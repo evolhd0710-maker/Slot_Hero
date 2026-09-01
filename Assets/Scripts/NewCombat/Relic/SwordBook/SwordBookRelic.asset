@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 023d463fcf21c6c448dd0c33fd079dc5, type: 3}
+  m_Name: SwordBookRelic
+  m_EditorClassIdentifier: 
+  relicId: 1
+  relicName: "\uAC80\uC220 \uAD50\uBCF8"
+  relicDescription: "\uB3C4\uAC80 \uD0DC\uADF8 1\uAC1C\uB9C8\uB2E4 \uB3C4\uAC80\uC758
+    \uACF5\uACA9\uB825 +1"
+  icon: {fileID: -5583694866630673790, guid: 1329d2ec0bceb62498fbcf31cd641936, type: 3}
+  rarity: 0
+  priority: 0
+  allowDuplicates: 0
+  attackPerSword: 1

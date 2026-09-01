@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d478cb63b8981348b5087b9449bae79, type: 3}
+  m_Name: "\uAC80\uD22C\uC0AC \uBC29\uBC00"
+  m_EditorClassIdentifier: 
+  actionName: "\uBC29\uBC00"
+  effects:
+  - {fileID: 11400000, guid: 0b9fc77ec4093ca41976d793269ab40c, type: 2}
+  - {fileID: 11400000, guid: d02fada4e7e0c58448a2b58d1994c696, type: 2}
+  weight: 30
+  firstTurnWeight: 0

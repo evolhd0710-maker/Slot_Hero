@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d478cb63b8981348b5087b9449bae79, type: 3}
+  m_Name: "\uC7A5\uAD70 \uAC80\uC220"
+  m_EditorClassIdentifier: 
+  actionName: 
+  effects:
+  - {fileID: 11400000, guid: 7d73828793f10ae449cfdfaf85bfd40c, type: 2}
+  - {fileID: 11400000, guid: 7d73828793f10ae449cfdfaf85bfd40c, type: 2}
+  - {fileID: 11400000, guid: 7d73828793f10ae449cfdfaf85bfd40c, type: 2}
+  weight: 30
+  firstTurnWeight: -1
+  animationTrigger: Attack

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dbf25ae5c1a6fb40b05ecc9903aba52, type: 3}
+  m_Name: Club
+  m_EditorClassIdentifier: 
+  symbolType: 3
+  symbolSprite: {fileID: -7656451306796661391, guid: 015d23a3e437c9344b6e428ad58eb0a3, type: 3}
+  symbolTags: 0300000004000000
+  baseAttack: 5
+  baseDefense: 0
+  basicEffects:
+  - {fileID: 11400000, guid: 99579be33b922524c9bc9a36ab6e03d9, type: 2}
+  - {fileID: 11400000, guid: 7e3e310a25cd8674794384570a8a6935, type: 2}
+  specialEffects:
+  - {fileID: 11400000, guid: 66cc41a397d236741ad8f1dfbb94f8a0, type: 2}
