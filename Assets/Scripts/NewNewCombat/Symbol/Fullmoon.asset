@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3438a6e39cd32c4eb9ecfebd852191a, type: 3}
+  m_Name: Fullmoon
+  m_EditorClassIdentifier: 
+  symbolName: Fullmoon
+  displayName: "\uB9CC\uC6D4"
+  icon: {fileID: -4102557354748464871, guid: 720528bf6c293274e885ebc62a1adfce, type: 3}
+  firstTag: {fileID: 11400000, guid: 712a7e3e81ddbeb47b4749f5fcad5ae9, type: 2}
+  secondTag: {fileID: 11400000, guid: ce955ca5e084451438b8eba861f15987, type: 2}
+  value: 7

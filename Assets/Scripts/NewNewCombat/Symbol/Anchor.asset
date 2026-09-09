@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3438a6e39cd32c4eb9ecfebd852191a, type: 3}
+  m_Name: Anchor
+  m_EditorClassIdentifier: 
+  symbolName: Anchor
+  displayName: "\uB2FB"
+  icon: {fileID: 5554709367672479556, guid: 9c3984f62378ba846be030aafd84a834, type: 3}
+  firstTag: {fileID: 11400000, guid: eac08d4b6af8ccb4689b936634f41429, type: 2}
+  secondTag: {fileID: 11400000, guid: b4296e66ba9ff1743a718d48d0e9fca0, type: 2}
+  value: 5

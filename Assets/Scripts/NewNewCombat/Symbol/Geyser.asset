@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3438a6e39cd32c4eb9ecfebd852191a, type: 3}
+  m_Name: Geyser
+  m_EditorClassIdentifier: 
+  symbolName: Geyser
+  displayName: "\uAC04\uD5D0\uCC9C"
+  icon: {fileID: -5016828881543214263, guid: 0a135556c12550b4bb20f8eb983fedc5, type: 3}
+  firstTag: {fileID: 11400000, guid: 4689947ceea43ef4b979a01ff1dae30a, type: 2}
+  secondTag: {fileID: 11400000, guid: 712a7e3e81ddbeb47b4749f5fcad5ae9, type: 2}
+  value: 3
