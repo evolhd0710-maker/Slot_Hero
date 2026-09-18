@@ -281,4 +281,29 @@ public class NewUnitBase : MonoBehaviour
             context
         );
     }
+
+    // ===== 변경 시작: 체력 비용 지불 =====
+
+    public bool TrySpendHealth(
+        int amount,
+        int minimumRemainingHealth = 1
+    )
+    {
+        if (amount <= 0)
+            return true;
+
+        if (CurrentHealth - amount < minimumRemainingHealth)
+            return false;
+
+        CurrentHealth -= amount;
+
+        Debug.Log(
+            $"{name} 체력 {amount} 지불. 남은 체력: {CurrentHealth}",
+            this
+        );
+
+        return true;
+    }
+
+    // ===== 변경 끝 =====
 }

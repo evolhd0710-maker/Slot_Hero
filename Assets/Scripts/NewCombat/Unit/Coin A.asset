@@ -9,8 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac1df387ccb4b184084bd4217c892a08, type: 3}
-  m_Name: "\uAC80\uD22C\uC0AC"
+  m_Script: {fileID: 11500000, guid: 98d848a35ea475d4da2581400d9a676b, type: 3}
+  m_Name: Coin A
   m_EditorClassIdentifier: 
-  unitName: "\uAC80\uD22C\uC0AC"
-  maxHealth: 2500
+  coinName: Coin A
+  displayName: Coin A
+  icon: {fileID: 0}
+  healthCost: 10
+  weight: 5

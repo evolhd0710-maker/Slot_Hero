@@ -12,7 +12,7 @@ public class SixReelSlotMachine : MonoBehaviour
     [SerializeField]
     private PlayerSymbolDeck playerSymbolDeck;
 
-    [Header("6개 릴")]
+    [Header("6개 릴 이미지")]
     [SerializeField]
     private Image[] reelImages =
         new Image[ReelCount];
@@ -27,14 +27,15 @@ public class SixReelSlotMachine : MonoBehaviour
     [SerializeField, Min(0f)]
     private float reelStopInterval = 0.15f;
 
-    [Header("버튼")]
-    [SerializeField]
-    private Button spinButton;
 
     private readonly List<SymbolData> resultSymbols =
         new List<SymbolData>();
 
+    private readonly bool[] lockedReels =
+        new bool[ReelCount];
+
     private bool isSpinning;
+
 
     public bool IsSpinning =>
         isSpinning;
@@ -42,110 +43,259 @@ public class SixReelSlotMachine : MonoBehaviour
     public IReadOnlyList<SymbolData> ResultSymbols =>
         resultSymbols;
 
+
     public event Action<IReadOnlyList<SymbolData>>
         OnSpinCompleted;
 
-    private void Awake()
-    {
-        if (spinButton != null)
-        {
-            spinButton.onClick.RemoveListener(Spin);
-            spinButton.onClick.AddListener(Spin);
-        }
 
-        ValidateReferences();
-    }
+    // =========================================================
+    // 상태
+    // =========================================================
 
-    private void OnDestroy()
+    public bool CanSpinAll
     {
-        if (spinButton != null)
+        get
         {
-            spinButton.onClick.RemoveListener(Spin);
+            return
+                !isSpinning &&
+                ValidateBasicSpinSettings();
         }
     }
 
-    private void ValidateReferences()
+
+    public bool CanSpinUnlockedReels
     {
-        if (reelImages == null ||
-            reelImages.Length != ReelCount)
+        get
         {
-            Debug.LogError(
-                $"릴 이미지는 정확히 {ReelCount}개 필요합니다.",
-                this
-            );
+            if (isSpinning)
+                return false;
+
+            if (!ValidateBasicSpinSettings())
+                return false;
+
+            if (resultSymbols.Count != ReelCount)
+                return false;
+
+            if (AreAllReelsLocked)
+                return false;
+
+            return true;
         }
     }
 
-    public void Spin()
+
+    public int LockedReelCount
     {
-        if (isSpinning)
-            return;
-
-        if (playerSymbolDeck == null)
+        get
         {
-            Debug.LogError(
-                "PlayerSymbolDeck이 연결되지 않았습니다.",
+            int count = 0;
+
+            for (int i = 0; i < ReelCount; i++)
+            {
+                if (lockedReels[i])
+                    count++;
+            }
+
+            return count;
+        }
+    }
+
+
+    public bool AreAllReelsLocked
+    {
+        get
+        {
+            for (int i = 0; i < ReelCount; i++)
+            {
+                if (!lockedReels[i])
+                    return false;
+            }
+
+            return true;
+        }
+    }
+
+
+    // =========================================================
+    // 첫 번째 스핀
+    // =========================================================
+
+    public bool TrySpinAll()
+    {
+        if (!CanSpinAll)
+        {
+            Debug.LogWarning(
+                "현재 전체 슬롯을 돌릴 수 없습니다.",
                 this
             );
 
-            return;
+            return false;
         }
 
-        if (playerSymbolDeck.TotalSymbolCount < ReelCount)
+        // 새 라운드의 첫 스핀이므로
+        // 이전 HOLD 상태는 전부 제거
+        ClearAllLocks();
+
+        StartCoroutine(
+            SpinRoutine(false)
+        );
+
+        return true;
+    }
+
+
+    // =========================================================
+    // 두 번째 스핀
+    // =========================================================
+
+    public bool TrySpinUnlockedReels()
+    {
+        if (!CanSpinUnlockedReels)
         {
-            Debug.LogError(
-                $"슬롯을 돌리려면 문양이 최소 {ReelCount}개 필요합니다. " +
-                $"현재 문양 수: {playerSymbolDeck.TotalSymbolCount}",
+            Debug.LogWarning(
+                "현재 HOLD되지 않은 릴을 다시 돌릴 수 없습니다.",
                 this
             );
 
-            return;
-        }
-
-        if (reelImages == null ||
-            reelImages.Length != ReelCount)
-        {
-            Debug.LogError(
-                $"릴 이미지가 정확히 {ReelCount}개 필요합니다.",
-                this
-            );
-
-            return;
+            return false;
         }
 
         StartCoroutine(
-            SpinRoutine()
+            SpinRoutine(true)
         );
+
+        return true;
     }
 
-    private IEnumerator SpinRoutine()
+
+    // =========================================================
+    // 스핀
+    // =========================================================
+
+    private IEnumerator SpinRoutine(
+        bool rerollUnlockedOnly
+    )
     {
         isSpinning = true;
 
-        if (spinButton != null)
-            spinButton.interactable = false;
 
-        resultSymbols.Clear();
+        List<int> spinningIndices =
+            new List<int>();
 
-        // 플레이어의 현재 덱을 복사해서
-        // 이번 스핀 전용 추첨 풀을 만든다.
-        List<SymbolData> drawPool =
-            playerSymbolDeck.CreateDrawPool();
+        List<SymbolData> finalResults =
+            new List<SymbolData>(
+                ReelCount
+            );
 
-        // ===== 실제 결과 비복원추출 =====
+
+        // 결과 리스트 크기를 6으로 고정
+        for (int i = 0; i < ReelCount; i++)
+        {
+            if (rerollUnlockedOnly &&
+                resultSymbols.Count == ReelCount)
+            {
+                finalResults.Add(
+                    resultSymbols[i]
+                );
+            }
+            else
+            {
+                finalResults.Add(
+                    null
+                );
+            }
+        }
+
+
+        // =====================================================
+        // 실제로 돌릴 릴 결정
+        // =====================================================
 
         for (int i = 0; i < ReelCount; i++)
         {
-            if (drawPool.Count == 0)
+            if (rerollUnlockedOnly &&
+                lockedReels[i])
             {
-                Debug.LogError(
-                    "문양 추첨 풀이 부족합니다.",
-                    this
-                );
-
-                break;
+                continue;
             }
 
+            spinningIndices.Add(i);
+        }
+
+
+        // =====================================================
+        // 비복원추출 풀 생성
+        // =====================================================
+
+        List<SymbolData> drawPool =
+            playerSymbolDeck.CreateDrawPool();
+
+
+        if (rerollUnlockedOnly)
+        {
+            /*
+             * 고정된 릴은 이미 이번 최종 결과에 포함되어 있으므로
+             * 뽑기 풀에서도 해당 문양을 1개씩 제거한다.
+             *
+             * 예:
+             * 수은 x1이 HOLD되어 있다면
+             * 다른 릴에서 수은 x1이 또 뽑히면 안 된다.
+             */
+
+            for (int i = 0; i < ReelCount; i++)
+            {
+                if (!lockedReels[i])
+                    continue;
+
+                SymbolData lockedSymbol =
+                    finalResults[i];
+
+                if (lockedSymbol == null)
+                    continue;
+
+                bool removed =
+                    drawPool.Remove(
+                        lockedSymbol
+                    );
+
+                if (!removed)
+                {
+                    Debug.LogError(
+                        $"HOLD된 문양 {lockedSymbol.DisplayName}을 " +
+                        $"DrawPool에서 제거하지 못했습니다.",
+                        this
+                    );
+
+                    FinishFailedSpin();
+
+                    yield break;
+                }
+            }
+        }
+
+
+        if (drawPool.Count <
+            spinningIndices.Count)
+        {
+            Debug.LogError(
+                $"재추첨할 문양 수가 부족합니다. " +
+                $"필요: {spinningIndices.Count}, " +
+                $"현재 풀: {drawPool.Count}",
+                this
+            );
+
+            FinishFailedSpin();
+
+            yield break;
+        }
+
+
+        // =====================================================
+        // 최종 결과 미리 결정
+        // =====================================================
+
+        foreach (int reelIndex in spinningIndices)
+        {
             int randomIndex =
                 UnityEngine.Random.Range(
                     0,
@@ -155,114 +305,195 @@ public class SixReelSlotMachine : MonoBehaviour
             SymbolData selectedSymbol =
                 drawPool[randomIndex];
 
-            resultSymbols.Add(
-                selectedSymbol
-            );
+            finalResults[reelIndex] =
+                selectedSymbol;
 
-            // 핵심:
-            // 뽑힌 문양 1개를 이번 추첨 풀에서 제거한다.
             drawPool.RemoveAt(
                 randomIndex
             );
         }
 
-        if (resultSymbols.Count != ReelCount)
-        {
-            isSpinning = false;
 
-            if (spinButton != null)
-                spinButton.interactable = true;
-
-            yield break;
-        }
+        // =====================================================
+        // 슬롯 회전 연출
+        // =====================================================
 
         bool[] stopped =
             new bool[ReelCount];
 
-        int stoppedCount = 0;
+        int stoppedCount =
+            0;
 
-        float startTime =
-            Time.unscaledTime;
+        float elapsed =
+            0f;
 
-        float nextChangeTime =
-            Time.unscaledTime;
 
-        while (stoppedCount < ReelCount)
+        while (stoppedCount <
+               spinningIndices.Count)
         {
-            float elapsedTime =
-                Time.unscaledTime -
-                startTime;
-
-            // 돌아가는 동안 보여주는 이미지는
-            // 단순 연출이므로 실제 추첨 결과와 무관하다.
-            if (Time.unscaledTime >=
-                nextChangeTime)
+            for (int order = 0;
+                 order < spinningIndices.Count;
+                 order++)
             {
-                nextChangeTime =
-                    Time.unscaledTime +
-                    symbolChangeInterval;
+                int reelIndex =
+                    spinningIndices[order];
 
-                for (int i = 0; i < ReelCount; i++)
+                if (stopped[reelIndex])
+                    continue;
+
+
+                float stopTime =
+                    firstStopDelay +
+                    reelStopInterval *
+                    order;
+
+
+                if (elapsed >= stopTime)
                 {
-                    if (stopped[i])
-                        continue;
+                    SetReelSymbol(
+                        reelIndex,
+                        finalResults[reelIndex]
+                    );
 
-                    SymbolData preview =
-                        playerSymbolDeck
-                            .GetRandomPreviewSymbol();
+                    stopped[reelIndex] =
+                        true;
 
-                    SetReelImage(
-                        i,
-                        preview
+                    stoppedCount++;
+
+                    continue;
+                }
+
+
+                // 회전 중 미리보기
+                SymbolData previewSymbol =
+                    playerSymbolDeck
+                        .GetRandomPreviewSymbol();
+
+                if (previewSymbol != null)
+                {
+                    SetReelSymbol(
+                        reelIndex,
+                        previewSymbol
                     );
                 }
             }
 
-            // 왼쪽 릴부터 순차 정지
-            for (int i = 0; i < ReelCount; i++)
-            {
-                if (stopped[i])
-                    continue;
 
-                float stopTime =
-                    firstStopDelay +
-                    reelStopInterval * i;
+            yield return new WaitForSeconds(
+                symbolChangeInterval
+            );
 
-                if (elapsedTime < stopTime)
-                    continue;
 
-                stopped[i] = true;
-
-                stoppedCount++;
-
-                SetReelImage(
-                    i,
-                    resultSymbols[i]
-                );
-            }
-
-            yield return null;
+            elapsed +=
+                symbolChangeInterval;
         }
 
-        isSpinning = false;
 
-        if (spinButton != null)
-            spinButton.interactable = true;
+        // =====================================================
+        // 최종 결과 저장
+        // =====================================================
+
+        resultSymbols.Clear();
+
+        resultSymbols.AddRange(
+            finalResults
+        );
+
+
+        isSpinning =
+            false;
+
+
+        Debug.Log(
+            rerollUnlockedOnly
+                ? "두 번째 슬롯 완료"
+                : "첫 번째 슬롯 완료",
+            this
+        );
+
 
         OnSpinCompleted?.Invoke(
             resultSymbols
         );
-
-        DebugSpinResult();
     }
 
-    private void SetReelImage(
+
+    // =========================================================
+    // HOLD
+    // =========================================================
+
+    public bool ToggleReelLock(
+        int reelIndex
+    )
+    {
+        if (!IsValidReelIndex(
+                reelIndex))
+        {
+            return false;
+        }
+
+        lockedReels[reelIndex] =
+            !lockedReels[reelIndex];
+
+        return
+            lockedReels[reelIndex];
+    }
+
+
+    public bool IsReelLocked(
+        int reelIndex
+    )
+    {
+        if (!IsValidReelIndex(
+                reelIndex))
+        {
+            return false;
+        }
+
+        return
+            lockedReels[reelIndex];
+    }
+
+
+    public void SetReelLock(
+        int reelIndex,
+        bool locked
+    )
+    {
+        if (!IsValidReelIndex(
+                reelIndex))
+        {
+            return;
+        }
+
+        lockedReels[reelIndex] =
+            locked;
+    }
+
+
+    public void ClearAllLocks()
+    {
+        for (int i = 0;
+             i < ReelCount;
+             i++)
+        {
+            lockedReels[i] =
+                false;
+        }
+    }
+
+
+    // =========================================================
+    // UI
+    // =========================================================
+
+    private void SetReelSymbol(
         int reelIndex,
         SymbolData symbol
     )
     {
-        if (reelIndex < 0 ||
-            reelIndex >= reelImages.Length)
+        if (!IsValidReelIndex(
+                reelIndex))
         {
             return;
         }
@@ -273,50 +504,104 @@ public class SixReelSlotMachine : MonoBehaviour
         if (reelImage == null)
             return;
 
+
         if (symbol == null)
         {
-            reelImage.sprite = null;
-            reelImage.enabled = false;
+            reelImage.sprite =
+                null;
+
+            reelImage.enabled =
+                false;
+
             return;
         }
 
-        reelImage.enabled = true;
-        reelImage.sprite = symbol.Icon;
-        reelImage.preserveAspect = true;
+
+        reelImage.sprite =
+            symbol.Icon;
+
+        reelImage.enabled =
+            symbol.Icon != null;
+
+        reelImage.preserveAspect =
+            true;
     }
 
-    private void DebugSpinResult()
+
+    // =========================================================
+    // 검사
+    // =========================================================
+
+    private bool ValidateBasicSpinSettings()
     {
-        string message =
-            "슬롯 비복원추출 결과: ";
+        if (playerSymbolDeck == null)
+        {
+            Debug.LogError(
+                "PlayerSymbolDeck이 연결되지 않았습니다.",
+                this
+            );
+
+            return false;
+        }
+
+
+        if (playerSymbolDeck.TotalSymbolCount <
+            ReelCount)
+        {
+            Debug.LogError(
+                $"문양 덱에 최소 {ReelCount}개의 문양이 필요합니다.",
+                this
+            );
+
+            return false;
+        }
+
+
+        if (reelImages == null ||
+            reelImages.Length != ReelCount)
+        {
+            Debug.LogError(
+                "Reel Images는 정확히 6개여야 합니다.",
+                this
+            );
+
+            return false;
+        }
+
 
         for (int i = 0;
-             i < resultSymbols.Count;
+             i < ReelCount;
              i++)
         {
-            SymbolData symbol =
-                resultSymbols[i];
+            if (reelImages[i] == null)
+            {
+                Debug.LogError(
+                    $"Reel Images[{i}]가 비어 있습니다.",
+                    this
+                );
 
-            if (symbol == null)
-            {
-                message += "[없음]";
-            }
-            else
-            {
-                message +=
-                    $"[{symbol.DisplayName}]";
-            }
-
-            if (i <
-                resultSymbols.Count - 1)
-            {
-                message += " ";
+                return false;
             }
         }
 
-        Debug.Log(
-            message,
-            this
-        );
+
+        return true;
+    }
+
+
+    private bool IsValidReelIndex(
+        int index
+    )
+    {
+        return
+            index >= 0 &&
+            index < ReelCount;
+    }
+
+
+    private void FinishFailedSpin()
+    {
+        isSpinning =
+            false;
     }
 }

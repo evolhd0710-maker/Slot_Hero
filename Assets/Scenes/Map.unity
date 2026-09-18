@@ -191,6 +191,133 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -300}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &513102954
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 513102956}
+  - component: {fileID: 513102955}
+  m_Layer: 0
+  m_Name: MapPlayerRunInitializer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &513102955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513102954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1091494a32a6bcc40b67f745f280376d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialPlayerData: {fileID: 11400000, guid: 485f2fa0e77821742bc005c12013ce4d, type: 2}
+  initialSymbols:
+  - symbol: {fileID: 11400000, guid: 19ae11a39f763ec4ca69d382d5f4218d, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: f006d99ec4bb2a44fa782fd4ebc98a26, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 78bbaae034a7bec419170fdf2716c66b, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 709e0eff0be64a3419e2d30cf88991c1, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 9c760aae8e9b9304cabd9453a85fa87b, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 89e24595658a2d642b2d2b5eeb08c7a9, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 44f5f48f1ac26d04eb0b9949fb66d021, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 29d1eca62e85da342afa2388722d31a9, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 2e865ec2f6e190440952ddeadb185a28, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 254a8bc918445fd4e81aac945fe87ccb, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 45c355c5a6278554fab2cce9f20a9f40, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 45c355c5a6278554fab2cce9f20a9f40, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 728b0056deff4e845a5e0758e2e65c2e, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 7d4b07823559c6744b3bc6d77e939038, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: d1640c8f9ea933542a367afa61e0553f, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 766b0fca3f4393443ad7942b625d98cd, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: d0e257f8195513e4a992c96628009a17, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 80e35ae70a7fc2b44a63627d2376cf6d, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: d22177973e9d03243a9c9086499ccaae, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 647727f43928270459c7dea37f9758b6, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 36118518e998c434cbe810b5084f32c4, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: a5cd24a871808bb449c446816d97e530, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: b02469cdd0b6642408179f7439d713b8, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: b5e5eb3f2648ed84ebce2727988fe168, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: d42a59af890a89c4c88d7f0334a80003, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 2dde558104a49064d9abc10f95a09a38, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 8228e55f8334ace45bee2f06fb137737, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 164edb37f8ad62a45aa0f8180fbbb937, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 52766dc72f267b344b6475f58f31d240, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 60e18ebe3d6d98340b4c54ac6196962d, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 94b89938855be954c905298a66aeb98c, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: e35401ac2d80a644dab1c55c5001fbd2, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: f26cca9078f448f49b16f484b38d77d1, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 899fa34e71089324aa5ec617ce76ab23, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: b93ce9fa61b460c438cebb0cc174d1bc, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: 2dca1fe9a76dd6f46a95af2a8ca463b1, type: 2}
+    count: 1
+  - symbol: {fileID: 11400000, guid: cc6fe457adac85e4bae95dd6bad0b6b0, type: 2}
+    count: 1
+  initialCoins:
+  - coin: {fileID: 11400000, guid: faba5db8e71b4f6478746a3a939566ab, type: 2}
+    count: 100
+  - coin: {fileID: 11400000, guid: f4f6e7d1bc12a184ba9b1d86ff5aec16, type: 2}
+    count: 100
+  - coin: {fileID: 11400000, guid: 8b75ab9dde452564181e3ad8ac9b1ff1, type: 2}
+    count: 100
+--- !u!4 &513102956
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513102954}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 888.1499, y: 438.26187, z: -5.245139}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &517229514
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,6 +646,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1476513040
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1476513042}
+  - component: {fileID: 1476513041}
+  m_Layer: 0
+  m_Name: MapPlayerStatusUI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1476513041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476513040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bd4fa5e938186848ad3a382f24b295a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthText: {fileID: 0}
+  coinText: {fileID: 0}
+  symbolDeckText: {fileID: 0}
+--- !u!4 &1476513042
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1476513040}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 870.5621, y: 451.16977, z: -5.62497}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1604630426
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,7 +998,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  normalBattleSceneName: Combat
+  normalBattleSceneName: NewNewCombat
   bossBattleSceneName: BossBattleScene
   normalEnemyDefinitions:
   - {fileID: 11400000, guid: 1d6febd04900250408fe3e5d9372cc83, type: 2}
@@ -890,3 +1064,5 @@ SceneRoots:
   - {fileID: 1713251559}
   - {fileID: 517229518}
   - {fileID: 1604630429}
+  - {fileID: 1476513042}
+  - {fileID: 513102956}

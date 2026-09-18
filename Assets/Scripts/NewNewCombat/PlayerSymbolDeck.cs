@@ -3,13 +3,30 @@ using UnityEngine;
 
 public class PlayerSymbolDeck : MonoBehaviour
 {
-    [Header("현재 문양 덱")]
+    [Header("새 런의 초기 문양 덱")]
+    [Tooltip(
+        "런 데이터가 아직 없을 때만 사용합니다. " +
+        "현재 보유량은 PlayerRunData에 있습니다."
+    )]
     [SerializeField]
     private List<SymbolDeckEntry> symbols =
         new List<SymbolDeckEntry>();
 
+    private PlayerRunData Run
+    {
+        get
+        {
+            PlayerRunData state =
+                PlayerRunData.GetOrCreate();
+
+            state.InitializeDeckIfNeeded(symbols);
+
+            return state;
+        }
+    }
+
     public IReadOnlyList<SymbolDeckEntry> Symbols =>
-        symbols;
+        Run.Symbols;
 
     public int TotalSymbolCount
     {
@@ -17,22 +34,26 @@ public class PlayerSymbolDeck : MonoBehaviour
         {
             int total = 0;
 
-            foreach (SymbolDeckEntry entry in symbols)
+            foreach (SymbolDeckEntry entry in Symbols)
             {
-                if (entry == null)
+                if (entry == null ||
+                    entry.Symbol == null ||
+                    entry.Count <= 0)
+                {
                     continue;
-
-                if (entry.Symbol == null)
-                    continue;
-
-                if (entry.Count <= 0)
-                    continue;
+                }
 
                 total += entry.Count;
             }
 
             return total;
         }
+    }
+
+    private void Awake()
+    {
+        PlayerRunData.GetOrCreate()
+            .InitializeDeckIfNeeded(symbols);
     }
 
     public void AddSymbol(
@@ -43,21 +64,36 @@ public class PlayerSymbolDeck : MonoBehaviour
         if (symbol == null || amount <= 0)
             return;
 
-        SymbolDeckEntry entry =
-            FindEntry(symbol);
+        PlayerRunData state = Run;
 
-        if (entry != null)
+        SymbolDeckEntry entry =
+            state.MutableSymbols.Find(
+                item => item != null &&
+                        item.Symbol == symbol
+            );
+
+        if (entry == null)
         {
+            state.MutableSymbols.Add(
+                new SymbolDeckEntry(symbol, amount)
+            );
+        }
+        else
+        {
+            if (amount > int.MaxValue - entry.Count)
+            {
+                Debug.LogError(
+                    "문양 보유 개수 범위를 초과했습니다.",
+                    this
+                );
+
+                return;
+            }
+
             entry.AddCount(amount);
-            return;
         }
 
-        symbols.Add(
-            new SymbolDeckEntry(
-                symbol,
-                amount
-            )
-        );
+        state.NotifyChanged();
     }
 
     public void RemoveSymbol(
@@ -68,110 +104,110 @@ public class PlayerSymbolDeck : MonoBehaviour
         if (symbol == null || amount <= 0)
             return;
 
+        PlayerRunData state = Run;
+
         SymbolDeckEntry entry =
-            FindEntry(symbol);
+            state.MutableSymbols.Find(
+                item => item != null &&
+                        item.Symbol == symbol
+            );
 
         if (entry == null)
             return;
 
-        entry.AddCount(-amount);
+        entry.SetCount(
+            Mathf.Max(0, entry.Count - amount)
+        );
 
-        if (entry.Count <= 0)
-            symbols.Remove(entry);
+        if (entry.Count == 0)
+            state.MutableSymbols.Remove(entry);
+
+        state.NotifyChanged();
     }
 
-    public int GetSymbolCount(
-        SymbolData symbol
-    )
+    public int GetSymbolCount(SymbolData symbol)
     {
-        SymbolDeckEntry entry =
-            FindEntry(symbol);
-
-        if (entry == null)
+        if (symbol == null)
             return 0;
 
-        return entry.Count;
+        foreach (SymbolDeckEntry entry in Symbols)
+        {
+            if (entry != null &&
+                entry.Symbol == symbol)
+            {
+                return entry.Count;
+            }
+        }
+
+        return 0;
     }
 
-    public bool HasSymbol(
-        SymbolData symbol
-    )
+    public bool HasSymbol(SymbolData symbol)
     {
         return GetSymbolCount(symbol) > 0;
     }
 
-    private SymbolDeckEntry FindEntry(
-        SymbolData symbol
+    public void SetDeck(
+        IEnumerable<SymbolDeckEntry> entries
     )
     {
-        foreach (SymbolDeckEntry entry in symbols)
-        {
-            if (entry == null)
-                continue;
-
-            if (entry.Symbol == symbol)
-                return entry;
-        }
-
-        return null;
+        PlayerRunData.GetOrCreate()
+            .SetSymbols(entries);
     }
 
     /// <summary>
-    /// 현재 덱의 실제 문양 개수만큼
-    /// 임시 추첨 풀을 만든다.
-    ///
-    /// 예:
-    /// 수은 x3
-    /// 물고기 x2
-    ///
-    /// 결과:
-    /// [수은, 수은, 수은, 물고기, 물고기]
+    /// 비복원추출에 사용할 임시 복사본을 만든다.
+    /// 이 목록에서 문양을 제거해도 실제 보유량은 바뀌지 않는다.
     /// </summary>
     public List<SymbolData> CreateDrawPool()
     {
-        List<SymbolData> drawPool =
+        List<SymbolData> pool =
             new List<SymbolData>();
 
-        foreach (SymbolDeckEntry entry in symbols)
+        foreach (SymbolDeckEntry entry in Symbols)
         {
-            if (entry == null)
+            if (entry == null ||
+                entry.Symbol == null ||
+                entry.Count <= 0)
+            {
                 continue;
-
-            if (entry.Symbol == null)
-                continue;
-
-            if (entry.Count <= 0)
-                continue;
+            }
 
             for (int i = 0; i < entry.Count; i++)
-            {
-                drawPool.Add(
-                    entry.Symbol
-                );
-            }
+                pool.Add(entry.Symbol);
         }
 
-        return drawPool;
+        return pool;
     }
 
     /// <summary>
-    /// 슬롯 회전 중 보여줄 임시 이미지용.
-    /// 실제 결과 추첨에는 사용하지 않는다.
+    /// 회전 연출용 문양 선택.
+    /// 실제 결과의 비복원추출 규칙과는 별개다.
     /// </summary>
     public SymbolData GetRandomPreviewSymbol()
     {
-        List<SymbolData> pool =
-            CreateDrawPool();
+        int total = TotalSymbolCount;
 
-        if (pool.Count == 0)
+        if (total <= 0)
             return null;
 
-        int randomIndex =
-            Random.Range(
-                0,
-                pool.Count
-            );
+        int roll = Random.Range(0, total);
 
-        return pool[randomIndex];
+        foreach (SymbolDeckEntry entry in Symbols)
+        {
+            if (entry == null ||
+                entry.Symbol == null ||
+                entry.Count <= 0)
+            {
+                continue;
+            }
+
+            if (roll < entry.Count)
+                return entry.Symbol;
+
+            roll -= entry.Count;
+        }
+
+        return null;
     }
 }
