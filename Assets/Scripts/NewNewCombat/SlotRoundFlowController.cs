@@ -31,19 +31,22 @@ public class SlotRoundFlowController : MonoBehaviour
     // =========================================================
 
     public bool CanPlaceBet =>
-        state ==
-            SlotRoundState.WaitingFirstBet ||
-        state ==
-            SlotRoundState.SelectingHoldAndSecondBet;
+        state == SlotRoundState.WaitingFirstBet ||
+        state == SlotRoundState.SelectingHoldAndSecondBet;
 
 
     public bool CanChooseBetCoin =>
         CanPlaceBet;
 
 
+    // 베팅하지 않고 넘어가는 것도
+    // 베팅 가능한 타이밍에서만 허용
+    public bool CanSkipBet =>
+        CanPlaceBet;
+
+
     public bool CanToggleHold =>
-        state ==
-        SlotRoundState.SelectingHoldAndSecondBet;
+        state == SlotRoundState.SelectingHoldAndSecondBet;
 
 
     // =========================================================
@@ -53,34 +56,14 @@ public class SlotRoundFlowController : MonoBehaviour
     public event Action<SlotRoundState>
         OnStateChanged;
 
-
     public event Action<int, bool>
         OnReelLockChanged;
 
-
-    /// <summary>
-    /// 베팅판 / HOLD UI 등을 초기화할 때 사용.
-    /// </summary>
     public event Action
         OnRoundReset;
 
-
-    /// <summary>
-    /// 플레이어의 슬롯 계산과 최종 공격이
-    /// 전부 끝났을 때 발생.
-    ///
-    /// CombatFlowController가 이 이벤트를 받아
-    /// 적 턴을 시작한다.
-    /// </summary>
     public event Action
         OnPlayerTurnCompleted;
-
-
-    /// <summary>
-    /// 적 턴 종료 후 새로운 플레이어 턴이 시작될 때.
-    /// </summary>
-    public event Action
-        OnPlayerTurnStarted;
 
 
     // =========================================================
@@ -95,7 +78,6 @@ public class SlotRoundFlowController : MonoBehaviour
 
         slotMachine.OnSpinCompleted -=
             HandleSpinCompleted;
-
 
         slotMachine.OnSpinCompleted +=
             HandleSpinCompleted;
@@ -114,17 +96,68 @@ public class SlotRoundFlowController : MonoBehaviour
 
 
     // =========================================================
-    // 베팅 완료
-    //
-    // BettingTableUI에서 코인이 실제 배치된 뒤 호출
+    // 실제 베팅 완료
     // =========================================================
 
     public void HandleBetPlaced()
     {
+        if (!CanPlaceBet)
+        {
+            Debug.LogWarning(
+                $"현재 상태에서는 베팅할 수 없습니다. State={state}",
+                this
+            );
+
+            return;
+        }
+
+
+        AdvanceCurrentBetStage(
+            false
+        );
+    }
+
+
+    // =========================================================
+    // 베팅 안함
+    // =========================================================
+
+    public void SkipBet()
+    {
+        if (!CanSkipBet)
+        {
+            Debug.LogWarning(
+                $"현재 상태에서는 베팅 안함을 선택할 수 없습니다. State={state}",
+                this
+            );
+
+            return;
+        }
+
+
+        Debug.Log(
+            $"[베팅 안함] State={state}",
+            this
+        );
+
+
+        AdvanceCurrentBetStage(
+            true
+        );
+    }
+
+
+    // =========================================================
+    // 현재 베팅 단계를 진행
+    // =========================================================
+
+    private void AdvanceCurrentBetStage(
+        bool skippedBet
+    )
+    {
         if (slotMachine == null)
         {
             Debug.LogError(
-                "SlotRoundFlowController에 " +
                 "SixReelSlotMachine이 연결되지 않았습니다.",
                 this
             );
@@ -136,100 +169,129 @@ public class SlotRoundFlowController : MonoBehaviour
 
 
         // =====================================================
-        // 첫 번째 베팅
+        // 첫 번째 베팅 단계
         // =====================================================
 
         if (state ==
             SlotRoundState.WaitingFirstBet)
         {
-            SetState(
-                SlotRoundState.FirstSpin
-            );
-
-
-            bool started =
-                slotMachine.TrySpinAll();
-
-
-            if (!started)
+            if (skippedBet)
             {
-                Debug.LogError(
-                    "첫 번째 슬롯 시작 실패",
+                Debug.Log(
+                    "첫 번째 베팅 생략 → 전체 슬롯 회전",
                     this
                 );
-
-                AbortRound();
             }
 
+
+            StartFirstSpin();
 
             return;
         }
 
 
         // =====================================================
-        // 두 번째 베팅
+        // 두 번째 베팅 단계
         // =====================================================
 
         if (state ==
             SlotRoundState.SelectingHoldAndSecondBet)
         {
-            // ---------------------------------------------
-            // 6개 전부 HOLD
-            //
-            // 재회전 없이 현재 결과를 그대로 최종 계산
-            // ---------------------------------------------
-
-            if (slotMachine.AreAllReelsLocked)
+            if (skippedBet)
             {
                 Debug.Log(
-                    "6개 릴 전부 HOLD → " +
-                    "두 번째 슬롯 생략 → 바로 계산",
+                    "두 번째 베팅 생략",
                     this
                 );
-
-
-                BeginResolution();
-
-                return;
             }
 
 
-            // ---------------------------------------------
-            // 일부 릴만 HOLD
-            //
-            // HOLD하지 않은 릴만 다시 회전
-            // ---------------------------------------------
+            StartSecondAttempt();
 
-            SetState(
-                SlotRoundState.SecondSpin
+            return;
+        }
+    }
+
+
+    // =========================================================
+    // 첫 번째 슬롯
+    // =========================================================
+
+    private void StartFirstSpin()
+    {
+        SetState(
+            SlotRoundState.FirstSpin
+        );
+
+
+        bool started =
+            slotMachine.TrySpinAll();
+
+
+        if (!started)
+        {
+            Debug.LogError(
+                "첫 번째 슬롯 시작 실패",
+                this
             );
 
 
-            bool started =
-                slotMachine
-                    .TrySpinUnlockedReels();
+            AbortRound();
+        }
+    }
 
 
-            if (!started)
-            {
-                Debug.LogError(
-                    "두 번째 슬롯 시작 실패",
-                    this
-                );
+    // =========================================================
+    // 두 번째 시도
+    // =========================================================
 
-                AbortRound();
-            }
+    private void StartSecondAttempt()
+    {
+        // =====================================================
+        // 모든 릴이 HOLD
+        //
+        // 두 번째 회전 없이 바로 최종 계산
+        // =====================================================
 
+        if (slotMachine.AreAllReelsLocked)
+        {
+            Debug.Log(
+                "모든 릴 HOLD → 두 번째 슬롯 생략 → 최종 계산",
+                this
+            );
+
+
+            BeginResolution();
 
             return;
         }
 
 
-        Debug.LogWarning(
-            $"현재 상태에서는 베팅할 수 없습니다. " +
-            $"State={state}",
-            this
+        // =====================================================
+        // 하나라도 풀려 있음
+        //
+        // 고정하지 않은 릴만 재회전
+        // =====================================================
+
+        SetState(
+            SlotRoundState.SecondSpin
         );
+
+
+        bool started =
+            slotMachine.TrySpinUnlockedReels();
+
+
+        if (!started)
+        {
+            Debug.LogError(
+                "두 번째 슬롯 시작 실패",
+                this
+            );
+
+
+            AbortRound();
+        }
     }
 
 
@@ -255,8 +317,7 @@ public class SlotRoundFlowController : MonoBehaviour
 
 
             Debug.Log(
-                "첫 번째 슬롯 결과 확정 → " +
-                "릴 HOLD 및 두 번째 베팅 가능",
+                "첫 번째 슬롯 완료 → HOLD 및 두 번째 선택 가능",
                 this
             );
 
@@ -273,14 +334,12 @@ public class SlotRoundFlowController : MonoBehaviour
             SlotRoundState.SecondSpin)
         {
             BeginResolution();
-
-            return;
         }
     }
 
 
     // =========================================================
-    // 플레이어 최종 계산 시작
+    // 최종 계산
     // =========================================================
 
     private void BeginResolution()
@@ -319,20 +378,10 @@ public class SlotRoundFlowController : MonoBehaviour
         }
 
 
-        // =====================================================
-        // 계산 연출
-        // → 최종 공격
-        // → 베팅 Consume
-        // =====================================================
-
         yield return damageResolver.Resolve(
             slotMachine.ResultSymbols
         );
 
-
-        // =====================================================
-        // 플레이어 행동 완전 종료
-        // =====================================================
 
         FinishPlayerTurn();
     }
@@ -344,42 +393,33 @@ public class SlotRoundFlowController : MonoBehaviour
 
     private void FinishPlayerTurn()
     {
-        // HOLD 초기화
         if (slotMachine != null)
         {
             slotMachine.ClearAllLocks();
         }
 
 
-        /*
-         * 여기서 WaitingFirstBet으로 돌아가면 안 된다.
-         *
-         * 적이 행동해야 하므로
-         * WaitingEnemyTurn 상태에서 잠근다.
-         */
-
         SetState(
             SlotRoundState.WaitingEnemyTurn
         );
 
 
-        // 베팅판 위 코인 / 선택 코인 / HOLD 표시 제거
+        // 베팅 코인 UI / HOLD UI 등 초기화
         OnRoundReset?.Invoke();
 
 
         Debug.Log(
-            "플레이어 행동 종료 → 적 턴 대기",
+            "플레이어 행동 종료 → 적 턴",
             this
         );
 
 
-        // CombatFlowController에게 알림
         OnPlayerTurnCompleted?.Invoke();
     }
 
 
     // =========================================================
-    // 적 행동 종료 후 호출
+    // 적 턴 종료 후
     // =========================================================
 
     public void BeginNextPlayerTurn()
@@ -388,8 +428,7 @@ public class SlotRoundFlowController : MonoBehaviour
             SlotRoundState.WaitingEnemyTurn)
         {
             Debug.LogWarning(
-                $"플레이어 턴을 시작할 수 없는 상태입니다. " +
-                $"State={state}",
+                $"다음 플레이어 턴을 시작할 수 없습니다. State={state}",
                 this
             );
 
@@ -403,12 +442,9 @@ public class SlotRoundFlowController : MonoBehaviour
 
 
         Debug.Log(
-            "적 행동 종료 → 새로운 플레이어 베팅 턴 시작",
+            "적 행동 종료 → 새로운 플레이어 턴",
             this
         );
-
-
-        OnPlayerTurnStarted?.Invoke();
     }
 
 
@@ -445,12 +481,6 @@ public class SlotRoundFlowController : MonoBehaviour
         );
 
 
-        Debug.Log(
-            $"Reel {reelIndex} HOLD = {locked}",
-            this
-        );
-
-
         return true;
     }
 
@@ -463,10 +493,9 @@ public class SlotRoundFlowController : MonoBehaviour
             return false;
 
 
-        return
-            slotMachine.IsReelLocked(
-                reelIndex
-            );
+        return slotMachine.IsReelLocked(
+            reelIndex
+        );
     }
 
 
@@ -476,7 +505,6 @@ public class SlotRoundFlowController : MonoBehaviour
 
     public void CancelRound()
     {
-        // 회전 / 계산 / 적 턴 대기 중에는 취소 불가능
         if (state ==
                 SlotRoundState.FirstSpin ||
 
@@ -501,15 +529,13 @@ public class SlotRoundFlowController : MonoBehaviour
     {
         if (bettingManager != null)
         {
-            bettingManager
-                .CancelAllBets();
+            bettingManager.CancelAllBets();
         }
 
 
         if (slotMachine != null)
         {
-            slotMachine
-                .ClearAllLocks();
+            slotMachine.ClearAllLocks();
         }
 
 

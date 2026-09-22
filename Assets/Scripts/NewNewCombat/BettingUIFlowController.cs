@@ -21,16 +21,23 @@ public class BettingUIFlowController : MonoBehaviour
     private SlotRoundFlowController roundFlowController;
 
 
-    [Header("베팅 버튼")]
+    [Header("버튼")]
     [SerializeField]
     private Button openCoinSelectButton;
 
+    [SerializeField]
+    private Button skipBetButton;
+
+
+    // =========================================================
+    // Unity
+    // =========================================================
 
     private void Start()
     {
         ShowBettingTable();
 
-        RefreshBetButton();
+        RefreshButtons();
     }
 
 
@@ -51,6 +58,21 @@ public class BettingUIFlowController : MonoBehaviour
             roundFlowController.OnRoundReset +=
                 HandleRoundReset;
         }
+
+
+        if (skipBetButton != null)
+        {
+            skipBetButton.onClick.RemoveListener(
+                SkipBet
+            );
+
+            skipBetButton.onClick.AddListener(
+                SkipBet
+            );
+        }
+
+
+        RefreshButtons();
     }
 
 
@@ -63,6 +85,14 @@ public class BettingUIFlowController : MonoBehaviour
 
             roundFlowController.OnRoundReset -=
                 HandleRoundReset;
+        }
+
+
+        if (skipBetButton != null)
+        {
+            skipBetButton.onClick.RemoveListener(
+                SkipBet
+            );
         }
     }
 
@@ -159,6 +189,41 @@ public class BettingUIFlowController : MonoBehaviour
 
 
     // =========================================================
+    // 베팅 안함
+    // =========================================================
+
+    public void SkipBet()
+    {
+        if (roundFlowController == null)
+            return;
+
+
+        if (!roundFlowController.CanSkipBet)
+            return;
+
+
+        /*
+         * 혹시 코인을 선택한 상태에서
+         * 베팅 안함을 눌렀다면 선택 코인을 제거한다.
+         *
+         * 실제 베팅판에 놓지 않았으므로
+         * 체력과 코인은 전혀 소모되지 않는다.
+         */
+        if (bettingTableUI != null)
+        {
+            bettingTableUI.ClearSelectedCoin();
+        }
+
+
+        // 코인 선택 패널에서 눌렀을 가능성까지 대비
+        ShowBettingTable();
+
+
+        roundFlowController.SkipBet();
+    }
+
+
+    // =========================================================
     // 상태
     // =========================================================
 
@@ -166,7 +231,7 @@ public class BettingUIFlowController : MonoBehaviour
         SlotRoundState state
     )
     {
-        RefreshBetButton();
+        RefreshButtons();
     }
 
 
@@ -174,18 +239,29 @@ public class BettingUIFlowController : MonoBehaviour
     {
         ShowBettingTable();
 
-        RefreshBetButton();
+        RefreshButtons();
     }
 
 
-    private void RefreshBetButton()
+    private void RefreshButtons()
     {
-        if (openCoinSelectButton == null)
-            return;
-
-
-        openCoinSelectButton.interactable =
+        bool canBet =
             roundFlowController == null ||
             roundFlowController.CanChooseBetCoin;
+
+
+        if (openCoinSelectButton != null)
+        {
+            openCoinSelectButton.interactable =
+                canBet;
+        }
+
+
+        if (skipBetButton != null)
+        {
+            skipBetButton.interactable =
+                roundFlowController == null ||
+                roundFlowController.CanSkipBet;
+        }
     }
 }
