@@ -1,16 +1,17 @@
 # Slot Hero 새 코드
 
-기획서를 옮겨 새로 쓴 코드다. 저장소에 원래 있던 `Assets/Scripts` 의 코드와 따로 두었다.
+기획서를 옮겨 새로 쓴 코드와 그 문서다. 저장소에 원래 있던 `Assets/Scripts` 의 코드와 따로 두었다.
 
-## 폴더
+## 자리
 
 ```
-Assets/SlotHero/
-  Scripts/<영역>/     영역마다 Runtime/{Data, Config, Generation, UI} 와 Editor
-                      영역마다 README.md 에 기획서와 코드의 대응을 적었다
-  문서/
-    작업 기록.md       무엇을 언제 왜 했는지
-    Slot Hero 코드 설명.docx   형식과 공개 멤버를 영역별로 모은 문서
+Assets/SlotHero/Scripts/<영역>/   코드. .cs 와 .meta 만 둔다
+                                  영역마다 Runtime/{Data, Config, Generation, UI} 와 Editor
+Docs/SlotHero/                    문서. Assets 밖이라 유니티가 임포트하지 않는다
+  README.md                       이 글
+  영역/<영역>.md                   영역마다 기획서와 코드의 대응, 임의로 정한 부분
+  작업 기록.md                     무엇을 언제 왜 했는지
+  Slot Hero 코드 설명.docx         형식과 공개 멤버를 영역별로 모은 문서
 ```
 
 영역은 Flow, Save, Map, Title, Profile, TopBar, Hud, Sanctum, Events, Reward, CurrentBuild, Popup, Settings, RunResult, Ui, Tools 열여섯이다.
@@ -24,7 +25,7 @@ https://www.figma.com/board/AVi8pGxY7BdquMy4gM0a5c
 
 ## 씬과 설정 에셋
 
-이 폴더에는 스크립트와 문서만 있다. 씬, 프리팹, 설정 에셋, 그림은 올리지 않았다.
+저장소에는 스크립트와 문서만 있다. 씬, 프리팹, 설정 에셋, 그림은 올리지 않았다.
 
 - 설정 에셋은 `Slot Hero > 설정 에셋 한 번에 만들기` 로 `Assets/SlotHeroConfigs` 에 만든다
 - `Slot Hero > 한 바퀴 다 돌리기` 는 설정 에셋, 그림 가져오기, 씬 짓기, 검사를 차례로 돈다
