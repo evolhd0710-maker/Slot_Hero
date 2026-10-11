@@ -1,4 +1,5 @@
 using System.Globalization;
+using SlotHero.Combat;
 using SlotHero.CurrentBuild;
 
 namespace SlotHero.Reward
@@ -35,7 +36,7 @@ namespace SlotHero.Reward
         }
 
         private static string GetTagName(
-            SlotHero.Combat.SymbolTagType tag, CurrentBuildVisualConfig visual)
+            SymbolTagType tag, CurrentBuildVisualConfig visual)
         {
             if (visual == null)
             {
