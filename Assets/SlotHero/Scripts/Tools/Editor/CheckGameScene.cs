@@ -1777,10 +1777,14 @@ namespace SlotHero.ToolsEditor
                 flow.Context.GainGold(1000);
             }
 
+            // 코인 칸은 남겨 둔다. 뒤의 CheckPurchaseWhenFull 이 코인 칸으로 "가득 찬 채로 사기" 를 본다.
+            // 물건 목록의 코인이 둘이고 하나는 런 시작에 주므로 진열에 오르는 코인은 하나뿐일 수 있다.
+            // 칸을 찾는 차례는 유니티가 정해 예전에는 가끔 그 코인을 여기서 사 버려 뒤 검사가 실패했다.
+            // 2026년 10월 11일 저장소를 새로 받아 돌려 보다 찾았다.
             MerchantSlotView target = null;
             for (int i = 0; i < slots.Length; i++)
             {
-                if (slots[i].Slot != null && slots[i].Slot.IsBuyable)
+                if (slots[i].Slot != null && slots[i].Slot.IsBuyable && slots[i].Slot.Item.Kind != SanctumItemKind.Coin)
                 {
                     target = slots[i];
                     break;
@@ -1789,7 +1793,7 @@ namespace SlotHero.ToolsEditor
 
             if (target == null)
             {
-                Report("살 수 있는 진열 자리가 있다", false);
+                Report("코인이 아닌 살 수 있는 진열 자리가 있다", false);
                 return;
             }
 
