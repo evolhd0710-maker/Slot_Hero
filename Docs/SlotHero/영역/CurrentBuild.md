@@ -7,7 +7,7 @@
 무엇을 가지고 있는지 모으는 일은 유물, 코인, 문양 기획서를 따르는 쪽이 맡는다.
 이 코드는 받은 내용을 정렬해 그리는 데까지만 한다.
 
-저장소를 받으면 이 `CurrentBuild` 폴더를 통째로 `Assets/Scripts/CurrentBuild`로 옮기면 된다.
+저장소를 받으면 이 `CurrentBuild` 폴더를 통째로 `Assets/SlotHero/Scripts/CurrentBuild`로 옮기면 된다.
 
 ## 파일 구성
 

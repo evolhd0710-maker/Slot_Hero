@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7e7c853eca7d4a4eaabc4e69f8fd24f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.RunResult.RunResultVisualConfig
+  BackgroundColor: {r: 0, g: 0, b: 0, a: 1}
+  PanelColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
+  TextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  DefeatColor: {r: 0.62, g: 0.169, b: 0.145, a: 1}
+  ClearColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  OutcomeFontSize: 64
+  LocationFontSize: 30
+  HeadingFontSize: 26
+  BodyFontSize: 24
+  ButtonFontSize: 30
+  HoverBrightness: 1.1
+  PressedBrightness: 0.9
+  DefeatText: "\uD328\uBC30"
+  ClearText: "\uD074\uB9AC\uC5B4"
+  TitleButtonText: "\uD0C0\uC774\uD2C0\uB85C"
+  Separator: " \xB7 "
+  StageFormat: "\uC2A4\uD14C\uC774\uC9C0 {0}"
+  RoomFormat: "{0}\uBC88\uC9F8 \uBC29"
+  SymbolHeadingFormat: "\uBB38\uC591 {0}\uC7A5"
+  TagHeadingText: "\uD0DC\uADF8 \uC815\uBCF4"
+  RelicHeadingText: "\uC720\uBB3C"
+  CoinHeadingText: "\uCF54\uC778"
+  SymbolEntryFormat: '{0} {1}'
+  TagEntryFormat: '{0} {1}'

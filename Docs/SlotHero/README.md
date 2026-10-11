@@ -1,21 +1,29 @@
 # Slot Hero 새 코드
 
-기획서를 옮겨 새로 쓴 코드와 그 문서다. 저장소에 원래 있던 `Assets/Scripts` 의 코드와 따로 두었다.
+기획서를 옮겨 새로 쓴 코드와 에셋, 그 문서다. 저장소에 원래 있던 `Assets/Scripts` 의 코드와 따로 두었다.
 
 ## 자리
 
 ```
-Assets/SlotHero/Scripts/<영역>/   코드. .cs 와 .meta 만 둔다
-                                  영역마다 Runtime/{Data, Config, Generation, UI} 와 Editor
-Docs/SlotHero/                    문서. Assets 밖이라 유니티가 임포트하지 않는다
-  README.md                       이 글
-  영역/<영역>.md                   영역마다 기획서와 코드의 대응, 임의로 정한 부분
-  작업 기록.md                     무엇을 언제 왜 했는지
-  Slot Hero 코드 설명.docx         형식과 공개 멤버를 영역별로 모은 문서
+Assets/SlotHero/          유니티가 읽는 것은 모두 여기 있다
+  Scripts/<영역>/          코드. 영역마다 Runtime/{Data, Config, Generation, UI} 와 Editor
+  Configs/                 설정 에셋. 기획서 수치, 물건 목록, 이벤트 목록, 문구
+  Scenes/                  게임 씬(게임.unity)과 화면마다 확인용 씬
+  Prefabs/                 프리팹
+  Art/                     그림. 메뉴로 가져온 그림과 코드로 만든 UI 스킨
+  Fonts/                   올리지 않는다. 아래 글꼴 참고
+Docs/SlotHero/            문서. Assets 밖이라 유니티가 임포트하지 않는다
+  README.md                이 글
+  영역/<영역>.md            영역마다 기획서와 코드의 대응
+  작업 기록.md              무엇을 언제 왜 했는지
+  Slot Hero 코드 설명.docx  형식과 공개 멤버를 영역별로 모은 문서
 ```
 
 영역은 Flow, Save, Map, Title, Profile, TopBar, Hud, Sanctum, Events, Reward, CurrentBuild, Popup, Settings, RunResult, Ui, Tools 열여섯이다.
 화면 영역끼리는 서로를 모르고 Flow 의 `GameFlowController` 가 잇는다.
+
+에디터 도구가 이 자리들을 경로로 적어 쓴다(`UiSceneBuilder`, `CreateDefaultConfigs`, `ImportArt`, `MakeUiSkin`, `PrepareTextResources`).
+폴더를 옮기면 그 상수도 함께 고친다.
 
 ## 구조 설명 보드
 
@@ -23,13 +31,26 @@ Docs/SlotHero/                    문서. Assets 밖이라 유니티가 임포�
 
 https://www.figma.com/board/AVi8pGxY7BdquMy4gM0a5c
 
-## 씬과 설정 에셋
+## 처음 받았을 때
 
-저장소에는 스크립트와 문서만 있다. 씬, 프리팹, 설정 에셋, 그림은 올리지 않았다.
+1. 메뉴 `Slot Hero > 글자 준비하기 > 모두 하기` 로 한글 글꼴 에셋을 만든다
+2. 메뉴 `Slot Hero > 확인용 씬 만들기 > 모두 다시 만들기` 로 확인용 씬과 프리팹을 다시 지어 새 글꼴을 물린다
+3. 메뉴 `Slot Hero > 게임 씬 만들기` 로 게임 씬을 다시 짓는다. 씬이 빌드 설정의 첫 자리에 들어간다
+4. `Assets/SlotHero/Scenes/게임.unity` 를 열고 플레이한다
 
-- 설정 에셋은 `Slot Hero > 설정 에셋 한 번에 만들기` 로 `Assets/SlotHeroConfigs` 에 만든다
-- `Slot Hero > 한 바퀴 다 돌리기` 는 설정 에셋, 그림 가져오기, 씬 짓기, 검사를 차례로 돈다
-- 그림을 가져오는 `ImportArt` 는 작성자 컴퓨터의 폴더 경로(`SourceRoot`, `RepoRoot`)를 읽는다. 다른 컴퓨터에서는 그 경로를 고쳐야 그림이 들어온다
+## 글꼴
+
+`Assets/SlotHero/Fonts` 는 올리지 않는다(`Assets/SlotHero/.gitignore`).
+지금 쓰는 맑은 고딕은 윈도우에 딸려 오는 글꼴이라 다시 배포할 수 없다.
+그래서 받은 씬과 프리팹에서는 글꼴이 비어 있다. 위 1 ~ 3 을 하면 각자 컴퓨터의 맑은 고딕으로 채워진다.
+배포할 글꼴은 따로 정해야 한다.
+
+## 그림 다시 가져오기
+
+`Slot Hero > 그림 가져오기` 는 작성자 컴퓨터의 폴더 경로(`ImportArt` 의 `SourceRoot`, `RepoRoot`)에서 그림을 읽는다.
+가져온 결과는 `Assets/SlotHero/Art` 에 올라가 있다.
+원본 폴더가 없는 컴퓨터에서는 복사만 건너뛰고, 올라가 있는 `Art` 의 그림으로 설정 에셋에 연결을 다시 잇는다.
+새 그림을 원본 폴더에서 가져오려면 그 경로를 고친다.
 
 ## 코드 규칙
 

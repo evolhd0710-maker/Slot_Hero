@@ -304,7 +304,7 @@ FNV-1a 32비트다. 8자리 열여섯 진수로 적는다.
 ### 1. 설정 에셋을 만든다
 
 메뉴 `Slot Hero / 설정 에셋 한 번에 만들기` 를 누르면
-`Assets/SlotHeroConfigs/Save/SaveConfig.asset` 이 생긴다.
+`Assets/SlotHero/Configs/Save/SaveConfig.asset` 이 생긴다.
 
 ### 2. 씬에 놓는다
 

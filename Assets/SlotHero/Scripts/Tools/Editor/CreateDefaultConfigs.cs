@@ -30,7 +30,7 @@ namespace SlotHero.ToolsEditor
     public static class CreateDefaultConfigs
     {
         /// 에셋을 모아 두는 자리
-        private const string Root = "Assets/SlotHeroConfigs";
+        private const string Root = "Assets/SlotHero/Configs";
 
         [MenuItem("Slot Hero/설정 에셋 한 번에 만들기")]
         public static void Create()

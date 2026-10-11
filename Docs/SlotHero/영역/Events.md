@@ -7,7 +7,7 @@
 즉 삽화와 본문과 선택지를 그리고, 무엇을 골랐는지 알리고,
 고른 뒤의 화면 규칙을 지키는 데까지다.
 
-저장소를 받으면 이 `Events` 폴더를 통째로 `Assets/Scripts/Events`로 옮기면 된다.
+저장소를 받으면 이 `Events` 폴더를 통째로 `Assets/SlotHero/Scripts/Events`로 옮기면 된다.
 네임스페이스를 `SlotHero.Event` 가 아니라 `SlotHero.Events` 로 둔 것은
 `event` 가 C# 예약어라 네임스페이스 이름으로 쓸 수 없기 때문이다.
 

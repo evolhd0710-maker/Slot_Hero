@@ -17,7 +17,7 @@ namespace SlotHero.ToolsEditor
     /// </summary>
     public static class PrepareTextResources
     {
-        private const string FontFolder = "Assets/SlotHeroFonts";
+        private const string FontFolder = "Assets/SlotHero/Fonts";
         private const string SourceFontPath = FontFolder + "/malgun.ttf";
         private const string FontAssetPath = FontFolder + "/MalgunGothic SDF.asset";
 

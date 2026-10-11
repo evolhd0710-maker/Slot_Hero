@@ -38,7 +38,7 @@ namespace SlotHero.ToolsEditor
     /// 메뉴 Slot Hero / 확인용 씬 만들기 에서 실행한다.
     ///
     /// 각 영역 README 의 씬 구성을 그대로 옮긴 것이다.
-    /// 만든 씬은 Assets/SlotHeroScenes 에 들어간다.
+    /// 만든 씬은 Assets/SlotHero/Scenes 에 들어간다.
     ///
     /// 그림이 아직 없어 로고와 배경은 단색으로 둔다.
     /// 자리와 크기, 글자가 기획서대로 나오는지 보는 데 쓴다.

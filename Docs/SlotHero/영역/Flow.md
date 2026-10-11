@@ -327,7 +327,7 @@ ESC 는 겹쳐 뜬 화면이 있으면 **그쪽이 먼저 가져간다.**
 
 메뉴 `Slot Hero / 게임 씬 만들기`.
 
-`Assets/SlotHeroScenes/게임.unity` 가 생기고 빌드 설정의 첫 자리에 들어간다.
+`Assets/SlotHero/Scenes/게임.unity` 가 생기고 빌드 설정의 첫 자리에 들어간다.
 플레이를 누르면 타이틀 화면부터 시작한다.
 
 ### 4. 굴려 본다

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82bf8bd6e00f0b94fbc8ba63351d0395, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Events.EventLayoutConfig
+  ReferenceResolution: {x: 1920, y: 1080}
+  IllustrationSize: {x: 1200, y: 500}
+  IllustrationTop: 100
+  ContentTop: 640
+  BodySize: {x: 580, y: 350}
+  ChoiceSize: {x: 580, y: 40}
+  ChoiceVerticalPadding: 10
+  ChoiceSpacing: 10
+  CenterGap: 20
+  MaxChoiceCount: 7

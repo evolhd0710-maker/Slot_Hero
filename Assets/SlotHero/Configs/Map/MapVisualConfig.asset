@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 674945dfbfca8874ea8eafbecbb0484c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Map.MapVisualConfig
+  ParchmentSize: {x: 1800, y: 1200}
+  MapSize: {x: 1300, y: 500}
+  NodeSize: 70
+  IconShapeRatio: 0.78
+  WidestIconShapeRatio: 0.85
+  EdgeGap: 3
+  EdgeThickness: 3
+  CheckMarkSize: {x: 36, y: 36}
+  CheckMarkOffset: {x: 0, y: 0}
+  UseRoomTypeColor: 0
+  RoomVisuals:
+  - RoomType: 1
+    Icon: {fileID: 21300000, guid: 709cafa28a722e94d85f3387006390fb, type: 3}
+    Color: {r: 0.95, g: 0.78, b: 0.2, a: 1}
+  - RoomType: 2
+    Icon: {fileID: 21300000, guid: f2e61348990d612438d95c0d9ec05873, type: 3}
+    Color: {r: 0.62, g: 0.17, b: 0.15, a: 1}
+  - RoomType: 3
+    Icon: {fileID: 21300000, guid: 07ffa6f4d727632409180295339dc7a2, type: 3}
+    Color: {r: 0.25, g: 0.6, b: 0.35, a: 1}
+  - RoomType: 4
+    Icon: {fileID: 21300000, guid: e9882d24fe4fe144894cb5ec42d5ed24, type: 3}
+    Color: {r: 0.55, g: 0.53, b: 0.5, a: 1}
+  - RoomType: 5
+    Icon: {fileID: 0}
+    Color: {r: 0.7, g: 0.68, b: 0.65, a: 1}
+  - RoomType: 6
+    Icon: {fileID: 21300000, guid: 6b8ca857b88780141826b49928c29069, type: 3}
+    Color: {r: 0.12, g: 0.11, b: 0.09, a: 1}
+  ClearedTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  SkippedTint: {r: 0.584, g: 0.557, b: 0.514, a: 1}
+  FutureTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  SelectableTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  CurrentTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  CheckMarkColor: {r: 1, g: 1, b: 1, a: 1}
+  SelectableScale: 1.05
+  TraveledEdgeColor: {r: 0.169, g: 0.125, b: 0.086, a: 0.9}
+  OpenEdgeColor: {r: 0.169, g: 0.125, b: 0.086, a: 0.9}
+  ClosedEdgeColor: {r: 0.588, g: 0.561, b: 0.518, a: 0.78}
+  PeekDimColor: {r: 0, g: 0, b: 0, a: 0.75}
+  AllowHorizontalPan: 1
+  ScrollSpeed: 120

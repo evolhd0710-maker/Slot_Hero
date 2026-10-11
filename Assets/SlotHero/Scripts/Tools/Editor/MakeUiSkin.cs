@@ -21,7 +21,7 @@ namespace SlotHero.ToolsEditor
     public static class MakeUiSkin
     {
         /// 스킨 그림이 들어가는 자리
-        public const string SkinFolder = "Assets/SlotHeroArt/Skin";
+        public const string SkinFolder = "Assets/SlotHero/Art/Skin";
 
         /// 한 변 길이. 9조각 가장자리가 16이라 가운데가 32 남는다
         private const int Size = 64;

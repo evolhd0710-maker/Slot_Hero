@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d1ece9e304d594280bfbd647311416, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Events.EventVisualConfig
+  IllustrationPlaceholderColor: {r: 1, g: 1, b: 1, a: 0.12}
+  PanelColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
+  ChosenPanelColor: {r: 0.463, g: 0.459, b: 0.455, a: 1}
+  BlockedPanelColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
+  ChosenAlpha: 0.7
+  BodyFontSize: 24
+  BodyMinFontSize: 20
+  ChoiceFontSize: 24
+  ChoiceMinFontSize: 20
+  TextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  BodyPadding: {x: 30, y: 40}
+  ChoicePadding: 20
+  GainColor: {r: 0.118, g: 0.541, b: 0.235, a: 1}
+  CostColor: {r: 0.753, g: 0.224, b: 0.169, a: 1}
+  RequirementMetColor: {r: 0.118, g: 0.541, b: 0.235, a: 1}
+  RequirementUnmetColor: {r: 0.753, g: 0.224, b: 0.169, a: 1}
+  Separator: " \u2014 "
+  LineSeparator: ', '
+  HiddenMark: '?'
+  RequirementFormat: ' [{0}]'
+  HoverBrightness: 1.1
+  PressedBrightness: 0.9

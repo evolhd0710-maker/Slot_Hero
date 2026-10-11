@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 994b77753fcd2f64e948cf742da1b95d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Sanctum.SanctumVisualConfig
+  PriceColor: {r: 1, g: 0.85, b: 0.25, a: 1}
+  PriceNotAffordableColor: {r: 0.85, g: 0.18, b: 0.15, a: 1}
+  SlotNormalTint: {r: 1, g: 1, b: 1, a: 1}
+  SlotNotAffordableTint: {r: 1, g: 1, b: 1, a: 1}
+  SlotSoldTint: {r: 0.45, g: 0.44, b: 0.42, a: 0.5}
+  HideSoldSlots: 1
+  HoverScale: 1.05
+  CampAvailableTint: {r: 1, g: 1, b: 1, a: 1}
+  CampUsedTint: {r: 0.45, g: 0.44, b: 0.42, a: 1}
+  CampHealFeedbackColor: {r: 0.35, g: 0.85, b: 0.35, a: 1}
+  CampHealFeedbackSeconds: 1.2

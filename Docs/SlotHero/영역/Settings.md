@@ -6,7 +6,7 @@
 화면 기획서가 정한 것은 탭으로 나눈다는 것과 이름은 왼쪽 값은 오른쪽이라는 배치까지다.
 그래서 항목을 코드에 박지 않고 설정 에셋에 적어 두고 화면이 그것을 읽어 그린다.
 
-저장소를 받으면 이 `Settings` 폴더를 통째로 `Assets/Scripts/Settings`로 옮기면 된다.
+저장소를 받으면 이 `Settings` 폴더를 통째로 `Assets/SlotHero/Scripts/Settings`로 옮기면 된다.
 
 ## 파일 구성
 

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea360f1bd51898443ab480cbc1c744cc, type: 3}
+  m_Name: EventIllustrationConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Events.EventIllustrationConfig
+  Illustrations:
+  - Id: carve_power_1
+    Sprite: {fileID: 21300000, guid: b14e8a6a6caa15141a44820081362ece, type: 3}
+  - Id: carve_power_2
+    Sprite: {fileID: 21300000, guid: 3ad8cf54f508abc4498727ffe6413d39, type: 3}
+  - Id: carve_power_3
+    Sprite: {fileID: 21300000, guid: 4153f8469ae2fa14eaefb00f5b96d4dc, type: 3}
+  - Id: "carve_power_\uB05D"
+    Sprite: {fileID: 21300000, guid: fc0ee44d892b42e4fb427e952f9686fa, type: 3}
+  - Id: pandora_1
+    Sprite: {fileID: 21300000, guid: 2e0455f2e69a7b04a997993ca4055b35, type: 3}
+  - Id: "pandora_\uB05D"
+    Sprite: {fileID: 21300000, guid: d6e64398c584f8a4a9a3b5f422d68f65, type: 3}
+  - Id: purification_1
+    Sprite: {fileID: 21300000, guid: ab63a24e5751caf47a5c1f10971948f9, type: 3}
+  - Id: purification_2
+    Sprite: {fileID: 21300000, guid: 26e0992023635f649ae2dc2565983b08, type: 3}
+  - Id: "purification_\uB05D"
+    Sprite: {fileID: 21300000, guid: 2566a8cb41a2ac640bae3c0b4e455b45, type: 3}
+  - Id: reflection_1
+    Sprite: {fileID: 21300000, guid: 6d9be7e48cf035548916b091a8f17dad, type: 3}
+  - Id: reflection_2
+    Sprite: {fileID: 21300000, guid: e7d0112ec5071d044a2e10a5a3066c1d, type: 3}
+  - Id: reflection_3
+    Sprite: {fileID: 21300000, guid: a08c3b3f3bafd72449a0961bdce2234d, type: 3}
+  - Id: "reflection_\uB05D"
+    Sprite: {fileID: 21300000, guid: 52f4aa8c26a73ec47876f5d2d8076f0b, type: 3}
+  - Id: symbol_trade_1
+    Sprite: {fileID: 21300000, guid: 05bd6e6738c99ed45bfc7bb56a909f0a, type: 3}
+  - Id: symbol_trade_2
+    Sprite: {fileID: 21300000, guid: 611a66f99da8342408ca908b3a31a8d3, type: 3}
+  - Id: "symbol_trade_\uB05D"
+    Sprite: {fileID: 21300000, guid: 75ed39a28d120c94eaf3a32bf02b278a, type: 3}

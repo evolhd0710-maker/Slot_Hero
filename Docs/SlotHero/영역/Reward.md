@@ -110,7 +110,7 @@ Reward/
 ### 1. 설정 에셋을 만든다
 
 메뉴 `Slot Hero / 설정 에셋 한 번에 만들기`.
-`Assets/SlotHeroConfigs/Reward` 에 자리와 표시 설정이 생긴다.
+`Assets/SlotHero/Configs/Reward` 에 자리와 표시 설정이 생긴다.
 
 ### 2. 씬을 만든다
 

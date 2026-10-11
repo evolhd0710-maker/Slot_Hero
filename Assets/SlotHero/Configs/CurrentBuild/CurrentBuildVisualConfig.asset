@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7cb230110c5134b99d3166f60c31a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.CurrentBuild.CurrentBuildVisualConfig
+  DimColor: {r: 0, g: 0, b: 0, a: 0.65}
+  PanelColor: {r: 0.098, g: 0.082, b: 0.055, a: 1}
+  SlotColor: {r: 0.067, g: 0.059, b: 0.051, a: 1}
+  CountBadgeColor: {r: 0.055, g: 0.043, b: 0.035, a: 1}
+  TagBarBackColor: {r: 0.157, g: 0.133, b: 0.106, a: 1}
+  SectionFontSize: 26
+  PanelTitleFontSize: 26
+  TagFontSize: 24
+  TagSymbolFontSize: 44
+  CountFontSize: 22
+  TextColor: {r: 0.933, g: 0.91, b: 0.863, a: 1}
+  SubTextColor: {r: 0.8, g: 0.773, b: 0.722, a: 1}
+  EmptyTagTextColor: {r: 0.475, g: 0.451, b: 0.412, a: 1}
+  PickSelectedBorderColor: {r: 0.878, g: 0.69, b: 0.251, a: 1}
+  PickSelectedBorderThickness: 6
+  PickConfirmText: "\uC120\uD0DD"
+  PickCancelText: "\uCDE8\uC18C"
+  PickNoneText: "\uACE0\uB97C \uCE78\uC744 \uB204\uB978\uB2E4"
+  PickDisabledAlpha: 0.4
+  SymbolCountFormat: "\uBB38\uC591 {0}\uC7A5"
+  TagCountFormat: "{0}\uC7A5"
+  CountBadgeFormat: "\xD7{0}"
+  CloseShortcutText: Tab / ESC
+  TagVisuals:
+  - Tag: 0
+    DisplayName: "\uC218\uC131"
+    Symbol: "\u263F"
+    Icon: {fileID: 21300000, guid: 3a17c098b64c50448a9d39ff0e082b63, type: 3}
+    BarColor: {r: 0.247, g: 0.663, b: 0.788, a: 1}
+  - Tag: 1
+    DisplayName: "\uAE08\uC131"
+    Symbol: "\u2640"
+    Icon: {fileID: 21300000, guid: ce073aca4cdf14245be4f97f6f3d3037, type: 3}
+    BarColor: {r: 0.851, g: 0.643, b: 0.255, a: 1}
+  - Tag: 2
+    DisplayName: "\uC9C0\uAD6C"
+    Symbol: "\u2295"
+    Icon: {fileID: 21300000, guid: 2b42d63659a33864b8be9b88e5bc6ab3, type: 3}
+    BarColor: {r: 0.545, g: 0.42, b: 0.29, a: 1}
+  - Tag: 3
+    DisplayName: "\uD654\uC131"
+    Symbol: "\u2642"
+    Icon: {fileID: 21300000, guid: 4c7c41047626d73499889a6d96532c04, type: 3}
+    BarColor: {r: 0.776, g: 0.337, b: 0.275, a: 1}
+  - Tag: 4
+    DisplayName: "\uBAA9\uC131"
+    Symbol: "\u2643"
+    Icon: {fileID: 21300000, guid: fd642fdcb97bfb64ea177944f7c10a7c, type: 3}
+    BarColor: {r: 0.424, g: 0.659, b: 0.439, a: 1}
+  - Tag: 5
+    DisplayName: "\uD1A0\uC131"
+    Symbol: "\u2644"
+    Icon: {fileID: 21300000, guid: 8da0f52b908d4b240bb43092a0fb901b, type: 3}
+    BarColor: {r: 0.541, g: 0.502, b: 0.447, a: 1}
+  - Tag: 6
+    DisplayName: "\uCC9C\uC655\uC131"
+    Symbol: "\u2645"
+    Icon: {fileID: 21300000, guid: d15c45b472e6c244795ee00f921be49f, type: 3}
+    BarColor: {r: 0.725, g: 0.776, b: 0.812, a: 1}
+  - Tag: 7
+    DisplayName: "\uD574\uC655\uC131"
+    Symbol: "\u2646"
+    Icon: {fileID: 21300000, guid: 35e64e4954c9b584796aba7073d0a268, type: 3}
+    BarColor: {r: 0.227, g: 0.373, b: 0.659, a: 1}
+  - Tag: 8
+    DisplayName: "\uBA85\uC655\uC131"
+    Symbol: "\u2647"
+    Icon: {fileID: 21300000, guid: 7eee28d0789f85140a71802250612983, type: 3}
+    BarColor: {r: 0.42, g: 0.306, b: 0.525, a: 1}

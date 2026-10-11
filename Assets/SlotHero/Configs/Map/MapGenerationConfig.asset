@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2ab889c308e75c43b872613b4a85c18, type: 3}
+  m_Name: MapGenerationConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Map.MapGenerationConfig
+  StageCount: 12
+  RowCount: 5
+  PathEndStage: 10
+  PathCount: 6
+  MaxRowStep: 2
+  SecondPathAvoidsFirst: 1
+  RemoveEdgeCrossings: 1
+  MinStartNodes: 3
+  MaxStartNodes: 5
+  MinNodesPerStage: 2
+  MaxNodesPerStage: 5
+  MaxGenerationAttempts: 40
+  ApplyJitter: 1
+  JitterX: 0.25
+  JitterY: 0.2
+  FixedNormalStages: 0100000002000000i
+  FixedSanctumStage: 11
+  BossStage: 12
+  MidSanctumStageMin: 5
+  MidSanctumStageMax: 8
+  RoomTypeWeights:
+  - RoomType: 1
+    Weight: 5000
+  - RoomType: 2
+    Weight: 2000
+  - RoomType: 3
+    Weight: 500
+  - RoomType: 4
+    Weight: 2500
+  - RoomType: 5
+    Weight: 0
+  TokenMultiplierMin: 1.1
+  TokenMultiplierMax: 1.2
+  NonConsecutiveTypes: 0300000002000000i
+  ReservedTokensPerNonConsecutiveType: 2

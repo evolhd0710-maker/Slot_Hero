@@ -6,7 +6,7 @@
 타이틀 오른쪽 위의 현재 프로필 버튼을 누르면 프로필 선택 화면으로 들어가고,
 거기서 프로필을 고르거나 만들거나 이름을 고치거나 지운다.
 
-저장소를 받으면 이 `Profile` 폴더를 통째로 `Assets/Scripts/Profile`로 옮기면 된다.
+저장소를 받으면 이 `Profile` 폴더를 통째로 `Assets/SlotHero/Scripts/Profile`로 옮기면 된다.
 
 ## 파일 구성
 

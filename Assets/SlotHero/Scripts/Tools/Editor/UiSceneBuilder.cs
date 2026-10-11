@@ -18,13 +18,13 @@ namespace SlotHero.ToolsEditor
     public static class UiSceneBuilder
     {
         /// 만든 씬을 두는 자리
-        public const string SceneFolder = "Assets/SlotHeroScenes";
+        public const string SceneFolder = "Assets/SlotHero/Scenes";
 
         /// 만든 프리팹을 두는 자리
-        public const string PrefabFolder = "Assets/SlotHeroPrefabs";
+        public const string PrefabFolder = "Assets/SlotHero/Prefabs";
 
         /// 설정 에셋이 있는 자리
-        public const string ConfigFolder = "Assets/SlotHeroConfigs";
+        public const string ConfigFolder = "Assets/SlotHero/Configs";
 
         private static TMP_FontAsset _font;
 

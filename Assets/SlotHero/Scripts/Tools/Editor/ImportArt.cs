@@ -19,7 +19,7 @@ namespace SlotHero.ToolsEditor
     /// </summary>
     public static class ImportArt
     {
-        private const string ArtFolder = "Assets/SlotHeroArt";
+        private const string ArtFolder = "Assets/SlotHero/Art";
 
         /// 그림이 있는 원래 자리. 유니티 프로젝트 밖이다.
         private const string SourceRoot = @"C:\Users\wonja\Downloads\slot hero\코드";

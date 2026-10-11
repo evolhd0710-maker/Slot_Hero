@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 701611e49f49d0243b524116d6a10389, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Reward.RewardVisualConfig
+  DimColor: {r: 0, g: 0, b: 0, a: 0.5}
+  BoxColor: {r: 0.804, g: 0.804, b: 0.804, a: 1}
+  GoldRowColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
+  CardColor: {r: 0.427, g: 0.427, b: 0.427, a: 1}
+  SelectedCardColor: {r: 0.988, g: 0.988, b: 0.988, a: 1}
+  SelectedBorderColor: {r: 0.62, g: 0.169, b: 0.145, a: 1}
+  SelectedBorderThickness: 5
+  SkipColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
+  TextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  CardTextColor: {r: 1, g: 1, b: 1, a: 1}
+  SelectedCardTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  SubTextColor: {r: 0.4, g: 0.38, b: 0.36, a: 1}
+  TitleFontSize: 34
+  GoldLabelFontSize: 30
+  GoldValueFontSize: 34
+  CardNameFontSize: 30
+  CardTagFontSize: 24
+  SkipFontSize: 30
+  TitleText: "\uBCF4\uC0C1"
+  BaseGoldText: "\uAE30\uBCF8 \uBCF4\uC0C1"
+  OverkillGoldText: "\uC624\uBC84\uD0AC \uBCF4\uC0C1"
+  SkipText: "\uC544\uC774\uD15C \uC120\uD0DD \uAC74\uB108\uB6F0\uAE30"
+  ConfirmText: "\uBCF4\uC0C1 \uBC1B\uAE30"
+  HoverBrightness: 1.1
+  PressedBrightness: 0.9

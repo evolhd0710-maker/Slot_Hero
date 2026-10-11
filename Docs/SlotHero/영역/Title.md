@@ -7,7 +7,7 @@
 화면 오른쪽 위의 현재 프로필 버튼은 `Profile` 폴더의 `CurrentProfileButton` 이 맡는다.
 프로필 선택 화면과 짝을 이루는 부품이라 그쪽에 두었다.
 
-저장소를 받으면 이 `Title` 폴더를 통째로 `Assets/Scripts/Title`로 옮기면 된다.
+저장소를 받으면 이 `Title` 폴더를 통째로 `Assets/SlotHero/Scripts/Title`로 옮기면 된다.
 
 ## 파일 구성
 

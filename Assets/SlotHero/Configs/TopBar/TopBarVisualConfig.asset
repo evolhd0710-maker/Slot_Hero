@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f8a0e37a3a4de54099d0f441eabd4b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.TopBar.TopBarVisualConfig
+  BackgroundColor: {r: 0.749, g: 0.749, b: 0.749, a: 1}
+  PlayTimeFontSize: 66
+  PlayTimeColor: {r: 1, g: 1, b: 1, a: 1}
+  PlayTimeOutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  PlayTimeOutlineWidth: 0.2
+  PadPlayTimeMinutes: 0
+  StageFontSize: 40
+  StageColor: {r: 1, g: 1, b: 1, a: 1}
+  RoomIconColor: {r: 0.141, g: 0.141, b: 0.141, a: 1}
+  HealthFontSize: 44
+  HealthColor: {r: 1, g: 0, b: 0, a: 1}
+  HealthFormat: '{0}/{1}'
+  HealthIncreaseColor: {r: 0.3, g: 0.85, b: 0.3, a: 1}
+  HealthDecreaseColor: {r: 1, g: 0.42, b: 0.42, a: 1}
+  HealthFlashSeconds: 0.6
+  GoldFontSize: 36
+  GoldColor: {r: 0.969, g: 0.741, b: 0.067, a: 1}
+  GoldNumberFormat: N0
+  GoldCountSeconds: 0.3
+  ButtonNormalTint: {r: 1, g: 1, b: 1, a: 1}
+  ButtonHoverBrightness: 1.1
+  ButtonPressedBrightness: 0.9
+  ButtonDisabledAlpha: 0.4
+  TooltipBackgroundColor: {r: 0.12, g: 0.11, b: 0.09, a: 0.9}
+  TooltipTextColor: {r: 1, g: 1, b: 1, a: 1}
+  TooltipFontSize: 24
+  TooltipOffsetY: -10
+  TooltipPadding: 10
+  TooltipMaxWidth: 320

@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a1cc137da9b44e48bf0a0806b7217db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Sanctum.MerchantLayoutConfig
+  ReferenceResolution: {x: 1920, y: 1080}
+  LeftMatPosition: {x: 200, y: 110}
+  LeftMatSize: {x: 710, y: 790}
+  RightMatPosition: {x: 1020, y: 120}
+  RightMatSize: {x: 690, y: 770}
+  SymbolFirstPosition: {x: 350, y: 210}
+  SymbolSlotSize: {x: 170, y: 180}
+  SymbolSpacing: {x: 210, y: 210}
+  SymbolColumns: 2
+  CoinFirstPosition: {x: 360, y: 630}
+  CoinSlotSize: {x: 150, y: 150}
+  CoinSpacing: 200
+  RelicFirstPosition: {x: 1170, y: 580}
+  RelicSlotSize: {x: 100, y: 120}
+  RelicSpacing: 135
+  SymbolChangePosition: {x: 1240, y: 150}
+  SymbolChangeSize: {x: 240, y: 250}
+  RefreshPosition: {x: 1330, y: 450}
+  RefreshSize: {x: 50, y: 50}
+  PriceSize: {x: 150, y: 30}
+  PriceIconSize: {x: 30, y: 30}
+  PriceIconGap: 10
+  PriceFontSize: 28
+  SymbolPriceOffsetY: -10
+  CoinPriceOffsetY: 10
+  RelicPriceOffsetY: 10
+  RefreshPriceOffsetY: 30
+  BackPosition: {x: 760, y: 920}
+  BackSize: {x: 370, y: 130}
+  BackFontSize: 44
+  BackArrowHeadHeight: 50

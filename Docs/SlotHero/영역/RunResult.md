@@ -5,7 +5,7 @@
 런이 끝났을 때 결과와 주요 정보를 요약해 보여 주는 화면이다.
 화면에 들어오는 순간 런 데이터를 지우고, 타이틀로를 누르면 타이틀 화면으로 나간다.
 
-저장소를 받으면 이 `RunResult` 폴더를 통째로 `Assets/Scripts/RunResult`로 옮기면 된다.
+저장소를 받으면 이 `RunResult` 폴더를 통째로 `Assets/SlotHero/Scripts/RunResult`로 옮기면 된다.
 
 ## 파일 구성
 

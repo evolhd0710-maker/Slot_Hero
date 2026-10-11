@@ -4,7 +4,7 @@
 화면 상단 1920 × 64 자리에 런 요약 넷과 버튼 셋을 놓는다.
 
 현재 빌드 버튼은 같은 고정 자리지만 기획서가 다르므로 `Hud` 폴더에 따로 있다.
-저장소를 받으면 이 `TopBar` 폴더를 통째로 `Assets/Scripts/TopBar`로 옮기면 된다.
+저장소를 받으면 이 `TopBar` 폴더를 통째로 `Assets/SlotHero/Scripts/TopBar`로 옮기면 된다.
 
 ## 파일 구성
 

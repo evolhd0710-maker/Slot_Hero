@@ -1,0 +1,373 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e5325ea7ca876f4fa9c16e43fcf6c7d, type: 3}
+  m_Name: RunCatalogConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Flow.RunCatalogConfig
+  Symbols:
+  - Id: QuickSilver
+    DisplayName: "\uC218\uC740"
+    FirstTag: 0
+    SecondTag: 1
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Fish
+    DisplayName: "\uBB3C\uACE0\uAE30"
+    FirstTag: 0
+    SecondTag: 2
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Geyser
+    DisplayName: "\uAC04\uD5D0\uCC9C"
+    FirstTag: 0
+    SecondTag: 3
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Lotus
+    DisplayName: "\uC5F0\uAF43"
+    FirstTag: 0
+    SecondTag: 4
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Mud
+    DisplayName: "\uC9C4\uD759"
+    FirstTag: 0
+    SecondTag: 5
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: DarkCloud
+    DisplayName: "\uBA39\uAD6C\uB984"
+    FirstTag: 0
+    SecondTag: 6
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Tsunami
+    DisplayName: "\uD574\uC77C"
+    FirstTag: 0
+    SecondTag: 7
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Styx
+    DisplayName: "\uC2A4\uD2F1\uC2A4\uAC15"
+    FirstTag: 0
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Chariot
+    DisplayName: "\uC804\uCC28"
+    FirstTag: 1
+    SecondTag: 2
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Furnace
+    DisplayName: "\uC6A9\uAD11\uB85C"
+    FirstTag: 1
+    SecondTag: 3
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: GoldLaurel
+    DisplayName: "\uAE08\uBE5B\uACC4\uAD00"
+    FirstTag: 1
+    SecondTag: 4
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Gem
+    DisplayName: "\uBCF4\uC11D"
+    FirstTag: 1
+    SecondTag: 5
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Meteorite
+    DisplayName: "\uC6B4\uC11D"
+    FirstTag: 1
+    SecondTag: 6
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Anchor
+    DisplayName: "\uB2FB"
+    FirstTag: 1
+    SecondTag: 7
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Scythe
+    DisplayName: "\uB0AB"
+    FirstTag: 1
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Phoenix
+    DisplayName: "\uBD88\uC0AC\uC870"
+    FirstTag: 2
+    SecondTag: 3
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Druid
+    DisplayName: "\uB4DC\uB8E8\uC774\uB4DC"
+    FirstTag: 2
+    SecondTag: 4
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Golem
+    DisplayName: "\uACE8\uB818"
+    FirstTag: 2
+    SecondTag: 5
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Bird
+    DisplayName: "\uC0C8"
+    FirstTag: 2
+    SecondTag: 6
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Whale
+    DisplayName: "\uACE0\uB798"
+    FirstTag: 2
+    SecondTag: 7
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Raven
+    DisplayName: "\uAE4C\uB9C8\uADC0"
+    FirstTag: 2
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: FireFlower
+    DisplayName: "\uBD88\uC758 \uAF43"
+    FirstTag: 3
+    SecondTag: 4
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Volcano
+    DisplayName: "\uD654\uC0B0"
+    FirstTag: 3
+    SecondTag: 5
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Sunrise
+    DisplayName: "\uC77C\uCD9C"
+    FirstTag: 3
+    SecondTag: 6
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: LightHouse
+    DisplayName: "\uB4F1\uB300"
+    FirstTag: 3
+    SecondTag: 7
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Fullmoon
+    DisplayName: "\uB9CC\uC6D4"
+    FirstTag: 3
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Forest
+    DisplayName: "\uC232"
+    FirstTag: 4
+    SecondTag: 5
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Yggdrasil
+    DisplayName: "\uC138\uACC4\uC218"
+    FirstTag: 4
+    SecondTag: 6
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Coral
+    DisplayName: "\uC0B0\uD638"
+    FirstTag: 4
+    SecondTag: 7
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Coffin
+    DisplayName: "\uAD00"
+    FirstTag: 4
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Desert
+    DisplayName: "\uC0AC\uB9C9"
+    FirstTag: 5
+    SecondTag: 6
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Island
+    DisplayName: "\uC12C"
+    FirstTag: 5
+    SecondTag: 7
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Grave
+    DisplayName: "\uBB34\uB364"
+    FirstTag: 5
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Hail
+    DisplayName: "\uC6B0\uBC15"
+    FirstTag: 6
+    SecondTag: 7
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: NightSky
+    DisplayName: "\uBC24\uD558\uB298"
+    FirstTag: 6
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  - Id: Shipwreck
+    DisplayName: "\uB09C\uD30C\uC120"
+    FirstTag: 7
+    SecondTag: 8
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+  Coins:
+  - Id: coin_gold
+    DisplayName: "\uAE08\uD654"
+    Rarity: 0
+    Icon: {fileID: 21300000, guid: 51bdc7a55d3fe824db62ddc6ccc3d4ea, type: 3}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: coin_silver
+    DisplayName: "\uC740\uD654"
+    Rarity: 0
+    Icon: {fileID: 21300000, guid: 94640581f7dc6e344af57e24185ccdc8, type: 3}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  Relics:
+  - Id: relic_book
+    DisplayName: "\uB0A1\uC740 \uCC45"
+    Rarity: 0
+    Icon: {fileID: 21300000, guid: 5b92b06abccf8a1488bad436779b5077, type: 3}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_wing
+    DisplayName: "\uB0A0\uAC1C"
+    Rarity: 1
+    Icon: {fileID: 21300000, guid: 0db1e3c7c0d18b9458e9bfb3a66dc857, type: 3}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_pick
+    DisplayName: "\uACE1\uAD2D\uC774"
+    Rarity: 2
+    Icon: {fileID: 21300000, guid: bcfd8e3343ca1474480ed544dfe7d1c2, type: 3}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  TagValues:
+  - Tag: 0
+    Value: 1
+  - Tag: 1
+    Value: 1
+  - Tag: 2
+    Value: 2
+  - Tag: 3
+    Value: 2
+  - Tag: 4
+    Value: 3
+  - Tag: 5
+    Value: 3
+  - Tag: 6
+    Value: 4
+  - Tag: 7
+    Value: 4
+  - Tag: 8
+    Value: 5
+  CoinSellPrices: 080000000d00000012000000170000001e000000i
+  StartingSymbolIds:
+  - QuickSilver
+  - Fish
+  - Geyser
+  - Lotus
+  - Mud
+  - DarkCloud
+  - Tsunami
+  - Styx
+  - Chariot
+  - Furnace
+  - GoldLaurel
+  - Gem
+  - Meteorite
+  - Anchor
+  - Scythe
+  - Phoenix
+  - Druid
+  - Golem
+  - Bird
+  - Whale
+  - Raven
+  - FireFlower
+  - Volcano
+  - Sunrise
+  - LightHouse
+  - Fullmoon
+  - Forest
+  - Yggdrasil
+  - Coral
+  - Coffin
+  - Desert
+  - Island
+  - Grave
+  - Hail
+  - NightSky
+  - Shipwreck
+  StartingCoinIds:
+  - coin_gold
+  StartingRelicIds: []
+  StartingGold: 0
+  StartingCoinCapacity: 5
+  StartingRelicCapacity: 6
+  MinimumDeckSize: 6
