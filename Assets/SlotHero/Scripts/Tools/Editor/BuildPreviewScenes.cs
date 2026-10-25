@@ -43,7 +43,7 @@ namespace SlotHero.ToolsEditor
     /// 그림이 아직 없어 로고와 배경은 단색으로 둔다.
     /// 자리와 크기, 글자가 기획서대로 나오는지 보는 데 쓴다.
     /// </summary>
-    public static class BuildPreviewScenes
+    public static partial class BuildPreviewScenes
     {
         /// 배경이 없을 때 까는 색. 와이어프레임의 어두운 바탕을 흉내 낸 것이다.
         private static readonly Color DarkBackground = new Color(0.125f, 0.114f, 0.102f, 1f);
@@ -87,6 +87,7 @@ namespace SlotHero.ToolsEditor
             BuildItemPicker();
             BuildSanctum();
             BuildMerchant();
+            BuildCombat();
 
             Debug.Log("확인용 씬을 모두 다시 만들었다.");
         }
@@ -2391,6 +2392,8 @@ namespace SlotHero.ToolsEditor
                 UiSceneBuilder.LoadConfig<CurrentBuildVisualConfig>("CurrentBuild", "CurrentBuildVisualConfig"));
             UiSceneBuilder.SetField(driver, "_runResultVisual",
                 UiSceneBuilder.LoadConfig<RunResultVisualConfig>("RunResult", "RunResultVisualConfig"));
+            UiSceneBuilder.SetField(driver, "_catalog",
+                UiSceneBuilder.LoadConfig<SlotHero.Flow.RunCatalogConfig>("Flow", "RunCatalogConfig"));
         }
 
         private static void SaveScene(Scene scene, string name)

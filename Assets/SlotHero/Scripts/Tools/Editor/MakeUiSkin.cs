@@ -49,13 +49,43 @@ namespace SlotHero.ToolsEditor
             // 그림자. 칸 뒤에 조금 내려 깔면 떠 있는 것처럼 보인다.
             Write("그림자", MakeShadow());
 
+            // 원. 전투의 코인/태그 원판과 코인 자리에 쓴다. 9조각이 아니다.
+            Write("원", MakeCircle(), CircleSize);
+
             AssetDatabase.Refresh();
             ApplyImportSettings();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-            Debug.Log("UI 스킨 그림 네 장을 만들었다: " + SkinFolder);
+            Debug.Log("UI 스킨 그림 다섯 장을 만들었다: " + SkinFolder);
+        }
+
+        /// 원 그림의 한 변. 원판이 600 이라 크게 늘려도 가장자리가 뭉개지지 않게 넉넉히 둔다
+        private const int CircleSize = 512;
+
+        /// <summary>
+        /// 흰 원. 가장자리 한 픽셀을 부드럽게 걸친다.
+        /// 태그 UI 의 칸은 이 원을 부채꼴로 채워 그린다(`Image.Type.Filled`).
+        /// </summary>
+        private static Color[] MakeCircle()
+        {
+            Color[] pixels = new Color[CircleSize * CircleSize];
+            float half = CircleSize * 0.5f;
+
+            for (int y = 0; y < CircleSize; y++)
+            {
+                for (int x = 0; x < CircleSize; x++)
+                {
+                    float dx = x + 0.5f - half;
+                    float dy = y + 0.5f - half;
+                    float distance = Mathf.Sqrt(dx * dx + dy * dy) - (half - 1f);
+                    float alpha = Mathf.Clamp01(0.5f - distance);
+                    pixels[y * CircleSize + x] = new Color(1f, 1f, 1f, alpha);
+                }
+            }
+
+            return pixels;
         }
 
         /// <summary>
@@ -198,7 +228,12 @@ namespace SlotHero.ToolsEditor
 
         private static void Write(string name, Color[] pixels)
         {
-            Texture2D texture = new Texture2D(Size, Size, TextureFormat.RGBA32, false);
+            Write(name, pixels, Size);
+        }
+
+        private static void Write(string name, Color[] pixels, int size)
+        {
+            Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
             texture.SetPixels(pixels);
             texture.Apply();
 
@@ -212,7 +247,7 @@ namespace SlotHero.ToolsEditor
         /// <summary>9조각으로 늘어나게 하고 압축을 끈다.</summary>
         private static void ApplyImportSettings()
         {
-            string[] names = { "패널", "버튼", "버튼_눌림", "그림자" };
+            string[] names = { "패널", "버튼", "버튼_눌림", "그림자", "원" };
 
             for (int i = 0; i < names.Length; i++)
             {
@@ -224,9 +259,12 @@ namespace SlotHero.ToolsEditor
                     continue;
                 }
 
+                // 원은 9조각으로 늘리지 않는다. 늘리면 가장자리가 네모로 펴진다.
+                float border = names[i] == "원" ? 0f : Border;
+
                 importer.textureType = TextureImporterType.Sprite;
                 importer.spriteImportMode = SpriteImportMode.Single;
-                importer.spriteBorder = new Vector4(Border, Border, Border, Border);
+                importer.spriteBorder = new Vector4(border, border, border, border);
                 importer.alphaIsTransparency = true;
                 importer.mipmapEnabled = false;
                 importer.filterMode = FilterMode.Bilinear;

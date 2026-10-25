@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c38c2af420b959b43b2fa689e45c6709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Combat.RelicConfig
+  Relics:
+  - Id: relic_12001
+    Number: 12001
+    DisplayName: "\uC81C\uAD6D \uAD70\uAE30"
+    EnglishName: Aquila
+    Rarity: 1
+    Description: "\uD654\uC131 \uD0DC\uADF8 \uAC00\uCE58 +5"
+    Flavor: "\uC81C\uAD6D\uC758 \uAC74\uAD6D\uC790\uB294 \uB9C8\uB974\uC2A4\uC758 \uC544\uB4E4\uC774\uB2C8."
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 03000000i
+      Amount: 5
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_12002
+    Number: 12002
+    DisplayName: "\uD751\uC694\uC11D \uB2E8\uAC80"
+    EnglishName: Obsidian Knife
+    Rarity: 3
+    Description: "\uCF54\uC778 \uC18C\uBAA8\uAC12 +10, \uCF54\uC778 \uAC00\uCE58 +3"
+    Flavor: "\uB208\uC5D0\uB294 \uB208, \uC774\uC5D0\uB294 \uC774, \uD76C\uC0DD\uC5D0\uB294 \uD76C\uC0DD"
+    CounterStart: 0
+    Effects:
+    - Kind: 1
+      Tags: 
+      Amount: 10
+      Threshold: 0
+      Multiplier: 1
+    - Kind: 2
+      Tags: 
+      Amount: 3
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_12003
+    Number: 12003
+    DisplayName: "12\uAC1C\uC758 \uAE08\uD654"
+    EnglishName: Twelve Coin
+    Rarity: 4
+    Description: "\uCF54\uC778 \uAC00\uCE58 {0}, \uB3D9\uC77C \uD0DC\uADF8\uB97C \uC9C0\uB2CC \uBB38\uC591\uC774 3\uAC1C \uB4F1\uC7A5\uD560\uB54C\uB9C8\uB2E4 \uC601\uAD6C\uD788 +1"
+    Flavor: "\uC601\uC6C5\uC758 \uC704\uB300\uD55C \uC5F4\uB450\uACFC\uC5C5\uC744 \uAE30\uB150\uD558\uB294 \uC8FC\uD654"
+    CounterStart: -5
+    Effects:
+    - Kind: 3
+      Tags: 
+      Amount: 1
+      Threshold: 3
+      Multiplier: 1
+  - Id: relic_12004
+    Number: 12004
+    DisplayName: "\uB9DD\uCE58\uC640 \uB04C"
+    EnglishName: Hammer and Chisel
+    Rarity: 3
+    Description: "\uCCAB \uD134 \uCD5C\uB2E4 \uD0DC\uADF8 \uBB38\uC591 3\uAC1C \uCD94\uAC00"
+    Flavor: "\uBAA8\uB4E0 \uB9D0\uB4E4\uC744 \uD070 \uD68C\uC11D\uC5D0 \uC0C8\uAE30\uB77C"
+    CounterStart: 0
+    Effects:
+    - Kind: 4
+      Tags: 
+      Amount: 3
+      Threshold: 1
+      Multiplier: 1
+  - Id: relic_12005
+    Number: 12005
+    DisplayName: "\uCCA0\uC81C \uBC29\uD328"
+    EnglishName: Iron Shield
+    Rarity: 2
+    Description: "10 \uC774\uC0C1\uC758 \uB370\uBBF8\uC9C0\uB97C \uBC1B\uC744 \uB54C, \uD574\uB2F9 \uB370\uBBF8\uC9C0\uC5D0 -5"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 5
+      Tags: 
+      Amount: 5
+      Threshold: 10
+      Multiplier: 1
+  - Id: relic_12006
+    Number: 12006
+    DisplayName: "\uC0AC\uAC74\uC758 \uC9C0\uD3C9\uC120"
+    EnglishName: Event Horizon
+    Rarity: 4
+    Description: "\uBE14\uB799\uD640\uC774 \uC0AC\uC6A9\uB418\uC5C8\uC744 \uB54C, \uAC00\uC7A5 \uB9CE\uC740 \uD0DC\uADF8\uB85C \uACF5\uACA9"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 6
+      Tags: 
+      Amount: 0
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_12007
+    Number: 12007
+    DisplayName: "\uBCC4\uC758 \uC800\uD3B8"
+    EnglishName: Beyond Stars
+    Rarity: 5
+    Description: "\uCC9C\uC655\uC131, \uD574\uC655\uC131, \uBA85\uC655\uC131 \uD0DC\uADF8\uAC00 2\uD68C \uC0AC\uC6A9"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 7
+      Tags: 06000000i
+      Amount: 1
+      Threshold: 0
+      Multiplier: 1
+    - Kind: 7
+      Tags: 07000000i
+      Amount: 1
+      Threshold: 0
+      Multiplier: 1
+    - Kind: 7
+      Tags: 08000000i
+      Amount: 1
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_12008
+    Number: 12008
+    DisplayName: "\uC77C\uC2DD"
+    EnglishName: Eclips
+    Rarity: 3
+    Description: "\uB0B4\uD589\uC131\uC758 \uAC00\uCE58 -3, \uC678\uD589\uC131\uC758 \uAC00\uCE58 +3"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 000000000100000002000000i
+      Amount: -3
+      Threshold: 0
+      Multiplier: 1
+    - Kind: 0
+      Tags: 030000000400000005000000060000000700000008000000i
+      Amount: 3
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_12009
+    Number: 12009
+    DisplayName: "\uACF0 \uAC00\uC8FD \uB9DD\uD1A0"
+    EnglishName: Berserk
+    Rarity: 3
+    Description: "\uCCB4\uB825 50% \uC774\uD558\uC77C \uB54C \uBAA8\uB4E0 \uD0DC\uADF8\uC758 \uB370\uBBF8\uC9C0 1.2\uBC30"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 9
+      Tags: 
+      Amount: 0
+      Threshold: 50
+      Multiplier: 1.2
+  - Id: relic_12010
+    Number: 12010
+    DisplayName: "\uC18D\uC784\uC218 \uC8FC\uC0AC\uC704"
+    EnglishName: Loaded dice
+    Rarity: 3
+    Description: "\uAC00\uC7A5 \uC88C\uCE21\uC758 \uBB38\uC591 1\uD68C \uC7AC\uC0AC\uC6A9"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 8
+      Tags: 
+      Amount: 1
+      Threshold: 1
+      Multiplier: 1

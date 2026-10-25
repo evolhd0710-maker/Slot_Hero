@@ -17,252 +17,252 @@ MonoBehaviour:
     DisplayName: "\uC218\uC740"
     FirstTag: 0
     SecondTag: 1
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 3eb64922efaa0574e885ed1a268cbc42, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Fish
     DisplayName: "\uBB3C\uACE0\uAE30"
     FirstTag: 0
     SecondTag: 2
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 1e43fd7e78fdac14cb0bf5af5a48edfb, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Geyser
     DisplayName: "\uAC04\uD5D0\uCC9C"
     FirstTag: 0
     SecondTag: 3
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 0a135556c12550b4bb20f8eb983fedc5, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Lotus
     DisplayName: "\uC5F0\uAF43"
     FirstTag: 0
     SecondTag: 4
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 454062bfb7ad6d340aa34b5e212daef6, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Mud
     DisplayName: "\uC9C4\uD759"
     FirstTag: 0
     SecondTag: 5
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 3531b3ae85a62614b9ac5f11d270d421, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: DarkCloud
     DisplayName: "\uBA39\uAD6C\uB984"
     FirstTag: 0
     SecondTag: 6
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 88bb58d6aabcc1b4b84ca95509ac9bf5, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Tsunami
     DisplayName: "\uD574\uC77C"
     FirstTag: 0
     SecondTag: 7
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 86ea627fc1d27b543936787428e7696e, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Styx
     DisplayName: "\uC2A4\uD2F1\uC2A4\uAC15"
     FirstTag: 0
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: e75f92696cf0db8499d1581fb33a8996, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Chariot
     DisplayName: "\uC804\uCC28"
     FirstTag: 1
     SecondTag: 2
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 1ef4c962aaf2c3a4685bed7fff68e0fd, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Furnace
     DisplayName: "\uC6A9\uAD11\uB85C"
     FirstTag: 1
     SecondTag: 3
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 3f9cc31e91eb7af449d81e98b451609e, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: GoldLaurel
     DisplayName: "\uAE08\uBE5B\uACC4\uAD00"
     FirstTag: 1
     SecondTag: 4
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 0e948c957093c124ea039c0158149c42, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Gem
     DisplayName: "\uBCF4\uC11D"
     FirstTag: 1
     SecondTag: 5
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: c2be6632cfe9aca409719598e129c25e, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Meteorite
     DisplayName: "\uC6B4\uC11D"
     FirstTag: 1
     SecondTag: 6
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 2931fa17b75e75847847228a47095188, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Anchor
     DisplayName: "\uB2FB"
     FirstTag: 1
     SecondTag: 7
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 9c3984f62378ba846be030aafd84a834, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Scythe
     DisplayName: "\uB0AB"
     FirstTag: 1
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: b97001f711ce4b742b415b6c5916556c, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Phoenix
     DisplayName: "\uBD88\uC0AC\uC870"
     FirstTag: 2
     SecondTag: 3
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: e5fa43b84ce33e6429b44e88a5fef9fd, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Druid
     DisplayName: "\uB4DC\uB8E8\uC774\uB4DC"
     FirstTag: 2
     SecondTag: 4
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: b659299d0bc695d448e74e13b2872122, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Golem
     DisplayName: "\uACE8\uB818"
     FirstTag: 2
     SecondTag: 5
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 72da63f396908e249abc107d35785dc9, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Bird
     DisplayName: "\uC0C8"
     FirstTag: 2
     SecondTag: 6
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 34d892194415e1c44a4a2b23a8d1f90b, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Whale
     DisplayName: "\uACE0\uB798"
     FirstTag: 2
     SecondTag: 7
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: e14596fe99acb6f42a74ad0175f0b92e, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Raven
     DisplayName: "\uAE4C\uB9C8\uADC0"
     FirstTag: 2
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: d8c946806fc252142bc5d9cc4101ae91, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: FireFlower
     DisplayName: "\uBD88\uC758 \uAF43"
     FirstTag: 3
     SecondTag: 4
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: e898a78e2aeedb443bf8157fb61f1317, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Volcano
     DisplayName: "\uD654\uC0B0"
     FirstTag: 3
     SecondTag: 5
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: ea140ebd92594554eaef0b03cc9d66a0, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Sunrise
     DisplayName: "\uC77C\uCD9C"
     FirstTag: 3
     SecondTag: 6
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 3f6807ad4ea783d4ebeb4850bbc23535, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: LightHouse
     DisplayName: "\uB4F1\uB300"
     FirstTag: 3
     SecondTag: 7
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 0703e635d8a507c428d7d0b6429235f8, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Fullmoon
     DisplayName: "\uB9CC\uC6D4"
     FirstTag: 3
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 720528bf6c293274e885ebc62a1adfce, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Forest
     DisplayName: "\uC232"
     FirstTag: 4
     SecondTag: 5
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: b778b83f09cb461479e103f238155083, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Yggdrasil
     DisplayName: "\uC138\uACC4\uC218"
     FirstTag: 4
     SecondTag: 6
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: ad521b5686c219549b3466ea3e04ea14, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Coral
     DisplayName: "\uC0B0\uD638"
     FirstTag: 4
     SecondTag: 7
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: e11e4c54bec1a9248971ec64def314bb, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Coffin
     DisplayName: "\uAD00"
     FirstTag: 4
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 23975371bd8336d4aa1707a7f0abd32d, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Desert
     DisplayName: "\uC0AC\uB9C9"
     FirstTag: 5
     SecondTag: 6
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: edc2efaa1117911488842132d498c52f, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Island
     DisplayName: "\uC12C"
     FirstTag: 5
     SecondTag: 7
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: c15221f4b629c644cb779cd44798d07c, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Grave
     DisplayName: "\uBB34\uB364"
     FirstTag: 5
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: af6deec64bb336044a65eb70786a1900, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Hail
     DisplayName: "\uC6B0\uBC15"
     FirstTag: 6
     SecondTag: 7
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: a95fbb14a0a826b48aac384905c46d29, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: NightSky
     DisplayName: "\uBC24\uD558\uB298"
     FirstTag: 6
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: 3ab5b6b0410316a498634578077aec97, type: 3}
     MinStage: 0
     MaxStage: 0
   - Id: Shipwreck
     DisplayName: "\uB09C\uD30C\uC120"
     FirstTag: 7
     SecondTag: 8
-    Icon: {fileID: 0}
+    Icon: {fileID: 21300000, guid: d3844ba798a21ec46ba40fcfb11f37d7, type: 3}
     MinStage: 0
     MaxStage: 0
   Coins:
@@ -283,26 +283,82 @@ MonoBehaviour:
     ExcludedFrom: 0
     OnlyInEvents: []
   Relics:
-  - Id: relic_book
-    DisplayName: "\uB0A1\uC740 \uCC45"
+  - Id: relic_12001
+    DisplayName: "\uC81C\uAD6D \uAD70\uAE30"
     Rarity: 0
-    Icon: {fileID: 21300000, guid: 5b92b06abccf8a1488bad436779b5077, type: 3}
+    Icon: {fileID: 0}
     MinStage: 0
     MaxStage: 0
     ExcludedFrom: 0
     OnlyInEvents: []
-  - Id: relic_wing
-    DisplayName: "\uB0A0\uAC1C"
-    Rarity: 1
-    Icon: {fileID: 21300000, guid: 0db1e3c7c0d18b9458e9bfb3a66dc857, type: 3}
-    MinStage: 0
-    MaxStage: 0
-    ExcludedFrom: 0
-    OnlyInEvents: []
-  - Id: relic_pick
-    DisplayName: "\uACE1\uAD2D\uC774"
+  - Id: relic_12002
+    DisplayName: "\uD751\uC694\uC11D \uB2E8\uAC80"
     Rarity: 2
-    Icon: {fileID: 21300000, guid: bcfd8e3343ca1474480ed544dfe7d1c2, type: 3}
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12003
+    DisplayName: "12\uAC1C\uC758 \uAE08\uD654"
+    Rarity: 3
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12004
+    DisplayName: "\uB9DD\uCE58\uC640 \uB04C"
+    Rarity: 2
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12005
+    DisplayName: "\uCCA0\uC81C \uBC29\uD328"
+    Rarity: 1
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12006
+    DisplayName: "\uC0AC\uAC74\uC758 \uC9C0\uD3C9\uC120"
+    Rarity: 3
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12007
+    DisplayName: "\uBCC4\uC758 \uC800\uD3B8"
+    Rarity: 4
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12008
+    DisplayName: "\uC77C\uC2DD"
+    Rarity: 2
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12009
+    DisplayName: "\uACF0 \uAC00\uC8FD \uB9DD\uD1A0"
+    Rarity: 2
+    Icon: {fileID: 0}
+    MinStage: 0
+    MaxStage: 0
+    ExcludedFrom: 0
+    OnlyInEvents: []
+  - Id: relic_12010
+    DisplayName: "\uC18D\uC784\uC218 \uC8FC\uC0AC\uC704"
+    Rarity: 2
+    Icon: {fileID: 0}
     MinStage: 0
     MaxStage: 0
     ExcludedFrom: 0

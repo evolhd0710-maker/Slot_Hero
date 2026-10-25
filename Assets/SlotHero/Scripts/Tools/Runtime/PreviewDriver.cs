@@ -1,7 +1,10 @@
-﻿using SlotHero.CurrentBuild;
+﻿using SlotHero.Combat;
+using SlotHero.Combat.UI;
+using SlotHero.CurrentBuild;
 using SlotHero.CurrentBuild.UI;
 using SlotHero.Events;
 using SlotHero.Events.UI;
+using SlotHero.Flow;
 using SlotHero.Map.UI;
 using SlotHero.Popup;
 using SlotHero.Popup.UI;
@@ -35,6 +38,9 @@ namespace SlotHero.Tools
 
         [SerializeField] private RunResultVisualConfig _runResultVisual;
 
+        [Tooltip("전투 화면에 문양과 코인과 유물 그림을 놓을 때 여기서 가져온다.")]
+        [SerializeField] private RunCatalogConfig _catalog;
+
         private void Start()
         {
             Run();
@@ -56,6 +62,36 @@ namespace SlotHero.Tools
             DriveTopBar();
             DriveSanctum();
             DriveMap();
+            DriveCombat();
+        }
+
+        private void DriveCombat()
+        {
+            CombatScreenController combat = FindAnyObjectByType<CombatScreenController>();
+            if (combat == null)
+            {
+                return;
+            }
+
+            combat.PlayerHealthLost += amount => Say("전투 · 체력 " + amount + " 깎임");
+            combat.Finished += outcome => Say("전투 · " + (outcome.Won ? "승리" : "패배") + ", 가장 큰 피해 " + outcome.BiggestHit + ", 오버킬 " + outcome.Overkill);
+            combat.Open(PreviewSamples.Combat(), new CatalogIcons(_catalog));
+        }
+
+        /// <summary>물건 목록에서 그림을 꺼내 전투 화면에 내준다.</summary>
+        private sealed class CatalogIcons : ICombatIconSource
+        {
+            private readonly RunCatalogConfig _catalog;
+
+            public CatalogIcons(RunCatalogConfig catalog)
+            {
+                _catalog = catalog;
+            }
+
+            public Sprite GetIcon(string id)
+            {
+                return _catalog != null ? _catalog.GetIcon(id) : null;
+            }
         }
 
         private void DriveMap()

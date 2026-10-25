@@ -33,6 +33,7 @@ namespace SlotHero.ToolsEditor
             Step("게임 씬 만들기", BuildGameScene.Build);
             Step("확인용 씬 눌러 보기", CheckPreviewScenes.CheckAll);
             Step("게임 씬 굴려 보기", CheckGameScene.Check);
+            Step("전투 검사", CheckCombat.Check);
             Step("그림으로 뽑기", CapturePreviewScenes.CaptureAll);
 
             Debug.Log("=== 한 바퀴 끝 ===");

@@ -48,6 +48,8 @@ namespace SlotHero.ToolsEditor
             CopyFolder(Path.Combine(SourceRoot, @"Events\Art"), ArtFolder + "/Events");
 
             // 문양 그림은 저장소에 있다. 받아 두었으면 그것도 가져온다.
+            // 2026년 10월 25일 저장소 원본 코드를 폐기하면서 `Assets/SymbolImage` 를 `Art/Symbols` 로 옮겨 두었다.
+            // 받아 둔 원본이 없으면 복사만 건너뛰고 옮겨 둔 그림으로 잇는다.
             CopyFolder(Path.Combine(RepoRoot, @"Assets\SymbolImage"), ArtFolder + "/Symbols");
 
             AssetDatabase.Refresh();

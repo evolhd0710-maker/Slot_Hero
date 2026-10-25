@@ -82,6 +82,8 @@ namespace SlotHero.ToolsEditor
                 return;
             }
 
+            UsePlaceholderCombat(flow);
+
             CheckInputHandling();
             CheckNoDemoItems();
             CheckBackdrops();
@@ -943,6 +945,21 @@ namespace SlotHero.ToolsEditor
         /// 버튼에 귀를 대지 못해 눌러도 아무 일이 없다.
         /// 플레이 모드에서는 유니티가 알아서 부르므로 이건 검사 쪽 사정이다.
         /// </summary>
+        /// <summary>
+        /// 흐름 검사에서는 전투 대역을 붙인다.
+        ///
+        /// 게임 씬의 전투 창구는 2026년 10월 25일부터 진짜 전투(`CombatEntry`)다.
+        /// 흐름 검사는 맵, 보상, 이벤트, 런 종료가 이어지는지를 보므로 승패를 팝업으로 바로 고르는 대역이 낫다.
+        /// 씬은 저장하지 않으므로 검사가 끝나면 원래대로다. 진짜 전투는 `CheckCombat` 이 따로 본다.
+        /// </summary>
+        private static void UsePlaceholderCombat(GameFlowController flow)
+        {
+            PopupPresenter popup = Object.FindAnyObjectByType<PopupPresenter>(FindObjectsInactive.Include);
+            PlaceholderCombatEntry stand = flow.gameObject.AddComponent<PlaceholderCombatEntry>();
+            UiSceneBuilder.SetField(stand, "_popup", popup);
+            UiSceneBuilder.SetField(flow, "_combatEntryBehaviour", stand);
+        }
+
         private static void AwakenNew()
         {
             // **꺼진 것까지 불러야 한다.**

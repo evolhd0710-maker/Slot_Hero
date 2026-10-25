@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255d795510a96814290e83d052271484, type: 3}
+  m_Name: CombatVisualConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Combat.CombatVisualConfig
+  PanelColor: {r: 0.13, g: 0.12, b: 0.11, a: 0.92}
+  EmptyColor: {r: 0.22, g: 0.21, b: 0.2, a: 0.7}
+  EnemyArtStandIn: {r: 0.32, g: 0.2, b: 0.17, a: 1}
+  BarBackColor: {r: 0.25, g: 0.24, b: 0.23, a: 1}
+  PlayerBarColor: {r: 0.27, g: 0.62, b: 0.32, a: 1}
+  EnemyBarColor: {r: 0.78, g: 0.27, b: 0.22, a: 1}
+  DialColor: {r: 0.17, g: 0.15, b: 0.13, a: 0.95}
+  DialCenterColor: {r: 0.82, g: 0.82, b: 0.82, a: 1}
+  VortexColor: {r: 0.3, g: 0.27, b: 0.35, a: 1}
+  CoinColor: {r: 0.86, g: 0.74, b: 0.42, a: 1}
+  PopupColor: {r: 0.94, g: 0.92, b: 0.88, a: 1}
+  DisabledBrightness: 0.35
+  HoverBrightness: 1.15
+  HoverScale: 1.06
+  TextColor: {r: 0.93, g: 0.9, b: 0.84, a: 1}
+  DarkTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  SubTextColor: {r: 0.68, g: 0.64, b: 0.58, a: 1}
+  CostColor: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+  HealthFontSize: 30
+  NameFontSize: 30
+  BodyFontSize: 22
+  HintFontSize: 24
+  TagSymbolFontSize: 40
+  CoinLabelFontSize: 22
+  DamageFontSize: 64
+  PlayerHealthLabel: "\uCCB4\uB825"
+  ChooseCoinHint: "\uCF54\uC778\uC744 \uACE0\uB974\uC138\uC694"
+  ChooseTagHint: "\uCF54\uC778\uC744 \uAC78 \uD0DC\uADF8\uB97C \uACE0\uB974\uC138\uC694"
+  NoCoinText: "\uCF54\uC778\n\uC5C6\uC774"
+  NoCoinHint: "\uCF54\uC778 \uC5C6\uC774 \uD0DC\uADF8\uB97C \uACE0\uB985\uB2C8\uB2E4"
+  EmptyCoinText: X
+  NotEnoughHealthText: "\uCCB4\uB825\uC774 \uBAA8\uC790\uB78D\uB2C8\uB2E4"
+  CostLabel: "\uC18C\uBAA8 \uCCB4\uB825"
+  WeightLabel: "\uAC00\uC911\uCE58"
+  AttackLabel: "\uACF5\uACA9\uB825"
+  VortexHint: "\uC544\uC9C1 \uD6A8\uACFC\uAC00 \uC5C6\uB294 \uCE78\uC785\uB2C8\uB2E4"
+  VictoryText: "\uC2B9\uB9AC"
+  DefeatText: "\uD328\uBC30"
+  SpinDuration: 0.9
+  SpinStopInterval: 0.12
+  SpinFrame: 0.05
+  DialSwapDuration: 0.2
+  AttackChargeDuration: 0.45
+  ProjectileDuration: 0.35
+  DamageShowDuration: 0.8
+  EnemyAttackDuration: 0.5
+  EndDelay: 1
+  DamageTierScales:
+  - 1
+  - 1.2
+  - 1.45
+  - 1.75
+  - 2.1
+  DamageTierShakes:
+  - 6
+  - 12
+  - 20
+  - 30
+  - 44

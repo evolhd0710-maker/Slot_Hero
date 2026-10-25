@@ -19,7 +19,8 @@ Docs/SlotHero/            문서. Assets 밖이라 유니티가 임포트하지 
   Slot Hero 코드 설명.docx  형식과 공개 멤버를 영역별로 모은 문서
 ```
 
-영역은 Flow, Save, Map, Title, Profile, TopBar, Hud, Sanctum, Events, Reward, CurrentBuild, Popup, Settings, RunResult, Ui, Tools 열여섯이다.
+영역은 Flow, Save, Map, Title, Profile, TopBar, Hud, Sanctum, Events, Reward, CurrentBuild, Popup, Settings, RunResult, Combat, Ui, Tools 열일곱이다.
+저장소에 원래 있던 코드(`Assets/Scripts`)와 씬, 프리팹은 2026년 10월 25일 폐기했다. 전투는 `Combat` 으로 새로 썼다.
 화면 영역끼리는 서로를 모르고 Flow 의 `GameFlowController` 가 잇는다.
 
 에디터 도구가 이 자리들을 경로로 적어 쓴다(`UiSceneBuilder`, `CreateDefaultConfigs`, `ImportArt`, `MakeUiSkin`, `PrepareTextResources`).

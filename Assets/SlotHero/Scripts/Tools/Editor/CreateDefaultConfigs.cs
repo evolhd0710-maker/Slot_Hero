@@ -20,7 +20,7 @@ using UnityEngine;
 namespace SlotHero.ToolsEditor
 {
     /// <summary>
-    /// 여덟 영역의 설정 에셋을 기본값으로 한꺼번에 만든다.
+    /// 영역들의 설정 에셋을 기본값으로 한꺼번에 만든다.
     /// 메뉴 Slot Hero / 설정 에셋 한 번에 만들기 에서 실행한다.
     ///
     /// 각 설정 에셋의 기본값은 그 영역 기획서의 수치를 그대로 적어 둔 것이라
@@ -84,6 +84,20 @@ namespace SlotHero.ToolsEditor
             made += Make<RewardVisualConfig>("Reward", "RewardVisualConfig");
 
             made += Make<SaveConfig>("Save", "SaveConfig");
+
+            made += Make<CombatRuleConfig>("Combat", "CombatRuleConfig");
+            made += Make<CombatLayoutConfig>("Combat", "CombatLayoutConfig");
+            made += Make<CombatVisualConfig>("Combat", "CombatVisualConfig");
+            made += Make<RelicConfig>("Combat", "RelicConfig");
+
+            // 유물 목록은 코드가 정본이다. 이미 있어도 시트의 목록으로 갈아 끼우고 물건 목록도 맞춘다.
+            Reset<RelicConfig>("Combat", "RelicConfig");
+            RunCatalogConfig catalog = AssetDatabase.LoadAssetAtPath<RunCatalogConfig>(Root + "/Flow/RunCatalogConfig.asset");
+            if (catalog != null)
+            {
+                SyncRelics(catalog);
+                EditorUtility.SetDirty(catalog);
+            }
 
             made += MakeCatalog();
 
@@ -154,6 +168,9 @@ namespace SlotHero.ToolsEditor
             reset += Reset<SanctumVisualConfig>("Sanctum", "SanctumVisualConfig");
             reset += Reset<SanctumLayoutConfig>("Sanctum", "SanctumLayoutConfig");
             reset += Reset<MerchantLayoutConfig>("Sanctum", "MerchantLayoutConfig");
+
+            reset += Reset<CombatLayoutConfig>("Combat", "CombatLayoutConfig");
+            reset += Reset<CombatVisualConfig>("Combat", "CombatVisualConfig");
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -253,9 +270,8 @@ namespace SlotHero.ToolsEditor
             AddItem(config.Coins, "coin_gold", "금화", ItemRarity.Common);
             AddItem(config.Coins, "coin_silver", "은화", ItemRarity.Common);
 
-            AddItem(config.Relics, "relic_book", "낡은 책", ItemRarity.Common);
-            AddItem(config.Relics, "relic_wing", "날개", ItemRarity.Uncommon);
-            AddItem(config.Relics, "relic_pick", "곡괭이", ItemRarity.Rare);
+            // 유물은 유물 정보시트의 열 개다. 2026년 10월 25일 임시 셋(낡은 책, 날개, 곡괭이)을 뺐다.
+            SyncRelics(config);
 
             // 런 시작 덱. **모든 문양을 한 장씩 넣는다.**
             //
@@ -409,6 +425,45 @@ namespace SlotHero.ToolsEditor
             T asset = ScriptableObject.CreateInstance<T>();
             AssetDatabase.CreateAsset(asset, path);
             return 1;
+        }
+
+        /// <summary>
+        /// 물건 목록의 유물을 유물 정보시트의 열 개로 맞춘다.
+        /// 시트에 없는 유물은 빼고, 있는 유물은 이름과 희귀도를 시트대로 고친다. 이어 둔 그림과 등장 조건은 그대로 둔다.
+        /// 희귀도는 시트의 1 ~ 5 가 일반 ~ 전설이다.
+        /// </summary>
+        public static void SyncRelics(RunCatalogConfig config)
+        {
+            System.Collections.Generic.List<RelicDefinition> sheet = RelicConfig.SheetRelics();
+            System.Collections.Generic.List<ItemDefinition> synced = new System.Collections.Generic.List<ItemDefinition>();
+
+            for (int i = 0; i < sheet.Count; i++)
+            {
+                ItemDefinition item = new ItemDefinition();
+                bool found = false;
+
+                for (int j = 0; j < config.Relics.Count; j++)
+                {
+                    if (config.Relics[j].Id == sheet[i].Id)
+                    {
+                        item = config.Relics[j];
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    item.Id = sheet[i].Id;
+                }
+
+                item.DisplayName = sheet[i].DisplayName;
+                item.Rarity = (ItemRarity)Mathf.Clamp(sheet[i].Rarity - 1, 0, 4);
+                synced.Add(item);
+            }
+
+            config.Relics = synced;
+            config.InvalidateIndex();
         }
 
         /// 폴더가 없으면 위에서부터 차례로 만든다

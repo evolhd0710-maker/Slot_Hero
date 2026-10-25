@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SlotHero.Ui;
+using SlotHero.Combat;
 using SlotHero.CurrentBuild;
 using SlotHero.CurrentBuild.UI;
 using SlotHero.Events;
@@ -76,6 +77,9 @@ namespace SlotHero.Flow
 
         [Header("설정 에셋")]
         [SerializeField] private RunCatalogConfig _catalogConfig;
+
+        [Tooltip("유물 소개문과 플레이버 텍스트. 아이템 상세에 적는다.")]
+        [SerializeField] private RelicConfig _relics;
         [SerializeField] private RunEventConfig _eventConfig;
         [SerializeField] private EventIllustrationConfig _eventIllustrations;
         [SerializeField] private RewardRuleConfig _rewardRules;
@@ -1133,6 +1137,25 @@ namespace SlotHero.Flow
             SetItemDetail(entry.Id, hovering);
         }
 
+        /// <summary>가진 유물의 쌓인 횟수. 없으면 0 이다.</summary>
+        private int GetRelicStack(string id)
+        {
+            if (Context == null || Context.Run == null)
+            {
+                return 0;
+            }
+
+            for (int i = 0; i < Context.Run.Owned.Relics.Count; i++)
+            {
+                if (Context.Run.Owned.Relics[i].RelicId == id)
+                {
+                    return Context.Run.Owned.Relics[i].Stack;
+                }
+            }
+
+            return 0;
+        }
+
         private void SetItemDetail(string id, bool show)
         {
             if (_itemDetail == null)
@@ -1146,7 +1169,7 @@ namespace SlotHero.Flow
                 return;
             }
 
-            ItemDetailSpec spec = ItemDetailTexts.Describe(id, _catalogConfig, _buildVisual);
+            ItemDetailSpec spec = ItemDetailTexts.Describe(id, _catalogConfig, _buildVisual, _relics, GetRelicStack(id));
             if (!spec.IsValid)
             {
                 _itemDetail.Hide();

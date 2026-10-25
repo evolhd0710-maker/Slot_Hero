@@ -178,5 +178,54 @@ namespace SlotHero.Tools
             spec.Add(PopupButtonSpec.Normal("save", "저장하고 나가기"));
             return spec;
         }
+
+        /// <summary>
+        /// 전투 하나. 슬롯머신 작동 방식 1.1.a 작동 예시의 문양과 코인을 옮겼다.
+        /// 불사조(화성/지구), 간헐천(수성/화성), 용광로(화성/금성), 섬(해왕성/토성), 난파선(해왕성/명왕성)에
+        /// 금화(소모 10 · 가중치 5)와 은화(소모 20 · 가중치 15)다. 적은 아트웍의 투기장 검투사다.
+        /// 유물은 제국 군기, 12개의 금화(두 번 쌓임), 사건의 지평선이다.
+        /// 덱이 릴보다 많아 처음 돌린 릴은 시드에 따라 달라진다.
+        /// </summary>
+        public static CombatSetup Combat()
+        {
+            CombatSetup setup = new CombatSetup();
+            setup.Deck.Add(new ReelSymbol("Phoenix", "불사조", SymbolTagType.Mars, SymbolTagType.Earth, 4));
+            setup.Deck.Add(new ReelSymbol("Geyser", "간헐천", SymbolTagType.Mercury, SymbolTagType.Mars, 3));
+            setup.Deck.Add(new ReelSymbol("Furnace", "용광로", SymbolTagType.Mars, SymbolTagType.Venus, 3));
+            setup.Deck.Add(new ReelSymbol("Island", "섬", SymbolTagType.Neptune, SymbolTagType.Saturn, 7));
+            setup.Deck.Add(new ReelSymbol("Shipwreck", "난파선", SymbolTagType.Neptune, SymbolTagType.Pluto, 9));
+            setup.Deck.Add(new ReelSymbol("Volcano", "화산", SymbolTagType.Mars, SymbolTagType.Jupiter, 5));
+            setup.Deck.Add(new ReelSymbol("Coffin", "관", SymbolTagType.Saturn, SymbolTagType.Pluto, 8));
+            setup.Deck.Add(new ReelSymbol("Whale", "고래", SymbolTagType.Neptune, SymbolTagType.Jupiter, 7));
+
+            setup.Coins.Add(new CombatCoin("coin_gold", "금화", 10, 5, "건 태그의 배수에 5 를 더한다."));
+            setup.Coins.Add(new CombatCoin("coin_silver", "은화", 20, 15, "건 태그의 배수에 15 를 더한다."));
+
+            // 유물 정보시트의 셋. 태그 가치, 고유 수치 표시, 소용돌이 칸을 함께 볼 수 있다.
+            List<RelicDefinition> relics = RelicConfig.SheetRelics();
+            AddRelic(setup, relics, 12001, 0);
+            AddRelic(setup, relics, 12003, 2);
+            AddRelic(setup, relics, 12006, 0);
+            setup.RelicCapacity = 6;
+
+            setup.Enemy = new CombatEnemy("투기장 검투사", "콜로세움에서 싸우는 검투사.", 40, 6);
+            setup.PlayerHealth = 99;
+            setup.PlayerMaxHealth = 99;
+            setup.Seed = 20261025;
+            return setup;
+        }
+
+        private static void AddRelic(CombatSetup setup, List<RelicDefinition> relics, int number, int stack)
+        {
+            string id = RelicConfig.IdFor(number);
+            for (int i = 0; i < relics.Count; i++)
+            {
+                if (relics[i].Id == id)
+                {
+                    setup.Relics.Add(new CombatRelic(id, relics[i].DisplayName, relics[i], stack));
+                    return;
+                }
+            }
+        }
     }
 }

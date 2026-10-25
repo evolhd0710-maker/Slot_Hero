@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using SlotHero.Ui;
+using SlotHero.Combat;
+using SlotHero.Combat.UI;
 using SlotHero.CurrentBuild;
 using SlotHero.CurrentBuild.UI;
 using SlotHero.Events;
@@ -66,6 +68,9 @@ namespace SlotHero.ToolsEditor
             // 확인용 씬에서 화면을 통째로 가져온다. 여는 차례가 곧 그리는 차례다.
             // 뒤에 오는 것이 위에 그려지므로 겹쳐 뜨는 것을 뒤에 둔다.
             SanctumController sanctum = Take<SanctumController>(canvas, "성소 화면");
+
+            // 전투도 방 화면이다. 보상과 지도보다 아래라 지도 버튼으로 전투 위에 지도를 띄울 수 있다.
+            CombatScreenController combatScreen = Take<CombatScreenController>(canvas, BuildPreviewScenes.CombatSceneName);
             EventScreenController events = Take<EventScreenController>(canvas, "11 이벤트 화면");
             RewardScreenController reward = Take<RewardScreenController>(canvas, "10 보상 화면");
 
@@ -102,8 +107,15 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(save, "_config",
                 UiSceneBuilder.LoadConfig<SaveConfig>("Save", "SaveConfig"));
 
-            PlaceholderCombatEntry combat = flowGo.AddComponent<PlaceholderCombatEntry>();
-            UiSceneBuilder.SetField(combat, "_popup", popup);
+            // 전투 창구. 2026년 10월 25일 대역(PlaceholderCombatEntry)을 떼고 진짜 전투를 붙였다.
+            CombatEntry combat = flowGo.AddComponent<CombatEntry>();
+            UiSceneBuilder.SetField(combat, "_screen", combatScreen);
+            UiSceneBuilder.SetField(combat, "_rules",
+                UiSceneBuilder.LoadConfig<CombatRuleConfig>("Combat", "CombatRuleConfig"));
+            UiSceneBuilder.SetField(combat, "_catalog",
+                UiSceneBuilder.LoadConfig<RunCatalogConfig>("Flow", "RunCatalogConfig"));
+            UiSceneBuilder.SetField(combat, "_relics",
+                UiSceneBuilder.LoadConfig<RelicConfig>("Combat", "RelicConfig"));
 
             GameFlowController flow = flowGo.AddComponent<GameFlowController>();
 
@@ -131,6 +143,8 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(flow, "_hud", hud);
             UiSceneBuilder.SetField(flow, "_combatEntryBehaviour", combat);
 
+            UiSceneBuilder.SetField(flow, "_relics",
+                UiSceneBuilder.LoadConfig<RelicConfig>("Combat", "RelicConfig"));
             UiSceneBuilder.SetField(flow, "_catalogConfig",
                 UiSceneBuilder.LoadConfig<RunCatalogConfig>("Flow", "RunCatalogConfig"));
             UiSceneBuilder.SetField(flow, "_eventConfig",

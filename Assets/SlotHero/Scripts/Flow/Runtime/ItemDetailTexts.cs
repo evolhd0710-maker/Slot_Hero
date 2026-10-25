@@ -12,14 +12,23 @@ namespace SlotHero.Flow
     /// 이름은 좌상단, 가치 값은 우상단, 내용은 그 아래, 플레이버 텍스트는 하단이다.
     /// 기획서가 "문양은 현재 가치를, 유물과 코인은 희귀도를" 우상단에 적게 했다.
     ///
-    /// **아이템마다의 효과 설명과 플레이버 텍스트는 아직 없다.**
-    /// 문양, 코인, 유물 기획서 소관인데 그 문서와 저장소 에셋이 오지 않았다.
-    /// 지금은 목록에 있는 것만 적는다. 문양은 태그 둘, 코인과 유물은 종류다.
+    /// 유물은 `유물 정보시트.xlsx` 의 소개문과 플레이버 텍스트를 적는다(`RelicConfig`). 2026년 10월 25일.
+    /// 문양과 코인의 효과 설명은 아직 없다. 문양은 태그 둘, 코인은 종류만 적는다.
     /// </summary>
     public static class ItemDetailTexts
     {
         /// <summary>그 식별자의 오버레이 내용. 목록에 없으면 비어 있는 내용을 돌려준다.</summary>
         public static ItemDetailSpec Describe(string id, RunCatalogConfig config, CurrentBuildVisualConfig tagNames)
+        {
+            return Describe(id, config, tagNames, null, 0);
+        }
+
+        /// <summary>
+        /// 유물이면 소개문과 플레이버 텍스트까지 적는다.
+        /// 쌓인 횟수는 12개의 금화처럼 고유 수치를 쓰는 유물이 지금 값을 적는 데 쓴다.
+        /// </summary>
+        public static ItemDetailSpec Describe(
+            string id, RunCatalogConfig config, CurrentBuildVisualConfig tagNames, RelicConfig relics, int relicStack)
         {
             if (config == null || string.IsNullOrEmpty(id))
             {
@@ -51,7 +60,10 @@ namespace SlotHero.Flow
             {
                 if (config.Relics[i].Id == id)
                 {
-                    return new ItemDetailSpec(config.Relics[i].DisplayName, GetRarityName(config.Relics[i].Rarity), "유물", string.Empty);
+                    RelicDefinition relic = relics != null ? relics.Find(id) : null;
+                    string body = relic != null ? relic.GetDescription(relicStack) : "유물";
+                    string flavor = relic != null ? relic.Flavor : string.Empty;
+                    return new ItemDetailSpec(config.Relics[i].DisplayName, GetRarityName(config.Relics[i].Rarity), body, flavor);
                 }
             }
 
