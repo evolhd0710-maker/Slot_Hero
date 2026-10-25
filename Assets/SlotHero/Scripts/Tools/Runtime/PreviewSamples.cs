@@ -182,7 +182,7 @@ namespace SlotHero.Tools
         /// <summary>
         /// 전투 하나. 슬롯머신 작동 방식 1.1.a 작동 예시의 문양과 코인을 옮겼다.
         /// 불사조(화성/지구), 간헐천(수성/화성), 용광로(화성/금성), 섬(해왕성/토성), 난파선(해왕성/명왕성)에
-        /// 금화(소모 10 · 가중치 5)와 은화(소모 20 · 가중치 15)다. 적은 아트웍의 투기장 검투사다.
+        /// 금화(소모 10 · 가중치 5)와 은화(소모 20 · 가중치 15)다. 적은 Stage 1 몬스터 기획서의 검투사다.
         /// 유물은 제국 군기, 12개의 금화(두 번 쌓임), 사건의 지평선이다.
         /// 덱이 릴보다 많아 처음 돌린 릴은 시드에 따라 달라진다.
         /// </summary>
@@ -208,7 +208,9 @@ namespace SlotHero.Tools
             AddRelic(setup, relics, 12006, 0);
             setup.RelicCapacity = 6;
 
-            setup.Enemy = new CombatEnemy("투기장 검투사", "콜로세움에서 싸우는 검투사.", 40, 6);
+            setup.Enemy = new CombatEnemy(
+                "검투사", "공격 · 방어 · 버프를 고루 쓴다. 함성으로 얻는 기세로 턴이 지날수록 강해진다.",
+                30, 6, MonsterKind.Gladiator);
             setup.PlayerHealth = 99;
             setup.PlayerMaxHealth = 99;
             setup.Seed = 20261025;

@@ -134,6 +134,39 @@ namespace SlotHero.ToolsEditor
             AnchorBand(enemyInfoLabel.rectTransform, 0f, 0.78f, UiScale.Px(20f));
             enemyInfoLabel.alignment = TextAlignmentOptions.TopLeft;
 
+            // 소환수 칸. 장군의 방패병 자리다. 소환되기 전에는 꺼 둔다.
+            int summonCount = rules.General != null ? rules.General.MaxShieldmen : 3;
+            Image[] summonPanels = new Image[summonCount];
+            Image[] summonBars = new Image[summonCount];
+            TMP_Text[] summonNames = new TMP_Text[summonCount];
+            TMP_Text[] summonInfos = new TMP_Text[summonCount];
+            for (int i = 0; i < summonCount; i++)
+            {
+                summonPanels[i] = UiSceneBuilder.NewImage("Summon" + i, root, visual.PanelColor);
+                summonPanels[i].raycastTarget = false;
+                UiSceneBuilder.AddShadowPx(summonPanels[i], 6f, 4f);
+
+                summonNames[i] = NewLabel("NameLabel", summonPanels[i].transform, visual.BodyFontSize, visual.TextColor, true);
+                AnchorBand(summonNames[i].rectTransform, 0.8f, 1f, UiScale.Px(4f));
+
+                Image back = UiSceneBuilder.NewFlatImage("BarBack", summonPanels[i].transform, visual.BarBackColor);
+                back.raycastTarget = false;
+                AnchorBand(back.rectTransform, 0.7f, 0.77f, UiScale.Px(8f));
+
+                summonBars[i] = UiSceneBuilder.NewFlatImage("Bar", back.transform, visual.EnemyBarColor);
+                summonBars[i].raycastTarget = false;
+                summonBars[i].sprite = UiSceneBuilder.LoadSkin("패널");
+                summonBars[i].type = Image.Type.Filled;
+                summonBars[i].fillMethod = Image.FillMethod.Horizontal;
+                UiSceneBuilder.Stretch(summonBars[i].rectTransform);
+
+                summonInfos[i] = NewLabel("InfoLabel", summonPanels[i].transform, visual.BodyFontSize * 0.8f, visual.SubTextColor, false);
+                AnchorBand(summonInfos[i].rectTransform, 0.04f, 0.66f, UiScale.Px(4f));
+                summonInfos[i].alignment = TextAlignmentOptions.Top;
+
+                summonPanels[i].gameObject.SetActive(false);
+            }
+
             // ---- 원판 ----
             TMP_Text hint = NewLabel("HintLabel", root, visual.HintFontSize, visual.TextColor, true);
 
@@ -187,6 +220,10 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_enemyNameLabel", enemyName);
             UiSceneBuilder.SetField(view, "_enemyInfoLabel", enemyInfoLabel);
             UiSceneBuilder.SetField(view, "_enemyDamageLabel", enemyDamage);
+            UiSceneBuilder.SetArrayField(view, "_summonPanels", summonPanels);
+            UiSceneBuilder.SetArrayField(view, "_summonBars", summonBars);
+            UiSceneBuilder.SetArrayField(view, "_summonNames", summonNames);
+            UiSceneBuilder.SetArrayField(view, "_summonInfos", summonInfos);
             UiSceneBuilder.SetField(view, "_dial", dial);
             UiSceneBuilder.SetField(view, "_coinGroup", coinGroup);
             UiSceneBuilder.SetField(view, "_coinDial", coinDial);

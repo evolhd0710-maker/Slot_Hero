@@ -60,13 +60,21 @@ namespace SlotHero.Combat
         };
 
         [Header("적")]
-        [Tooltip("방 종류마다 첫 스테이지의 적. **임시다.** 이름은 Jackpot 아트웍의 \"투기장 검투사\" 를 빌렸다.")]
+        [Tooltip("방 종류마다 첫 스테이지의 적. 일반은 검투사, 엘리트는 장군이다(Stage 1 몬스터 기획서). " +
+                 "보스(황제)는 기획서가 아직 오지 않아 **임시** 적이다.")]
         public List<EnemyRule> Enemies = new List<EnemyRule>
         {
-            new EnemyRule(CombatEnemyKind.Normal, "투기장 검투사", "콜로세움에서 싸우는 검투사.", 40, 6),
-            new EnemyRule(CombatEnemyKind.Elite, "투기장 챔피언", "검투사들 가운데 살아남은 자.", 80, 9),
-            new EnemyRule(CombatEnemyKind.Boss, "콜로세움의 주인", "콜로세움을 지배하는 자.", 160, 12),
+            new EnemyRule(CombatEnemyKind.Normal, MonsterKind.Gladiator, "검투사",
+                "공격 · 방어 · 버프를 고루 쓴다. 함성으로 얻는 기세로 턴이 지날수록 강해진다.", 30, 6),
+            new EnemyRule(CombatEnemyKind.Elite, MonsterKind.General, "장군",
+                "방패병을 소환해 진형을 세우고, 기마병 돌격과 투창 명령으로 몰아붙인다.", 80, 15),
+            new EnemyRule(CombatEnemyKind.Boss, MonsterKind.Plain, "콜로세움의 주인", "콜로세움을 지배하는 자.", 160, 12),
         };
+
+        [Header("몬스터 패턴")]
+        public GladiatorRule Gladiator = new GladiatorRule();
+        public GeneralRule General = new GeneralRule();
+        public ShieldmanRule Shieldman = new ShieldmanRule();
 
         [Tooltip("스테이지가 하나 오를 때마다 적 체력에 곱하는 비율의 증가분. 0.5 면 2스테이지 1.5배, 3스테이지 2배다. 임시다.")]
         [Min(0f)]
@@ -122,7 +130,7 @@ namespace SlotHero.Combat
         /// <summary>그 종류와 스테이지의 적을 새로 만든다. 스테이지는 1부터다.</summary>
         public CombatEnemy MakeEnemy(CombatEnemyKind kind, int stage)
         {
-            EnemyRule rule = new EnemyRule(kind, "적", string.Empty, 30, 5);
+            EnemyRule rule = new EnemyRule(kind, MonsterKind.Plain, "적", string.Empty, 30, 5);
             for (int i = 0; i < Enemies.Count; i++)
             {
                 if (Enemies[i].Kind == kind)
@@ -133,10 +141,34 @@ namespace SlotHero.Combat
             }
 
             int above = stage > 1 ? stage - 1 : 0;
-            int health = Mathf.RoundToInt(rule.MaxHealth * (1f + EnemyHealthGrowthPerStage * above));
             int attack = rule.Attack + EnemyAttackGrowthPerStage * above;
 
-            return new CombatEnemy(rule.Name, rule.Description, health, attack);
+            CombatEnemy enemy = new CombatEnemy(
+                rule.Name, rule.Description, ScaleHealth(rule.MaxHealth, stage), attack, rule.Monster);
+            // Plain 은 공격력에 이미 더했다. 패턴 몬스터는 패턴 피해마다 더한다.
+            enemy.AttackBonus = rule.Monster == MonsterKind.Plain ? 0 : EnemyAttackGrowthPerStage * above;
+            enemy.Stage = stage < 1 ? 1 : stage;
+            return enemy;
+        }
+
+        /// <summary>장군이 소환하는 방패병. 본체와 같은 스테이지로 체력과 피해를 올린다.</summary>
+        public CombatEnemy MakeShieldman(int stage)
+        {
+            int above = stage > 1 ? stage - 1 : 0;
+
+            CombatEnemy enemy = new CombatEnemy(
+                Shieldman.Name, Shieldman.Description, ScaleHealth(Shieldman.MaxHealth, stage),
+                Shieldman.JavelinDamage, MonsterKind.Shieldman);
+            enemy.AttackBonus = EnemyAttackGrowthPerStage * above;
+            enemy.Stage = stage < 1 ? 1 : stage;
+            enemy.IsSummon = true;
+            return enemy;
+        }
+
+        private int ScaleHealth(int health, int stage)
+        {
+            int above = stage > 1 ? stage - 1 : 0;
+            return Mathf.RoundToInt(health * (1f + EnemyHealthGrowthPerStage * above));
         }
 
         /// <summary>넘친 피해로 받는 오버킬 골드.</summary>
@@ -195,14 +227,21 @@ namespace SlotHero.Combat
     public struct EnemyRule
     {
         public CombatEnemyKind Kind;
+
+        [Tooltip("행동 방식. Plain 은 매 턴 공격력만큼 때린다. 나머지는 아래 몬스터 패턴 수치를 쓴다.")]
+        public MonsterKind Monster;
+
         public string Name;
         public string Description;
         public int MaxHealth;
+
+        [Tooltip("Plain 이 한 턴에 주는 피해. 패턴 몬스터는 쓰지 않는다. 대표 공격 패턴 피해를 적어 둔다.")]
         public int Attack;
 
-        public EnemyRule(CombatEnemyKind kind, string name, string description, int maxHealth, int attack)
+        public EnemyRule(CombatEnemyKind kind, MonsterKind monster, string name, string description, int maxHealth, int attack)
         {
             Kind = kind;
+            Monster = monster;
             Name = name;
             Description = description;
             MaxHealth = maxHealth;

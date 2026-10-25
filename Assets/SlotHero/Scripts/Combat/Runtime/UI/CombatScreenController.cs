@@ -148,7 +148,7 @@ namespace SlotHero.Combat.UI
             if (_view != null)
             {
                 _view.Show();
-                _view.ShowEnemy(_battle.Enemy);
+                RefreshEnemies();
                 _view.ShowRelics(_battle.Relics, _icons, _setup.RelicCapacity);
                 _view.ShowPlayerHealth(_battle.PlayerHealth, _battle.PlayerMaxHealth, 0);
                 _view.ClearReelHighlights();
@@ -262,17 +262,14 @@ namespace SlotHero.Combat.UI
 
             if (_view != null)
             {
+                // 방패병이 있으면 방패병이 장군 대신 맞는다. 구슬도 그 칸으로 간다.
                 if (!Instant)
                 {
-                    yield return _view.FireProjectile(color);
+                    yield return _view.FireProjectile(color, attack.Target);
+                    yield return _view.ShowEnemyHit(attack.Damage, attack.Target.MaxHealth, attack.Target, attack.Blocked);
                 }
 
-                _view.ShowEnemyHealth(_battle.Enemy.Health, _battle.Enemy.MaxHealth);
-
-                if (!Instant)
-                {
-                    yield return _view.ShowEnemyHit(attack.Damage, _battle.Enemy.MaxHealth);
-                }
+                RefreshEnemies();
 
                 if (_view.TagDial != null)
                 {
@@ -286,12 +283,30 @@ namespace SlotHero.Combat.UI
                 yield break;
             }
 
-            // 적 공격. 초안 06 의 "기존 UI 로 복귀, 적 공격 애니메이션 실행".
+            // 적 차례. 초안 06 의 "기존 UI 로 복귀, 적 공격 애니메이션 실행".
+            // 왼쪽 적부터 한 번씩 행동한다. 행동마다 안내 글에 패턴을 적고 연출을 튼다.
+            int healthBefore = _battle.PlayerHealth;
             int damage = _battle.EnemyAttack();
             LoseHealth(damage);
 
             if (_view != null)
             {
+                RefreshEnemies();
+
+                int shown = healthBefore;
+                IReadOnlyList<EnemyAction> actions = _battle.EnemyActions;
+                for (int i = 0; i < actions.Count; i++)
+                {
+                    shown -= actions[i].Damage;
+                    _view.SetHint(actions[i].Summary);
+                    _view.ShowPlayerHealth(Mathf.Max(0, shown), _battle.PlayerMaxHealth, 0);
+
+                    if (!Instant)
+                    {
+                        yield return _view.ShowEnemyAttack(actions[i].Damage, actions[i].Actor);
+                    }
+                }
+
                 // 철제 방패처럼 적이 때릴 때 발동한 유물을 알린다.
                 if (_battle.Notices.Count > 0)
                 {
@@ -299,10 +314,6 @@ namespace SlotHero.Combat.UI
                 }
 
                 _view.ShowPlayerHealth(Mathf.Max(0, _battle.PlayerHealth), _battle.PlayerMaxHealth, 0);
-                if (!Instant)
-                {
-                    yield return _view.ShowEnemyAttack(damage);
-                }
             }
 
             if (_battle.Phase == CombatPhase.Lost)
@@ -675,6 +686,15 @@ namespace SlotHero.Combat.UI
             if (PlayerHealthLost != null)
             {
                 PlayerHealthLost(amount);
+            }
+        }
+
+        /// <summary>본체와 소환수의 체력, 방어도, 버프를 지금 값으로 다시 그린다.</summary>
+        private void RefreshEnemies()
+        {
+            if (_view != null && _battle != null)
+            {
+                _view.ShowEnemies(_battle.Enemy, _battle.Enemies, _battle.Target);
             }
         }
 

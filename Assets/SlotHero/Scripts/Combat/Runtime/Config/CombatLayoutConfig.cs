@@ -74,6 +74,16 @@ namespace SlotHero.Combat
 
         public Vector2 EnemyInfoSize = UiScale.V(300f, 300f);
 
+        [Header("소환수")]
+        [Tooltip("첫 소환수 칸(가장 왼쪽 자리)의 왼쪽 위. 정보 칸 아래, 일러스트 왼쪽이다. " +
+                 "몬스터 기획서는 소환수 자리를 그리지 않아 정보 칸 아래 빈 곳에 두었다.")]
+        public Vector2 SummonPosition = UiScale.V(460f, 756f);
+
+        [Tooltip("소환수 칸 하나. 셋이 정보 칸 너비(300)에 들어간다.")]
+        public Vector2 SummonSize = UiScale.V(92f, 180f);
+
+        public float SummonGap = UiScale.Px(12f);
+
         [Header("코인/태그 원판")]
         [Tooltip("두 UI 가 같은 자리, 같은 크기로 바뀌어 든다. 초안의 \"600x600 원\".")]
         public Vector2 DialPosition = UiScale.V(1150f, 340f);
@@ -133,6 +143,12 @@ namespace SlotHero.Combat
             float x = RelicPanelPosition.x + (RelicPanelSize.x - RelicSlotSize) * 0.5f;
             float y = RelicPanelPosition.y + RelicSlotGap + index * (RelicSlotSize + RelicSlotGap);
             return new Vector2(x, y);
+        }
+
+        /// <summary>그 자리 소환수 칸의 왼쪽 위. 0 이 가장 왼쪽이다.</summary>
+        public Vector2 GetSummonPosition(int slot)
+        {
+            return new Vector2(SummonPosition.x + slot * (SummonSize.x + SummonGap), SummonPosition.y);
         }
 
         /// <summary>원판 가운데. 화면 왼쪽 위 기준이다.</summary>

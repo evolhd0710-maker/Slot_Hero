@@ -23,12 +23,21 @@ namespace SlotHero.Combat
     ///   - 적이 때리기 전에 철제 방패가 피해를 줄인다
     ///   - 사건의 지평선이 있으면 소용돌이 칸이 가장 많은 태그로 공격한다
     ///
+    /// 적의 패턴(검투사, 장군, 방패병)은 `CombatBattle.Monsters.cs` 에 있다.
+    ///
     /// 연출은 `CombatScreenController` 가 맡는다. 여기서는 값만 바꾼다.
     /// </summary>
-    public class CombatBattle
+    public partial class CombatBattle
     {
         private readonly CombatRuleConfig _rules;
         private readonly CombatRandom _random;
+
+        /// 적 패턴 전용 난수. 릴과 따로 두어 적이 행동해도 릴 결과가 바뀌지 않게 한다.
+        private readonly CombatRandom _monsterRandom;
+
+        /// 자리 차례로 놓인 적. 살아 있는 적만 남는다.
+        private readonly List<CombatEnemy> _enemies = new List<CombatEnemy>();
+        private readonly List<EnemyAction> _enemyActions = new List<EnemyAction>();
         private readonly List<ReelSymbol> _deck;
         private readonly List<CombatCoin> _coins;
         private readonly List<ReelSymbol> _pool;
@@ -57,7 +66,12 @@ namespace SlotHero.Combat
             _pool = new List<ReelSymbol>(setup.SymbolPool);
             _relics = new List<CombatRelic>(setup.Relics);
 
+            _monsterRandom = new CombatRandom(setup.Seed ^ 0x5A17E5);
+
             Enemy = setup.Enemy ?? new CombatEnemy("적", string.Empty, 30, 5);
+            Enemy.Slot = GeneralRules.MaxShieldmen;
+            _enemies.Add(Enemy);
+
             PlayerMaxHealth = setup.PlayerMaxHealth;
             PlayerHealth = setup.PlayerHealth;
             Phase = CombatPhase.None;
@@ -84,7 +98,37 @@ namespace SlotHero.Combat
             get { return _notices; }
         }
 
+        /// <summary>본체. 이 적이 쓰러지면 이긴다. 소환수는 함께 사라진다.</summary>
         public CombatEnemy Enemy { get; private set; }
+
+        /// <summary>살아 있는 적. 왼쪽 자리부터다. 이 차례로 행동한다.</summary>
+        public IReadOnlyList<CombatEnemy> Enemies
+        {
+            get { return _enemies; }
+        }
+
+        /// <summary>영웅의 공격을 받을 적. 가장 왼쪽에 살아 있는 적이다. 방패병이 있으면 방패병이다.</summary>
+        public CombatEnemy Target
+        {
+            get
+            {
+                for (int i = 0; i < _enemies.Count; i++)
+                {
+                    if (!_enemies[i].IsDead)
+                    {
+                        return _enemies[i];
+                    }
+                }
+
+                return Enemy;
+            }
+        }
+
+        /// <summary>마지막 적 차례에 적들이 한 행동. 행동한 차례대로다.</summary>
+        public IReadOnlyList<EnemyAction> EnemyActions
+        {
+            get { return _enemyActions; }
+        }
 
         public int PlayerHealth { get; private set; }
         public int PlayerMaxHealth { get; private set; }
@@ -394,7 +438,12 @@ namespace SlotHero.Combat
 
             result.DamageScale = scale;
             result.Damage = damage > 0 ? (int)Math.Round(damage * scale, MidpointRounding.AwayFromZero) : 0;
-            result.EnemyHealthAfter = Enemy.Health - result.Damage;
+
+            // 피해 계산 순서 ⑤ 방어도 → ⑥ 체력. 방어도가 먼저 막는다.
+            CombatEnemy target = Target;
+            result.Target = target;
+            result.Blocked = Math.Min(Math.Max(0, target.Block), result.Damage);
+            result.EnemyHealthAfter = target.Health - (result.Damage - result.Blocked);
             return result;
         }
 
@@ -412,7 +461,9 @@ namespace SlotHero.Combat
             AttackResult result = Calculate(tag);
 
             PlayerHealth -= result.HealthPaid;
-            Enemy.Health = result.EnemyHealthAfter;
+            result.Target.Block -= result.Blocked;
+            result.Target.Health = result.EnemyHealthAfter;
+            RemoveDefeated();
 
             Turns++;
             if (result.Damage > BiggestHit)
@@ -431,7 +482,10 @@ namespace SlotHero.Combat
             return result;
         }
 
-        /// <summary>적이 한 번 때린다. 준 피해를 돌려준다. 플레이어가 쓰러지면 끝난다.</summary>
+        /// <summary>
+        /// 적 차례. 살아 있는 적이 왼쪽부터 한 번씩 행동한다. 영웅이 받은 피해 합을 돌려준다.
+        /// 무엇을 했는지는 `EnemyActions` 에 남는다. 플레이어가 쓰러지면 끝난다.
+        /// </summary>
         public int EnemyAttack()
         {
             if (Phase != CombatPhase.EnemyTurn)
@@ -440,8 +494,53 @@ namespace SlotHero.Combat
             }
 
             _notices.Clear();
+            _enemyActions.Clear();
 
-            int damage = Enemy.Attack;
+            int before = PlayerHealth;
+
+            // 행동하는 동안 소환으로 목록이 바뀐다. 차례는 시작할 때의 자리로 정한다.
+            List<CombatEnemy> order = new List<CombatEnemy>(_enemies);
+            for (int i = 0; i < order.Count && PlayerHealth > 0; i++)
+            {
+                CombatEnemy actor = order[i];
+                if (actor.IsDead || actor.JustSummoned)
+                {
+                    continue;
+                }
+
+                EnemyAction action = Act(actor);
+                actor.Actions++;
+                actor.LastAction = action;
+                _enemyActions.Add(action);
+            }
+
+            for (int i = 0; i < _enemies.Count; i++)
+            {
+                _enemies[i].JustSummoned = false;
+            }
+
+            Phase = PlayerHealth <= 0 ? CombatPhase.Lost : CombatPhase.Rerolling;
+            return before - PlayerHealth;
+        }
+
+        /// <summary>
+        /// 적이 영웅을 때린다. 영웅이 받은 피해를 돌려준다. 몬스터 기획서의 피해 계산 순서다.
+        ///   ① 데미지 증감(고정)   스테이지 보정
+        ///   ② 데미지 증감(퍼센트) 기세
+        ///   ③ 받는 데미지 증감(퍼센트) 지금은 없다
+        ///   ④ 받는 데미지 증감(고정) 철제 방패
+        ///   ⑤ 방어도 영웅은 아직 방어도가 없다
+        ///   ⑥ 체력
+        /// </summary>
+        private int HitPlayer(CombatEnemy actor, int baseDamage)
+        {
+            int damage = baseDamage + actor.AttackBonus;
+            if (actor.Momentum != 0)
+            {
+                damage = (int)Math.Round(damage * (100 + actor.Momentum) / 100.0, MidpointRounding.AwayFromZero);
+            }
+
+            damage = Math.Max(0, damage);
 
             // 철제 방패. 적이 공격하기 전에 그 피해가 문턱 이상이면 줄인다.
             ForEachEffect(RelicEffectKind.ReduceDamageTaken, (relic, effect) =>
@@ -454,9 +553,26 @@ namespace SlotHero.Combat
             });
 
             PlayerHealth -= damage;
-
-            Phase = PlayerHealth <= 0 ? CombatPhase.Lost : CombatPhase.Rerolling;
             return damage;
+        }
+
+        /// <summary>쓰러진 적을 자리에서 뺀다. 본체가 쓰러졌으면 소환수도 함께 사라진다.</summary>
+        private void RemoveDefeated()
+        {
+            bool mainDown = Enemy.IsDead;
+            for (int i = _enemies.Count - 1; i >= 0; i--)
+            {
+                CombatEnemy enemy = _enemies[i];
+                if (enemy == Enemy)
+                {
+                    continue;
+                }
+
+                if (enemy.IsDead || mainDown)
+                {
+                    _enemies.RemoveAt(i);
+                }
+            }
         }
 
         /// <summary>

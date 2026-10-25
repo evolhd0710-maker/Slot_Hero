@@ -51,7 +51,16 @@ namespace SlotHero.Combat
         /// <summary>최종 공격력.</summary>
         public int Damage;
 
-        /// <summary>때린 뒤 적 체력. 0 아래일 수 있다.</summary>
+        /// <summary>
+        /// 맞은 적. 가장 왼쪽에 살아 있는 적이다.
+        /// 방패병이 있으면 방패병이 장군 대신 받는다(몬스터 기획서 06-1 의 "장군에게 가는 피해를 대신 받아낸다").
+        /// </summary>
+        public CombatEnemy Target;
+
+        /// <summary>맞은 적의 방어도가 막은 피해.</summary>
+        public int Blocked;
+
+        /// <summary>때린 뒤 맞은 적의 체력. 0 아래일 수 있다.</summary>
         public int EnemyHealthAfter;
 
         /// <summary>배수 전체. 중복 배수와 코인 가중치의 합이다.</summary>

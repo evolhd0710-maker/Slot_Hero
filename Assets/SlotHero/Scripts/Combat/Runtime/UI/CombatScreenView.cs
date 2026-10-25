@@ -70,6 +70,13 @@ namespace SlotHero.Combat.UI
         [SerializeField] private TMP_Text _enemyInfoLabel;
         [SerializeField] private TMP_Text _enemyDamageLabel;
 
+        [Header("소환수")]
+        [Tooltip("소환수 칸. 자리 0 이 가장 왼쪽이다. 장군의 방패병이 장군 바로 왼쪽(마지막 칸)부터 들어선다.")]
+        [SerializeField] private Image[] _summonPanels = new Image[0];
+        [SerializeField] private Image[] _summonBars = new Image[0];
+        [SerializeField] private TMP_Text[] _summonNames = new TMP_Text[0];
+        [SerializeField] private TMP_Text[] _summonInfos = new TMP_Text[0];
+
         [Header("원판")]
         [SerializeField] private Image _dial;
         [SerializeField] private CanvasGroup _coinGroup;
@@ -468,11 +475,149 @@ namespace SlotHero.Combat.UI
 
             SetText(_enemyArtLabel, enemy.Name);
             SetText(_enemyNameLabel, enemy.Name);
-
-            string attack = _visual != null ? _visual.AttackLabel : "공격력";
-            SetText(_enemyInfoLabel, attack + " " + enemy.Attack + "\n\n" + enemy.Description);
+            SetText(_enemyInfoLabel, DescribeEnemy(enemy, true));
 
             ShowEnemyHealth(enemy.Health, enemy.MaxHealth);
+        }
+
+        /// <summary>
+        /// 본체와 소환수를 모두 그린다. 영웅의 공격을 받을 소환수 칸은 색을 바꾼다.
+        /// 소환수가 없는 자리의 칸은 끈다.
+        /// </summary>
+        public void ShowEnemies(CombatEnemy main, IReadOnlyList<CombatEnemy> field, CombatEnemy target)
+        {
+            ShowEnemy(main);
+
+            for (int i = 0; i < _summonPanels.Length; i++)
+            {
+                if (_summonPanels[i] != null)
+                {
+                    _summonPanels[i].gameObject.SetActive(false);
+                }
+            }
+
+            if (field == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < field.Count; i++)
+            {
+                CombatEnemy summon = field[i];
+                int slot = summon != null ? summon.Slot : -1;
+                if (summon == null || !summon.IsSummon || slot < 0 || slot >= _summonPanels.Length || _summonPanels[slot] == null)
+                {
+                    continue;
+                }
+
+                _summonPanels[slot].gameObject.SetActive(true);
+                if (_visual != null)
+                {
+                    _summonPanels[slot].color = summon == target ? _visual.TargetColor : _visual.PanelColor;
+                }
+
+                if (slot < _summonNames.Length)
+                {
+                    SetText(_summonNames[slot], summon.Name);
+                }
+
+                if (slot < _summonInfos.Length)
+                {
+                    SetText(_summonInfos[slot], summon.Health + " / " + summon.MaxHealth + "\n" + DescribeEnemy(summon, false));
+                }
+
+                if (slot < _summonBars.Length)
+                {
+                    SetBar(_summonBars[slot], summon.Health, summon.MaxHealth);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 그 적의 가운데. 화면 왼쪽 위 기준이다. 소환수는 그 칸, 본체는 일러스트 가운데다.
+        /// 공격 구슬과 피해 숫자가 여기로 간다.
+        /// </summary>
+        public Vector2 GetEnemyCenter(CombatEnemy enemy)
+        {
+            if (_layout == null)
+            {
+                return Vector2.zero;
+            }
+
+            if (enemy != null && enemy.IsSummon && enemy.Slot >= 0 && enemy.Slot < _summonPanels.Length)
+            {
+                Vector2 at = _layout.GetSummonPosition(enemy.Slot);
+                return at + _layout.SummonSize * 0.5f;
+            }
+
+            return _layout.EnemyArtPosition + _layout.EnemyArtSize * 0.5f;
+        }
+
+        /// <summary>
+        /// 정보 칸에 적는 글. 방어도, 버프, 지난 행동, 설명.
+        /// full 이 아니면 소환수 칸에 들어가게 상태만 짧게 적는다.
+        /// </summary>
+        private string DescribeEnemy(CombatEnemy enemy, bool full)
+        {
+            List<string> lines = new List<string>();
+
+            if (enemy.Monster == MonsterKind.Plain)
+            {
+                lines.Add((_visual != null ? _visual.AttackLabel : "공격력") + " " + enemy.Attack);
+            }
+
+            if (enemy.Block > 0)
+            {
+                lines.Add(Colored((_visual != null ? _visual.BlockLabel : "방어도") + " " + enemy.Block,
+                    _visual != null ? _visual.BlockColor : Color.white));
+            }
+
+            if (enemy.Momentum != 0)
+            {
+                lines.Add(Colored((_visual != null ? _visual.MomentumLabel : "기세") + " " + enemy.Momentum,
+                    _visual != null ? _visual.BuffColor : Color.white));
+            }
+
+            if (enemy.JavelinOrdered)
+            {
+                lines.Add(Colored(_visual != null ? _visual.JavelinOrderLabel : "투창 명령",
+                    _visual != null ? _visual.BuffColor : Color.white));
+            }
+
+            if (full)
+            {
+                if (enemy.LastAction != null)
+                {
+                    lines.Add((_visual != null ? _visual.LastActionLabel : "지난 행동") + " · " + DescribeAction(enemy.LastAction));
+                }
+
+                if (lines.Count > 0)
+                {
+                    lines.Add(string.Empty);
+                }
+
+                lines.Add(enemy.Description);
+            }
+
+            return string.Join("\n", lines);
+        }
+
+        private static string DescribeAction(EnemyAction action)
+        {
+            switch (action.Kind)
+            {
+                case PatternKind.Attack:
+                    return action.Pattern + " " + action.Damage;
+                case PatternKind.Defend:
+                    return action.Pattern + " " + action.BlockGained;
+                default:
+                    return action.Pattern;
+            }
+        }
+
+        private static string Colored(string text, Color color)
+        {
+            return "<color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + text + "</color>";
         }
 
         private static void SetBar(Image bar, int value, int max)
@@ -572,6 +717,12 @@ namespace SlotHero.Combat.UI
         /// </summary>
         public IEnumerator FireProjectile(Color color)
         {
+            return FireProjectile(color, null);
+        }
+
+        /// <summary>그 적에게 공격 구슬을 날린다. 방패병이 맞으면 방패병 칸으로 간다.</summary>
+        public IEnumerator FireProjectile(Color color, CombatEnemy target)
+        {
             if (_projectile == null || _layout == null)
             {
                 yield break;
@@ -579,9 +730,7 @@ namespace SlotHero.Combat.UI
 
             RectTransform rect = _projectile.rectTransform;
             Vector2 from = TopLeftToAnchored(_layout.DialCenter);
-            Vector2 to = TopLeftToAnchored(new Vector2(
-                _layout.EnemyArtPosition.x + _layout.EnemyArtSize.x * 0.5f,
-                _layout.EnemyArtPosition.y + _layout.EnemyArtSize.y * 0.5f));
+            Vector2 to = TopLeftToAnchored(GetEnemyCenter(target));
 
             _projectile.color = color;
             _projectile.gameObject.SetActive(true);
@@ -605,15 +754,39 @@ namespace SlotHero.Combat.UI
         /// <summary>몬스터 위에 피해 숫자를 띄우고 몬스터를 흔든다. 세기는 적 최대 체력 대비 비율로 정한다.</summary>
         public IEnumerator ShowEnemyHit(int damage, int enemyMaxHealth)
         {
+            return ShowEnemyHit(damage, enemyMaxHealth, null, 0);
+        }
+
+        /// <summary>
+        /// 맞은 적 위에 피해 숫자를 띄우고 그 적을 흔든다. 방어도가 막은 몫이 있으면 함께 적는다.
+        /// </summary>
+        public IEnumerator ShowEnemyHit(int damage, int enemyMaxHealth, CombatEnemy target, int blocked)
+        {
             int tier = CombatVisualConfig.GetDamageTier(damage, enemyMaxHealth);
             float scale = _visual != null ? _visual.GetTierScale(tier) : 1f;
             float shake = _visual != null ? _visual.GetTierShake(tier) : 10f;
 
-            Coroutine shaking = _enemyArt != null
-                ? StartCoroutine(Shake(_enemyArt.rectTransform, shake, 0.3f))
+            RectTransform body = GetEnemyRect(target);
+            Coroutine shaking = body != null
+                ? StartCoroutine(Shake(body, shake, 0.3f))
                 : null;
 
-            yield return Pop(_enemyDamageLabel, damage.ToString(), Color.white, scale);
+            if (_enemyDamageLabel != null && _layout != null)
+            {
+                Vector2 center = GetEnemyCenter(target);
+                _enemyDamageLabel.rectTransform.anchoredPosition =
+                    TopLeftToAnchored(new Vector2(center.x, center.y - UiScale.Px(40f)));
+            }
+
+            string text = (damage - blocked).ToString();
+            if (blocked > 0)
+            {
+                string blockedText = _visual != null ? _visual.BlockedText : "막음";
+                Color blockColor = _visual != null ? _visual.BlockColor : Color.white;
+                text += "\n<size=45%>" + Colored(blockedText + " " + blocked, blockColor) + "</size>";
+            }
+
+            yield return Pop(_enemyDamageLabel, text, Color.white, scale);
 
             if (shaking != null)
             {
@@ -621,15 +794,37 @@ namespace SlotHero.Combat.UI
             }
         }
 
+        /// <summary>그 적을 그린 칸. 소환수는 그 칸, 본체는 일러스트다.</summary>
+        private RectTransform GetEnemyRect(CombatEnemy enemy)
+        {
+            if (enemy != null && enemy.IsSummon && enemy.Slot >= 0 && enemy.Slot < _summonPanels.Length
+                && _summonPanels[enemy.Slot] != null)
+            {
+                return _summonPanels[enemy.Slot].rectTransform;
+            }
+
+            return _enemyArt != null ? _enemyArt.rectTransform : null;
+        }
+
         /// <summary>몬스터가 앞으로 나와 때리고 플레이어 체력 칸이 흔들린다.</summary>
         public IEnumerator ShowEnemyAttack(int damage)
+        {
+            return ShowEnemyAttack(damage, null);
+        }
+
+        /// <summary>
+        /// 그 적이 앞으로 나온다. 피해가 있으면 플레이어 체력 칸이 흔들리고 피해 숫자가 뜬다.
+        /// 방어나 버프처럼 때리지 않는 패턴은 나오기만 한다.
+        /// </summary>
+        public IEnumerator ShowEnemyAttack(int damage, CombatEnemy actor)
         {
             float duration = _visual != null ? _visual.EnemyAttackDuration : 0.5f;
             float lunge = _layout != null ? _layout.EnemyLunge : 40f;
 
-            if (_enemyArt != null)
+            RectTransform body = GetEnemyRect(actor);
+            if (body != null)
             {
-                RectTransform rect = _enemyArt.rectTransform;
+                RectTransform rect = body;
                 Vector2 home = rect.anchoredPosition;
                 float elapsed = 0f;
 
@@ -643,6 +838,11 @@ namespace SlotHero.Combat.UI
                 }
 
                 rect.anchoredPosition = home;
+            }
+
+            if (damage <= 0)
+            {
+                yield break;
             }
 
             Color red = _visual != null ? _visual.CostColor : Color.red;
@@ -757,6 +957,11 @@ namespace SlotHero.Combat.UI
             PlaceTopLeft(_enemyArt, _layout.EnemyArtPosition, _layout.EnemyArtSize);
             PlaceTopLeft(_enemyInfo, _layout.EnemyInfoPosition, _layout.EnemyInfoSize);
 
+            for (int i = 0; i < _summonPanels.Length; i++)
+            {
+                PlaceTopLeft(_summonPanels[i], _layout.GetSummonPosition(i), _layout.SummonSize);
+            }
+
             PlaceTopLeft(_dial, _layout.DialPosition, new Vector2(_layout.DialSize, _layout.DialSize));
 
             if (_hintLabel != null)
@@ -828,6 +1033,14 @@ namespace SlotHero.Combat.UI
             Style(_enemyDamageLabel, _visual.DamageFontSize, Color.white);
             Style(_playerDamageLabel, _visual.DamageFontSize * 0.7f, _visual.CostColor);
             Style(_resultLabel, _visual.DamageFontSize * 1.4f, _visual.TextColor);
+
+            for (int i = 0; i < _summonPanels.Length; i++)
+            {
+                Paint(_summonPanels[i], _visual.PanelColor);
+                Paint(i < _summonBars.Length ? _summonBars[i] : null, _visual.EnemyBarColor);
+                Style(i < _summonNames.Length ? _summonNames[i] : null, _visual.BodyFontSize, _visual.TextColor);
+                Style(i < _summonInfos.Length ? _summonInfos[i] : null, _visual.BodyFontSize * 0.8f, _visual.SubTextColor);
+            }
 
             if (_enemyDamageLabel != null)
             {

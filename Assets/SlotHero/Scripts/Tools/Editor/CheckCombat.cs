@@ -46,6 +46,9 @@ namespace SlotHero.ToolsEditor
             CheckRules(rules);
             CheckSectors();
             CheckRelics(rules);
+            CheckGladiator(rules);
+            CheckGeneral(rules);
+            CheckMonsterRules(rules);
 
             Object.DestroyImmediate(rules);
 
@@ -463,6 +466,264 @@ namespace SlotHero.ToolsEditor
 
             Report("속임수 주사위 · 가장 왼쪽 문양 가치를 한 번 더 더한다", withoutDice.ValueSum, expected + left.Value);
             Report("속임수 주사위 · 재사용 하나", withoutDice.ReuseCount, 1);
+        }
+
+        // ---- 몬스터 ----
+
+        /// <summary>
+        /// 검투사. 첫 턴 타격, 그 뒤 타격 · 방어 · 함성. 함성의 기세만큼 타격이 세지고, 방어도는 영웅 공격을 막고 다음 행동 전에 사라진다.
+        /// </summary>
+        private static void CheckGladiator(CombatRuleConfig rules)
+        {
+            bool firstIsStrike = true;
+            bool strikesMatchMomentum = true;
+            bool blockAbsorbs = true;
+            bool blockFades = true;
+            bool momentumMatchesShouts = true;
+            int strikes = 0;
+            int guards = 0;
+            int shouts = 0;
+
+            // 확률은 표본 하나로 보면 흔들린다. 시드 스물로 30턴씩, 600번을 모아 본다.
+            for (int seed = 0; seed < 20; seed++)
+            {
+                CombatSetup setup = ExampleSetup(5000, 5000);
+                setup.PlayerMaxHealth = 5000;
+                setup.Seed = 20261025 + seed * 7919;
+                setup.Enemy = new CombatEnemy("검투사", string.Empty, 5000, 6, MonsterKind.Gladiator);
+
+                CombatBattle battle = Begin(setup, rules);
+                int battleShouts = 0;
+
+                for (int turn = 0; turn < 30 && battle.Phase == CombatPhase.ChoosingCoin; turn++)
+                {
+                    battle.SelectWithoutCoin();
+
+                    int blockBefore = battle.Enemy.Block;
+                    int healthBefore = battle.Enemy.Health;
+                    AttackResult hit = battle.Attack(FirstUsableTag(battle));
+                    if (hit != null)
+                    {
+                        int blocked = Mathf.Min(blockBefore, hit.Damage);
+                        blockAbsorbs &= hit.Blocked == blocked && healthBefore - battle.Enemy.Health == hit.Damage - blocked;
+                    }
+
+                    int momentum = battle.Enemy.Momentum;
+                    battle.EnemyAttack();
+                    EnemyAction action = battle.EnemyActions.Count > 0 ? battle.EnemyActions[0] : null;
+                    if (action == null)
+                    {
+                        break;
+                    }
+
+                    if (turn == 0)
+                    {
+                        firstIsStrike &= action.Pattern == "타격" && action.Damage == 6;
+                    }
+
+                    switch (action.Kind)
+                    {
+                        case PatternKind.Attack:
+                            strikes++;
+                            int expected = Mathf.RoundToInt(6 * (100 + momentum) / 100f);
+                            strikesMatchMomentum &= action.Damage == expected;
+                            blockFades &= battle.Enemy.Block == 0;
+                            break;
+                        case PatternKind.Defend:
+                            guards++;
+                            blockFades &= battle.Enemy.Block == 8;
+                            break;
+                        case PatternKind.Buff:
+                            shouts++;
+                            battleShouts++;
+                            blockFades &= battle.Enemy.Block == 0;
+                            break;
+                    }
+
+                    battle.Reroll();
+                }
+
+                momentumMatchesShouts &= battle.Enemy.Momentum == battleShouts * 50;
+            }
+
+            Report("검투사 · 첫 턴은 타격 6", firstIsStrike);
+            Report("검투사 · 타격 · 방어 · 함성을 모두 쓴다", strikes > 0 && guards > 0 && shouts > 0, strikes * 100 + guards * 10 + shouts);
+            Report("검투사 · 타격이 가장 잦다", strikes > guards && strikes > shouts, strikes);
+            Report("검투사 · 방어가 함성보다 잦다(30 : 20)", guards > shouts, guards);
+            Report("검투사 · 함성마다 기세 50", momentumMatchesShouts);
+            Report("검투사 · 타격은 6 × (1 + 기세%)", strikesMatchMomentum);
+            Report("검투사 · 방어도가 영웅 공격을 먼저 막는다", blockAbsorbs);
+            Report("검투사 · 방어도는 다음 행동 전에 사라진다", blockFades);
+        }
+
+        /// <summary>
+        /// 장군과 방패병. 방패병이 없으면 진형 갖추기, 셋이면 더 소환하지 않는다.
+        /// 방패병이 장군 대신 맞고, 투창 명령 다음 턴에 방패병마다 투창 7 을 던진다.
+        /// </summary>
+        private static void CheckGeneral(CombatRuleConfig rules)
+        {
+            // 방패병이 영웅 공격에 쓰러지지 않게 체력을 크게 둔 규칙으로 패턴만 본다.
+            CombatRuleConfig sturdy = Object.Instantiate(rules);
+            sturdy.Shieldman = new ShieldmanRule();
+            sturdy.Shieldman.MaxHealth = 100000;
+
+            CombatSetup setup = ExampleSetup(100000, 5000);
+            setup.PlayerMaxHealth = 100000;
+            setup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+
+            CombatBattle battle = Begin(setup, sturdy);
+            battle.SelectWithoutCoin();
+            AttackResult first = battle.Attack(FirstUsableTag(battle));
+            Report("장군 · 방패병이 없으면 장군이 맞는다", first != null && first.Target == battle.Enemy);
+
+            battle.EnemyAttack();
+            EnemyAction formation = battle.EnemyActions.Count > 0 ? battle.EnemyActions[0] : null;
+            Report("장군 · 방패병이 없으면 진형 갖추기", formation != null && formation.Kind == PatternKind.Summon);
+            Report("장군 · 방패병 1기가 선다", battle.SummonCount, 1);
+            Report("장군 · 첫 방패병은 장군 바로 왼쪽 자리", formation != null && formation.Summoned != null ? formation.Summoned.Slot : -1, battle.Enemy.Slot - 1);
+            Report("장군 · 소환된 방패병은 그 턴에 행동하지 않는다", battle.EnemyActions.Count, 1);
+            Report("장군 · 방패병 체력은 규칙의 방패병 체력", formation != null && formation.Summoned != null ? formation.Summoned.MaxHealth : -1, 100000);
+
+            battle.Reroll();
+            battle.SelectWithoutCoin();
+            int generalBefore = battle.Enemy.Health;
+            AttackResult guarded = battle.Attack(FirstUsableTag(battle));
+            Report("장군 · 방패병이 장군 대신 맞는다", guarded != null && guarded.Target != battle.Enemy && guarded.Target.IsSummon);
+            Report("장군 · 장군 체력은 그대로", battle.Enemy.Health, generalBefore);
+
+            bool neverOverMax = true;
+            bool noFormationAtMax = true;
+            bool javelinFollowsOrder = true;
+            bool guardWithoutOrder = true;
+            bool chargeIs15 = true;
+            int charges = 0;
+            int orders = 0;
+            int javelins = 0;
+            bool ordered = false;
+            int orderedCount = 0;
+
+            for (int turn = 0; turn < 80 && battle.Phase == CombatPhase.EnemyTurn; turn++)
+            {
+                int shieldmenBefore = battle.SummonCount;
+                battle.EnemyAttack();
+
+                int thrown = 0;
+                for (int i = 0; i < battle.EnemyActions.Count; i++)
+                {
+                    EnemyAction action = battle.EnemyActions[i];
+                    if (action.Actor.Monster == MonsterKind.Shieldman)
+                    {
+                        if (action.Pattern == "투창")
+                        {
+                            thrown++;
+                            javelins++;
+                            javelinFollowsOrder &= ordered && action.Damage == 7;
+                        }
+                        else
+                        {
+                            guardWithoutOrder &= action.Kind == PatternKind.Defend && action.BlockGained == 8;
+                        }
+
+                        continue;
+                    }
+
+                    if (action.Kind == PatternKind.Summon)
+                    {
+                        noFormationAtMax &= shieldmenBefore < 3;
+                    }
+                    else if (action.Kind == PatternKind.Attack)
+                    {
+                        charges++;
+                        chargeIs15 &= action.Damage == 15;
+                    }
+                    else if (action.Kind == PatternKind.Buff)
+                    {
+                        orders++;
+                    }
+                }
+
+                if (ordered)
+                {
+                    javelinFollowsOrder &= thrown == orderedCount;
+                }
+
+                // 이번 턴에 명령을 받은 방패병 수. 다음 턴에 그만큼 던진다.
+                ordered = false;
+                orderedCount = 0;
+                for (int i = 0; i < battle.Enemies.Count; i++)
+                {
+                    if (battle.Enemies[i].JavelinOrdered)
+                    {
+                        ordered = true;
+                        orderedCount++;
+                    }
+                }
+
+                neverOverMax &= battle.SummonCount <= 3;
+
+                battle.Reroll();
+                battle.SelectWithoutCoin();
+                battle.Attack(FirstUsableTag(battle));
+            }
+
+            Report("장군 · 방패병은 3기를 넘지 않는다", neverOverMax);
+            Report("장군 · 방패병이 3기면 진형 갖추기를 쓰지 않는다", noFormationAtMax);
+            Report("장군 · 기마병 돌격과 투창 명령을 쓴다", charges > 0 && orders > 0, charges * 100 + orders);
+            Report("장군 · 기마병 돌격은 15", chargeIs15);
+            Report("방패병 · 투창 명령 다음 턴에 명령받은 방패병마다 투창 7", javelins > 0 && javelinFollowsOrder, javelins);
+            Report("방패병 · 명령이 없으면 방어 상태 8", guardWithoutOrder);
+
+            Object.DestroyImmediate(sturdy);
+
+            // 기본 규칙(방패병 체력 15). 방패병을 쓰러뜨리면 다시 장군이 맞는다.
+            CombatSetup plainSetup = ExampleSetup(5000, 5000);
+            plainSetup.PlayerMaxHealth = 5000;
+            plainSetup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+            CombatBattle plain = Begin(plainSetup, rules);
+            plain.SelectWithoutCoin();
+            plain.Attack(FirstUsableTag(plain));
+            plain.EnemyAttack();
+            plain.Reroll();
+            plain.SelectCoin(0);
+            AttackResult kill = plain.Attack(SymbolTagType.Mars);
+            Report("방패병 · 체력 15", kill != null && kill.Target.IsSummon ? kill.Target.MaxHealth : -1, 15);
+            Report("방패병 · 쓰러지면 자리에서 빠진다", plain.SummonCount, 0);
+            Report("방패병 · 쓰러지면 다시 장군이 맞는다", plain.Target == plain.Enemy);
+
+            // 본체가 쓰러지면 소환수도 사라지고 이긴다.
+            CombatSetup lastSetup = ExampleSetup(5000, 5000);
+            lastSetup.PlayerMaxHealth = 5000;
+            lastSetup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+            CombatBattle last = Begin(lastSetup, rules);
+            last.SelectWithoutCoin();
+            last.Attack(FirstUsableTag(last));
+            last.EnemyAttack();
+            last.Reroll();
+            last.Enemy.Health = 0;
+            last.SelectWithoutCoin();
+            last.Attack(FirstUsableTag(last));
+            Report("장군 · 본체가 쓰러지면 방패병도 사라진다", last.SummonCount, 0);
+            Report("장군 · 본체가 쓰러지면 이긴다", last.Phase == CombatPhase.Won, (int)last.Phase);
+        }
+
+        /// <summary>규칙 설정의 적이 몬스터 기획서와 맞는지.</summary>
+        private static void CheckMonsterRules(CombatRuleConfig rules)
+        {
+            CombatEnemy normal = rules.MakeEnemy(CombatEnemyKind.Normal, 1);
+            Report("일반 방은 검투사", normal.Monster == MonsterKind.Gladiator && normal.Name == "검투사");
+            Report("검투사 체력 30", normal.MaxHealth, 30);
+
+            CombatEnemy elite = rules.MakeEnemy(CombatEnemyKind.Elite, 1);
+            Report("엘리트 방은 장군", elite.Monster == MonsterKind.General && elite.Name == "장군");
+            Report("장군 체력 80", elite.MaxHealth, 80);
+
+            Report("스테이지가 오르면 패턴 피해에 더한다", rules.MakeEnemy(CombatEnemyKind.Normal, 2).AttackBonus, rules.EnemyAttackGrowthPerStage);
+            Report("Plain 적은 공격력에 이미 더해 따로 더하지 않는다", rules.MakeEnemy(CombatEnemyKind.Boss, 2).AttackBonus, 0);
+            Report("방패병은 장군과 같은 스테이지로 오른다", rules.MakeShieldman(2).MaxHealth > rules.MakeShieldman(1).MaxHealth);
+
+            CombatRuleConfig asset = UiSceneBuilder.LoadConfig<CombatRuleConfig>("Combat", "CombatRuleConfig");
+            Report("설정 에셋도 일반 방이 검투사", asset != null && asset.MakeEnemy(CombatEnemyKind.Normal, 1).Monster == MonsterKind.Gladiator);
+            Report("설정 에셋도 엘리트 방이 장군", asset != null && asset.MakeEnemy(CombatEnemyKind.Elite, 1).Monster == MonsterKind.General);
         }
 
         /// <summary>유물 설정과 물건 목록이 시트의 열 개로 맞춰졌는지.</summary>

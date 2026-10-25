@@ -28,6 +28,15 @@ namespace SlotHero.Combat
         public Color PlayerBarColor = new Color(0.27f, 0.62f, 0.32f, 1f);
         public Color EnemyBarColor = new Color(0.78f, 0.27f, 0.22f, 1f);
 
+        [Tooltip("영웅의 공격을 받을 소환수 칸. 방패병이 장군 대신 맞는다는 것을 보인다.")]
+        public Color TargetColor = new Color(0.42f, 0.24f, 0.18f, 0.95f);
+
+        [Tooltip("방어도 숫자. 몬스터 기획서의 [방어] 분류 색 쪽이다.")]
+        public Color BlockColor = new Color(0.55f, 0.72f, 0.92f, 1f);
+
+        [Tooltip("버프(기세, 투창 명령). [버프] 분류 색 쪽이다.")]
+        public Color BuffColor = new Color(0.95f, 0.78f, 0.35f, 1f);
+
         [Tooltip("원판 바탕.")]
         public Color DialColor = new Color(0.17f, 0.15f, 0.13f, 0.95f);
 
@@ -81,6 +90,11 @@ namespace SlotHero.Combat
         public string CostLabel = "소모 체력";
         public string WeightLabel = "가중치";
         public string AttackLabel = "공격력";
+        public string BlockLabel = "방어도";
+        public string MomentumLabel = "기세";
+        public string JavelinOrderLabel = "투창 명령";
+        public string LastActionLabel = "지난 행동";
+        public string BlockedText = "막음";
         public string VortexHint = "아직 효과가 없는 칸입니다";
         public string VortexRelicHint = "사건의 지평선 · 가장 많은 태그로 공격합니다";
         public string VictoryText = "승리";
