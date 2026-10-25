@@ -59,7 +59,9 @@ TextureImporter:
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
   alphaIsTransparency: 1
+  spriteTessellationMethod: 0
   spriteTessellationDetail: -1
+  spriteGeometrySubdivision: -1
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
@@ -159,7 +161,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "ChatGPT Image 2026\uB144 9\uC6D4 19\uC77C \uC624\uC804 12_51_57_0": 6278733574127768335
+      "ChatGPT Image 2026\uB144 9\uC6D4 19\uC77C \uC624\uC804 12_51_57_1": 7324656208934248445
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
