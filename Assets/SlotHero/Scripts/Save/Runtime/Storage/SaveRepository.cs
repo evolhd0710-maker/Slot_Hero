@@ -162,7 +162,7 @@ namespace SlotHero.Save
             string backupName = _config.GetMetaBackupFileName(profileIndex);
 
             // 판 번호는 보지 않는다. `SaveFormat` 참고.
-            MetaSaveData main = ReadMeta(mainName);
+            MetaSaveData main = ReadMeta(mainName, profileIndex);
             if (main != null)
             {
                 outcome = SaveOutcome.Ok;
@@ -187,7 +187,7 @@ namespace SlotHero.Save
                 return null;
             }
 
-            MetaSaveData backup = ReadMeta(backupName);
+            MetaSaveData backup = ReadMeta(backupName, profileIndex);
             if (backup != null)
             {
                 // 백업은 한 번 앞의 메타라 지금 런을 모를 수 있다. 온전한 런이 있으면 먼저 이어 붙인다.
@@ -245,7 +245,7 @@ namespace SlotHero.Save
                 return null;
             }
 
-            MetaSaveData backup = ReadMeta(backupName);
+            MetaSaveData backup = ReadMeta(backupName, profileIndex);
             if (backup == null || !LinkIntactRun(backup, profileIndex))
             {
                 return null;
@@ -330,7 +330,7 @@ namespace SlotHero.Save
             // 예전에는 읽히기만 하면 옮겨, 실행 중 본 파일이 망가진 채로 다시 저장하면 멀쩡한 백업을 망가진 글로 덮었다.
             // 2026년 10월 9일 외부 검토가 짚었다.
             string current = ReadSaved(mainName);
-            if (current != null && ParseMeta(current) != null)
+            if (current != null && ParseMeta(current, data.ProfileIndex) != null)
             {
                 WriteJson(backupName, current);
             }
@@ -375,6 +375,10 @@ namespace SlotHero.Save
                 outcome = SaveOutcome.RunDiscarded;
                 return null;
             }
+
+            // 문양 이름을 기획서에 맞추기 전에 저장한 런이면 옛 식별자를 새 식별자로 옮긴다(2026년 10월 19일 원재).
+            // 체크섬은 파일 글로 이미 확인했다. 옮긴 값은 다음 저장에 새 체크섬과 함께 실린다.
+            SymbolIdRenames.Apply(data);
 
             outcome = SaveOutcome.Ok;
             return data;
@@ -431,7 +435,7 @@ namespace SlotHero.Save
                 return true;
             }
 
-            if (ReadMeta(mainName) != null)
+            if (ReadMeta(mainName, profileIndex) != null)
             {
                 return false;
             }
@@ -612,13 +616,19 @@ namespace SlotHero.Save
         }
 
         /// <summary>그 이름의 메타를 읽되 검사를 통과한 것만 돌려준다.</summary>
-        private MetaSaveData ReadMeta(string fileName)
+        private MetaSaveData ReadMeta(string fileName, int profileIndex)
         {
-            return ParseMeta(ReadSaved(fileName));
+            return ParseMeta(ReadSaved(fileName), profileIndex);
         }
 
-        /// <summary>메타 글을 자료로 되돌리되 검사를 통과한 것만 돌려준다.</summary>
-        private static MetaSaveData ParseMeta(string json)
+        /// <summary>
+        /// 메타 글을 자료로 되돌리되 검사를 통과한 것만 돌려준다.
+        ///
+        /// **안에 적힌 프로필 번호가 그 칸 번호와 같아야 한다.** 다른 칸의 메타가 이 칸 파일 자리에 있으면
+        /// 체크섬은 멀쩡해도 받지 않는다. 받으면 그 자료로 저장할 때 안에 적힌 번호의 칸을 덮어썼다.
+        /// 2026년 10월 22일 코덱스 검토가 짚었다. 그 파일은 망가진 것처럼 다룬다(백업, 아니면 새로 만든다).
+        /// </summary>
+        private static MetaSaveData ParseMeta(string json, int profileIndex)
         {
             if (json == null)
             {
@@ -626,7 +636,8 @@ namespace SlotHero.Save
             }
 
             MetaSaveData data = Parse<MetaSaveData>(json);
-            if (data == null || !data.IsConsistent() || !SaveChecksum.VerifyJson(json))
+            if (data == null || !data.IsConsistent() || !SaveChecksum.VerifyJson(json)
+                || data.ProfileIndex != profileIndex)
             {
                 return null;
             }

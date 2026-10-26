@@ -85,6 +85,17 @@ namespace SlotHero.Flow
         }
 
         /// <inheritdoc />
+        public void ResetForNewRun()
+        {
+            Leave();
+
+            if (_screen != null)
+            {
+                _screen.ResetForNewRun();
+            }
+        }
+
+        /// <inheritdoc />
         public Sprite GetIcon(string id)
         {
             return _catalog != null ? _catalog.GetIcon(id) : null;
@@ -126,7 +137,16 @@ namespace SlotHero.Flow
                 OwnedRelic owned = run.Owned.Relics[i];
                 RelicDefinition definition = _relics != null ? _relics.Find(owned.RelicId) : null;
                 string name = _catalog != null ? _catalog.GetDisplayName(owned.RelicId) : owned.RelicId;
-                setup.Relics.Add(new CombatRelic(owned.RelicId, name, definition, owned.Stack));
+                CombatRelic relic = new CombatRelic(owned.RelicId, name, definition, owned.Stack);
+
+                // 전투 화면 유물 칸 색은 물건 목록의 등급을 따른다.
+                ItemDefinition item;
+                if (_catalog != null && _catalog.TryGetItem(owned.RelicId, out item))
+                {
+                    relic.Rarity = (int)item.Rarity;
+                }
+
+                setup.Relics.Add(relic);
             }
 
             // 망치와 끌이 "그 태그의 랜덤 문양" 을 고르는 풀. 게임에 있는 모든 문양이다.

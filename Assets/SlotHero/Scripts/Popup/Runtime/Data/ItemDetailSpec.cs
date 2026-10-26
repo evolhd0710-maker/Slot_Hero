@@ -25,12 +25,20 @@ namespace SlotHero.Popup
         /// <summary>플레이버 텍스트. 따옴표와 기울임은 표시 쪽이 입힌다.</summary>
         public string Flavor;
 
+        /// <summary>내용 글자에 두르는 테두리 색. 문양의 태그 둘을 적을 때 흰색으로 두른다(2026년 10월 25일 원재).</summary>
+        public UnityEngine.Color BodyOutlineColor;
+
+        /// <summary>내용 글자 테두리 두께. 0 이면 두르지 않는다.</summary>
+        public float BodyOutlineWidth;
+
         public ItemDetailSpec(string name, string valueText, string body, string flavor)
         {
             Name = name;
             ValueText = valueText;
             Body = body;
             Flavor = flavor;
+            BodyOutlineColor = new UnityEngine.Color(0f, 0f, 0f, 0f);
+            BodyOutlineWidth = 0f;
         }
 
         /// <summary>띄울 내용이 들어 있는지.</summary>

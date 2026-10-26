@@ -12,24 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b91b545a357d23439e57ab62e890c38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Title.TitleVisualConfig
-  MenuEntries:
-  - Kind: 0
-    DisplayName: "\uC0C8 \uAC8C\uC784"
-  - Kind: 1
-    DisplayName: "\uC774\uC5B4\uD558\uAE30"
-  - Kind: 2
-    DisplayName: "\uC124\uC815"
-  - Kind: 3
-    DisplayName: "\uC885\uB8CC"
-  MenuTextColor: {r: 1, g: 1, b: 1, a: 1}
-  VersionColor: {r: 0.933, g: 0.91, b: 0.863, a: 0.7}
-  MenuFontSize: 40
-  VersionFontSize: 20
-  HoverBrightness: 1.1
-  PressedBrightness: 0.9
-  PressedOffsetRatio: 0.02
-  DisabledAlpha: 0.4
-  VersionFormat: v{0}
-  NoSavedRunReason: "\uC800\uC7A5\uB41C \uB7F0\uC774 \uC5C6\uC2B5\uB2C8\uB2E4"
-  BrokenRunReason: "\uC800\uC7A5\uB41C \uB7F0\uC744 \uBD88\uB7EC\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
-  UnreadableRunReason: "\uC800\uC7A5\uB41C \uB7F0\uC744 \uC9C0\uAE08 \uC77D\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uC7A0\uC2DC \uB4A4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694"
+  _menuEntries:
+  - _kind: 0
+    _displayName: "\uC0C8 \uAC8C\uC784"
+  - _kind: 1
+    _displayName: "\uC774\uC5B4\uD558\uAE30"
+  - _kind: 2
+    _displayName: "\uC124\uC815"
+  - _kind: 3
+    _displayName: "\uC885\uB8CC"
+  _menuTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _versionColor: {r: 0.933, g: 0.91, b: 0.863, a: 0.7}
+  _menuFontSize: 40
+  _versionFontSize: 20
+  _hoverBrightness: 1.1
+  _pressedBrightness: 0.9
+  _pressedOffsetRatio: 0.02
+  _disabledAlpha: 0.4
+  _versionFormat: v{0}
+  _noSavedRunReason: "\uC800\uC7A5\uB41C \uB7F0\uC774 \uC5C6\uC2B5\uB2C8\uB2E4"
+  _brokenRunReason: "\uC800\uC7A5\uB41C \uB7F0\uC744 \uBD88\uB7EC\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+  _unreadableRunReason: "\uC800\uC7A5\uB41C \uB7F0\uC744 \uC9C0\uAE08 \uC77D\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uC7A0\uC2DC \uB4A4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694"

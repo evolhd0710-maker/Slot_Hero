@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Map;
 using SlotHero.Sanctum;
 
@@ -20,22 +21,28 @@ namespace SlotHero.Flow
     public class RewardRuleConfig : ScriptableObject
     {
         [Tooltip("방 종류마다의 보상 규칙. 적어 두지 않은 방은 보상이 없다.")]
-        public List<RewardRule> Rules = new List<RewardRule>
+        [FormerlySerializedAs("Rules")]
+        [SerializeField] private List<RewardRule> _rules = new List<RewardRule>
         {
             new RewardRule(RoomType.Normal, 10, 15, 3, true, false, false),
             new RewardRule(RoomType.Elite, 25, 35, 3, false, true, true),
             new RewardRule(RoomType.Event, 0, 0, 0, false, false, false),
             new RewardRule(RoomType.Boss, 50, 70, 4, false, true, true),
         };
+        public List<RewardRule> Rules { get { return _rules; } set { _rules = value; } }
 
         [Tooltip("이벤트가 연 전투(35 도전자, 38 매복)를 이기면 어느 방의 카드 규칙으로 보상을 고르게 할지. " +
             "이벤트 기획서는 \"보상 선택(문양, 유물 등)\" 이라고만 적어 일반 방과 같게 두었다. 골드는 전투가 정한 것만 받는다.")]
-        public RoomType EventCombatCardsLike = RoomType.Normal;
+        [FormerlySerializedAs("EventCombatCardsLike")]
+        [SerializeField] private RoomType _eventCombatCardsLike = RoomType.Normal;
+        public RoomType EventCombatCardsLike { get { return _eventCombatCardsLike; } set { _eventCombatCardsLike = value; } }
 
         [Tooltip("보상 카드의 코인과 유물을 뽑을 때 등급부터 굴리는 비중. 스테이지 범위마다 한 줄이다. " +
             "비어 있거나 그 스테이지를 덮는 줄이 없으면 등급을 따지지 않고 고르게 뽑는다. " +
             "문양이 섞인 카드 묶음에는 쓰지 않는다. 기획서에 수치가 없어 비워 둔다(2026년 10월 9일 원재).")]
-        public List<StageRarityWeights> RarityByStage = new List<StageRarityWeights>();
+        [FormerlySerializedAs("RarityByStage")]
+        [SerializeField] private List<StageRarityWeights> _rarityByStage = new List<StageRarityWeights>();
+        public List<StageRarityWeights> RarityByStage { get { return _rarityByStage; } set { _rarityByStage = value; } }
 
         /// <summary>그 스테이지의 보상 희귀도 분포. 없으면 null 이고 그때는 고르게 뽑는다.</summary>
         public StageRarityWeights GetRarityWeights(int stage)
@@ -125,32 +132,48 @@ namespace SlotHero.Flow
     [Serializable]
     public struct RewardRule
     {
-        public RoomType RoomType;
+        [FormerlySerializedAs("RoomType")]
+        [SerializeField] private RoomType _roomType;
+        public RoomType RoomType { get { return _roomType; } set { _roomType = value; } }
 
         [Tooltip("기본 보상 골드의 최솟값.")]
-        public int MinGold;
+        [FormerlySerializedAs("MinGold")]
+        [SerializeField] private int _minGold;
+        public int MinGold { get { return _minGold; } set { _minGold = value; } }
 
         [Tooltip("기본 보상 골드의 최댓값.")]
-        public int MaxGold;
+        [FormerlySerializedAs("MaxGold")]
+        [SerializeField] private int _maxGold;
+        public int MaxGold { get { return _maxGold; } set { _maxGold = value; } }
 
         [Tooltip("고를 카드 장수. 0 이면 카드가 나오지 않는다.")]
-        public int CardCount;
+        [FormerlySerializedAs("CardCount")]
+        [SerializeField] private int _cardCount;
+        public int CardCount { get { return _cardCount; } set { _cardCount = value; } }
 
-        public bool GivesSymbols;
-        public bool GivesCoins;
-        public bool GivesRelics;
+        [FormerlySerializedAs("GivesSymbols")]
+        [SerializeField] private bool _givesSymbols;
+        public bool GivesSymbols { get { return _givesSymbols; } set { _givesSymbols = value; } }
+
+        [FormerlySerializedAs("GivesCoins")]
+        [SerializeField] private bool _givesCoins;
+        public bool GivesCoins { get { return _givesCoins; } set { _givesCoins = value; } }
+
+        [FormerlySerializedAs("GivesRelics")]
+        [SerializeField] private bool _givesRelics;
+        public bool GivesRelics { get { return _givesRelics; } set { _givesRelics = value; } }
 
         public RewardRule(
             RoomType roomType, int minGold, int maxGold, int cardCount,
             bool givesSymbols, bool givesCoins, bool givesRelics)
         {
-            RoomType = roomType;
-            MinGold = minGold;
-            MaxGold = maxGold;
-            CardCount = cardCount;
-            GivesSymbols = givesSymbols;
-            GivesCoins = givesCoins;
-            GivesRelics = givesRelics;
+            _roomType = roomType;
+            _minGold = minGold;
+            _maxGold = maxGold;
+            _cardCount = cardCount;
+            _givesSymbols = givesSymbols;
+            _givesCoins = givesCoins;
+            _givesRelics = givesRelics;
         }
     }
 }

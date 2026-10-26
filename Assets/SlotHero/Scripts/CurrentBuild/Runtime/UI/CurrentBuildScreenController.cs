@@ -120,11 +120,6 @@ namespace SlotHero.CurrentBuild.UI
             _snapshot = snapshot;
             _icons = icons;
 
-            if (_snapshot != null)
-            {
-                // 통계에 빠진 태그가 있어도 아홉 줄이 모두 나오게 한다.
-            }
-
             SetActive(true);
             Refresh();
 

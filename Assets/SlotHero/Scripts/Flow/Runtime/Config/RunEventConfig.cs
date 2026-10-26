@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Events;
 using SlotHero.Map;
 
@@ -18,18 +19,24 @@ namespace SlotHero.Flow
     public class RunEventConfig : ScriptableObject
     {
         [Tooltip("이벤트 방에 나올 이야기들.")]
-        public List<EventScript> Events = new List<EventScript>();
+        [FormerlySerializedAs("Events")]
+        [SerializeField] private List<EventScript> _events = new List<EventScript>();
+        public List<EventScript> Events { get { return _events; } set { _events = value; } }
 
         [Tooltip("도전 이벤트가 전투에 거는 부정 효과. 이벤트 기획서 3장 도전 이벤트 공통 규칙 의 부정 효과 목록(D1 ~ D6)이다. " +
             "35 도전자 는 여기서 둘을 뽑아 고르게 하고, 38 매복 은 하나를 무작위로 건다. " +
             "얼마나 깎고 늘리는지는 전투가 정한다.")]
-        public List<EventCombatPenalty> CombatPenalties = EventCombatPenalty.SpecDefaults();
+        [FormerlySerializedAs("CombatPenalties")]
+        [SerializeField] private List<EventCombatPenalty> _combatPenalties = EventCombatPenalty.SpecDefaults();
+        public List<EventCombatPenalty> CombatPenalties { get { return _combatPenalties; } set { _combatPenalties = value; } }
 
         [Tooltip("화면 하나에 나오는 선택지의 최대 수. 이벤트 기획서 초안 1장 의 \"선택지 1~5개\" 로 2026년 10월 9일 원재가 5개로 정했다. " +
             "채우는 선택지와 저절로 끼우는 떠나는 선택지까지 센다. 넘는 화면은 검사가 알린다. " +
             "고른 이력과 함께 놓는 칸 수(EventLayoutConfig.MaxChoiceCount)보다 크면 안 된다.")]
         [Min(1)]
-        public int MaxChoicesPerScreen = 5;
+        [FormerlySerializedAs("MaxChoicesPerScreen")]
+        [SerializeField] private int _maxChoicesPerScreen = 5;
+        public int MaxChoicesPerScreen { get { return _maxChoicesPerScreen; } set { _maxChoicesPerScreen = value; } }
 
         /// <summary>선택지가 화면당 최대 수를 넘는 화면을 찾는다(`EventScript.FindTooManyChoices`).</summary>
         public void FindTooManyChoices(List<string> problems)

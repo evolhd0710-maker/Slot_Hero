@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using SlotHero.CurrentBuild;
+using SlotHero.Ui;
 
 namespace SlotHero.Reward.UI
 {
@@ -22,6 +24,9 @@ namespace SlotHero.Reward.UI
         [SerializeField] private Image _background;
         [SerializeField] private Image _border;
         [SerializeField] private Image _icon;
+
+        [Tooltip("문양 카드에서 그림 둘레에 태그 둘을 보여 주는 테두리. 코인과 유물 카드에서는 감춘다(2026년 10월 19일 원재).")]
+        [SerializeField] private TagCorners _tagCorners;
         [SerializeField] private TMP_Text _nameLabel;
         [SerializeField] private TMP_Text _tagLabel;
 
@@ -65,13 +70,25 @@ namespace SlotHero.Reward.UI
             }
         }
 
-        /// <summary>카드 하나를 담는다.</summary>
+        /// <summary>카드 하나를 담는다. 태그 테두리는 감춘다.</summary>
         public void Bind(
             RewardCard card,
             RewardLayoutConfig layout,
             RewardVisualConfig visual,
             string tagText,
             Sprite icon)
+        {
+            Bind(card, layout, visual, tagText, icon, null);
+        }
+
+        /// <summary>카드 하나를 담는다. 문양 카드면 tagVisual 로 태그 테두리를 찾아 얹는다.</summary>
+        public void Bind(
+            RewardCard card,
+            RewardLayoutConfig layout,
+            RewardVisualConfig visual,
+            string tagText,
+            Sprite icon,
+            CurrentBuildVisualConfig tagVisual)
         {
             _card = card;
             _visual = visual;
@@ -103,12 +120,39 @@ namespace SlotHero.Reward.UI
                 {
                     _tagLabel.fontSize = visual.CardTagFontSize;
                 }
+
+                // 태그 이름에 흰 테두리를 두른다(2026년 10월 25일 원재). 테두리 값은 태그 색과 같은 곳에 둔다.
+                if (tagVisual != null)
+                {
+                    TextOutline.Apply(_tagLabel, tagVisual.TagOutlineColor, tagVisual.TagOutlineWidth);
+                }
             }
 
             if (_icon != null)
             {
                 _icon.sprite = icon;
                 _icon.enabled = icon != null;
+            }
+
+            if (_tagCorners != null)
+            {
+                if (card != null && card.HasTags && tagVisual != null)
+                {
+                    Sprite topRight;
+                    Sprite bottomLeft;
+                    tagVisual.GetTagCorners(card.FirstTag, card.SecondTag, out topRight, out bottomLeft);
+                    _tagCorners.Show(
+                        topRight, bottomLeft, tagVisual.GetSymbolPlate(card.Id), tagVisual.SymbolFrameInset);
+
+                    Sprite topGlyph;
+                    Sprite bottomGlyph;
+                    tagVisual.GetTagGlyphs(card.FirstTag, card.SecondTag, out topGlyph, out bottomGlyph);
+                    _tagCorners.ShowGlyphs(topGlyph, bottomGlyph, tagVisual.CornerGlyphSizeRatio, tagVisual.CornerGlyphFromCorner);
+                }
+                else
+                {
+                    _tagCorners.Hide();
+                }
             }
 
             ApplyStyle();

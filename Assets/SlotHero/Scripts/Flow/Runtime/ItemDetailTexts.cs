@@ -44,8 +44,16 @@ namespace SlotHero.Flow
                 }
 
                 string value = "가치 " + config.GetTagValueSum(symbol);
-                string body = "태그  " + GetTagName(symbol.FirstTag, tagNames) + " · " + GetTagName(symbol.SecondTag, tagNames);
-                return new ItemDetailSpec(symbol.DisplayName, value, body, string.Empty);
+                ItemDetailSpec spec = new ItemDetailSpec(symbol.DisplayName, value, DescribeTags(symbol, tagNames), string.Empty);
+
+                // 내용이 태그 둘뿐이라 내용 글자 전체에 태그 테두리를 두른다(2026년 10월 25일 원재).
+                if (tagNames != null)
+                {
+                    spec.BodyOutlineColor = tagNames.TagOutlineColor;
+                    spec.BodyOutlineWidth = tagNames.TagOutlineWidth;
+                }
+
+                return spec;
             }
 
             for (int i = 0; i < config.Coins.Count; i++)
@@ -70,6 +78,22 @@ namespace SlotHero.Flow
             return new ItemDetailSpec();
         }
 
+        /// <summary>
+        /// 문양의 태그 둘. "태그" 라는 머리말 없이 둘만 적고, 태그마다 제 색으로 굵고 크게 적고 흰 테두리를 두른다(2026년 10월 25일 원재).
+        /// 크기 배율은 `CurrentBuildVisualConfig.DetailTagSizePercent` 다. 설정이 없으면 이름만 적는다.
+        /// </summary>
+        public static string DescribeTags(SymbolDefinition symbol, CurrentBuildVisualConfig tagNames)
+        {
+            string tags = SymbolTags.GetColoredName(symbol.FirstTag, tagNames) + " · " + SymbolTags.GetColoredName(symbol.SecondTag, tagNames);
+            if (tagNames == null)
+            {
+                return tags;
+            }
+
+            string size = tagNames.DetailTagSizePercent.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+            return "<b><size=" + size + "%>" + tags + "</size></b>";
+        }
+
         /// <summary>등급 이름. 성소 기획서 07 가격 의 표 이름이다.</summary>
         public static string GetRarityName(ItemRarity rarity)
         {
@@ -88,18 +112,6 @@ namespace SlotHero.Flow
             }
 
             return string.Empty;
-        }
-
-        /// <summary>현재 빌드 화면과 같은 태그 이름. 설정이 없으면 영어 이름이다.</summary>
-        private static string GetTagName(SymbolTagType tag, CurrentBuildVisualConfig tagNames)
-        {
-            if (tagNames == null)
-            {
-                return tag.ToString();
-            }
-
-            string name = tagNames.GetTagVisual(tag).DisplayName;
-            return string.IsNullOrEmpty(name) ? tag.ToString() : name;
         }
     }
 }

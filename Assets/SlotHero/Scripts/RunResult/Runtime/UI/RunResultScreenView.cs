@@ -123,7 +123,7 @@ namespace SlotHero.RunResult.UI
             {
                 _titleButtonLabel.text = _visual.TitleButtonText;
                 _titleButtonLabel.fontSize = _visual.ButtonFontSize;
-                _titleButtonLabel.color = _visual.TextColor;
+                _titleButtonLabel.color = _visual.ButtonTextColor;
                 _titleButtonLabel.alignment = TextAlignmentOptions.Center;
             }
         }

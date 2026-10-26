@@ -65,6 +65,9 @@ namespace SlotHero.ToolsEditor
             // 맨 뒤에 깔리는 배경. 늘 켜 두고 화면들이 그 위에 그려진다.
             BuildBackground(canvas);
 
+            // 전투 방에서만 공용 배경 위에 덮는 전투 배경. 흐름이 켜고 끈다(2026년 10월 25일 원재).
+            Image battleBackground = UiSceneBuilder.NewBattleBackdrop("BattleBackground", canvas.transform);
+
             // 확인용 씬에서 화면을 통째로 가져온다. 여는 차례가 곧 그리는 차례다.
             // 뒤에 오는 것이 위에 그려지므로 겹쳐 뜨는 것을 뒤에 둔다.
             SanctumController sanctum = Take<SanctumController>(canvas, "성소 화면");
@@ -84,7 +87,6 @@ namespace SlotHero.ToolsEditor
             ProfileSelectScreenController profile = Take<ProfileSelectScreenController>(canvas, "06 프로필 선택 화면");
             TitleScreenController title = Take<TitleScreenController>(canvas, "05 타이틀 화면");
 
-            TopBarController topBar = Take<TopBarController>(canvas, "03 상단 표시줄");
             RunHudController hud = BuildHud(canvas);
 
             CurrentBuildScreenController currentBuild =
@@ -93,8 +95,12 @@ namespace SlotHero.ToolsEditor
             // 고르기 화면은 방 화면과 현재 빌드 위, 아이템 상세 아래다. 고르는 칸에도 아이템 상세가 떠야 한다.
             ItemPickerScreenController picker = Take<ItemPickerScreenController>(canvas, "13 고르기 화면");
 
-            // 아이템 상세는 현재 빌드 위에 뜬다. 설정과 팝업보다는 아래다. 그 둘이 열려 있으면 물건에 커서가 닿지 않는다.
+            // 아이템 상세는 현재 빌드와 고르기 위에 뜬다. 상단 표시줄보다는 아래다.
             ItemDetailView itemDetail = Take<ItemDetailView>(canvas, "08 아이템 상세");
+
+            // **상단 표시줄 위에는 먼저 끝내야 하는 것만 둔다. 설정과 팝업이다**(2026년 10월 25일 원재).
+            // 예전에는 현재 빌드와 고르기 화면이 표시줄 위에 있어, 그 화면의 어둠 막이 지도 버튼을 덮어 눌리지 않았다.
+            TopBarController topBar = Take<TopBarController>(canvas, "03 상단 표시줄");
 
             SettingsScreenController settings = Take<SettingsScreenController>(canvas, "07 설정 화면");
             PopupPresenter popup = Take<PopupPresenter>(canvas, "08 화면 팝업");
@@ -142,6 +148,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(flow, "_topBar", topBar);
             UiSceneBuilder.SetField(flow, "_hud", hud);
             UiSceneBuilder.SetField(flow, "_combatEntryBehaviour", combat);
+            UiSceneBuilder.SetField(flow, "_battleBackground", battleBackground != null ? battleBackground.gameObject : null);
 
             UiSceneBuilder.SetField(flow, "_relics",
                 UiSceneBuilder.LoadConfig<RelicConfig>("Combat", "RelicConfig"));

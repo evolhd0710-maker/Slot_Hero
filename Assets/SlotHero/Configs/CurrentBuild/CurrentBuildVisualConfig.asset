@@ -12,72 +12,111 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7cb230110c5134b99d3166f60c31a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.CurrentBuild.CurrentBuildVisualConfig
-  DimColor: {r: 0, g: 0, b: 0, a: 0.65}
-  PanelColor: {r: 0.098, g: 0.082, b: 0.055, a: 1}
-  SlotColor: {r: 0.067, g: 0.059, b: 0.051, a: 1}
-  CountBadgeColor: {r: 0.055, g: 0.043, b: 0.035, a: 1}
-  TagBarBackColor: {r: 0.157, g: 0.133, b: 0.106, a: 1}
-  SectionFontSize: 26
-  PanelTitleFontSize: 26
-  TagFontSize: 24
-  TagSymbolFontSize: 44
-  CountFontSize: 22
-  TextColor: {r: 0.933, g: 0.91, b: 0.863, a: 1}
-  SubTextColor: {r: 0.8, g: 0.773, b: 0.722, a: 1}
-  EmptyTagTextColor: {r: 0.475, g: 0.451, b: 0.412, a: 1}
-  PickSelectedBorderColor: {r: 0.878, g: 0.69, b: 0.251, a: 1}
-  PickSelectedBorderThickness: 6
-  PickConfirmText: "\uC120\uD0DD"
-  PickCancelText: "\uCDE8\uC18C"
-  PickNoneText: "\uACE0\uB97C \uCE78\uC744 \uB204\uB978\uB2E4"
-  PickDisabledAlpha: 0.4
-  SymbolCountFormat: "\uBB38\uC591 {0}\uC7A5"
-  TagCountFormat: "{0}\uC7A5"
-  CountBadgeFormat: "\xD7{0}"
-  CloseShortcutText: Tab / ESC
-  TagVisuals:
-  - Tag: 0
-    DisplayName: "\uC218\uC131"
-    Symbol: "\u263F"
-    Icon: {fileID: 21300000, guid: 3a17c098b64c50448a9d39ff0e082b63, type: 3}
-    BarColor: {r: 0.247, g: 0.663, b: 0.788, a: 1}
-  - Tag: 1
-    DisplayName: "\uAE08\uC131"
-    Symbol: "\u2640"
-    Icon: {fileID: 21300000, guid: ce073aca4cdf14245be4f97f6f3d3037, type: 3}
-    BarColor: {r: 0.851, g: 0.643, b: 0.255, a: 1}
-  - Tag: 2
-    DisplayName: "\uC9C0\uAD6C"
-    Symbol: "\u2295"
-    Icon: {fileID: 21300000, guid: 2b42d63659a33864b8be9b88e5bc6ab3, type: 3}
-    BarColor: {r: 0.545, g: 0.42, b: 0.29, a: 1}
-  - Tag: 3
-    DisplayName: "\uD654\uC131"
-    Symbol: "\u2642"
-    Icon: {fileID: 21300000, guid: 4c7c41047626d73499889a6d96532c04, type: 3}
-    BarColor: {r: 0.776, g: 0.337, b: 0.275, a: 1}
-  - Tag: 4
-    DisplayName: "\uBAA9\uC131"
-    Symbol: "\u2643"
-    Icon: {fileID: 21300000, guid: fd642fdcb97bfb64ea177944f7c10a7c, type: 3}
-    BarColor: {r: 0.424, g: 0.659, b: 0.439, a: 1}
-  - Tag: 5
-    DisplayName: "\uD1A0\uC131"
-    Symbol: "\u2644"
-    Icon: {fileID: 21300000, guid: 8da0f52b908d4b240bb43092a0fb901b, type: 3}
-    BarColor: {r: 0.541, g: 0.502, b: 0.447, a: 1}
-  - Tag: 6
-    DisplayName: "\uCC9C\uC655\uC131"
-    Symbol: "\u2645"
-    Icon: {fileID: 21300000, guid: d15c45b472e6c244795ee00f921be49f, type: 3}
-    BarColor: {r: 0.725, g: 0.776, b: 0.812, a: 1}
-  - Tag: 7
-    DisplayName: "\uD574\uC655\uC131"
-    Symbol: "\u2646"
-    Icon: {fileID: 21300000, guid: 35e64e4954c9b584796aba7073d0a268, type: 3}
-    BarColor: {r: 0.227, g: 0.373, b: 0.659, a: 1}
-  - Tag: 8
-    DisplayName: "\uBA85\uC655\uC131"
-    Symbol: "\u2647"
-    Icon: {fileID: 21300000, guid: 7eee28d0789f85140a71802250612983, type: 3}
-    BarColor: {r: 0.42, g: 0.306, b: 0.525, a: 1}
+  _dimColor: {r: 0, g: 0, b: 0, a: 0.95}
+  _panelColor: {r: 1, g: 1, b: 1, a: 1}
+  _slotColor: {r: 0.067, g: 0.059, b: 0.051, a: 0.4}
+  _emptyOutlineColor: {r: 0.925, g: 0.886, b: 0.784, a: 0.45}
+  _countBadgeColor: {r: 0.055, g: 0.043, b: 0.035, a: 1}
+  _tagBarBackColor: {r: 0.157, g: 0.133, b: 0.106, a: 1}
+  _sectionFontSize: 26
+  _panelTitleFontSize: 26
+  _tagFontSize: 24
+  _tagSymbolFontSize: 44
+  _countFontSize: 22
+  _textColor: {r: 0.933, g: 0.91, b: 0.863, a: 1}
+  _subTextColor: {r: 0.8, g: 0.773, b: 0.722, a: 1}
+  _emptyTagTextColor: {r: 0.475, g: 0.451, b: 0.412, a: 1}
+  _tagIconColor: {r: 1, g: 1, b: 1, a: 1}
+  _emptyTagIconColor: {r: 0.55, g: 0.55, b: 0.55, a: 0.6}
+  _detailTagSizePercent: 150
+  _tagNameFontSize: 30
+  _tagOutlineColor: {r: 1, g: 1, b: 1, a: 1}
+  _tagOutlineWidth: 0.15
+  _pickSelectedBorderColor: {r: 0.18, g: 0.8, b: 0.251, a: 1}
+  _pickSelectedBorderThickness: 12
+  _pickConfirmText: "\uC120\uD0DD"
+  _pickCancelText: "\uCDE8\uC18C"
+  _pickNoneText: "\uACE0\uB97C \uCE78\uC744 \uB204\uB978\uB2E4"
+  _pickDisabledAlpha: 0.4
+  _symbolCountFormat: "\uBB38\uC591 {0}\uC7A5"
+  _tagCountFormat: "{0}\uC7A5"
+  _countBadgeFormat: "\xD7{0}"
+  _closeShortcutText: Tab / ESC
+  _tagVisuals:
+  - _tag: 0
+    _displayName: "\uC218\uC131"
+    _symbol: "\u263F"
+    _icon: {fileID: 21300000, guid: 3a17c098b64c50448a9d39ff0e082b63, type: 3}
+    _barColor: {r: 0.525, g: 0.737, b: 0.878, a: 1}
+    _textColor: {r: 0.525, g: 0.737, b: 0.878, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: 955ffd7e9cde59041961e70768d8a660, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: fef3043855889214fb32d4b1b2bbc639, type: 3}
+  - _tag: 1
+    _displayName: "\uAE08\uC131"
+    _symbol: "\u2640"
+    _icon: {fileID: 21300000, guid: ce073aca4cdf14245be4f97f6f3d3037, type: 3}
+    _barColor: {r: 0.639, g: 0.604, b: 0.565, a: 1}
+    _textColor: {r: 0.639, g: 0.604, b: 0.565, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: 704fd80b82ab877408a5c7cff124c3c0, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: d8d1c704fab66d04dae3d7196945c8b3, type: 3}
+  - _tag: 2
+    _displayName: "\uC9C0\uAD6C"
+    _symbol: "\u2295"
+    _icon: {fileID: 21300000, guid: 2b42d63659a33864b8be9b88e5bc6ab3, type: 3}
+    _barColor: {r: 0.373, g: 0.627, b: 0.322, a: 1}
+    _textColor: {r: 0.373, g: 0.627, b: 0.322, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: ff780bdee7e154b4a8c06da5b04c54e0, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: b6cf5e97232a31148a7b471bf0808437, type: 3}
+  - _tag: 3
+    _displayName: "\uD654\uC131"
+    _symbol: "\u2642"
+    _icon: {fileID: 21300000, guid: 4c7c41047626d73499889a6d96532c04, type: 3}
+    _barColor: {r: 0.824, g: 0.235, b: 0.18, a: 1}
+    _textColor: {r: 0.824, g: 0.235, b: 0.18, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: f39669fc29dd504459bd2ef6df396940, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: aa8848e8f75a8f24289882ee991e418e, type: 3}
+  - _tag: 4
+    _displayName: "\uBAA9\uC131"
+    _symbol: "\u2643"
+    _icon: {fileID: 21300000, guid: fd642fdcb97bfb64ea177944f7c10a7c, type: 3}
+    _barColor: {r: 0.478, g: 0.329, b: 0.251, a: 1}
+    _textColor: {r: 0.725, g: 0.541, b: 0.384, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: 74337f5d6d8d9234d840136a45fbd21e, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: a8d847f6459f32744a69aab781dd4ab1, type: 3}
+  - _tag: 5
+    _displayName: "\uD1A0\uC131"
+    _symbol: "\u2644"
+    _icon: {fileID: 21300000, guid: 8da0f52b908d4b240bb43092a0fb901b, type: 3}
+    _barColor: {r: 0.816, g: 0.643, b: 0.227, a: 1}
+    _textColor: {r: 0.816, g: 0.643, b: 0.227, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: 66ecb1547b65d9a489a9367ae7633dd7, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: 8ba0791da8a5a4343be3afa9b58a27d2, type: 3}
+  - _tag: 6
+    _displayName: "\uCC9C\uC655\uC131"
+    _symbol: "\u2645"
+    _icon: {fileID: 21300000, guid: d15c45b472e6c244795ee00f921be49f, type: 3}
+    _barColor: {r: 0.208, g: 0.71, b: 0.667, a: 1}
+    _textColor: {r: 0.208, g: 0.71, b: 0.667, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: 19813f65028fe0f4a993e9ce01eb7f70, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: 4167b88ec7fb64e42a40784503e65719, type: 3}
+  - _tag: 7
+    _displayName: "\uD574\uC655\uC131"
+    _symbol: "\u2646"
+    _icon: {fileID: 21300000, guid: 35e64e4954c9b584796aba7073d0a268, type: 3}
+    _barColor: {r: 0.176, g: 0.337, b: 0.702, a: 1}
+    _textColor: {r: 0.416, g: 0.573, b: 0.925, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: 4f3a9656be8dbfe428e5f2d9cb1873c6, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: 4565898b45bb30b4c9471cfbd82c6a3e, type: 3}
+  - _tag: 8
+    _displayName: "\uBA85\uC655\uC131"
+    _symbol: "\u2647"
+    _icon: {fileID: 21300000, guid: 7eee28d0789f85140a71802250612983, type: 3}
+    _barColor: {r: 0.482, g: 0.271, b: 0.651, a: 1}
+    _textColor: {r: 0.655, g: 0.482, b: 0.839, a: 1}
+    _cornerTopRight: {fileID: 21300000, guid: 11d1eddec6a713249b9affd082bd4cd0, type: 3}
+    _cornerBottomLeft: {fileID: 21300000, guid: b8d905cbc555fd34ea5865a181487c3d, type: 3}
+  _cornerGlyphSizeRatio: 0.22
+  _cornerGlyphFromCorner: 0.12
+  _symbolPlates:
+  - {fileID: 21300000, guid: 7a0c9b75ed66b5947bc3cba00e409131, type: 3}
+  _symbolFrameInset: 0.06

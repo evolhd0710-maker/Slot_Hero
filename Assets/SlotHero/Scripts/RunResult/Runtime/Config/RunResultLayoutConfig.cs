@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Ui;
 
 namespace SlotHero.RunResult
@@ -19,62 +20,94 @@ namespace SlotHero.RunResult
     {
         [Header("기준")]
         [Tooltip("모든 규격의 기준 해상도. 1920 × 1080 FHD.")]
-        public Vector2 ReferenceResolution = UiScale.V(1920f, 1080f);
+        [FormerlySerializedAs("ReferenceResolution")]
+        [SerializeField] private Vector2 _referenceResolution = UiScale.V(1920f, 1080f);
+        public Vector2 ReferenceResolution { get { return _referenceResolution; } set { _referenceResolution = value; } }
 
         [Header("결과")]
         [Tooltip("결과 칸의 자리. 칸 폭을 빼고 좌우로 똑같이 남겨 화면 가운데에 둔 값이다.")]
-        public Vector2 OutcomePosition = UiScale.V(580f, 80f);
+        [FormerlySerializedAs("OutcomePosition")]
+        [SerializeField] private Vector2 _outcomePosition = UiScale.V(580f, 80f);
+        public Vector2 OutcomePosition { get { return _outcomePosition; } set { _outcomePosition = value; } }
 
         [Tooltip("결과 칸의 크기. 와이어프레임 실측 768 × 119 를 10 단위로 옮긴 값이다.")]
-        public Vector2 OutcomeSize = UiScale.V(760f, 120f);
+        [FormerlySerializedAs("OutcomeSize")]
+        [SerializeField] private Vector2 _outcomeSize = UiScale.V(760f, 120f);
+        public Vector2 OutcomeSize { get { return _outcomeSize; } set { _outcomeSize = value; } }
 
         [Header("도달 지점")]
         [Tooltip("도달 지점 칸의 자리. 와이어프레임 실측 x 134 · y 248 을 10 단위로 옮긴 값이다.")]
-        public Vector2 LocationPosition = UiScale.V(130f, 250f);
+        [FormerlySerializedAs("LocationPosition")]
+        [SerializeField] private Vector2 _locationPosition = UiScale.V(130f, 250f);
+        public Vector2 LocationPosition { get { return _locationPosition; } set { _locationPosition = value; } }
 
         [Tooltip("도달 지점 칸의 크기. 와이어프레임 실측 787 × 108 을 10 단위로 옮긴 값이다.")]
-        public Vector2 LocationSize = UiScale.V(790f, 110f);
+        [FormerlySerializedAs("LocationSize")]
+        [SerializeField] private Vector2 _locationSize = UiScale.V(790f, 110f);
+        public Vector2 LocationSize { get { return _locationSize; } set { _locationSize = value; } }
 
         [Header("최종 구성")]
         [Tooltip("최종 구성 칸의 자리. 도달 지점 칸 아래로 30 띄운 값이다.")]
-        public Vector2 FinalBuildPosition = UiScale.V(130f, 390f);
+        [FormerlySerializedAs("FinalBuildPosition")]
+        [SerializeField] private Vector2 _finalBuildPosition = UiScale.V(130f, 390f);
+        public Vector2 FinalBuildPosition { get { return _finalBuildPosition; } set { _finalBuildPosition = value; } }
 
         [Tooltip("최종 구성 칸의 크기. 아래 끝이 오른쪽 열과 같은 890 이 되게 잡은 값이다.")]
-        public Vector2 FinalBuildSize = UiScale.V(790f, 500f);
+        [FormerlySerializedAs("FinalBuildSize")]
+        [SerializeField] private Vector2 _finalBuildSize = UiScale.V(790f, 500f);
+        public Vector2 FinalBuildSize { get { return _finalBuildSize; } set { _finalBuildSize = value; } }
 
         [Header("이번 런 기록")]
         [Tooltip("이번 런 기록 칸의 자리. 왼쪽 열과 80 띄우고 오른쪽 여백을 130 으로 맞춘 값이다.")]
-        public Vector2 RunRecordPosition = UiScale.V(1000f, 250f);
+        [FormerlySerializedAs("RunRecordPosition")]
+        [SerializeField] private Vector2 _runRecordPosition = UiScale.V(1000f, 250f);
+        public Vector2 RunRecordPosition { get { return _runRecordPosition; } set { _runRecordPosition = value; } }
 
         [Tooltip("이번 런 기록 칸의 크기. 와이어프레임 실측 787 × 367 을 10 단위로 옮긴 값이다.")]
-        public Vector2 RunRecordSize = UiScale.V(790f, 370f);
+        [FormerlySerializedAs("RunRecordSize")]
+        [SerializeField] private Vector2 _runRecordSize = UiScale.V(790f, 370f);
+        public Vector2 RunRecordSize { get { return _runRecordSize; } set { _runRecordSize = value; } }
 
         [Header("해금 및 도전과제")]
         [Tooltip("해금 칸의 자리. 이번 런 기록 칸 아래로 30 띄운 값이다.")]
-        public Vector2 UnlockPosition = UiScale.V(1000f, 650f);
+        [FormerlySerializedAs("UnlockPosition")]
+        [SerializeField] private Vector2 _unlockPosition = UiScale.V(1000f, 650f);
+        public Vector2 UnlockPosition { get { return _unlockPosition; } set { _unlockPosition = value; } }
 
         [Tooltip("해금 칸의 크기. 와이어프레임 실측 787 × 238 을 10 단위로 옮긴 값이다.")]
-        public Vector2 UnlockSize = UiScale.V(790f, 240f);
+        [FormerlySerializedAs("UnlockSize")]
+        [SerializeField] private Vector2 _unlockSize = UiScale.V(790f, 240f);
+        public Vector2 UnlockSize { get { return _unlockSize; } set { _unlockSize = value; } }
 
         [Header("타이틀로")]
         [Tooltip("타이틀로 버튼의 자리. 오른쪽 끝을 오른쪽 열의 오른쪽 끝 1790 에 맞춘 값이다.")]
-        public Vector2 TitleButtonPosition = UiScale.V(1350f, 930f);
+        [FormerlySerializedAs("TitleButtonPosition")]
+        [SerializeField] private Vector2 _titleButtonPosition = UiScale.V(1350f, 930f);
+        public Vector2 TitleButtonPosition { get { return _titleButtonPosition; } set { _titleButtonPosition = value; } }
 
         [Tooltip("타이틀로 버튼의 크기. 와이어프레임 실측 442 × 97 을 10 단위로 옮긴 값이다.")]
-        public Vector2 TitleButtonSize = UiScale.V(440f, 100f);
+        [FormerlySerializedAs("TitleButtonSize")]
+        [SerializeField] private Vector2 _titleButtonSize = UiScale.V(440f, 100f);
+        public Vector2 TitleButtonSize { get { return _titleButtonSize; } set { _titleButtonSize = value; } }
 
         [Header("칸 안쪽")]
         [Tooltip("칸 안쪽 좌우 여백. 와이어프레임 실측 25 를 10 단위로 옮긴 값이다.")]
         [Min(0f)]
-        public float PanelPadding = UiScale.Px(20f);
+        [FormerlySerializedAs("PanelPadding")]
+        [SerializeField] private float _panelPadding = UiScale.Px(20f);
+        public float PanelPadding { get { return _panelPadding; } set { _panelPadding = value; } }
 
         [Tooltip("칸 안쪽 위아래 여백. 와이어프레임 실측 26 을 10 단위로 옮긴 값이다.")]
         [Min(0f)]
-        public float PanelTopPadding = UiScale.Px(30f);
+        [FormerlySerializedAs("PanelTopPadding")]
+        [SerializeField] private float _panelTopPadding = UiScale.Px(30f);
+        public float PanelTopPadding { get { return _panelTopPadding; } set { _panelTopPadding = value; } }
 
         [Tooltip("줄 하나에서 다음 줄까지의 거리. 와이어프레임 실측 31 을 10 단위로 옮긴 값이다.")]
         [Min(1f)]
-        public float LineStep = UiScale.Px(30f);
+        [FormerlySerializedAs("LineStep")]
+        [SerializeField] private float _lineStep = UiScale.Px(30f);
+        public float LineStep { get { return _lineStep; } set { _lineStep = value; } }
 
         /// <summary>칸 안에서 줄 하나가 차지하는 자리. 화면 왼쪽 위를 기준으로 잡은 값이다.</summary>
         public Vector2 GetLinePosition(Vector2 panelPosition, int index)
@@ -157,21 +190,21 @@ namespace SlotHero.RunResult
 
         private void OnValidate()
         {
-            OutcomeSize.x = Mathf.Max(1f, OutcomeSize.x);
-            OutcomeSize.y = Mathf.Max(1f, OutcomeSize.y);
-            LocationSize.x = Mathf.Max(1f, LocationSize.x);
-            LocationSize.y = Mathf.Max(1f, LocationSize.y);
-            FinalBuildSize.x = Mathf.Max(1f, FinalBuildSize.x);
-            FinalBuildSize.y = Mathf.Max(1f, FinalBuildSize.y);
-            RunRecordSize.x = Mathf.Max(1f, RunRecordSize.x);
-            RunRecordSize.y = Mathf.Max(1f, RunRecordSize.y);
-            UnlockSize.x = Mathf.Max(1f, UnlockSize.x);
-            UnlockSize.y = Mathf.Max(1f, UnlockSize.y);
-            TitleButtonSize.x = Mathf.Max(1f, TitleButtonSize.x);
-            TitleButtonSize.y = Mathf.Max(1f, TitleButtonSize.y);
-            LineStep = Mathf.Max(1f, LineStep);
-            PanelPadding = Mathf.Max(0f, PanelPadding);
-            PanelTopPadding = Mathf.Max(0f, PanelTopPadding);
+            _outcomeSize.x = Mathf.Max(1f, _outcomeSize.x);
+            _outcomeSize.y = Mathf.Max(1f, _outcomeSize.y);
+            _locationSize.x = Mathf.Max(1f, _locationSize.x);
+            _locationSize.y = Mathf.Max(1f, _locationSize.y);
+            _finalBuildSize.x = Mathf.Max(1f, _finalBuildSize.x);
+            _finalBuildSize.y = Mathf.Max(1f, _finalBuildSize.y);
+            _runRecordSize.x = Mathf.Max(1f, _runRecordSize.x);
+            _runRecordSize.y = Mathf.Max(1f, _runRecordSize.y);
+            _unlockSize.x = Mathf.Max(1f, _unlockSize.x);
+            _unlockSize.y = Mathf.Max(1f, _unlockSize.y);
+            _titleButtonSize.x = Mathf.Max(1f, _titleButtonSize.x);
+            _titleButtonSize.y = Mathf.Max(1f, _titleButtonSize.y);
+            _lineStep = Mathf.Max(1f, _lineStep);
+            _panelPadding = Mathf.Max(0f, _panelPadding);
+            _panelTopPadding = Mathf.Max(0f, _panelTopPadding);
         }
     }
 }

@@ -11,8 +11,8 @@ namespace SlotHero.Map.UI
     ///
     /// 계층 구성
     ///   MapScreen (Canvas 아래)
-    ///     Viewport        : 이 스크립트를 붙인다. 지도 영역 1600 x 800, Mask 와 투명 Image
-    ///       Content       : 크기 1600 x 800, 피벗 가운데
+    ///     Viewport        : 이 스크립트를 붙인다. 지도 영역 1300 x 500(`MapVisualConfig.MapSize`), Mask 와 투명 Image
+    ///       Content       : 크기 1300 x 500, 피벗 가운데
     ///         EdgeLayer
     ///         NodeLayer
     /// </summary>
@@ -33,7 +33,6 @@ namespace SlotHero.Map.UI
 
         private readonly List<MapNodeView> _nodeViews = new List<MapNodeView>();
         private readonly List<MapEdgeView> _edgeViews = new List<MapEdgeView>();
-        private readonly Dictionary<int, MapNodeView> _nodeViewById = new Dictionary<int, MapNodeView>();
 
         private StageMap _map;
         private MapProgress _progress;
@@ -85,7 +84,6 @@ namespace SlotHero.Map.UI
             {
                 MapNodeView view = Instantiate(_nodePrefab, _nodeLayer);
                 _nodeViews.Add(view);
-                _nodeViewById[_map.Nodes[i].Id] = view;
             }
 
             Refresh();
@@ -143,13 +141,6 @@ namespace SlotHero.Map.UI
             bool toSkipped = nodeStates.TryGetValue(edge.ToNodeId, out toState) && toState == MapNodeDisplayState.Skipped;
 
             return fromSkipped || toSkipped ? MapEdgeDisplayState.Closed : MapEdgeDisplayState.Open;
-        }
-
-        /// <summary>노드 번호로 표시를 찾는다. 연출을 붙일 때 쓴다.</summary>
-        public MapNodeView GetNodeView(int nodeId)
-        {
-            MapNodeView view;
-            return _nodeViewById.TryGetValue(nodeId, out view) ? view : null;
         }
 
         /// <summary>현재 노드가 화면 밖에 있으면 가로로 끌어와 보이게 한다.</summary>
@@ -280,7 +271,7 @@ namespace SlotHero.Map.UI
             {
                 if (_nodeViews[i] != null)
                 {
-                    Destroy(_nodeViews[i].gameObject);
+                    DestroyView(_nodeViews[i].gameObject);
                 }
             }
 
@@ -288,13 +279,28 @@ namespace SlotHero.Map.UI
             {
                 if (_edgeViews[i] != null)
                 {
-                    Destroy(_edgeViews[i].gameObject);
+                    DestroyView(_edgeViews[i].gameObject);
                 }
             }
 
             _nodeViews.Clear();
             _edgeViews.Clear();
-            _nodeViewById.Clear();
+        }
+
+        /// <summary>
+        /// 노드와 간선 하나를 지운다. 플레이 중에는 프레임 끝에 지우고, 편집 모드에서는 바로 지운다.
+        /// 편집 모드 검사는 프레임이 돌지 않아 Destroy 로는 옛 지도가 새 지도와 겹쳐 남았다(2026년 10월 21일 코덱스 검토).
+        /// </summary>
+        private static void DestroyView(GameObject target)
+        {
+            if (Application.isPlaying)
+            {
+                Destroy(target);
+            }
+            else
+            {
+                DestroyImmediate(target);
+            }
         }
 
         // 화면 이동. 기획서에 따라 좌우만 움직이며 세로 이동과 확대 축소는 지원하지 않는다.

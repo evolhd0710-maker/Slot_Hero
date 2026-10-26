@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Sanctum
 {
@@ -17,39 +18,45 @@ namespace SlotHero.Sanctum
     {
         [Header("가격 표기")]
         [Tooltip("살 수 있을 때의 가격 글자 색.")]
-        public Color PriceColor = new Color(1f, 0.85f, 0.25f);
+        [FormerlySerializedAs("PriceColor")]
+        [SerializeField] private Color _priceColor = new Color(1f, 0.85f, 0.25f);
+        public Color PriceColor { get { return _priceColor; } set { _priceColor = value; } }
 
         [Tooltip("골드가 모자랄 때의 가격 글자 색. 13 가격 · 공통 규칙 의 붉은 색 표기.")]
-        public Color PriceNotAffordableColor = new Color(0.85f, 0.18f, 0.15f);
+        [FormerlySerializedAs("PriceNotAffordableColor")]
+        [SerializeField] private Color _priceNotAffordableColor = new Color(0.85f, 0.18f, 0.15f);
+        public Color PriceNotAffordableColor { get { return _priceNotAffordableColor; } set { _priceNotAffordableColor = value; } }
 
         [Header("진열 자리")]
         [Tooltip("살 수 있는 자리.")]
-        public Color SlotNormalTint = Color.white;
+        [FormerlySerializedAs("SlotNormalTint")]
+        [SerializeField] private Color _slotNormalTint = Color.white;
+        public Color SlotNormalTint { get { return _slotNormalTint; } set { _slotNormalTint = value; } }
 
         [Tooltip("골드가 모자라 살 수 없는 자리. 가격만 붉게 하고 물건은 그대로 두려면 흰색으로 둔다.")]
-        public Color SlotNotAffordableTint = Color.white;
+        [FormerlySerializedAs("SlotNotAffordableTint")]
+        [SerializeField] private Color _slotNotAffordableTint = Color.white;
+        public Color SlotNotAffordableTint { get { return _slotNotAffordableTint; } set { _slotNotAffordableTint = value; } }
 
         [Tooltip("이미 팔린 자리.")]
-        public Color SlotSoldTint = new Color(0.45f, 0.44f, 0.42f, 0.5f);
+        [FormerlySerializedAs("SlotSoldTint")]
+        [SerializeField] private Color _slotSoldTint = new Color(0.45f, 0.44f, 0.42f, 0.5f);
+        public Color SlotSoldTint { get { return _slotSoldTint; } set { _slotSoldTint = value; } }
 
         [Tooltip("팔린 자리를 아예 감춘다. 끄면 위의 색으로 흐리게 남겨 둔다.")]
-        public bool HideSoldSlots = true;
-
-        [Tooltip("커서를 올린 자리를 키우는 비율. 인게임 화면 기획서 04 화면 공통 규칙 의 카드 상태를 따라 5퍼센트.")]
-        public float HoverScale = 1.05f;
+        [FormerlySerializedAs("HideSoldSlots")]
+        [SerializeField] private bool _hideSoldSlots = true;
+        public bool HideSoldSlots { get { return _hideSoldSlots; } set { _hideSoldSlots = value; } }
 
         [Header("야영")]
         [Tooltip("쓸 수 있는 야영.")]
-        public Color CampAvailableTint = Color.white;
+        [FormerlySerializedAs("CampAvailableTint")]
+        [SerializeField] private Color _campAvailableTint = Color.white;
+        public Color CampAvailableTint { get { return _campAvailableTint; } set { _campAvailableTint = value; } }
 
         [Tooltip("이미 쓴 야영. 04 야영 의 사용 표시 는 회색으로 바꾸고 선택을 막는다.")]
-        public Color CampUsedTint = new Color(0.45f, 0.44f, 0.42f, 1f);
-
-        [Tooltip("야영 사용 피드백으로 체력 수치에 잠시 입히는 색.")]
-        public Color CampHealFeedbackColor = new Color(0.35f, 0.85f, 0.35f);
-
-        [Tooltip("체력 수치를 그 색으로 두는 시간(초).")]
-        [Min(0f)]
-        public float CampHealFeedbackSeconds = 1.2f;
+        [FormerlySerializedAs("CampUsedTint")]
+        [SerializeField] private Color _campUsedTint = new Color(0.45f, 0.44f, 0.42f, 1f);
+        public Color CampUsedTint { get { return _campUsedTint; } set { _campUsedTint = value; } }
     }
 }

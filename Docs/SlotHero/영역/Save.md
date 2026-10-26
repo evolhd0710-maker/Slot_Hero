@@ -17,6 +17,7 @@ Save/
       RunOwnedData.cs        문양 풀, 유물, 코인
       RunStatisticsData.cs   이번 런의 통계
       RelicPoolSaveData.cs   유물 순서를 어디까지 꺼냈는지
+      SymbolIdRenames.cs     바뀐 문양 식별자. 옛 런을 읽을 때 새 식별자로 옮긴다
       MetaSaveData.cs        해금, 도전과제, 누적 통계, 지난 런 기록 (06장)
       SettingsSaveData.cs    기기 설정 (07장)
       SaveChecksum.cs        유효성 검사 값
@@ -150,6 +151,14 @@ Save/
 
 **칸의 뜻을 바꿀 때만 조심한다.** 같은 이름에 다른 뜻을 담으면 옛 값이 새 뜻으로 읽힌다.
 그때는 이름을 새로 짓는다. 설정의 연출 속도를 `effectSpeed` 에서 `presentationSpeed` 로 바꾼 것이 그 예다.
+
+**칸은 그대로인데 담긴 식별자가 바뀐 경우**는 읽은 직후 한 곳에서 옮긴다.
+2026년 10월 19일 원재가 문양 이름을 전투 시스템 기획서 10c 의 04 표에 맞추기로 해
+`QuickSilver` → `Quicksilver`, `Phoenix` → `Pheonix`, `Shipwreck` → `Shipwerck` 가 바뀌었다.
+`SaveRepository.LoadRun` 이 `SymbolIdRenames.Apply` 를 불러 소지 문양을 새 식별자로 옮긴다.
+차례와 장수는 그대로 두고, 두 이름이 함께 있으면 새 쪽에 장수를 합친다.
+런 저장에서 문양 식별자가 들어가는 칸은 소지 문양뿐이다. 저장 형식은 그대로라 판 번호는 올리지 않는다.
+이름이 또 바뀌면 `SymbolIdRenames` 의 표에 한 줄을 더한다.
 
 ## 체크섬
 
@@ -440,6 +449,10 @@ unity run <프로젝트> -- -executeMethod SlotHero.ToolsEditor.ClearSaveData.Cl
   오늘 날짜로 맞춘다. 날짜가 바뀐 경우에만 메타를 다시 쓴다. 2026년 10월 9일 원재가 정했다.
   날짜를 주는 곳은 `SaveService.Today` 이고 비워 두면 기기 시계다
 - **최대 체력 99.** 전투 시스템이 정할 값이다. 그때까지 설정 에셋에 둔다
+- **지도 규칙이 바뀐 런은 지운다.** 지도는 저장하지 않고 시드로 다시 만든다. 런을 쓸 때마다 지금 스테이지 지도의 지문(`RunSaveData.MapFingerprint`)을 적고,
+  불러올 때 흐름이 물린 `SaveService.RunStillPlayable` 로 다시 만든 지도와 견준다. 다르면 런을 지우고 `SaveOutcome.RunOutdated` 로 "런 데이터 삭제" 팝업을 띄운다.
+  업데이트로 같은 시드에서 다른 지도가 나오면 저장된 방 번호가 없거나 다른 방을 가리키기 때문이다. 2026년 10월 22일 원재가 정했다.
+  지문을 적기 전에 시작한 런은 지문이 비어 있어 보지 않고, 다음에 쓸 때 지문이 적힌다
 
 ## 이 코드에 없는 것
 

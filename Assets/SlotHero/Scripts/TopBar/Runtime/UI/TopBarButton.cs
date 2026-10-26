@@ -113,9 +113,20 @@ namespace SlotHero.TopBar.UI
                 iconRect.anchorMax = new Vector2(0.5f, 0.5f);
                 iconRect.pivot = new Vector2(0.5f, 0.5f);
                 iconRect.anchoredPosition = Vector2.zero;
-                iconRect.sizeDelta = new Vector2(iconSize, iconSize);
 
-                // 지도 아이콘처럼 정사각형이 아닌 그림도 60 안에 들어오게 한다.
+                // 가로로 긴 그림(지도 76 × 55)은 정사각 칸에 맞추면 높이가 29 로 줄어 작게 보였다(2026년 10월 25일 원재).
+                // 높이를 다른 아이콘과 같게 두고 폭만 그림 비율만큼 넓힌다. 누르는 영역은 넘지 않는다.
+                float width = iconSize;
+                if (_icon.sprite != null && _icon.sprite.rect.height > 0f)
+                {
+                    float aspect = _icon.sprite.rect.width / _icon.sprite.rect.height;
+                    if (aspect > 1f)
+                    {
+                        width = Mathf.Min(iconSize * aspect, hitSize);
+                    }
+                }
+
+                iconRect.sizeDelta = new Vector2(width, iconSize);
                 _icon.preserveAspect = true;
             }
 

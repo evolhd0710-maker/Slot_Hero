@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Events
 {
@@ -11,22 +13,32 @@ namespace SlotHero.Events
     public class EventScreen
     {
         /// <summary>화면 식별자. 기획서의 "화면 2A" 같은 이름을 그대로 쓴다.</summary>
-        public string ScreenId = string.Empty;
+        [FormerlySerializedAs("ScreenId")]
+        [SerializeField] private string _screenId = string.Empty;
+        public string ScreenId { get { return _screenId; } set { _screenId = value; } }
 
         /// <summary>삽화 식별자. 그림 자체는 표시 쪽이 이 식별자로 찾아온다.</summary>
-        public string IllustrationId = string.Empty;
+        [FormerlySerializedAs("IllustrationId")]
+        [SerializeField] private string _illustrationId = string.Empty;
+        public string IllustrationId { get { return _illustrationId; } set { _illustrationId = value; } }
 
         /// <summary>
         /// 분위기. 기획서가 "연출 참고용 방향만 짧게 적는다"로 정한 그것이다.
         /// 화면에 나오지 않는다. 삽화를 그릴 때 보는 메모다.
         /// </summary>
-        public string Mood = string.Empty;
+        [FormerlySerializedAs("Mood")]
+        [SerializeField] private string _mood = string.Empty;
+        public string Mood { get { return _mood; } set { _mood = value; } }
 
         /// <summary>본문. 화면에 나오는 스토리다.</summary>
-        public string BodyText = string.Empty;
+        [FormerlySerializedAs("BodyText")]
+        [SerializeField] private string _bodyText = string.Empty;
+        public string BodyText { get { return _bodyText; } set { _bodyText = value; } }
 
         /// <summary>선택지. 위에서 아래로 그대로 놓인다.</summary>
-        public List<EventScreenChoice> Choices = new List<EventScreenChoice>();
+        [FormerlySerializedAs("Choices")]
+        [SerializeField] private List<EventScreenChoice> _choices = new List<EventScreenChoice>();
+        public List<EventScreenChoice> Choices { get { return _choices; } set { _choices = value; } }
 
         public EventScreen()
         {

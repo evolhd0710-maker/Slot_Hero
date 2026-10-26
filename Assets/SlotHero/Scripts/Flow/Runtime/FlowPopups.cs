@@ -262,7 +262,9 @@ namespace SlotHero.Flow
         /// </summary>
         public void NotifySave(SaveOutcome outcome, string text)
         {
-            string title = outcome == SaveOutcome.RunDiscarded ? "런 데이터 손상" : "저장";
+            string title = outcome == SaveOutcome.RunDiscarded
+                ? "런 데이터 손상"
+                : (outcome == SaveOutcome.RunOutdated ? "런 데이터 삭제" : "저장");
             Show(PopupSpec.Notice(title, text, "확인"));
         }
 

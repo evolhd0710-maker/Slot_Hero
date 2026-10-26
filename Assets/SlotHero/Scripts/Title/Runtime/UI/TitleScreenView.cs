@@ -19,8 +19,8 @@ namespace SlotHero.Title.UI
         [SerializeField] private TitleLayoutConfig _layout;
         [SerializeField] private TitleVisualConfig _visual;
 
+        // 배경 그림은 씬을 만들 때 깔고 이 표시는 건드리지 않는다. 읽는 곳이 없던 `_background` 칸은 지웠다(2026년 10월 25일 원재).
         [Header("바탕")]
-        [SerializeField] private Image _background;
         [SerializeField] private Image _logo;
 
         [Header("메뉴")]
@@ -181,15 +181,6 @@ namespace SlotHero.Title.UI
             if (_versionLabel != null && _visual != null)
             {
                 _versionLabel.text = _visual.FormatVersion(buildNumber);
-            }
-        }
-
-        /// <summary>배경 그림을 바꾼다.</summary>
-        public void SetBackground(Sprite sprite)
-        {
-            if (_background != null)
-            {
-                _background.sprite = sprite;
             }
         }
 

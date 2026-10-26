@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Events.UI;
 
 namespace SlotHero.Events
@@ -10,9 +11,13 @@ namespace SlotHero.Events
     public struct EventIllustration
     {
         /// <summary>`이벤트식별자_화면식별자`. 그림 파일 이름과 같다.</summary>
-        public string Id;
+        [FormerlySerializedAs("Id")]
+        [SerializeField] private string _id;
+        public string Id { get { return _id; } set { _id = value; } }
 
-        public Sprite Sprite;
+        [FormerlySerializedAs("Sprite")]
+        [SerializeField] private Sprite _sprite;
+        public Sprite Sprite { get { return _sprite; } set { _sprite = value; } }
     }
 
     /// <summary>
@@ -27,7 +32,9 @@ namespace SlotHero.Events
     [CreateAssetMenu(fileName = "EventIllustrationConfig", menuName = "Slot Hero/이벤트/삽화 목록")]
     public class EventIllustrationConfig : ScriptableObject, IEventIllustrationSource
     {
-        public List<EventIllustration> Illustrations = new List<EventIllustration>();
+        [FormerlySerializedAs("Illustrations")]
+        [SerializeField] private List<EventIllustration> _illustrations = new List<EventIllustration>();
+        public List<EventIllustration> Illustrations { get { return _illustrations; } set { _illustrations = value; } }
 
         /// <inheritdoc />
         public Sprite GetIllustration(string illustrationId)

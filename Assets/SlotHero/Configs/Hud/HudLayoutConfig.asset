@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa3cfa9d170f60a43a95ef02a64edb7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Hud.HudLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  ButtonSize: 200
-  ButtonCornerMargin: 70
-  IconSize: 150
-  OnLeftCorner: 0
-  AutoSaveNoticeSize: {x: 200, y: 40}
-  AutoSaveNoticeGap: 15
+  _referenceResolution: {x: 1920, y: 1080}
+  _buttonSize: 200
+  _buttonCornerMargin: 70
+  _iconSize: 150
+  _onLeftCorner: 0
+  _autoSaveNoticeSize: {x: 200, y: 40}
+  _autoSaveNoticeGap: 15

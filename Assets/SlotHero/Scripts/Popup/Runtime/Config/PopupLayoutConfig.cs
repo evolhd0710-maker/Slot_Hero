@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Ui;
 
 namespace SlotHero.Popup
@@ -16,49 +17,97 @@ namespace SlotHero.Popup
     {
         [Header("기준")]
         [Tooltip("모든 규격의 기준 해상도. 1920 × 1080 FHD.")]
-        public Vector2 ReferenceResolution = UiScale.V(1920f, 1080f);
+        [FormerlySerializedAs("ReferenceResolution")]
+        [SerializeField] private Vector2 _referenceResolution = UiScale.V(1920f, 1080f);
+        public Vector2 ReferenceResolution { get { return _referenceResolution; } set { _referenceResolution = value; } }
 
         [Header("팝업 본체")]
         [Tooltip("팝업 본체의 최대 크기. 기획서 기준 1080 × 820.")]
-        public Vector2 MaxPopupSize = UiScale.V(1080f, 820f);
+        [FormerlySerializedAs("MaxPopupSize")]
+        [SerializeField] private Vector2 _maxPopupSize = UiScale.V(1080f, 820f);
+        public Vector2 MaxPopupSize { get { return _maxPopupSize; } set { _maxPopupSize = value; } }
 
         [Tooltip("본체 안쪽 좌우 여백. 와이어프레임 실측 41 을 10 단위로 옮긴 값이다. 제목 칸 폭이 1000 이 된다.")]
-        public float PopupPadding = UiScale.Px(40f);
+        [FormerlySerializedAs("PopupPadding")]
+        [SerializeField] private float _popupPadding = UiScale.Px(40f);
+        public float PopupPadding { get { return _popupPadding; } set { _popupPadding = value; } }
 
         [Tooltip("본체 위쪽 여백. 와이어프레임 기준 60.")]
-        public float PopupTopPadding = UiScale.Px(60f);
+        [FormerlySerializedAs("PopupTopPadding")]
+        [SerializeField] private float _popupTopPadding = UiScale.Px(60f);
+        public float PopupTopPadding { get { return _popupTopPadding; } set { _popupTopPadding = value; } }
 
         [Tooltip("본체 아래쪽 여백. 와이어프레임 기준 40.")]
-        public float PopupBottomPadding = UiScale.Px(40f);
+        [FormerlySerializedAs("PopupBottomPadding")]
+        [SerializeField] private float _popupBottomPadding = UiScale.Px(40f);
+        public float PopupBottomPadding { get { return _popupBottomPadding; } set { _popupBottomPadding = value; } }
 
         [Header("제목과 본문")]
         [Tooltip("제목 칸의 높이. 와이어프레임 실측 76 을 10 단위로 옮긴 값이다.")]
         [Min(1f)]
-        public float TitleHeight = UiScale.Px(80f);
+        [FormerlySerializedAs("TitleHeight")]
+        [SerializeField] private float _titleHeight = UiScale.Px(80f);
+        public float TitleHeight { get { return _titleHeight; } set { _titleHeight = value; } }
 
         [Tooltip("제목과 본문 사이 간격. 와이어프레임 기준 30.")]
-        public float TitleToBodyGap = UiScale.Px(30f);
+        [FormerlySerializedAs("TitleToBodyGap")]
+        [SerializeField] private float _titleToBodyGap = UiScale.Px(30f);
+        public float TitleToBodyGap { get { return _titleToBodyGap; } set { _titleToBodyGap = value; } }
 
         [Tooltip("본문과 버튼 사이 간격. 와이어프레임 기준 40.")]
-        public float BodyToButtonGap = UiScale.Px(40f);
+        [FormerlySerializedAs("BodyToButtonGap")]
+        [SerializeField] private float _bodyToButtonGap = UiScale.Px(40f);
+        public float BodyToButtonGap { get { return _bodyToButtonGap; } set { _bodyToButtonGap = value; } }
 
         [Tooltip("본문 칸 안쪽 여백. 와이어프레임 실측 32 를 10 단위로 옮긴 값이다.")]
-        public float BodyPadding = UiScale.Px(30f);
+        [FormerlySerializedAs("BodyPadding")]
+        [SerializeField] private float _bodyPadding = UiScale.Px(30f);
+        public float BodyPadding { get { return _bodyPadding; } set { _bodyPadding = value; } }
 
         [Header("버튼")]
         [Tooltip("버튼 칸의 높이. 와이어프레임 실측 97 을 10 단위로 옮긴 값이다.")]
         [Min(1f)]
-        public float ButtonHeight = UiScale.Px(100f);
+        [FormerlySerializedAs("ButtonHeight")]
+        [SerializeField] private float _buttonHeight = UiScale.Px(100f);
+        public float ButtonHeight { get { return _buttonHeight; } set { _buttonHeight = value; } }
+
+        // 아래 넷은 08 화면 팝업 의 "버튼 개수에 따른 배치" 다. 둘과 셋 모두 전체 폭이 980 이 되어 같은 자리에서 시작한다.
+        // 예전에는 `PopupLayoutMath` 에 박혀 있어 본체 폭과 함께 조정할 수 없었다(2026년 10월 22일 코덱스 검토).
+        [Tooltip("버튼이 하나이거나 둘일 때의 폭. 기획서 기준 450.")]
+        [Min(1f)]
+        [SerializeField] private float _wideButtonWidth = UiScale.Px(450f);
+        public float WideButtonWidth { get { return _wideButtonWidth; } set { _wideButtonWidth = value; } }
+
+        [Tooltip("버튼이 셋일 때의 폭. 기획서 기준 300.")]
+        [Min(1f)]
+        [SerializeField] private float _narrowButtonWidth = UiScale.Px(300f);
+        public float NarrowButtonWidth { get { return _narrowButtonWidth; } set { _narrowButtonWidth = value; } }
+
+        [Tooltip("버튼이 둘일 때의 간격. 기획서 기준 80.")]
+        [Min(0f)]
+        [SerializeField] private float _wideButtonGap = UiScale.Px(80f);
+        public float WideButtonGap { get { return _wideButtonGap; } set { _wideButtonGap = value; } }
+
+        [Tooltip("버튼이 셋일 때의 간격. 기획서 기준 40.")]
+        [Min(0f)]
+        [SerializeField] private float _narrowButtonGap = UiScale.Px(40f);
+        public float NarrowButtonGap { get { return _narrowButtonGap; } set { _narrowButtonGap = value; } }
 
         [Header("아이템 상세 오버레이")]
         [Tooltip("아이템 상세 팝업의 크기. 기획서 기준 500 × 380.")]
-        public Vector2 ItemDetailSize = UiScale.V(500f, 380f);
+        [FormerlySerializedAs("ItemDetailSize")]
+        [SerializeField] private Vector2 _itemDetailSize = UiScale.V(500f, 380f);
+        public Vector2 ItemDetailSize { get { return _itemDetailSize; } set { _itemDetailSize = value; } }
 
         [Tooltip("커서에서 팝업까지 띄우는 거리.")]
-        public Vector2 ItemDetailCursorOffset = UiScale.V(20f, -20f);
+        [FormerlySerializedAs("ItemDetailCursorOffset")]
+        [SerializeField] private Vector2 _itemDetailCursorOffset = UiScale.V(20f, -20f);
+        public Vector2 ItemDetailCursorOffset { get { return _itemDetailCursorOffset; } set { _itemDetailCursorOffset = value; } }
 
         [Tooltip("화면 가장자리에서 남기는 최소 여백. 인게임 화면 기획서 04 의 안전 영역 40.")]
-        public float ScreenEdgePadding = UiScale.Px(40f);
+        [FormerlySerializedAs("ScreenEdgePadding")]
+        [SerializeField] private float _screenEdgePadding = UiScale.Px(40f);
+        public float ScreenEdgePadding { get { return _screenEdgePadding; } set { _screenEdgePadding = value; } }
 
         /// <summary>제목과 버튼, 여백이 차지하는 세로 길이. 본문을 뺀 나머지다.</summary>
         public float GetChromeHeight()
@@ -159,13 +208,13 @@ namespace SlotHero.Popup
 
         private void OnValidate()
         {
-            MaxPopupSize.x = Mathf.Max(1f, MaxPopupSize.x);
-            MaxPopupSize.y = Mathf.Max(1f, MaxPopupSize.y);
-            TitleHeight = Mathf.Max(1f, TitleHeight);
-            ButtonHeight = Mathf.Max(1f, ButtonHeight);
-            ItemDetailSize.x = Mathf.Max(1f, ItemDetailSize.x);
-            ItemDetailSize.y = Mathf.Max(1f, ItemDetailSize.y);
-            ScreenEdgePadding = Mathf.Max(0f, ScreenEdgePadding);
+            _maxPopupSize.x = Mathf.Max(1f, _maxPopupSize.x);
+            _maxPopupSize.y = Mathf.Max(1f, _maxPopupSize.y);
+            _titleHeight = Mathf.Max(1f, _titleHeight);
+            _buttonHeight = Mathf.Max(1f, _buttonHeight);
+            _itemDetailSize.x = Mathf.Max(1f, _itemDetailSize.x);
+            _itemDetailSize.y = Mathf.Max(1f, _itemDetailSize.y);
+            _screenEdgePadding = Mathf.Max(0f, _screenEdgePadding);
         }
     }
 }

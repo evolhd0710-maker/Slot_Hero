@@ -43,11 +43,8 @@ namespace SlotHero.Save
                 || point == AutoSavePoint.RunEnded;
         }
 
-        /// <summary>메타 데이터를 건드리는 시점인지. 런 종료뿐이다.</summary>
-        public static bool TouchesMeta(AutoSavePoint point)
-        {
-            return point == AutoSavePoint.RunEnded;
-        }
+        // 메타를 건드리는 시점은 표로 두지 않는다. 런 종료 말고도 런 시작(런 횟수)과 날짜가 바뀐 뒤의 런 저장(마지막으로 논 날짜)이
+        // 메타를 쓴다(`SaveService.WriteRun`). 예전의 `TouchesMeta` 는 런 종료뿐이라 적어 실제와 달랐다(2026년 10월 25일 코덱스 검토).
 
         /// <summary>설정 데이터를 건드리는 시점인지.</summary>
         public static bool TouchesSettings(AutoSavePoint point)

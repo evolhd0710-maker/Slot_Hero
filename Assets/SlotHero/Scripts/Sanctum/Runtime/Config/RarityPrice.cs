@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Sanctum
 {
@@ -9,13 +11,18 @@ namespace SlotHero.Sanctum
     [Serializable]
     public struct RarityPrice
     {
-        public ItemRarity Rarity;
-        public int Price;
+        [FormerlySerializedAs("Rarity")]
+        [SerializeField] private ItemRarity _rarity;
+        public ItemRarity Rarity { get { return _rarity; } set { _rarity = value; } }
+
+        [FormerlySerializedAs("Price")]
+        [SerializeField] private int _price;
+        public int Price { get { return _price; } set { _price = value; } }
 
         public RarityPrice(ItemRarity rarity, int price)
         {
-            Rarity = rarity;
-            Price = price;
+            _rarity = rarity;
+            _price = price;
         }
     }
 }

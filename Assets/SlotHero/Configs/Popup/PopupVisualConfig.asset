@@ -12,26 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d265589b116d794386dfc169a14aa3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Popup.PopupVisualConfig
-  DimColor: {r: 0, g: 0, b: 0, a: 0.6}
-  PopupColor: {r: 0.988, g: 0.988, b: 0.988, a: 1}
-  TitlePanelColor: {r: 0.949, g: 0.941, b: 0.925, a: 1}
-  BodyPanelColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
-  ButtonColor: {r: 0.949, g: 0.941, b: 0.925, a: 1}
-  ButtonTextColor: {r: 0.29, g: 0.267, b: 0.235, a: 1}
-  EmphasizedButtonColor: {r: 0.62, g: 0.169, b: 0.145, a: 1}
-  EmphasizedButtonTextColor: {r: 1, g: 1, b: 1, a: 1}
-  HoverBrightness: 1.1
-  PressedBrightness: 0.9
-  DisabledAlpha: 0.4
-  TitleFontSize: 40
-  BodyFontSize: 24
-  ButtonFontSize: 30
-  TextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
-  ItemDetailColor: {r: 0.945, g: 0.937, b: 0.918, a: 1}
-  ItemDetailPanelColor: {r: 0.894, g: 0.878, b: 0.847, a: 1}
-  ItemNameFontSize: 30
-  ItemValueFontSize: 24
-  ItemBodyFontSize: 24
-  ItemFlavorFontSize: 20
-  ItemFlavorColor: {r: 0.431, g: 0.4, b: 0.353, a: 1}
-  ItemFlavorFormat: '"{0}"'
+  _dimColor: {r: 0, g: 0, b: 0, a: 0.6}
+  _popupColor: {r: 1, g: 1, b: 1, a: 1}
+  _titlePanelColor: {r: 1, g: 1, b: 1, a: 1}
+  _bodyPanelColor: {r: 1, g: 1, b: 1, a: 1}
+  _buttonColor: {r: 1, g: 1, b: 1, a: 1}
+  _buttonTextColor: {r: 0.29, g: 0.267, b: 0.235, a: 1}
+  _emphasizedButtonColor: {r: 0.62, g: 0.169, b: 0.145, a: 1}
+  _emphasizedButtonTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _hoverBrightness: 1.1
+  _pressedBrightness: 0.9
+  _disabledAlpha: 0.4
+  _titleFontSize: 40
+  _bodyFontSize: 24
+  _buttonFontSize: 30
+  _textColor: {r: 0.925, g: 0.886, b: 0.784, a: 1}
+  _itemDetailColor: {r: 1, g: 1, b: 1, a: 1}
+  _itemDetailPanelColor: {r: 1, g: 1, b: 1, a: 1}
+  _itemNameFontSize: 30
+  _itemValueFontSize: 24
+  _itemBodyFontSize: 24
+  _itemFlavorFontSize: 20
+  _itemFlavorColor: {r: 0.737, g: 0.694, b: 0.612, a: 1}
+  _itemFlavorFormat: '"{0}"'

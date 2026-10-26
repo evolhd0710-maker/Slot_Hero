@@ -14,6 +14,10 @@ namespace SlotHero.Combat.UI
     ///
     /// **소용돌이 칸은 평소에 효과가 없다.** 블랙홀은 아직 기획 중이라 칸만 두었다(2026년 10월 25일).
     /// 유물 사건의 지평선이 있을 때만 켜지고, 누르면 가장 많은 태그로 공격한다.
+    ///
+    /// 그림은 피그마 `Jackpot 아트웍 (복사)` Frame 3 · 4 다. 원판 테두리 안을 어둡게 메우고 열 칸 바퀴를 그린 뒤
+    /// 가운데에 메달을 놓고 그 위에 고른 코인을 얹는다. 피그마 바퀴는 칸 간격이 1 ~ 2 도씩 어긋나 있어
+    /// 같은 선 모양으로 36 도 간격 바퀴를 다시 그려 쓴다(`Combat/Art/피그마에서 가져온 그림/열칸_원판_그리기.ps1`).
     /// </summary>
     public class TagDialView : MonoBehaviour
     {
@@ -39,15 +43,32 @@ namespace SlotHero.Combat.UI
 
         [SerializeField] private TagSectorView[] _sectors = new TagSectorView[0];
 
+        [Header("바퀴")]
+        [Tooltip("칸 묶음. 이 크기가 바퀴 바깥 지름이고 칸 누르기 반지름이 된다.")]
+        [SerializeField] private RectTransform _sectorLayer;
+
+        [Tooltip("원판 테두리 안쪽을 메우는 어두운 원.")]
+        [SerializeField] private Image _wheelBack;
+
+        [Tooltip("열 칸 바퀴 선 그림.")]
+        [SerializeField] private Image _wheel;
+
         [Header("가운데")]
         [SerializeField] private Button _centerButton;
         [SerializeField] private Image _centerBack;
+
+        [Tooltip("가운데 메달. 피그마 원판 가운데 메달이다.")]
+        [SerializeField] private Image _medal;
         [SerializeField] private Image _centerCoin;
         [SerializeField] private TMPro.TMP_Text _centerLabel;
 
         [Header("공격 예정")]
-        [Tooltip("태그를 고르면 원판 전체가 그 태그 색으로 찬다. 초안 06 의 \"공격 예정(우측 UI 변경)\".")]
+        [Tooltip("예전 방식의 원판 전체 채우기. 지금은 고른 칸만 태그 색으로 채우고 테두리를 켠다. " +
+                 "초안 06 의 \"공격 예정(우측 UI 변경)\".")]
         [SerializeField] private Image _charge;
+
+        private int _chosenIndex = -1;
+        private float _chargeAlpha = 0.45f;
 
         private readonly List<Action> _clickHandlers = new List<Action>();
         private readonly List<Action<bool>> _hoverHandlers = new List<Action<bool>>();
@@ -149,7 +170,19 @@ namespace SlotHero.Combat.UI
             }
 
             float sweep = 360f / SectorCount;
-            float innerRatio = layout.TagCenterSize / layout.DialSize;
+            float innerRatio = layout.TagWheelInnerRatio;
+            float artSize = layout.TagWheelSize * layout.TagWheelArtScale;
+            _chargeAlpha = visual.TagChargeAlpha;
+
+            PlaceCentered(_sectorLayer, Vector2.zero, new Vector2(layout.TagWheelSize, layout.TagWheelSize));
+            PlaceCentered(_wheel != null ? _wheel.rectTransform : null, Vector2.zero, new Vector2(artSize, artSize));
+            PlaceCentered(_wheelBack != null ? _wheelBack.rectTransform : null, Vector2.zero,
+                new Vector2(layout.TagWheelBackSize, layout.TagWheelBackSize));
+
+            if (_wheelBack != null)
+            {
+                _wheelBack.color = visual.TagWheelBackColor;
+            }
 
             for (int i = 0; i < _sectors.Length; i++)
             {
@@ -166,28 +199,47 @@ namespace SlotHero.Combat.UI
                 Sprite icon = null;
                 string symbol = "@";
 
-                if (TryGetTag(i, out tag) && tags != null)
+                // 태그 칸인데 태그 설정이 없으면 소용돌이 기호 대신 태그 이름을 적는다(2026년 10월 26일 코덱스 점검).
+                if (TryGetTag(i, out tag))
                 {
-                    BuildTagVisual tagVisual = tags.GetTagVisual(tag);
-                    color = tagVisual.BarColor;
-                    icon = tagVisual.Icon;
-                    symbol = tagVisual.Symbol;
+                    if (tags != null)
+                    {
+                        BuildTagVisual tagVisual = tags.GetTagVisual(tag);
+                        color = tagVisual.BarColor;
+                        icon = tagVisual.Icon;
+                        symbol = tagVisual.Symbol;
+                    }
+                    else
+                    {
+                        color = Color.white;
+                        symbol = tag.ToString();
+                    }
                 }
 
                 _sectors[i].Setup(
                     start, sweep, layout.TagSectorGapDegrees, innerRatio,
                     layout.TagIconDistance, layout.TagIconSize, color, icon, symbol);
                 _sectors[i].SetStyle(visual.HoverBrightness, visual.DisabledBrightness, visual.HoverScale);
+                _sectors[i].SetOutlineSize(artSize);
             }
 
             if (_centerButton != null)
             {
-                RectTransform rect = (RectTransform)_centerButton.transform;
-                rect.anchorMin = new Vector2(0.5f, 0.5f);
-                rect.anchorMax = new Vector2(0.5f, 0.5f);
-                rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.sizeDelta = new Vector2(layout.TagCenterSize, layout.TagCenterSize);
-                rect.anchoredPosition = Vector2.zero;
+                PlaceCentered((RectTransform)_centerButton.transform, Vector2.zero,
+                    new Vector2(layout.TagCenterSize, layout.TagCenterSize));
+            }
+
+            // 메달과 코인은 누르는 칸 크기와 따로 둔다. 메달이 누르는 칸보다 크다.
+            if (_medal != null)
+            {
+                Vector2 offset = layout.TagMedalOffset;
+                PlaceCentered(_medal.rectTransform, new Vector2(offset.x, -offset.y), layout.TagMedalSize);
+            }
+
+            if (_centerCoin != null)
+            {
+                PlaceCentered(_centerCoin.rectTransform, Vector2.zero,
+                    new Vector2(layout.TagCenterCoinSize, layout.TagCenterCoinSize));
             }
 
             if (_centerBack != null)
@@ -196,6 +248,20 @@ namespace SlotHero.Combat.UI
             }
 
             SetCharge(false, Color.clear);
+        }
+
+        private static void PlaceCentered(RectTransform rect, Vector2 position, Vector2 size)
+        {
+            if (rect == null)
+            {
+                return;
+            }
+
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = size;
+            rect.anchoredPosition = position;
         }
 
         /// <summary>가운데에 고른 코인을 놓는다. 코인 없이 골랐으면 글자만 둔다.</summary>
@@ -236,17 +302,35 @@ namespace SlotHero.Combat.UI
             }
         }
 
-        /// <summary>원판 전체를 그 색으로 채우거나 걷는다.</summary>
+        /// <summary>
+        /// 공격할 칸을 정해 둔다. 다음 `SetCharge` 가 이 칸을 채운다.
+        /// 태그를 누르거나 조종기가 태그를 고를 때 부른다.
+        /// </summary>
+        public void MarkChosen(int sectorIndex)
+        {
+            _chosenIndex = sectorIndex;
+        }
+
+        /// <summary>
+        /// 정해 둔 칸을 그 색으로 채우고 테두리를 켜거나 걷는다.
+        /// 예전 원판 전체 채우기 그림이 남아 있으면 그것도 함께 켜고 끈다.
+        /// </summary>
         public void SetCharge(bool on, Color color)
         {
-            if (_charge == null)
+            for (int i = 0; i < _sectors.Length; i++)
             {
-                return;
+                if (_sectors[i] != null)
+                {
+                    _sectors[i].SetCharged(on && i == _chosenIndex, color, _chargeAlpha);
+                }
             }
 
-            _charge.gameObject.SetActive(on);
-            _charge.color = color;
-            _charge.transform.SetAsLastSibling();
+            if (_charge != null)
+            {
+                _charge.gameObject.SetActive(on);
+                _charge.color = color;
+                _charge.transform.SetAsLastSibling();
+            }
         }
 
         private void HandleSectorClicked(int index)

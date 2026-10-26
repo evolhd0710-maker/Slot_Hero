@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Ui;
 
 namespace SlotHero.Events
@@ -21,42 +22,62 @@ namespace SlotHero.Events
     {
         [Header("기준")]
         [Tooltip("모든 규격의 기준 해상도. 1920 × 1080 FHD.")]
-        public Vector2 ReferenceResolution = UiScale.V(1920f, 1080f);
+        [FormerlySerializedAs("ReferenceResolution")]
+        [SerializeField] private Vector2 _referenceResolution = UiScale.V(1920f, 1080f);
+        public Vector2 ReferenceResolution { get { return _referenceResolution; } set { _referenceResolution = value; } }
 
         [Header("삽화")]
         [Tooltip("삽화 크기. 기획서 기준 1200 × 500.")]
-        public Vector2 IllustrationSize = UiScale.V(1200f, 500f);
+        [FormerlySerializedAs("IllustrationSize")]
+        [SerializeField] private Vector2 _illustrationSize = UiScale.V(1200f, 500f);
+        public Vector2 IllustrationSize { get { return _illustrationSize; } set { _illustrationSize = value; } }
 
         [Tooltip("화면 위에서 삽화까지의 거리. 와이어프레임 기준 100.")]
-        public float IllustrationTop = UiScale.Px(100f);
+        [FormerlySerializedAs("IllustrationTop")]
+        [SerializeField] private float _illustrationTop = UiScale.Px(100f);
+        public float IllustrationTop { get { return _illustrationTop; } set { _illustrationTop = value; } }
 
         [Header("본문과 선택지")]
         [Tooltip("삽화 아래에서 본문과 선택지가 시작되는 y. 와이어프레임 기준 640.")]
-        public float ContentTop = UiScale.Px(640f);
+        [FormerlySerializedAs("ContentTop")]
+        [SerializeField] private float _contentTop = UiScale.Px(640f);
+        public float ContentTop { get { return _contentTop; } set { _contentTop = value; } }
 
         [Tooltip("본문 칸의 크기. 와이어프레임 실측 580 × 348 을 10 단위로 옮긴 값이다.")]
-        public Vector2 BodySize = UiScale.V(580f, 350f);
+        [FormerlySerializedAs("BodySize")]
+        [SerializeField] private Vector2 _bodySize = UiScale.V(580f, 350f);
+        public Vector2 BodySize { get { return _bodySize; } set { _bodySize = value; } }
 
         [Tooltip("선택지 칸 하나의 크기. 와이어프레임 실측 580 × 36 을 10 단위로 옮긴 값이다. " +
                  "글이 한 줄에 안 들어가면 세로로만 늘어난다. 가로는 이 값을 지킨다.")]
-        public Vector2 ChoiceSize = UiScale.V(580f, 40f);
+        [FormerlySerializedAs("ChoiceSize")]
+        [SerializeField] private Vector2 _choiceSize = UiScale.V(580f, 40f);
+        public Vector2 ChoiceSize { get { return _choiceSize; } set { _choiceSize = value; } }
 
         [Tooltip("선택지 칸 안쪽 위아래 여백. 글이 여러 줄이 될 때 칸이 이만큼 더 커진다.")]
         [Min(0f)]
-        public float ChoiceVerticalPadding = UiScale.Px(10f);
+        [FormerlySerializedAs("ChoiceVerticalPadding")]
+        [SerializeField] private float _choiceVerticalPadding = UiScale.Px(10f);
+        public float ChoiceVerticalPadding { get { return _choiceVerticalPadding; } set { _choiceVerticalPadding = value; } }
 
         [Tooltip("선택지 칸 사이 간격. 와이어프레임 기준 10.")]
         [Min(0f)]
-        public float ChoiceSpacing = UiScale.Px(10f);
+        [FormerlySerializedAs("ChoiceSpacing")]
+        [SerializeField] private float _choiceSpacing = UiScale.Px(10f);
+        public float ChoiceSpacing { get { return _choiceSpacing; } set { _choiceSpacing = value; } }
 
         [Tooltip("본문 칸과 선택지 칸이 화면 가운데에서 떨어지는 거리. 와이어프레임 기준 20.")]
-        public float CenterGap = UiScale.Px(20f);
+        [FormerlySerializedAs("CenterGap")]
+        [SerializeField] private float _centerGap = UiScale.Px(20f);
+        public float CenterGap { get { return _centerGap; } set { _centerGap = value; } }
 
         [Tooltip("한 화면에 놓을 수 있는 선택지 칸의 최대 수. 본문 칸 높이 안에 들어가는 만큼인 7이다. " +
                  "고른 이력과 새 선택지가 함께 놓인다. 넘으면 고른 이력만 가장 오래 전 것부터 지운다. " +
                  "각본 화면 하나의 선택지 수는 이벤트 목록의 화면당 최대 선택지 수(5)가 따로 막는다.")]
         [Min(1)]
-        public int MaxChoiceCount = 7;
+        [FormerlySerializedAs("MaxChoiceCount")]
+        [SerializeField] private int _maxChoiceCount = 7;
+        public int MaxChoiceCount { get { return _maxChoiceCount; } set { _maxChoiceCount = value; } }
 
         /// <summary>삽화의 자리. 화면 가운데 위를 기준으로 잡은 값이다.</summary>
         public Vector2 GetIllustrationPosition()
@@ -179,15 +200,15 @@ namespace SlotHero.Events
 
         private void OnValidate()
         {
-            IllustrationSize.x = Mathf.Max(1f, IllustrationSize.x);
-            IllustrationSize.y = Mathf.Max(1f, IllustrationSize.y);
-            BodySize.x = Mathf.Max(1f, BodySize.x);
-            BodySize.y = Mathf.Max(1f, BodySize.y);
-            ChoiceSize.x = Mathf.Max(1f, ChoiceSize.x);
-            ChoiceSize.y = Mathf.Max(1f, ChoiceSize.y);
-            ChoiceVerticalPadding = Mathf.Max(0f, ChoiceVerticalPadding);
-            ChoiceSpacing = Mathf.Max(0f, ChoiceSpacing);
-            MaxChoiceCount = Mathf.Max(1, MaxChoiceCount);
+            _illustrationSize.x = Mathf.Max(1f, _illustrationSize.x);
+            _illustrationSize.y = Mathf.Max(1f, _illustrationSize.y);
+            _bodySize.x = Mathf.Max(1f, _bodySize.x);
+            _bodySize.y = Mathf.Max(1f, _bodySize.y);
+            _choiceSize.x = Mathf.Max(1f, _choiceSize.x);
+            _choiceSize.y = Mathf.Max(1f, _choiceSize.y);
+            _choiceVerticalPadding = Mathf.Max(0f, _choiceVerticalPadding);
+            _choiceSpacing = Mathf.Max(0f, _choiceSpacing);
+            _maxChoiceCount = Mathf.Max(1, _maxChoiceCount);
         }
     }
 }

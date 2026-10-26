@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5230deea612b0324e8cb80066fed3457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Hud.HudVisualConfig
-  NormalTint: {r: 1, g: 1, b: 1, a: 1}
-  HoverBrightness: 1.1
-  PressedBrightness: 0.9
-  PressedOffsetRatio: 0.02
-  DisabledAlpha: 0.4
-  AutoSaveText: "\uC790\uB3D9 \uC800\uC7A5\uC911..."
-  AutoSaveColor: {r: 1, g: 1, b: 1, a: 0.5}
-  AutoSaveFontSize: 24
-  AutoSaveShowSeconds: 0.5
-  AutoSaveFadeSeconds: 0.5
+  _normalTint: {r: 1, g: 1, b: 1, a: 1}
+  _hoverBrightness: 1.1
+  _pressedBrightness: 0.9
+  _pressedOffsetRatio: 0.02
+  _disabledAlpha: 0.4
+  _autoSaveText: "\uC790\uB3D9 \uC800\uC7A5\uC911..."
+  _autoSaveColor: {r: 1, g: 1, b: 1, a: 0.5}
+  _autoSaveFontSize: 24
+  _autoSaveShowSeconds: 0.5
+  _autoSaveFadeSeconds: 0.5

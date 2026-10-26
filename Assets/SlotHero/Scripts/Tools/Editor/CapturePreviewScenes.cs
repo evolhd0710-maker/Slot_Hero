@@ -34,7 +34,108 @@ namespace SlotHero.ToolsEditor
                 Capture(path, folder);
             }
 
+            CaptureCombatStates(folder);
+
             Debug.Log("씬 " + guids.Length + "개를 그림으로 뽑았다: " + folder);
+        }
+
+        /// <summary>
+        /// 전투 화면은 한 장으로는 코인 고르기만 보인다. 피그마 Frame 2 ~ 5 에 대응하는 모습을 더 뽑는다.
+        /// 코인 호버(고름 강조와 설명 풍선), 태그 UI, 태그 칸 호버, 공격 예정과 피해 숫자다.
+        /// 편집 모드라 Awake 가 돌지 않아 마우스 알림 대신 처리기를 직접 부른다. 씬은 저장하지 않는다.
+        /// </summary>
+        private static void CaptureCombatStates(string folder)
+        {
+            string scenePath = UiSceneBuilder.SceneFolder + "/" + BuildPreviewScenes.CombatSceneName + ".unity";
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath) == null)
+            {
+                return;
+            }
+
+            EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            SlotHero.Combat.UI.CombatScreenController screen = Object.FindFirstObjectByType<SlotHero.Combat.UI.CombatScreenController>();
+            if (screen == null || screen.View == null)
+            {
+                return;
+            }
+
+            SlotHero.Combat.UI.CombatScreenView view = screen.View;
+            BuildPreviewScenes.OpenCombatSample(screen);
+
+            // Frame 2. 첫 코인에 마우스를 올린 모습.
+            CallPrivate(view.CoinDial, "HandleCoinHover", 0, true);
+            CallPrivate(screen, "HandleCoinHover", 0, true);
+            Shoot(BuildPreviewScenes.CombatSceneName + " 코인 고름", folder);
+            CallPrivate(view.CoinDial, "HandleCoinHover", 0, false);
+            CallPrivate(screen, "HandleCoinHover", 0, false);
+
+            // Frame 3. 코인을 골라 태그 UI 로 바뀐 모습.
+            screen.ChooseCoin(0);
+            Shoot(BuildPreviewScenes.CombatSceneName + " 태그", folder);
+
+            // Frame 4. 태그 칸 하나에 마우스를 올린 모습. 고를 수 있는 첫 태그 칸을 쓴다(소용돌이는 건너뛴다).
+            // 그 태그 문양이 있는 릴에 강조 테두리가 둘러지도록 조종기의 호버 처리기도 부른다.
+            SlotHero.Combat.UI.TagSectorView hovered = null;
+            SlotHero.Combat.SymbolTagType tag = SlotHero.Combat.SymbolTagType.Mercury;
+            int hoveredIndex = -1;
+            for (int i = 0; i < view.TagDial.Sectors.Count && hovered == null; i++)
+            {
+                if (view.TagDial.Sectors[i].Interactable && SlotHero.Combat.UI.TagDialView.TryGetTag(i, out tag))
+                {
+                    hovered = view.TagDial.Sectors[i];
+                    hoveredIndex = i;
+                }
+            }
+
+            if (hovered != null)
+            {
+                hovered.OnPointerEnter(null);
+                CallPrivate(screen, "HandleTagHover", tag, true);
+                Shoot(BuildPreviewScenes.CombatSceneName + " 태그 고름", folder);
+                hovered.OnPointerExit(null);
+                CallPrivate(screen, "HandleTagHover", tag, false);
+
+                // Frame 5. 그 칸을 공격 예정으로 채우고 몬스터 위에 피해 숫자를 띄운 모습.
+                view.TagDial.MarkChosen(hoveredIndex);
+                view.TagDial.SetCharge(true, view.GetTagVisual(tag).BarColor);
+            }
+
+            SlotHero.Combat.UI.DamageNumberView number = Object.FindFirstObjectByType<SlotHero.Combat.UI.DamageNumberView>(FindObjectsInactive.Include);
+            if (number != null && view.Layout != null)
+            {
+                Vector2 center = view.GetEnemyCenter(null);
+                number.gameObject.SetActive(true);
+                number.transform.SetAsLastSibling();
+                number.RectTransform.anchoredPosition = new Vector2(center.x, -(center.y - 40f));
+                number.Show(1280, string.Empty);
+                if (number.Group != null)
+                {
+                    number.Group.alpha = 1f;
+                }
+            }
+
+            Shoot(BuildPreviewScenes.CombatSceneName + " 피해 숫자", folder);
+
+            // 건드린 씬을 버리고 저장된 상태로 다시 연다.
+            EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+        }
+
+        private static void CallPrivate(object target, string method, params object[] arguments)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            System.Reflection.MethodInfo info = target.GetType().GetMethod(
+                method, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (info == null)
+            {
+                Debug.LogWarning("처리기를 찾지 못했다: " + target.GetType().Name + "." + method);
+                return;
+            }
+
+            info.Invoke(target, arguments);
         }
 
         /// <summary>

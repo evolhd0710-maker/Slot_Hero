@@ -8,10 +8,13 @@ namespace SlotHero.Combat.UI
     /// <summary>
     /// 코인 UI. 전투 UI 및 연출 초안 / 03 코인 UI 세부.
     ///
-    ///   - 이번 턴에 꺼낸 코인 셋을 삼각형으로 놓는다. 꺼낸 것이 셋보다 적으면 빈 자리는 X 코인이다
+    ///   - 이번 턴에 꺼낸 코인 셋을 삼각형으로 놓는다. 꺼낸 것이 셋보다 적으면 그 자리는 원판 바탕의 빈 코인 자리로 둔다
     ///   - 코인에 마우스를 올리면 옆에 정보 팝업이 뜬다. 위와 왼쪽 아래 코인은 오른쪽에, 오른쪽 아래 코인은 왼쪽에 뜬다
     ///   - 코인을 누르면 태그 UI 로 바뀐다. 체력이 모자란 코인은 누를 수 없다
     ///   - 가운데 작은 원은 "코인 없이" 다. 초안에 설명이 없는 자리라 코인을 쓸 수 없을 때의 길로 두었다
+    ///
+    /// 그림은 피그마 `Jackpot 아트웍 (복사)` Frame 1 · 2 다. 원판 바탕에 그려진 코인 자리 셋에 코인을 놓고,
+    /// 고를 수 있는 코인에 마우스를 올리면 붉은 빛 테두리를 두른다. 정보 팝업은 검은 설명 풍선이다.
     /// </summary>
     public class CoinDialView : MonoBehaviour
     {
@@ -21,6 +24,9 @@ namespace SlotHero.Combat.UI
         [SerializeField] private Image[] _coinIcons = new Image[0];
         [SerializeField] private TMP_Text[] _coinLabels = new TMP_Text[0];
         [SerializeField] private PointerRelay[] _coinHovers = new PointerRelay[0];
+
+        [Tooltip("고를 수 있는 코인에 마우스를 올리면 켜는 붉은 빛 테두리. 피그마 Frame 2 의 코인 고름 강조다.")]
+        [SerializeField] private Image[] _coinGlows = new Image[0];
 
         [Header("가운데")]
         [SerializeField] private Button _centerButton;
@@ -163,9 +169,11 @@ namespace SlotHero.Combat.UI
             {
                 _coinButtons[index].interactable = usable;
             }
+
+            SetGlow(index, false);
         }
 
-        /// <summary>그 자리를 X 코인으로 둔다. 꺼낸 코인이 없는 자리다.</summary>
+        /// <summary>그 자리를 빈 코인 자리로 둔다. 꺼낸 코인이 없는 자리다.</summary>
         public void SetEmpty(int index)
         {
             if (index < 0 || index >= _coinButtons.Length)
@@ -173,13 +181,14 @@ namespace SlotHero.Combat.UI
                 return;
             }
 
-            Color empty = _visual != null ? _visual.EmptyColor : Color.gray;
-
+            // 원판 바탕에 빈 코인 자리가 그려져 있어 바탕 원은 투명하게 둔다.
             if (_coinBacks.Length > index && _coinBacks[index] != null)
             {
                 _coinBacks[index].enabled = true;
-                _coinBacks[index].color = empty;
+                _coinBacks[index].color = Color.clear;
             }
+
+            SetGlow(index, false);
 
             if (_coinIcons.Length > index && _coinIcons[index] != null)
             {
@@ -200,6 +209,7 @@ namespace SlotHero.Combat.UI
         /// <summary>
         /// 그 자리 옆에 코인 정보 팝업을 띄운다.
         /// 위와 왼쪽 아래 코인은 코인 오른쪽에, 오른쪽 아래 코인은 왼쪽에 놓는다(초안 03).
+        /// 피그마 Frame 2 처럼 코인 가운데보다 `CoinPopupLift` 만큼 올려 원판을 덜 가린다.
         /// </summary>
         public void ShowPopup(int index, Sprite icon, string title, string stats, string description)
         {
@@ -234,7 +244,7 @@ namespace SlotHero.Combat.UI
             float x = toLeft
                 ? coin.x - half - _layout.CoinPopupGap - _layout.CoinPopupSize.x
                 : coin.x + half + _layout.CoinPopupGap;
-            float y = coin.y - _layout.CoinPopupSize.y * 0.5f;
+            float y = coin.y - _layout.CoinPopupSize.y * 0.5f - _layout.CoinPopupLift;
 
             RectTransform rect = _popup.rectTransform;
             rect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -271,6 +281,12 @@ namespace SlotHero.Combat.UI
 
                 Vector2 offset = _layout.GetCoinOffset(i);
                 PlaceCentered((RectTransform)_coinButtons[i].transform, new Vector2(offset.x, -offset.y), _layout.CoinSize);
+
+                if (i < _coinGlows.Length && _coinGlows[i] != null)
+                {
+                    PlaceCentered(_coinGlows[i].rectTransform, Vector2.zero, _layout.CoinSize * _layout.CoinGlowScale);
+                    _coinGlows[i].gameObject.SetActive(false);
+                }
             }
 
             if (_centerButton != null)
@@ -288,12 +304,16 @@ namespace SlotHero.Combat.UI
                 _centerBack.color = _visual.EmptyColor;
             }
 
-            if (_popup != null && _visual != null)
-            {
-                _popup.color = _visual.PopupColor;
-            }
-
+            // 팝업 바탕은 피그마 설명 풍선 그림이라 색을 입히지 않는다.
             HidePopup();
+        }
+
+        private void SetGlow(int index, bool on)
+        {
+            if (index >= 0 && index < _coinGlows.Length && _coinGlows[index] != null)
+            {
+                _coinGlows[index].gameObject.SetActive(on);
+            }
         }
 
         private static void PlaceCentered(RectTransform rect, Vector2 position, float size)
@@ -323,6 +343,9 @@ namespace SlotHero.Combat.UI
 
         private void HandleCoinHover(int index, bool hovering)
         {
+            bool usable = index < _coinButtons.Length && _coinButtons[index] != null && _coinButtons[index].interactable;
+            SetGlow(index, hovering && usable);
+
             if (CoinHoverChanged != null)
             {
                 CoinHoverChanged(index, hovering);

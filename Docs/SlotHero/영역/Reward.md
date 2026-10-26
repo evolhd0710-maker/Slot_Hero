@@ -136,6 +136,7 @@ RewardCanvas
 자식에 테두리 `Image`, 배경 `Image`, 그림 `Image`, 이름 `TMP_Text`, 태그 `TMP_Text` 를 둔다.
 **테두리가 배경보다 앞에 와야 한다.** 고른 카드에서 테두리만 삐져나와 보이게 하려는 것이다.
 
+
 ### 3. 호출
 
 ```csharp

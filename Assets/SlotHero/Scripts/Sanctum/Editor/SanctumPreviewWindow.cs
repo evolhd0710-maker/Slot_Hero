@@ -85,7 +85,8 @@ namespace SlotHero.SanctumEditor
 
                 if (GUILayout.Button("시드 바꿔 들어가기"))
                 {
-                    _runSeed = Random.Range(int.MinValue, int.MaxValue);
+                    // 시드만 새로 뽑으면 되므로 시계를 쓴다. `UnityEngine.Random` 은 쓰지 않는다는 코드 규칙을 따른다.
+                    _runSeed = System.Environment.TickCount;
                     EnterSanctum(_runSeed);
                 }
 

@@ -341,7 +341,7 @@ namespace SlotHero.ToolsEditor
         {
             // 제국 군기. 화성 태그 가치 +5. 불사조(화성/지구) 4 → 9.
             CombatBattle aquila = Begin(WithRelic(ExampleSetup(99, 500), 12001, 0), rules);
-            Report("제국 군기 · 화성 문양 가치 +5", aquila.GetSymbolValue(Find(aquila, "Phoenix")), 9);
+            Report("제국 군기 · 화성 문양 가치 +5", aquila.GetSymbolValue(Find(aquila, "Pheonix")), 9);
             Report("제국 군기 · 화성이 없는 문양은 그대로", aquila.GetSymbolValue(Find(aquila, "Island")), 7);
 
             // 흑요석 단검. 코인 소모값 +10, 코인 가치 +3. 금화(10 · 5) → 20 · 8. (7 + 9) × (2 + 8) = 160.
@@ -428,8 +428,8 @@ namespace SlotHero.ToolsEditor
             // 일식. 내행성 -3, 외행성 +3.
             CombatBattle eclipse = Begin(WithRelic(ExampleSetup(99, 500), 12008, 0), rules);
             Report("일식 · 섬(토성 · 해왕성) 7 + 6 = 13", eclipse.GetSymbolValue(Find(eclipse, "Island")), 13);
-            Report("일식 · 수은(수성 · 금성) 2 - 6 = -4", eclipse.GetSymbolValue(Find(eclipse, "QuickSilver")), -4);
-            Report("일식 · 불사조(화성 · 지구) 4 + 3 - 3 = 4", eclipse.GetSymbolValue(Find(eclipse, "Phoenix")), 4);
+            Report("일식 · 수은(수성 · 금성) 2 - 6 = -4", eclipse.GetSymbolValue(Find(eclipse, "Quicksilver")), -4);
+            Report("일식 · 불사조(화성 · 지구) 4 + 3 - 3 = 4", eclipse.GetSymbolValue(Find(eclipse, "Pheonix")), 4);
             eclipse.SelectWithoutCoin();
             AttackResult venus = eclipse.Attack(SymbolTagType.Venus);
             Report("일식 · 가치 합이 음수여도 적을 낫게 하지 않는다", venus != null && venus.Damage == 0 && eclipse.Enemy.Health == 500);
@@ -740,7 +740,8 @@ namespace SlotHero.ToolsEditor
             }
 
             Report("유물 설정은 시트의 열 개", relics.Relics.Count, 10);
-            Report("물건 목록의 유물도 열 개", catalog.Relics.Count, 10);
+            // 물건 목록에는 시트 열 개 뒤에 그림만 있는 세계관 유물 스물이 더 있다(2026년 10월 26일 원재).
+            Report("물건 목록의 유물은 시트 열과 세계관 스물로 서른", catalog.Relics.Count, 30);
 
             bool matches = true;
             for (int i = 0; i < relics.Relics.Count; i++)
@@ -924,6 +925,33 @@ namespace SlotHero.ToolsEditor
             Report("12개의 금화가 쌓인 횟수가 런에 적힌다", stack == battleStack, stack);
 
             entry.Leave();
+
+            // 새 런을 시작하면 앞 런의 전투를 모두 비운다. 다음 전투를 열 때 앞 런의 릴과 코인이 잠깐 보였다(2026년 10월 26일 원재).
+            entry.ResetForNewRun();
+            Report("새 런이면 전투 진행을 비운다", screen.Battle == null);
+            Report("새 런이면 릴 그림을 비운다", !AnyReelIconShown(screen));
+            Report("새 런이면 전투 화면이 닫혀 있다", !screen.gameObject.activeSelf);
+        }
+
+        /// <summary>릴 가운데 그림이 켜진 칸이 있는지. 새 런으로 비웠으면 하나도 없어야 한다.</summary>
+        private static bool AnyReelIconShown(CombatScreenController screen)
+        {
+            if (screen.View == null)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < screen.View.Reels.Count; i++)
+            {
+                Transform icon = screen.View.Reels[i].transform.Find("Content/Icon");
+                UnityEngine.UI.Image image = icon != null ? icon.GetComponent<UnityEngine.UI.Image>() : null;
+                if (image != null && image.enabled)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -965,12 +993,12 @@ namespace SlotHero.ToolsEditor
         private static CombatSetup ExampleSetup(int playerHealth, int enemyHealth)
         {
             CombatSetup setup = new CombatSetup();
-            setup.Deck.Add(new ReelSymbol("Phoenix", "불사조", SymbolTagType.Mars, SymbolTagType.Earth, 4));
+            setup.Deck.Add(new ReelSymbol("Pheonix", "불사조", SymbolTagType.Mars, SymbolTagType.Earth, 4));
             setup.Deck.Add(new ReelSymbol("Geyser", "간헐천", SymbolTagType.Mercury, SymbolTagType.Mars, 3));
             setup.Deck.Add(new ReelSymbol("Furnace", "용광로", SymbolTagType.Mars, SymbolTagType.Venus, 3));
             setup.Deck.Add(new ReelSymbol("Island", "섬", SymbolTagType.Neptune, SymbolTagType.Saturn, 7));
-            setup.Deck.Add(new ReelSymbol("Shipwreck", "난파선", SymbolTagType.Neptune, SymbolTagType.Pluto, 9));
-            setup.Deck.Add(new ReelSymbol("QuickSilver", "수은", SymbolTagType.Mercury, SymbolTagType.Venus, 2));
+            setup.Deck.Add(new ReelSymbol("Shipwerck", "난파선", SymbolTagType.Neptune, SymbolTagType.Pluto, 9));
+            setup.Deck.Add(new ReelSymbol("Quicksilver", "수은", SymbolTagType.Mercury, SymbolTagType.Venus, 2));
 
             setup.Coins.Add(new CombatCoin("coin_gold", "금화", 10, 5, string.Empty));
 

@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 0a135556c12550b4bb20f8eb983fedc5
+guid: 237d6ccfcc21fb149a8548d0edb0a748
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5016828881543214263
-    second: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_51 (3)_0"
+      213: 3887222674284272389
+    second: Geyser_0
+  - first:
+      213: -8171165746068769472
+    second: Geyser_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,17 +101,43 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_51 (3)_0"
+      name: Geyser_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1254
-        height: 1254
+        x: 52
+        y: 47
+        width: 416
+        height: 423
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +146,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 94b42b866b4a06ab0800000000000000
-      internalID: -5016828881543214263
+      spriteID: 50bde874d6032f530800000000000000
+      internalID: 3887222674284272389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Geyser_1
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 127
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0453bb0fb003a9e80800000000000000
+      internalID: -8171165746068769472
       vertices: []
       indices: 
       edges: []
@@ -137,7 +188,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_51 (3)_0": -5016828881543214263
+      Geyser_0: 3887222674284272389
+      Geyser_1: -8171165746068769472
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

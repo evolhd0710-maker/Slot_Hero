@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Events
 {
@@ -124,68 +126,94 @@ namespace SlotHero.Events
         /// </summary>
         public const string NotEnoughMaxHealth = "최대 체력 부족";
 
-        public EventActionKind Kind = EventActionKind.None;
+        [FormerlySerializedAs("Kind")]
+        [SerializeField] private EventActionKind _kind = EventActionKind.None;
+        public EventActionKind Kind { get { return _kind; } set { _kind = value; } }
 
         /// <summary>그대로 쓰는 값. 골드와 개수에 쓴다.</summary>
-        public int Amount;
+        [FormerlySerializedAs("Amount")]
+        [SerializeField] private int _amount;
+        public int Amount { get { return _amount; } set { _amount = value; } }
 
         /// <summary>최대 체력에 곱할 비율. 0.15 면 15퍼센트다.</summary>
-        public float MaxHealthRatio;
+        [FormerlySerializedAs("MaxHealthRatio")]
+        [SerializeField] private float _maxHealthRatio;
+        public float MaxHealthRatio { get { return _maxHealthRatio; } set { _maxHealthRatio = value; } }
 
         /// <summary>몇 개에 적용할지. 유물 둘을 한꺼번에 받을 때처럼 쓴다.</summary>
-        public int Count = 1;
+        [FormerlySerializedAs("Count")]
+        [SerializeField] private int _count = 1;
+        public int Count { get { return _count; } set { _count = value; } }
 
         /// <summary>
         /// 작업을 하기 전에 치르는 골드.
         /// 기획서의 "10G를 지불하고 교환한다" 같은 줄이 이것이다.
         /// 모자라면 그 선택지가 비활성이 된다.
         /// </summary>
-        public int GoldCost;
+        [FormerlySerializedAs("GoldCost")]
+        [SerializeField] private int _goldCost;
+        public int GoldCost { get { return _goldCost; } set { _goldCost = value; } }
 
         /// <summary>
         /// 작업과 함께 받는 골드.
         /// 기획서의 "체력을 잃고 00G를 획득한다" 같은 줄이 이것이다.
         /// </summary>
-        public int GoldGain;
+        [FormerlySerializedAs("GoldGain")]
+        [SerializeField] private int _goldGain;
+        public int GoldGain { get { return _goldGain; } set { _goldGain = value; } }
 
         /// <summary>
         /// 작업과 함께 영구히 깎는 최대 체력의 비율. 0.10 이면 10퍼센트다.
         /// 12 잠든 보물 의 "유물 A와 B를 모두 획득한다. 최대 체력이 00% 영구 감소한다" 가 이것이다.
         /// 기획서가 한 선택지에 둘을 함께 적어 두어 사이 화면 없이 한 번에 한다.
         /// </summary>
-        public float MaxHealthCostRatio;
+        [FormerlySerializedAs("MaxHealthCostRatio")]
+        [SerializeField] private float _maxHealthCostRatio;
+        public float MaxHealthCostRatio { get { return _maxHealthCostRatio; } set { _maxHealthCostRatio = value; } }
 
         /// <summary>
         /// 선택지가 지목한 대상을 쓴다.
         /// 켜 두면 화면에 들어갈 때 채워 넣은 그 문양이나 코인이 대상이 된다.
         /// </summary>
-        public bool UseChoiceTarget;
+        [FormerlySerializedAs("UseChoiceTarget")]
+        [SerializeField] private bool _useChoiceTarget;
+        public bool UseChoiceTarget { get { return _useChoiceTarget; } set { _useChoiceTarget = value; } }
 
         /// <summary>전투 보상을 두 배로 준다. 3장 도전 이벤트 공통 규칙.</summary>
-        public bool DoubleCombatReward;
+        [FormerlySerializedAs("DoubleCombatReward")]
+        [SerializeField] private bool _doubleCombatReward;
+        public bool DoubleCombatReward { get { return _doubleCombatReward; } set { _doubleCombatReward = value; } }
 
         /// <summary>전투에 부정 효과를 하나 걸고 시작한다.</summary>
-        public bool WithCombatPenalty;
+        [FormerlySerializedAs("WithCombatPenalty")]
+        [SerializeField] private bool _withCombatPenalty;
+        public bool WithCombatPenalty { get { return _withCombatPenalty; } set { _withCombatPenalty = value; } }
 
         /// <summary>
         /// 작업에 넘길 기억 이름들. 앞 화면에서 고른 것을 쓰는 작업이 적는다.
         /// 적은 차례대로 <see cref="EventTarget.Recalled"/> 에 들어간다.
         /// </summary>
-        public List<string> RecallKeys = new List<string>();
+        [FormerlySerializedAs("RecallKeys")]
+        [SerializeField] private List<string> _recallKeys = new List<string>();
+        public List<string> RecallKeys { get { return _recallKeys; } set { _recallKeys = value; } }
 
         /// <summary>
         /// 대상을 따로 지목하지 않을 때 고를 보유 물건의 가장 낮은 등급. -1 이면 따지지 않는다.
         /// 등급은 0 일반 ~ 4 전설이다. 25 미치광이 대장장이 의 "고급 이상 보유 코인 중 무작위 1개" 가 1 로 쓴다.
         /// 그런 물건이 없으면 그 선택지는 비활성이다.
         /// </summary>
-        public int TargetMinRarity = -1;
+        [FormerlySerializedAs("TargetMinRarity")]
+        [SerializeField] private int _targetMinRarity = -1;
+        public int TargetMinRarity { get { return _targetMinRarity; } set { _targetMinRarity = value; } }
 
         /// <summary>
         /// 받을 물건의 등급을 정하는 비중. 잃는 물건의 등급에서 몇 단계 위인지가 차례다(0 같은 등급, 1 한 단계 위 …).
         /// 13 유물 교환 의 "같은 희귀도 50%, 한 단계 높은 희귀도 40%, 두 단계 높은 희귀도 10%" 가 50, 40, 10 이다.
         /// 비어 있으면 등급을 따지지 않고 남은 것에서 고르게 뽑는다.
         /// </summary>
-        public List<int> RarityStepWeights = new List<int>();
+        [FormerlySerializedAs("RarityStepWeights")]
+        [SerializeField] private List<int> _rarityStepWeights = new List<int>();
+        public List<int> RarityStepWeights { get { return _rarityStepWeights; } set { _rarityStepWeights = value; } }
 
         public EventAction()
         {

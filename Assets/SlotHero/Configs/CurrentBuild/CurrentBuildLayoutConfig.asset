@@ -12,44 +12,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 941ab63c0dace8b409906006acf5d23a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.CurrentBuild.CurrentBuildLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  LeftMargin: 60
-  ContentBottomPadding: 60
-  SlotSpacing: 20
-  LabelToSlotGap: 40
-  RelicLabelY: 90
-  RelicSlotSize: {x: 150, y: 150}
-  RelicSlotCount: 6
-  CoinLabelY: 300
-  CoinSlotScale: 0.9
-  CoinSlotCount: 5
-  SymbolLabelY: 500
-  SymbolSlotSize: {x: 150, y: 160}
-  LabelSize: {x: 300, y: 50}
-  SymbolColumns: 8
-  SymbolSlotLimit: 36
-  SymbolRowSpacing: 20
-  CountBadgeSize: {x: 60, y: 30}
-  CountBadgeInset: 10
-  SortPosition: {x: 1080, y: 380}
-  SortSize: {x: 300, y: 60}
-  TagPanelPosition: {x: 1440, y: 90}
-  TagPanelSize: {x: 420, y: 830}
-  PanelPadding: 20
-  PanelTitleGap: 50
-  FirstTagBarY: 240
-  TagRowHeight: 80
-  TagBarSize: {x: 300, y: 20}
-  TagBarX: 1540
-  TagSymbolX: 1460
-  ClosePosition: {x: 1440, y: 960}
-  CloseSize: {x: 420, y: 60}
-  PickTitleY: 90
-  PickSortPosition: {x: 1080, y: 80}
-  PickResultPosition: {x: 60, y: 960}
-  PickResultSize: {x: 1320, y: 60}
-  PickConfirmPosition: {x: 1440, y: 960}
-  PickConfirmSize: {x: 200, y: 60}
-  PickCancelPosition: {x: 1660, y: 960}
-  PickCancelSize: {x: 200, y: 60}
-  PickViewportBottom: 940
+  _referenceResolution: {x: 1920, y: 1080}
+  _leftMargin: 60
+  _contentBottomPadding: 60
+  _slotSpacing: 20
+  _labelToSlotGap: 40
+  _relicLabelY: 90
+  _relicSlotSize: {x: 150, y: 150}
+  _relicSlotCount: 6
+  _coinLabelY: 300
+  _coinSlotScale: 0.9
+  _coinSlotCount: 5
+  _symbolLabelY: 500
+  _symbolSlotSize: {x: 150, y: 150}
+  _labelSize: {x: 300, y: 50}
+  _symbolColumns: 8
+  _symbolSlotLimit: 36
+  _symbolRowSpacing: 20
+  _countBadgeSize: {x: 60, y: 30}
+  _countBadgeInset: 10
+  _sortPosition: {x: 1080, y: 380}
+  _sortSize: {x: 300, y: 60}
+  _tagPanelPosition: {x: 1440, y: 90}
+  _tagPanelSize: {x: 420, y: 830}
+  _panelPadding: 20
+  _panelTitleGap: 50
+  _firstTagBarY: 240
+  _tagRowHeight: 80
+  _tagBarSize: {x: 300, y: 20}
+  _tagBarX: 1540
+  _tagSymbolX: 1460
+  _closePosition: {x: 1440, y: 960}
+  _closeSize: {x: 420, y: 60}
+  _pickTitleY: 100
+  _pickSortPosition: {x: 1080, y: 76}
+  _pickResultPosition: {x: 60, y: 960}
+  _pickResultSize: {x: 1320, y: 60}
+  _pickConfirmPosition: {x: 1440, y: 960}
+  _pickConfirmSize: {x: 200, y: 60}
+  _pickCancelPosition: {x: 1660, y: 960}
+  _pickCancelSize: {x: 200, y: 60}
+  _pickViewportBottom: 940

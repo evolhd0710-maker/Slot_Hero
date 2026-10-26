@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b97001f711ce4b742b415b6c5916556c
+guid: b9dc842a90837af48bad06372027a9dc
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6350313048223485464
-    second: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_18_51 (5)_0"
+      213: -8702967748025807226
+    second: Scythe_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,17 +98,43 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_18_51 (5)_0"
+      name: Scythe_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1254
-        height: 1254
+        x: 46
+        y: 40
+        width: 420
+        height: 432
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +143,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8e17c149de72fd7a0800000000000000
-      internalID: -6350313048223485464
+      spriteID: 68e8d3781f8d83780800000000000000
+      internalID: -8702967748025807226
       vertices: []
       indices: 
       edges: []
@@ -137,7 +163,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_18_51 (5)_0": -6350313048223485464
+      Scythe_0: -8702967748025807226
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

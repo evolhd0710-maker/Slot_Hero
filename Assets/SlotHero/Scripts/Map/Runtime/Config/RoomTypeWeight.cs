@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Map
 {
@@ -9,13 +11,18 @@ namespace SlotHero.Map
     [Serializable]
     public struct RoomTypeWeight
     {
-        public RoomType RoomType;
-        public int Weight;
+        [FormerlySerializedAs("RoomType")]
+        [SerializeField] private RoomType _roomType;
+        public RoomType RoomType { get { return _roomType; } set { _roomType = value; } }
+
+        [FormerlySerializedAs("Weight")]
+        [SerializeField] private int _weight;
+        public int Weight { get { return _weight; } set { _weight = value; } }
 
         public RoomTypeWeight(RoomType roomType, int weight)
         {
-            RoomType = roomType;
-            Weight = weight;
+            _roomType = roomType;
+            _weight = weight;
         }
     }
 }

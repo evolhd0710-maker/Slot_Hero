@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Settings
 {
@@ -12,13 +13,19 @@ namespace SlotHero.Settings
     public class SettingsTab
     {
         [Tooltip("탭 식별자.")]
-        public string Id;
+        [FormerlySerializedAs("Id")]
+        [SerializeField] private string _id;
+        public string Id { get { return _id; } set { _id = value; } }
 
         [Tooltip("탭에 적는 이름.")]
-        public string DisplayName;
+        [FormerlySerializedAs("DisplayName")]
+        [SerializeField] private string _displayName;
+        public string DisplayName { get { return _displayName; } set { _displayName = value; } }
 
         [Tooltip("이 탭에 놓을 항목.")]
-        public List<SettingDefinition> Items = new List<SettingDefinition>();
+        [FormerlySerializedAs("Items")]
+        [SerializeField] private List<SettingDefinition> _items = new List<SettingDefinition>();
+        public List<SettingDefinition> Items { get { return _items; } set { _items = value; } }
 
         public SettingsTab()
         {
@@ -51,13 +58,15 @@ namespace SlotHero.Settings
     public class SettingsCatalogConfig : ScriptableObject
     {
         [Tooltip("분류 탭. 위에서 아래로 그대로 놓인다.")]
-        public List<SettingsTab> Tabs = new List<SettingsTab>
+        [FormerlySerializedAs("Tabs")]
+        [SerializeField] private List<SettingsTab> _tabs = new List<SettingsTab>
         {
             MakeGeneralTab(),
             new SettingsTab("graphics", "그래픽"),
             MakeSoundTab(),
             new SettingsTab("control", "조작"),
         };
+        public List<SettingsTab> Tabs { get { return _tabs; } set { _tabs = value; } }
 
         /// <summary>
         /// 일반 탭. 와이어프레임의 네 항목에 2026년 10월 5일 원재의 결정을 반영했다.

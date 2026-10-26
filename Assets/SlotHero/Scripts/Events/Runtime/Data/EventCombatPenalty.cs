@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Events
 {
@@ -14,15 +16,19 @@ namespace SlotHero.Events
     public struct EventCombatPenalty
     {
         /// <summary>전투가 이 효과를 알아보는 이름. 기획서 번호 D1 ~ D6 을 그대로 쓴다.</summary>
-        public string Id;
+        [FormerlySerializedAs("Id")]
+        [SerializeField] private string _id;
+        public string Id { get { return _id; } set { _id = value; } }
 
         /// <summary>선택지와 전투 화면에 적는 글.</summary>
-        public string Text;
+        [FormerlySerializedAs("Text")]
+        [SerializeField] private string _text;
+        public string Text { get { return _text; } set { _text = value; } }
 
         public EventCombatPenalty(string id, string text)
         {
-            Id = id;
-            Text = text;
+            _id = id;
+            _text = text;
         }
 
         /// <summary>3장 부정 효과 목록 여섯 가지. 기획서가 "예시" 로 적은 것을 그대로 옮겼다.</summary>

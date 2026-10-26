@@ -65,6 +65,13 @@ namespace SlotHero.Save
         /// 2026년 10월 9일 외부 검토가 실제 파일로 재현했다.
         /// </summary>
         ReadFailed = 11,
+
+        /// <summary>
+        /// 업데이트로 지도 생성 규칙이 바뀌어 저장된 런을 이어 할 수 없어 지웠다. 팝업을 띄운다.
+        /// 지도는 저장하지 않고 시드로 다시 만드는데, 규칙이 바뀌면 같은 시드에서 다른 지도가 나와
+        /// 저장된 방 번호가 없거나 다른 방을 가리킨다. 2026년 10월 22일 원재가 "런 데이터를 삭제" 하라고 정했다.
+        /// </summary>
+        RunOutdated = 12,
     }
 
     /// <summary>결과를 다루는 데 쓰는 값.</summary>
@@ -76,6 +83,7 @@ namespace SlotHero.Save
             return outcome == SaveOutcome.MetaRestoredFromBackup
                 || outcome == SaveOutcome.MetaResetProfile
                 || outcome == SaveOutcome.RunDiscarded
+                || outcome == SaveOutcome.RunOutdated
                 || outcome == SaveOutcome.RunFlagRepaired
                 || outcome == SaveOutcome.WriteFailed
                 || outcome == SaveOutcome.ReadFailed;
@@ -100,6 +108,9 @@ namespace SlotHero.Save
 
                 case SaveOutcome.RunDiscarded:
                     return "진행 중이던 런 데이터가 손상되어 삭제했습니다.\n새 게임으로 시작할 수 있습니다.";
+
+                case SaveOutcome.RunOutdated:
+                    return "게임이 업데이트되어 진행 중이던 런을 이어 할 수 없어 삭제했습니다.\n새 게임으로 시작할 수 있습니다.";
 
                 case SaveOutcome.RunFlagRepaired:
                     return "진행 중이던 런 데이터를 찾을 수 없어 기록을 정리했습니다.";

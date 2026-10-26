@@ -22,7 +22,7 @@ namespace SlotHero.ToolsEditor
         private const string ArtFolder = "Assets/SlotHero/Art";
 
         /// 그림이 있는 원래 자리. 유니티 프로젝트 밖이다.
-        private const string SourceRoot = @"C:\Users\wonja\Downloads\slot hero\코드";
+        public const string SourceRoot = @"C:\Users\wonja\Downloads\slot hero\코드";
 
         /// <summary>
         /// 저장소를 받아 둔 자리. 문양 그림 서른여섯 장이 `Assets/SymbolImage` 에 있다.
@@ -40,12 +40,21 @@ namespace SlotHero.ToolsEditor
             CopyFolder(Path.Combine(SourceRoot, @"Sanctum\Art"), ArtFolder + "/Sanctum");
             CopyFolder(Path.Combine(SourceRoot, @"Hud\Art"), ArtFolder + "/Hud");
 
+            // 전투 화면 그림. 피그마 `Jackpot 아트웍 (복사)` 의 전투 화면에서 뽑은 것과 코덱스가 그린 피해 숫자다(2026년 10월 26일).
+            // 피해 숫자는 하위 폴더에 원본과 함께 있어 그 폴더도 같은 곳으로 옮긴다. 원본 폴더는 옮기지 않는다.
+            CopyFolder(Path.Combine(SourceRoot, @"Combat\Art"), ArtFolder + "/Combat");
+            CopyFolder(Path.Combine(SourceRoot, @"Combat\Art\피해숫자"), ArtFolder + "/Combat");
+
             // 타이틀 그림은 아직 없다. 배경 요청 기획서의 "메인 화면 배경"을 발주해 둔 상태다.
             // 폴더가 없으면 조용히 넘어가므로 그림이 오면 넣기만 하면 붙는다.
             CopyFolder(Path.Combine(SourceRoot, @"Title\Art"), ArtFolder + "/Title");
 
             // 이벤트 삽화. 파일 이름이 곧 삽화 식별자다. `이벤트식별자_화면식별자.png`.
             CopyFolder(Path.Combine(SourceRoot, @"Events\Art"), ArtFolder + "/Events");
+
+            // 문양 임시 그림. 저장소 그림을 받기 전까지 쓰려고 코덱스로 만들었다(2026년 10월 19일 원재).
+            // 저장소 그림을 아래에서 같은 이름으로 다시 덮으므로 저장소를 받으면 그쪽이 쓰인다.
+            CopyFolder(Path.Combine(SourceRoot, @"Flow\Art\Symbols"), ArtFolder + "/Symbols");
 
             // 문양 그림은 저장소에 있다. 받아 두었으면 그것도 가져온다.
             // 2026년 10월 25일 저장소 원본 코드를 폐기하면서 `Assets/SymbolImage` 를 `Art/Symbols` 로 옮겨 두었다.
@@ -54,12 +63,15 @@ namespace SlotHero.ToolsEditor
 
             AssetDatabase.Refresh();
 
-            MakeSprites(ArtFolder + "/Map");
+            MakeSprites(ArtFolder + "/Map", true);
             MakeSprites(ArtFolder + "/CurrentBuild");
             MakeSprites(ArtFolder + "/TopBar");
             MakeSprites(ArtFolder + "/Items");
             MakeSprites(ArtFolder + "/Sanctum");
             MakeSprites(ArtFolder + "/Hud");
+
+            // 원판 그림(1254)과 피해 숫자(256)를 절반 넘게 줄여 그리므로 밉맵을 만든다.
+            MakeSprites(ArtFolder + "/Combat", true);
             MakeSprites(ArtFolder + "/Title");
             MakeSprites(ArtFolder + "/Events");
             MakeSprites(ArtFolder + "/Symbols");
@@ -100,6 +112,15 @@ namespace SlotHero.ToolsEditor
         /// <summary>가져온 그림을 스프라이트로 바꾼다.</summary>
         private static void MakeSprites(string folder)
         {
+            MakeSprites(folder, false);
+        }
+
+        /// <summary>
+        /// 가져온 그림을 스프라이트로 바꾼다. mipmaps 를 켜면 작게 줄여 그릴 때 계단이 지지 않게 밉맵을 만든다.
+        /// 지도 노드 아이콘은 256 그림을 지도에서 70, 상단 표시줄에서 50 으로 줄여 그리므로 켠다(2026년 10월 25일).
+        /// </summary>
+        private static void MakeSprites(string folder, bool mipmaps)
+        {
             if (!AssetDatabase.IsValidFolder(folder))
             {
                 return;
@@ -120,7 +141,7 @@ namespace SlotHero.ToolsEditor
                 importer.textureType = TextureImporterType.Sprite;
                 importer.spriteImportMode = SpriteImportMode.Single;
                 importer.alphaIsTransparency = true;
-                importer.mipmapEnabled = false;
+                importer.mipmapEnabled = mipmaps;
                 importer.filterMode = FilterMode.Bilinear;
 
                 // UI 그림은 압축하지 않는다.
@@ -170,6 +191,9 @@ namespace SlotHero.ToolsEditor
                 }
 
                 entry.Icon = sprite;
+
+                // 안쪽 무늬는 `<이름>_무늬.png` 다. 없으면 비워 두어 얹지 않는다(2026년 10월 25일 원재).
+                entry.DetailIcon = LoadSprite(ArtFolder + "/Map/" + fileName + "_무늬.png");
                 visual.RoomVisuals[i] = entry;
                 linked++;
             }
@@ -222,9 +246,32 @@ namespace SlotHero.ToolsEditor
                 }
 
                 entry.Icon = sprite;
+
+                // 문양 칸의 태그 테두리. `태그테두리_<이름>_우상.png`, `_좌하.png` 다(2026년 10월 19일 원재).
+                string tagName = fileName.Substring("태그_".Length);
+                entry.CornerTopRight = LoadSprite(ArtFolder + "/CurrentBuild/태그테두리_" + tagName + "_우상.png");
+                entry.CornerBottomLeft = LoadSprite(ArtFolder + "/CurrentBuild/태그테두리_" + tagName + "_좌하.png");
+
                 visual.TagVisuals[i] = entry;
                 linked++;
             }
+
+            // 문양 뒤에 까는 흑요석 판. 행상 진열과 같은 `문양_바닥` 이다(2026년 10월 20일 원재).
+            // 예전에는 금빛 금과 균열이 조금씩 다른 넉 장이었다. 2026년 10월 25일 원재가 가장 깔끔한 한 장으로 모으라고 해
+            // 금빛 금이 없는 옛 `문양_바닥_c` 를 `문양_바닥` 으로 두고 나머지는 `Flow/Art/이전 그림 20261025` 로 옮겼다.
+            string[] plateNames = { "문양_바닥" };
+            List<Sprite> plates = new List<Sprite>();
+            for (int i = 0; i < plateNames.Length; i++)
+            {
+                Sprite plate = LoadItemArt(plateNames[i]);
+                if (plate != null)
+                {
+                    plates.Add(plate);
+                }
+            }
+
+            visual.SymbolPlates = plates.ToArray();
+            Debug.Log("문양 판 그림 " + plates.Count + "장을 물렸다.");
 
             EditorUtility.SetDirty(visual);
             Debug.Log("태그 기호 그림 " + linked + "개를 물렸다.");
@@ -357,6 +404,12 @@ namespace SlotHero.ToolsEditor
             return AssetDatabase.LoadAssetAtPath<Sprite>(ArtFolder + "/Items/" + name + ".png");
         }
 
+        /// <summary>문양 그림 하나. 이름은 문양 식별자와 같다(`Whale`, `Raven` 등).</summary>
+        public static Sprite LoadSymbol(string name)
+        {
+            return AssetDatabase.LoadAssetAtPath<Sprite>(ArtFolder + "/Symbols/" + name + ".png");
+        }
+
         private static Sprite LoadSprite(string path)
         {
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
@@ -395,6 +448,15 @@ namespace SlotHero.ToolsEditor
         public static Sprite LoadHud(string name)
         {
             return AssetDatabase.LoadAssetAtPath<Sprite>(ArtFolder + "/Hud/" + name + ".png");
+        }
+
+        /// <summary>
+        /// 전투 화면 그림 하나. 릴 틀, 유물 칸, 원판, 체력 틀, 주인공 초상, 피해 숫자다.
+        /// 이름은 `코드/Combat/Art` 의 파일 이름이다. 무엇을 어디서 가져왔는지는 `Combat/README.md` 에 있다.
+        /// </summary>
+        public static Sprite LoadCombat(string name)
+        {
+            return AssetDatabase.LoadAssetAtPath<Sprite>(ArtFolder + "/Combat/" + name + ".png");
         }
 
         /// <summary>

@@ -30,23 +30,5 @@ namespace SlotHero.RunResult
 
         /// <summary>해금 및 도전과제. 이번 런에서 새로 해금된 항목을 적는다.</summary>
         public List<ResultLine> Unlocks = new List<ResultLine>();
-
-        /// <summary>세 칸 중 가장 긴 칸의 줄 수. 칸 높이를 볼 때 쓴다.</summary>
-        public int GetLongestPanelLineCount()
-        {
-            int longest = FinalBuild.Count;
-
-            if (RunRecord.Count > longest)
-            {
-                longest = RunRecord.Count;
-            }
-
-            if (Unlocks.Count > longest)
-            {
-                longest = Unlocks.Count;
-            }
-
-            return longest;
-        }
     }
 }

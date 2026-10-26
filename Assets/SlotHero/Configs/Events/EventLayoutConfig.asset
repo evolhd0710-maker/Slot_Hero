@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82bf8bd6e00f0b94fbc8ba63351d0395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Events.EventLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  IllustrationSize: {x: 1200, y: 500}
-  IllustrationTop: 100
-  ContentTop: 640
-  BodySize: {x: 580, y: 350}
-  ChoiceSize: {x: 580, y: 40}
-  ChoiceVerticalPadding: 10
-  ChoiceSpacing: 10
-  CenterGap: 20
-  MaxChoiceCount: 7
+  _referenceResolution: {x: 1920, y: 1080}
+  _illustrationSize: {x: 1200, y: 500}
+  _illustrationTop: 100
+  _contentTop: 640
+  _bodySize: {x: 580, y: 350}
+  _choiceSize: {x: 580, y: 40}
+  _choiceVerticalPadding: 10
+  _choiceSpacing: 10
+  _centerGap: 20
+  _maxChoiceCount: 7

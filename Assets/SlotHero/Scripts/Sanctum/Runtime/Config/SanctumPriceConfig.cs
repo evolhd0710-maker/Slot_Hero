@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Sanctum
 {
@@ -19,14 +20,19 @@ namespace SlotHero.Sanctum
         [Header("문양 기준가")]
         [Tooltip("문양은 등급이 없어 태그 가치 합으로 값을 매긴다. 가격은 기본가 + 태그 가치 합 × 계수다. 기본가 20.")]
         [Min(0)]
-        public int SymbolBasePrice = 20;
+        [FormerlySerializedAs("SymbolBasePrice")]
+        [SerializeField] private int _symbolBasePrice = 20;
+        public int SymbolBasePrice { get { return _symbolBasePrice; } set { _symbolBasePrice = value; } }
 
         [Tooltip("태그 가치 합에 곱하는 계수. 기본 5.")]
         [Min(0)]
-        public int SymbolTagValueMultiplier = 5;
+        [FormerlySerializedAs("SymbolTagValueMultiplier")]
+        [SerializeField] private int _symbolTagValueMultiplier = 5;
+        public int SymbolTagValueMultiplier { get { return _symbolTagValueMultiplier; } set { _symbolTagValueMultiplier = value; } }
 
         [Header("코인 기준가")]
-        public List<RarityPrice> CoinPrices = new List<RarityPrice>
+        [FormerlySerializedAs("CoinPrices")]
+        [SerializeField] private List<RarityPrice> _coinPrices = new List<RarityPrice>
         {
             new RarityPrice(ItemRarity.Common, 15),
             new RarityPrice(ItemRarity.Uncommon, 25),
@@ -34,9 +40,11 @@ namespace SlotHero.Sanctum
             new RarityPrice(ItemRarity.Epic, 45),
             new RarityPrice(ItemRarity.Legend, 60),
         };
+        public List<RarityPrice> CoinPrices { get { return _coinPrices; } set { _coinPrices = value; } }
 
         [Header("유물 기준가")]
-        public List<RarityPrice> RelicPrices = new List<RarityPrice>
+        [FormerlySerializedAs("RelicPrices")]
+        [SerializeField] private List<RarityPrice> _relicPrices = new List<RarityPrice>
         {
             new RarityPrice(ItemRarity.Common, 30),
             new RarityPrice(ItemRarity.Uncommon, 45),
@@ -44,30 +52,43 @@ namespace SlotHero.Sanctum
             new RarityPrice(ItemRarity.Epic, 75),
             new RarityPrice(ItemRarity.Legend, 100),
         };
+        public List<RarityPrice> RelicPrices { get { return _relicPrices; } set { _relicPrices = value; } }
 
         [Header("문양 변경")]
         [Tooltip("처음 쓸 때의 가격. 기본 10.")]
         [Min(0)]
-        public int SymbolChangeStartPrice = 10;
+        [FormerlySerializedAs("SymbolChangeStartPrice")]
+        [SerializeField] private int _symbolChangeStartPrice = 10;
+        public int SymbolChangeStartPrice { get { return _symbolChangeStartPrice; } set { _symbolChangeStartPrice = value; } }
 
         [Tooltip("가격이 오르는 단위. 기본 10.")]
         [Min(0)]
-        public int SymbolChangeStep = 10;
+        [FormerlySerializedAs("SymbolChangeStep")]
+        [SerializeField] private int _symbolChangeStep = 10;
+        public int SymbolChangeStep { get { return _symbolChangeStep; } set { _symbolChangeStep = value; } }
 
         [Tooltip("오르는 방식. 기획서 예시 10 > 30 > 60 > 100 > 150 은 증가 폭이 커지는 쪽이다.")]
-        public PriceGrowth SymbolChangeGrowth = PriceGrowth.Triangular;
+        [FormerlySerializedAs("SymbolChangeGrowth")]
+        [SerializeField] private PriceGrowth _symbolChangeGrowth = PriceGrowth.Triangular;
+        public PriceGrowth SymbolChangeGrowth { get { return _symbolChangeGrowth; } set { _symbolChangeGrowth = value; } }
 
         [Header("유물 새로고침")]
         [Tooltip("처음 쓸 때의 가격. 기본 20.")]
         [Min(0)]
-        public int RelicRefreshStartPrice = 20;
+        [FormerlySerializedAs("RelicRefreshStartPrice")]
+        [SerializeField] private int _relicRefreshStartPrice = 20;
+        public int RelicRefreshStartPrice { get { return _relicRefreshStartPrice; } set { _relicRefreshStartPrice = value; } }
 
         [Tooltip("가격이 오르는 단위. 기본 10.")]
         [Min(0)]
-        public int RelicRefreshStep = 10;
+        [FormerlySerializedAs("RelicRefreshStep")]
+        [SerializeField] private int _relicRefreshStep = 10;
+        public int RelicRefreshStep { get { return _relicRefreshStep; } set { _relicRefreshStep = value; } }
 
         [Tooltip("오르는 방식. 기획서 예시 20 > 30 > 40 > 50 > 60 은 증가 폭이 늘 같은 쪽이다.")]
-        public PriceGrowth RelicRefreshGrowth = PriceGrowth.Linear;
+        [FormerlySerializedAs("RelicRefreshGrowth")]
+        [SerializeField] private PriceGrowth _relicRefreshGrowth = PriceGrowth.Linear;
+        public PriceGrowth RelicRefreshGrowth { get { return _relicRefreshGrowth; } set { _relicRefreshGrowth = value; } }
 
         /// <summary>상품 하나의 가격. 종류에 맞는 기준가 규칙을 골라 쓴다.</summary>
         public int GetItemPrice(MerchantItem item)

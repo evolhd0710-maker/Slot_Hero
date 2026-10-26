@@ -232,7 +232,7 @@ namespace SlotHero.Reward.UI
                 _skipPanel.color = _visual.SkipColor;
             }
 
-            ApplyLabel(_skipLabel, _visual.SkipText, _visual.SkipFontSize, _visual.TextColor);
+            ApplyLabel(_skipLabel, _visual.SkipText, _visual.SkipFontSize, _visual.SkipTextColor);
 
             for (int i = 0; i < _cards.Count; i++)
             {
@@ -271,7 +271,17 @@ namespace SlotHero.Reward.UI
                 {
                     _cards[i].Clicked -= HandleCardClicked;
                     _cards[i].HoverChanged -= HandleCardHover;
-                    Destroy(_cards[i].gameObject);
+
+                    // 편집 모드 검사는 프레임이 돌지 않아 Destroy 로는 옛 카드가 새 카드와 겹쳐 남는다.
+                    // 지도와 같이 편집 모드에서는 바로 지운다(2026년 10월 22일 코덱스 검토).
+                    if (Application.isPlaying)
+                    {
+                        Destroy(_cards[i].gameObject);
+                    }
+                    else
+                    {
+                        DestroyImmediate(_cards[i].gameObject);
+                    }
                 }
             }
 
@@ -291,7 +301,8 @@ namespace SlotHero.Reward.UI
                 view.Bind(
                     card, _layout, _visual,
                     RewardText.Tags(card, _buildVisual),
-                    _icons != null ? _icons.GetIcon(card) : null);
+                    _icons != null ? _icons.GetIcon(card) : null,
+                    _buildVisual);
 
                 view.Clicked += HandleCardClicked;
                 view.HoverChanged += HandleCardHover;

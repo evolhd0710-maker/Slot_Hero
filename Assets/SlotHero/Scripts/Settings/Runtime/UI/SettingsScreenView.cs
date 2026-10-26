@@ -244,7 +244,7 @@ namespace SlotHero.Settings.UI
             {
                 _titleLabel.text = _visual.TitleText;
                 _titleLabel.fontSize = _visual.TitleFontSize;
-                _titleLabel.color = _visual.ItemTextColor;
+                _titleLabel.color = _visual.TitleTextColor;
             }
 
             if (_restoreLabel != null)
@@ -416,18 +416,6 @@ namespace SlotHero.Settings.UI
             if (_dropdownLayer != null && _dropdownLayer.activeSelf)
             {
                 _dropdownLayer.SetActive(false);
-            }
-        }
-
-        /// <summary>고른 탭을 바꿔 칠한다.</summary>
-        public void SetSelectedTab(int index)
-        {
-            for (int i = 0; i < _tabs.Count; i++)
-            {
-                if (_tabs[i] != null)
-                {
-                    _tabs[i].SetSelected(i == index);
-                }
             }
         }
 

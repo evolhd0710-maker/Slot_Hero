@@ -12,16 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71394144685cc914b8e36c79a429a92e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Popup.PopupLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  MaxPopupSize: {x: 1080, y: 820}
-  PopupPadding: 40
-  PopupTopPadding: 60
-  PopupBottomPadding: 40
-  TitleHeight: 80
-  TitleToBodyGap: 30
-  BodyToButtonGap: 40
-  BodyPadding: 30
-  ButtonHeight: 100
-  ItemDetailSize: {x: 500, y: 380}
-  ItemDetailCursorOffset: {x: 20, y: -20}
-  ScreenEdgePadding: 40
+  _referenceResolution: {x: 1920, y: 1080}
+  _maxPopupSize: {x: 1080, y: 820}
+  _popupPadding: 40
+  _popupTopPadding: 60
+  _popupBottomPadding: 40
+  _titleHeight: 80
+  _titleToBodyGap: 30
+  _bodyToButtonGap: 40
+  _bodyPadding: 30
+  _buttonHeight: 100
+  _wideButtonWidth: 450
+  _narrowButtonWidth: 300
+  _wideButtonGap: 80
+  _narrowButtonGap: 40
+  _itemDetailSize: {x: 500, y: 380}
+  _itemDetailCursorOffset: {x: 20, y: -20}
+  _screenEdgePadding: 40

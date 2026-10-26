@@ -12,28 +12,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 701611e49f49d0243b524116d6a10389, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Reward.RewardVisualConfig
-  DimColor: {r: 0, g: 0, b: 0, a: 0.5}
-  BoxColor: {r: 0.804, g: 0.804, b: 0.804, a: 1}
-  GoldRowColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
-  CardColor: {r: 0.427, g: 0.427, b: 0.427, a: 1}
-  SelectedCardColor: {r: 0.988, g: 0.988, b: 0.988, a: 1}
-  SelectedBorderColor: {r: 0.62, g: 0.169, b: 0.145, a: 1}
-  SelectedBorderThickness: 5
-  SkipColor: {r: 0.851, g: 0.851, b: 0.851, a: 1}
-  TextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
-  CardTextColor: {r: 1, g: 1, b: 1, a: 1}
-  SelectedCardTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
-  SubTextColor: {r: 0.4, g: 0.38, b: 0.36, a: 1}
-  TitleFontSize: 34
-  GoldLabelFontSize: 30
-  GoldValueFontSize: 34
-  CardNameFontSize: 30
-  CardTagFontSize: 24
-  SkipFontSize: 30
-  TitleText: "\uBCF4\uC0C1"
-  BaseGoldText: "\uAE30\uBCF8 \uBCF4\uC0C1"
-  OverkillGoldText: "\uC624\uBC84\uD0AC \uBCF4\uC0C1"
-  SkipText: "\uC544\uC774\uD15C \uC120\uD0DD \uAC74\uB108\uB6F0\uAE30"
-  ConfirmText: "\uBCF4\uC0C1 \uBC1B\uAE30"
-  HoverBrightness: 1.1
-  PressedBrightness: 0.9
+  _dimColor: {r: 0, g: 0, b: 0, a: 0.5}
+  _boxColor: {r: 1, g: 1, b: 1, a: 1}
+  _goldRowColor: {r: 1, g: 1, b: 1, a: 1}
+  _cardColor: {r: 0.427, g: 0.427, b: 0.427, a: 1}
+  _selectedCardColor: {r: 0.988, g: 0.988, b: 0.988, a: 1}
+  _selectedBorderColor: {r: 0.62, g: 0.169, b: 0.145, a: 1}
+  _selectedBorderThickness: 5
+  _skipColor: {r: 1, g: 1, b: 1, a: 1}
+  _textColor: {r: 0.925, g: 0.886, b: 0.784, a: 1}
+  _skipTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  _cardTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _selectedCardTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  _subTextColor: {r: 0.4, g: 0.38, b: 0.36, a: 1}
+  _titleFontSize: 34
+  _goldLabelFontSize: 30
+  _goldValueFontSize: 34
+  _cardNameFontSize: 30
+  _cardTagFontSize: 30
+  _skipFontSize: 30
+  _titleText: "\uBCF4\uC0C1"
+  _baseGoldText: "\uAE30\uBCF8 \uBCF4\uC0C1"
+  _overkillGoldText: "\uC624\uBC84\uD0AC \uBCF4\uC0C1"
+  _skipText: "\uC544\uC774\uD15C \uC120\uD0DD \uAC74\uB108\uB6F0\uAE30"
+  _confirmText: "\uBCF4\uC0C1 \uBC1B\uAE30"
+  _hoverBrightness: 1.1
+  _pressedBrightness: 0.9

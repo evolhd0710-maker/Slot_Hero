@@ -22,6 +22,11 @@ namespace SlotHero.TopBar.UI
             "SetLocation 에 그림을 넘기지 않으면 이것을 쓴다.")]
         [SerializeField] private Sprite _stageIcon;
 
+        [Tooltip("스테이지마다의 아이콘. 0 번이 1스테이지다. " +
+            "1 제국(깃발), 2 신전(그리스), 3 바다(지중해), 4 사막(이집트), 5 유적(수메르)이다(2026년 10월 20일 원재). " +
+            "비어 있는 칸은 위의 깃발을 쓴다.")]
+        [SerializeField] private Sprite[] _stageIcons = new Sprite[0];
+
         [Tooltip("③ 체력 칸의 아이콘.")]
         [SerializeField] private Sprite _healthIcon;
 
@@ -157,8 +162,9 @@ namespace SlotHero.TopBar.UI
         /// stage 는 맵의 단계다. 스테이지 번호가 아니다.
         /// stageIcon 을 비워 두면 이 조종기에 물려 둔 깃발 그림을 쓴다.
         /// 스테이지마다 깃발이 달라지면 그때 부르는 쪽이 그림을 넘기면 된다.
+        /// roomDetail 은 방 아이콘의 안쪽 무늬다. 지도 노드와 같은 그림이다.
         /// </summary>
-        public void SetLocation(Sprite stageIcon, int stage, Sprite roomIcon, string tooltipText)
+        public void SetLocation(Sprite stageIcon, int stage, Sprite roomIcon, Sprite roomDetail, string tooltipText)
         {
             _locationTooltip = tooltipText;
 
@@ -167,8 +173,30 @@ namespace SlotHero.TopBar.UI
                 _view.SetLocation(
                     stageIcon != null ? stageIcon : _stageIcon,
                     stage.ToString(CultureInfo.InvariantCulture),
-                    roomIcon);
+                    roomIcon,
+                    roomDetail);
             }
+        }
+
+        /// <summary>
+        /// 그 스테이지의 아이콘. stageIndex 는 1 부터 센다.
+        /// 그림이 없거나 범위 밖이면 fallback(깃발)을 돌려준다.
+        /// </summary>
+        public static Sprite PickStageIcon(Sprite[] icons, int stageIndex, Sprite fallback)
+        {
+            int slot = stageIndex - 1;
+            if (icons == null || slot < 0 || slot >= icons.Length || icons[slot] == null)
+            {
+                return fallback;
+            }
+
+            return icons[slot];
+        }
+
+        /// <summary>그 스테이지의 아이콘. 이 조종기에 물린 그림에서 고른다.</summary>
+        public Sprite GetStageIcon(int stageIndex)
+        {
+            return PickStageIcon(_stageIcons, stageIndex, _stageIcon);
         }
 
         // ── 체력 ────────────────────────────────────────────────

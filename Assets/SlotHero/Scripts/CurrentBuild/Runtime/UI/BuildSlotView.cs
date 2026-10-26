@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using SlotHero.Ui;
 
 namespace SlotHero.CurrentBuild.UI
 {
@@ -15,7 +16,9 @@ namespace SlotHero.CurrentBuild.UI
     /// 기획서의 "종류마다 한 칸에 개수를 함께 표시한다"에 해당한다.
     ///
     /// 프리팹 구성: 루트에 이 스크립트와 배경 Image,
-    /// 자식에 물건 그림 Image, 개수 배지(Image + TMP_Text).
+    /// 자식에 물건 그림 Image, 태그 테두리(`TagCorners`), 개수 배지(Image + TMP_Text).
+    ///
+    /// 문양 칸에는 첫 태그의 테두리를 우상단에, 둘째 태그의 테두리를 좌하단에 얹는다(2026년 10월 19일 원재).
     ///
     /// 커서가 물건 위에 올라가면 알린다. 기획서의 아이템 상세 팝업을 띄우는 데 쓴다. 빈 칸은 알리지 않는다.
     /// </summary>
@@ -90,6 +93,13 @@ namespace SlotHero.CurrentBuild.UI
 
         [SerializeField] private Image _background;
         [SerializeField] private Image _icon;
+
+        [Tooltip("아직 갖지 않은 빈 칸에만 보이는 점선 테두리. 빈 칸은 배경을 감추고 이것만 남긴다(2026년 10월 21일 원재).")]
+        [SerializeField] private Image _emptyOutline;
+
+        [Tooltip("문양의 태그 둘을 우상단과 좌하단에 보여 주는 테두리. 문양이 아닌 칸에서는 감춘다.")]
+        [SerializeField] private TagCorners _tagCorners;
+
         [SerializeField] private GameObject _countRoot;
         [SerializeField] private Image _countBackground;
         [SerializeField] private TMP_Text _countLabel;
@@ -138,18 +148,18 @@ namespace SlotHero.CurrentBuild.UI
                 _background.color = visual.SlotColor;
             }
 
+            ShowEmpty(false, visual);
+
             if (_icon != null)
             {
+                // 그림이 없는 물건이면 비워 둔다. 예전 물건의 그림이 남으면 다른 물건으로 보인다(2026년 10월 21일 코덱스 검토).
                 Sprite sprite = entry.IsValid && icons != null ? icons.GetIcon(entry) : null;
-                if (sprite != null)
-                {
-                    _icon.sprite = sprite;
-                }
-
+                _icon.sprite = sprite;
                 _icon.preserveAspect = true;
-                _icon.enabled = entry.IsValid && _icon.sprite != null;
+                _icon.enabled = sprite != null;
             }
 
+            BindTagCorners(entry, visual);
             BindCount(entry, slotSize, layout, visual, showCount);
             gameObject.name = entry.IsValid ? "Slot_" + entry.Id : "Slot_빈칸";
         }
@@ -171,6 +181,8 @@ namespace SlotHero.CurrentBuild.UI
                 _background.color = visual.SlotColor;
             }
 
+            ShowEmpty(true, visual);
+
             if (_icon != null)
             {
                 _icon.enabled = false;
@@ -181,7 +193,30 @@ namespace SlotHero.CurrentBuild.UI
                 _countRoot.SetActive(false);
             }
 
+            if (_tagCorners != null)
+            {
+                _tagCorners.Hide();
+            }
+
             gameObject.name = "Slot_빈칸";
+        }
+
+        /// <summary>빈 칸이면 배경을 감추고 점선 테두리만 보인다. 물건이 있으면 그 반대다.</summary>
+        private void ShowEmpty(bool empty, CurrentBuildVisualConfig visual)
+        {
+            if (_background != null)
+            {
+                _background.enabled = !empty;
+            }
+
+            if (_emptyOutline != null)
+            {
+                _emptyOutline.enabled = empty;
+                if (visual != null)
+                {
+                    _emptyOutline.color = visual.EmptyOutlineColor;
+                }
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -221,6 +256,34 @@ namespace SlotHero.CurrentBuild.UI
             {
                 HoverChanged(this, false);
             }
+        }
+
+        /// <summary>
+        /// 문양이면 태그 테두리를 얹고 아니면 감춘다.
+        /// 문양만 서로 다른 태그를 둘 가진다. 유물과 코인은 태그 칸이 비어 있다(`BuildEntry.Item`).
+        /// </summary>
+        private void BindTagCorners(BuildEntry entry, CurrentBuildVisualConfig visual)
+        {
+            if (_tagCorners == null)
+            {
+                return;
+            }
+
+            if (!entry.IsValid || !entry.HasTwoDifferentTags || visual == null)
+            {
+                _tagCorners.Hide();
+                return;
+            }
+
+            Sprite topRight;
+            Sprite bottomLeft;
+            visual.GetTagCorners(entry.FirstTag, entry.SecondTag, out topRight, out bottomLeft);
+            _tagCorners.Show(topRight, bottomLeft, visual.GetSymbolPlate(entry.Id), visual.SymbolFrameInset);
+
+            Sprite topGlyph;
+            Sprite bottomGlyph;
+            visual.GetTagGlyphs(entry.FirstTag, entry.SecondTag, out topGlyph, out bottomGlyph);
+            _tagCorners.ShowGlyphs(topGlyph, bottomGlyph, visual.CornerGlyphSizeRatio, visual.CornerGlyphFromCorner);
         }
 
         private void BindCount(

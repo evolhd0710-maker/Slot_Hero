@@ -31,6 +31,10 @@ namespace SlotHero.Map.UI
     public class MapNodeView : MonoBehaviour
     {
         [SerializeField] private Image _icon;
+
+        [Tooltip("아이콘 위에 얹는 안쪽 무늬. 아이콘의 자식으로 아이콘을 꽉 채운다.")]
+        [SerializeField] private Image _detail;
+
         [SerializeField] private Image _checkMark;
         [SerializeField] private Button _button;
 
@@ -112,6 +116,20 @@ namespace SlotHero.Map.UI
                 // 노드 칸은 아이콘 모양보다 넓어 이웃 칸끼리 조금 겹칠 수 있다. 겹친 자리를 누르면 엉뚱한 방이 골라진다.
                 float padding = GetClickPadding(visual);
                 _icon.raycastPadding = new Vector4(padding, padding, padding, padding);
+
+                // **고를 수 있는 노드만 커서를 받는다.** 고를 수 있는 노드는 커지고 커서를 올리면 한 번 더 커져,
+                // 이웃 단계의 고를 수 없는 노드와 누르는 영역이 조금 겹칠 수 있다. 그 노드가 나중에 그려지면 클릭을 가로챘다.
+                // 고를 수 없는 노드는 눌러도 아무 일이 없으므로 커서를 받지 않게 한다(2026년 10월 22일 코덱스 검토).
+                _icon.raycastTarget = selectable;
+
+                // 안쪽 무늬는 몸통 색과 따로 밝게 얹는다. 몸통에 진한 갈색을 곱하면 검은 눈과 선이 묻혔다(2026년 10월 25일 원재).
+                if (_detail != null)
+                {
+                    _detail.sprite = roomVisual.DetailIcon;
+                    _detail.enabled = roomVisual.DetailIcon != null;
+                    _detail.color = visual.IconDetailColor;
+                    _detail.raycastTarget = false;
+                }
             }
 
             if (_checkMark != null)

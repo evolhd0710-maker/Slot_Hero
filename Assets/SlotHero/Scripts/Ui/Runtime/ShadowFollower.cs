@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace SlotHero.Ui
 {
@@ -26,6 +27,7 @@ namespace SlotHero.Ui
         [SerializeField] private float _drop = UiScale.Px(6f);
 
         private RectTransform _rect;
+        private Graphic _graphic;
 
         /// <summary>따라가는 칸.</summary>
         public RectTransform Target
@@ -59,10 +61,18 @@ namespace SlotHero.Ui
             _rect.sizeDelta = _target.sizeDelta + new Vector2(_spread * 2f, _spread * 2f);
             _rect.anchoredPosition = _target.anchoredPosition + new Vector2(0f, -_drop);
 
-            // 칸이 꺼지면 그림자도 꺼진다.
-            if (gameObject.activeSelf != _target.gameObject.activeSelf)
+            // 칸이 꺼지면 그림자도 감춘다. **자기 오브젝트는 끄지 않고 그림만 끈다.**
+            // 자기를 끄면 이 LateUpdate 가 멈춰, 칸이 다시 켜져도 그림자가 돌아오지 않았다.
+            // 코인 고르기에서 정렬 칸을 감춘 뒤 문양 고르기를 열면 그림자가 없었다(2026년 10월 22일 코덱스 검토).
+            bool show = _target.gameObject.activeSelf;
+            if (_graphic == null)
             {
-                gameObject.SetActive(_target.gameObject.activeSelf);
+                _graphic = GetComponent<Graphic>();
+            }
+
+            if (_graphic != null && _graphic.enabled != show)
+            {
+                _graphic.enabled = show;
             }
         }
 
@@ -71,17 +81,6 @@ namespace SlotHero.Ui
         {
             _spread = spread;
             _drop = drop;
-        }
-
-        /// <summary>그림자가 칸보다 뒤에 그려지는 자리에 있는지.</summary>
-        public bool IsBehindTarget()
-        {
-            if (_target == null || transform.parent != _target.parent)
-            {
-                return false;
-            }
-
-            return transform.GetSiblingIndex() < _target.GetSiblingIndex();
         }
     }
 }

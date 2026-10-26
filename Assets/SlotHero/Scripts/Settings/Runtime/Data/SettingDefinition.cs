@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Settings
 {
@@ -40,37 +42,57 @@ namespace SlotHero.Settings
     public class SettingDefinition
     {
         /// <summary>저장과 조회에 쓰는 식별자.</summary>
-        public string Id;
+        [FormerlySerializedAs("Id")]
+        [SerializeField] private string _id;
+        public string Id { get { return _id; } set { _id = value; } }
 
         /// <summary>항목 이름. 칸 왼쪽에 적는다.</summary>
-        public string DisplayName;
+        [FormerlySerializedAs("DisplayName")]
+        [SerializeField] private string _displayName;
+        public string DisplayName { get { return _displayName; } set { _displayName = value; } }
 
         /// <summary>값을 다루는 방식.</summary>
-        public SettingKind Kind;
+        [FormerlySerializedAs("Kind")]
+        [SerializeField] private SettingKind _kind;
+        public SettingKind Kind { get { return _kind; } set { _kind = value; } }
 
         /// <summary>선택지. 고르는 항목에만 쓴다. 켜고 끄는 항목은 둘만 넣는다.</summary>
-        public string[] Options;
+        [FormerlySerializedAs("Options")]
+        [SerializeField] private string[] _options;
+        public string[] Options { get { return _options; } set { _options = value; } }
 
         /// <summary>처음 값과 기본값 복원으로 돌아갈 값.</summary>
-        public float DefaultValue;
+        [FormerlySerializedAs("DefaultValue")]
+        [SerializeField] private float _defaultValue;
+        public float DefaultValue { get { return _defaultValue; } set { _defaultValue = value; } }
 
         /// <summary>수치 항목의 가장 작은 값.</summary>
-        public float Min;
+        [FormerlySerializedAs("Min")]
+        [SerializeField] private float _min;
+        public float Min { get { return _min; } set { _min = value; } }
 
         /// <summary>수치 항목의 가장 큰 값.</summary>
-        public float Max = 1f;
+        [FormerlySerializedAs("Max")]
+        [SerializeField] private float _max = 1f;
+        public float Max { get { return _max; } set { _max = value; } }
 
         /// <summary>수치 항목이 한 번에 오르내리는 폭.</summary>
-        public float Step = 0.1f;
+        [FormerlySerializedAs("Step")]
+        [SerializeField] private float _step = 0.1f;
+        public float Step { get { return _step; } set { _step = value; } }
 
         /// <summary>수치 항목을 적는 꼴. {0} 자리에 값이 들어간다.</summary>
-        public string ValueFormat = "{0:0}";
+        [FormerlySerializedAs("ValueFormat")]
+        [SerializeField] private string _valueFormat = "{0:0}";
+        public string ValueFormat { get { return _valueFormat; } set { _valueFormat = value; } }
 
         /// <summary>
         /// 음소거 값의 식별자. 비어 있으면 음소거 버튼이 없다.
         /// 소리 크기 항목이 쓴다. 크기와 따로 저장해 음소거를 풀면 앞의 크기로 돌아간다.
         /// </summary>
-        public string MuteId = string.Empty;
+        [FormerlySerializedAs("MuteId")]
+        [SerializeField] private string _muteId = string.Empty;
+        public string MuteId { get { return _muteId; } set { _muteId = value; } }
 
         /// <summary>
         /// 기본값 복원을 눌러도 그대로 두는 항목인지.
@@ -80,7 +102,9 @@ namespace SlotHero.Settings
         /// 2026년 10월 8일 원재가 "해상도 같은 일부는 변경되지 않아야 한다" 고 정했고, 같은 날 언어도 뺐다.
         /// 처음 값은 이 항목도 <see cref="DefaultValue"/> 다.
         /// </summary>
-        public bool KeepOnRestore;
+        [FormerlySerializedAs("KeepOnRestore")]
+        [SerializeField] private bool _keepOnRestore;
+        public bool KeepOnRestore { get { return _keepOnRestore; } set { _keepOnRestore = value; } }
 
         // 음소거 값의 정의. 화면이 같은 항목인지 견줄 때 같은 객체여야 하므로 한 번 만들어 둔다.
         [NonSerialized] private SettingDefinition _mute;

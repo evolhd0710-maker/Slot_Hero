@@ -61,18 +61,6 @@ namespace SlotHero.Map
             return last.Count > 0 ? last[0] : null;
         }
 
-        /// <summary>두 노드가 간선으로 직접 이어져 있는지 확인한다. 방향은 보지 않는다.</summary>
-        public bool AreConnected(int nodeIdA, int nodeIdB)
-        {
-            MapNode a = GetNode(nodeIdA);
-            if (a == null)
-            {
-                return false;
-            }
-
-            return a.NextNodeIds.Contains(nodeIdB) || a.PrevNodeIds.Contains(nodeIdB);
-        }
-
         /// <summary>노드와 간선을 다시 읽어 내부 색인을 만든다. 노드를 직접 손댄 뒤에는 호출해야 한다.</summary>
         public void RebuildIndex()
         {

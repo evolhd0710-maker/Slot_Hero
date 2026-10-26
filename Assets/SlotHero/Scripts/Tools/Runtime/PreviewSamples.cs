@@ -14,7 +14,8 @@ namespace SlotHero.Tools
     /// 기획서 와이어프레임의 예시를 그대로 옮긴 것이다.
     ///
     /// 씬을 만드는 에디터 쪽과 눌러 보는 런타임 쪽이 같은 자료를 써야 해서 여기 모았다.
-    /// **게임 자료가 아니다.** 실제 자료가 생기면 이 파일은 지운다.
+    /// **게임 자료가 아니다.** 확인용 씬을 채우고 그림으로 뽑는 데만 쓴다.
+    /// 게임 씬은 가져올 때 이 칸들을 치운다(`BuildGameScene.ClearDemoItems`).
     /// </summary>
     public static class PreviewSamples
     {
@@ -189,11 +190,11 @@ namespace SlotHero.Tools
         public static CombatSetup Combat()
         {
             CombatSetup setup = new CombatSetup();
-            setup.Deck.Add(new ReelSymbol("Phoenix", "불사조", SymbolTagType.Mars, SymbolTagType.Earth, 4));
+            setup.Deck.Add(new ReelSymbol("Pheonix", "불사조", SymbolTagType.Mars, SymbolTagType.Earth, 4));
             setup.Deck.Add(new ReelSymbol("Geyser", "간헐천", SymbolTagType.Mercury, SymbolTagType.Mars, 3));
             setup.Deck.Add(new ReelSymbol("Furnace", "용광로", SymbolTagType.Mars, SymbolTagType.Venus, 3));
             setup.Deck.Add(new ReelSymbol("Island", "섬", SymbolTagType.Neptune, SymbolTagType.Saturn, 7));
-            setup.Deck.Add(new ReelSymbol("Shipwreck", "난파선", SymbolTagType.Neptune, SymbolTagType.Pluto, 9));
+            setup.Deck.Add(new ReelSymbol("Shipwerck", "난파선", SymbolTagType.Neptune, SymbolTagType.Pluto, 9));
             setup.Deck.Add(new ReelSymbol("Volcano", "화산", SymbolTagType.Mars, SymbolTagType.Jupiter, 5));
             setup.Deck.Add(new ReelSymbol("Coffin", "관", SymbolTagType.Saturn, SymbolTagType.Pluto, 8));
             setup.Deck.Add(new ReelSymbol("Whale", "고래", SymbolTagType.Neptune, SymbolTagType.Jupiter, 7));

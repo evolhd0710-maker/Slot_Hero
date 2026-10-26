@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Ui;
 
 namespace SlotHero.Title
@@ -19,40 +20,60 @@ namespace SlotHero.Title
     {
         [Header("기준")]
         [Tooltip("모든 규격의 기준 해상도. 1920 × 1080 FHD.")]
-        public Vector2 ReferenceResolution = UiScale.V(1920f, 1080f);
+        [FormerlySerializedAs("ReferenceResolution")]
+        [SerializeField] private Vector2 _referenceResolution = UiScale.V(1920f, 1080f);
+        public Vector2 ReferenceResolution { get { return _referenceResolution; } set { _referenceResolution = value; } }
 
         [Tooltip("화면 가장자리에서 남기는 여백. 04 화면 공통 규칙 의 안전 영역 40.")]
         [Min(0f)]
-        public float SafeAreaPadding = UiScale.Px(40f);
+        [FormerlySerializedAs("SafeAreaPadding")]
+        [SerializeField] private float _safeAreaPadding = UiScale.Px(40f);
+        public float SafeAreaPadding { get { return _safeAreaPadding; } set { _safeAreaPadding = value; } }
 
         [Header("로고")]
         [Tooltip("로고의 자리. 와이어프레임 실측 x 172 · y 218 을 10 단위로 옮긴 값이다.")]
-        public Vector2 LogoPosition = UiScale.V(170f, 220f);
+        [FormerlySerializedAs("LogoPosition")]
+        [SerializeField] private Vector2 _logoPosition = UiScale.V(170f, 220f);
+        public Vector2 LogoPosition { get { return _logoPosition; } set { _logoPosition = value; } }
 
         [Tooltip("로고의 크기. 와이어프레임 실측 470 × 66 을 10 단위로 옮긴 값이다.")]
-        public Vector2 LogoSize = UiScale.V(470f, 70f);
+        [FormerlySerializedAs("LogoSize")]
+        [SerializeField] private Vector2 _logoSize = UiScale.V(470f, 70f);
+        public Vector2 LogoSize { get { return _logoSize; } set { _logoSize = value; } }
 
         [Header("메뉴")]
         [Tooltip("첫 메뉴 항목의 자리. 와이어프레임 실측 x 176 · y 595 를 10 단위로 옮긴 값이다.")]
-        public Vector2 MenuPosition = UiScale.V(170f, 600f);
+        [FormerlySerializedAs("MenuPosition")]
+        [SerializeField] private Vector2 _menuPosition = UiScale.V(170f, 600f);
+        public Vector2 MenuPosition { get { return _menuPosition; } set { _menuPosition = value; } }
 
         [Tooltip("메뉴 항목 하나의 크기. 누르는 영역이다.")]
-        public Vector2 MenuItemSize = UiScale.V(400f, 50f);
+        [FormerlySerializedAs("MenuItemSize")]
+        [SerializeField] private Vector2 _menuItemSize = UiScale.V(400f, 50f);
+        public Vector2 MenuItemSize { get { return _menuItemSize; } set { _menuItemSize = value; } }
 
         [Tooltip("메뉴 항목 사이 간격. 와이어프레임 실측 약 114 를 10 단위로 옮긴 값이다.")]
         [Min(1f)]
-        public float MenuSpacing = UiScale.Px(110f);
+        [FormerlySerializedAs("MenuSpacing")]
+        [SerializeField] private float _menuSpacing = UiScale.Px(110f);
+        public float MenuSpacing { get { return _menuSpacing; } set { _menuSpacing = value; } }
 
         [Tooltip("항목이 늘어 화면을 넘칠 때 줄일 수 있는 가장 좁은 간격.")]
         [Min(1f)]
-        public float MinMenuSpacing = UiScale.Px(60f);
+        [FormerlySerializedAs("MinMenuSpacing")]
+        [SerializeField] private float _minMenuSpacing = UiScale.Px(60f);
+        public float MinMenuSpacing { get { return _minMenuSpacing; } set { _minMenuSpacing = value; } }
 
         [Header("버전")]
         [Tooltip("버전 글의 자리. 와이어프레임 실측 x 1537 · y 996 을 10 단위로 옮긴 값이다.")]
-        public Vector2 VersionPosition = UiScale.V(1540f, 990f);
+        [FormerlySerializedAs("VersionPosition")]
+        [SerializeField] private Vector2 _versionPosition = UiScale.V(1540f, 990f);
+        public Vector2 VersionPosition { get { return _versionPosition; } set { _versionPosition = value; } }
 
         [Tooltip("버전 글의 크기.")]
-        public Vector2 VersionSize = UiScale.V(100f, 30f);
+        [FormerlySerializedAs("VersionSize")]
+        [SerializeField] private Vector2 _versionSize = UiScale.V(100f, 30f);
+        public Vector2 VersionSize { get { return _versionSize; } set { _versionSize = value; } }
 
         /// <summary>
         /// 메뉴 항목 사이의 실제 간격.
@@ -133,15 +154,15 @@ namespace SlotHero.Title
 
         private void OnValidate()
         {
-            LogoSize.x = Mathf.Max(1f, LogoSize.x);
-            LogoSize.y = Mathf.Max(1f, LogoSize.y);
-            MenuItemSize.x = Mathf.Max(1f, MenuItemSize.x);
-            MenuItemSize.y = Mathf.Max(1f, MenuItemSize.y);
-            VersionSize.x = Mathf.Max(1f, VersionSize.x);
-            VersionSize.y = Mathf.Max(1f, VersionSize.y);
-            MenuSpacing = Mathf.Max(1f, MenuSpacing);
-            MinMenuSpacing = Mathf.Clamp(MinMenuSpacing, 1f, MenuSpacing);
-            SafeAreaPadding = Mathf.Max(0f, SafeAreaPadding);
+            _logoSize.x = Mathf.Max(1f, _logoSize.x);
+            _logoSize.y = Mathf.Max(1f, _logoSize.y);
+            _menuItemSize.x = Mathf.Max(1f, _menuItemSize.x);
+            _menuItemSize.y = Mathf.Max(1f, _menuItemSize.y);
+            _versionSize.x = Mathf.Max(1f, _versionSize.x);
+            _versionSize.y = Mathf.Max(1f, _versionSize.y);
+            _menuSpacing = Mathf.Max(1f, _menuSpacing);
+            _minMenuSpacing = Mathf.Clamp(_minMenuSpacing, 1f, _menuSpacing);
+            _safeAreaPadding = Mathf.Max(0f, _safeAreaPadding);
         }
     }
 }

@@ -52,12 +52,6 @@ namespace SlotHero.Events
             return minInclusive + (int)(NextUInt() % span);
         }
 
-        /// <summary>0 이상 100 미만의 정수. 확률 분기에 쓴다.</summary>
-        public int Percent()
-        {
-            return Range(0, 100);
-        }
-
         /// <summary>
         /// 목록을 섞는다. 앞에서부터 count 개만 쓰면 중복 없이 뽑은 것이 된다.
         /// </summary>

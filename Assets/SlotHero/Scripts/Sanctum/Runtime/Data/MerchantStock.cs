@@ -51,22 +51,6 @@ namespace SlotHero.Sanctum
             }
         }
 
-        /// <summary>종류에 맞는 자리 목록을 돌려준다.</summary>
-        public List<MerchantSlot> GetSlots(SanctumItemKind kind)
-        {
-            switch (kind)
-            {
-                case SanctumItemKind.Symbol:
-                    return SymbolSlots;
-                case SanctumItemKind.Coin:
-                    return CoinSlots;
-                case SanctumItemKind.Relic:
-                    return RelicSlots;
-                default:
-                    return null;
-            }
-        }
-
         /// <summary>불러온 뒤 자리 목록이 비어 있지 않도록 손본다.</summary>
         public void EnsureSlots(int symbolCount, int coinCount, int relicCount)
         {

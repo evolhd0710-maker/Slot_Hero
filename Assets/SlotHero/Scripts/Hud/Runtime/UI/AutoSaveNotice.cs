@@ -25,7 +25,7 @@ namespace SlotHero.Hud.UI
 
         /// <summary>
         /// 설정 화면의 자동 저장 알림 항목. 꺼 두면 저장이 일어나도 문구를 띄우지 않는다.
-        /// 설정 시스템이 아직 없으므로 값을 넣어 주는 쪽이 챙긴다.
+        /// 설정 값을 화면에 적용하는 일은 미뤄 두어 값을 넣어 주는 쪽이 챙긴다(`RunHudController.SetAutoSaveNoticeEnabled`).
         /// </summary>
         public bool NoticeEnabled { get; set; }
 

@@ -22,6 +22,12 @@ namespace SlotHero.Flow
 
         /// <summary>전투를 닫는다. 맵으로 돌아갈 때 부른다.</summary>
         void Leave();
+
+        /// <summary>
+        /// 앞 런의 전투를 모두 비운다. 새 런을 시작하거나 다른 런을 이어 할 때 흐름이 부른다(2026년 10월 26일 원재).
+        /// 다음 전투를 열 때 앞 런의 릴, 코인, 유물, 체력이 잠깐이라도 보이지 않게 한다.
+        /// </summary>
+        void ResetForNewRun();
     }
 
     /// <summary>

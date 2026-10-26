@@ -12,23 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3044bfa34f80ec3448ebcb1dc41f7a67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Profile.ProfileLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  TitlePosition: {x: 120, y: 80}
-  TitleSize: {x: 770, y: 100}
-  CardPosition: {x: 120, y: 420}
-  CardSize: {x: 520, y: 260}
-  CardSpacing: 60
-  CardPadding: 20
-  NameTop: 70
-  NameHeight: 40
-  InfoTop: 130
-  InfoHeight: 30
-  InfoSpacing: 40
-  ActionButtonSize: {x: 60, y: 60}
-  ActionButtonSpacing: 10
-  ActionButtonMargin: 20
-  BackPosition: {x: 1510, y: 920}
-  BackSize: {x: 290, y: 90}
-  CurrentButtonPosition: {x: 1360, y: 50}
-  CurrentButtonSize: {x: 440, y: 100}
-  CurrentButtonPadding: 20
+  _referenceResolution: {x: 1920, y: 1080}
+  _titlePosition: {x: 120, y: 80}
+  _titleSize: {x: 770, y: 100}
+  _cardPosition: {x: 120, y: 420}
+  _cardSize: {x: 520, y: 260}
+  _cardSpacing: 60
+  _cardPadding: 20
+  _nameTop: 70
+  _nameHeight: 40
+  _infoTop: 130
+  _infoHeight: 30
+  _infoSpacing: 40
+  _actionButtonSize: {x: 60, y: 60}
+  _actionButtonSpacing: 10
+  _actionButtonMargin: 20
+  _backPosition: {x: 1510, y: 920}
+  _backSize: {x: 290, y: 90}
+  _currentButtonPosition: {x: 1360, y: 50}
+  _currentButtonSize: {x: 440, y: 100}
+  _currentButtonPadding: 20

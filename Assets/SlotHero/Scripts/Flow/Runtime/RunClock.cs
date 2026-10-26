@@ -50,7 +50,7 @@ namespace SlotHero.Flow
             _paused = false;
         }
 
-        /// <summary>한 프레임 흐른다. 멈춰 있으면 아무 일도 없다.</summary>
+        /// <summary>한 프레임 흐른다. 흐르고 있을 때만 시간을 더한다.</summary>
         public void Tick(float deltaSeconds)
         {
             if (!IsTicking)

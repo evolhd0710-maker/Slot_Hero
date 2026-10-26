@@ -12,36 +12,164 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea360f1bd51898443ab480cbc1c744cc, type: 3}
   m_Name: EventIllustrationConfig
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Events.EventIllustrationConfig
-  Illustrations:
-  - Id: carve_power_1
-    Sprite: {fileID: 21300000, guid: b14e8a6a6caa15141a44820081362ece, type: 3}
-  - Id: carve_power_2
-    Sprite: {fileID: 21300000, guid: 3ad8cf54f508abc4498727ffe6413d39, type: 3}
-  - Id: carve_power_3
-    Sprite: {fileID: 21300000, guid: 4153f8469ae2fa14eaefb00f5b96d4dc, type: 3}
-  - Id: "carve_power_\uB05D"
-    Sprite: {fileID: 21300000, guid: fc0ee44d892b42e4fb427e952f9686fa, type: 3}
-  - Id: pandora_1
-    Sprite: {fileID: 21300000, guid: 2e0455f2e69a7b04a997993ca4055b35, type: 3}
-  - Id: "pandora_\uB05D"
-    Sprite: {fileID: 21300000, guid: d6e64398c584f8a4a9a3b5f422d68f65, type: 3}
-  - Id: purification_1
-    Sprite: {fileID: 21300000, guid: ab63a24e5751caf47a5c1f10971948f9, type: 3}
-  - Id: purification_2
-    Sprite: {fileID: 21300000, guid: 26e0992023635f649ae2dc2565983b08, type: 3}
-  - Id: "purification_\uB05D"
-    Sprite: {fileID: 21300000, guid: 2566a8cb41a2ac640bae3c0b4e455b45, type: 3}
-  - Id: reflection_1
-    Sprite: {fileID: 21300000, guid: 6d9be7e48cf035548916b091a8f17dad, type: 3}
-  - Id: reflection_2
-    Sprite: {fileID: 21300000, guid: e7d0112ec5071d044a2e10a5a3066c1d, type: 3}
-  - Id: reflection_3
-    Sprite: {fileID: 21300000, guid: a08c3b3f3bafd72449a0961bdce2234d, type: 3}
-  - Id: "reflection_\uB05D"
-    Sprite: {fileID: 21300000, guid: 52f4aa8c26a73ec47876f5d2d8076f0b, type: 3}
-  - Id: symbol_trade_1
-    Sprite: {fileID: 21300000, guid: 05bd6e6738c99ed45bfc7bb56a909f0a, type: 3}
-  - Id: symbol_trade_2
-    Sprite: {fileID: 21300000, guid: 611a66f99da8342408ca908b3a31a8d3, type: 3}
-  - Id: "symbol_trade_\uB05D"
-    Sprite: {fileID: 21300000, guid: 75ed39a28d120c94eaf3a32bf02b278a, type: 3}
+  _illustrations:
+  - _id: ambush_1
+    _sprite: {fileID: 21300000, guid: 8fc39a8c0ed47d742a913cb1555e4ed3, type: 3}
+  - _id: "ambush_\uB05D"
+    _sprite: {fileID: 21300000, guid: d0d0d992962eb35478f4ea0c01bca1ef, type: 3}
+  - _id: blessing_1
+    _sprite: {fileID: 21300000, guid: 203a86b776ca1cd4f86f48905dc494df, type: 3}
+  - _id: "blessing_\uB05D"
+    _sprite: {fileID: 21300000, guid: be59f5ba408c7db4ba2db0642747e3b8, type: 3}
+  - _id: blood_deal_1
+    _sprite: {fileID: 21300000, guid: 976338f96321c4d4793b49d3d963c394, type: 3}
+  - _id: blood_deal_2
+    _sprite: {fileID: 21300000, guid: df4c04aff9ff6a5468754dca676fb49b, type: 3}
+  - _id: "blood_deal_\uB05D"
+    _sprite: {fileID: 21300000, guid: 2663aa4445052584ab11f5868060cab8, type: 3}
+  - _id: carve_power_1
+    _sprite: {fileID: 21300000, guid: b14e8a6a6caa15141a44820081362ece, type: 3}
+  - _id: carve_power_2
+    _sprite: {fileID: 21300000, guid: 3ad8cf54f508abc4498727ffe6413d39, type: 3}
+  - _id: carve_power_3
+    _sprite: {fileID: 21300000, guid: 4153f8469ae2fa14eaefb00f5b96d4dc, type: 3}
+  - _id: "carve_power_\uB05D"
+    _sprite: {fileID: 21300000, guid: fc0ee44d892b42e4fb427e952f9686fa, type: 3}
+  - _id: challenger_1
+    _sprite: {fileID: 21300000, guid: 8745df876b1099a4fb3800b68df48c80, type: 3}
+  - _id: challenger_2
+    _sprite: {fileID: 21300000, guid: f0cb5f79cae46f2449a76b0509d78930, type: 3}
+  - _id: challenger_3
+    _sprite: {fileID: 21300000, guid: 05fc2f273690d374290715b5a7acaac8, type: 3}
+  - _id: "challenger_\uB05D"
+    _sprite: {fileID: 21300000, guid: 536f78b7e27b4c042948cdf6bb6cb73a, type: 3}
+  - _id: coin_sale_1
+    _sprite: {fileID: 21300000, guid: 060c65d0f05ae2f4486c77293cf11001, type: 3}
+  - _id: coin_sale_2
+    _sprite: {fileID: 21300000, guid: 3947e123befe7194db3353d473c75211, type: 3}
+  - _id: "coin_sale_\uB05D"
+    _sprite: {fileID: 21300000, guid: bd50862cf1599124bbc581e9843aa39b, type: 3}
+  - _id: corrosion_1
+    _sprite: {fileID: 21300000, guid: fd5184f2533d813409d1f06eb809fda4, type: 3}
+  - _id: "corrosion_\uB05D"
+    _sprite: {fileID: 21300000, guid: 2c26e00b7a14a7440bb114e8f6432320, type: 3}
+  - _id: erosion_1
+    _sprite: {fileID: 21300000, guid: 19c9ee0e1a4c0b94ca873dc1a8306c84, type: 3}
+  - _id: erosion_2
+    _sprite: {fileID: 21300000, guid: 843565c7db0380f4eb10178d0badb049, type: 3}
+  - _id: "erosion_\uB05D"
+    _sprite: {fileID: 21300000, guid: d4698de0de300c541baa3b426c00df96, type: 3}
+  - _id: gamble_1
+    _sprite: {fileID: 21300000, guid: 3a64a041d3380b348832d8aa57352f9d, type: 3}
+  - _id: gamble_2
+    _sprite: {fileID: 21300000, guid: 66a55578db30daa4988b725d58be0d66, type: 3}
+  - _id: "gamble_\uB05D"
+    _sprite: {fileID: 21300000, guid: ac7287facd95b53419f7bd05f063f520, type: 3}
+  - _id: "gamble_\uC774\uAE4030"
+    _sprite: {fileID: 21300000, guid: d21aab4bc7b48434ca3aa0a2ba85661a, type: 3}
+  - _id: "gamble_\uC774\uAE4060"
+    _sprite: {fileID: 21300000, guid: cf1f775d73f835a4a8753cd2a21b9b68, type: 3}
+  - _id: "gamble_\uC9D0"
+    _sprite: {fileID: 21300000, guid: c36694d46b7077c43841415615cd86cf, type: 3}
+  - _id: left_behind_1
+    _sprite: {fileID: 21300000, guid: 2be82764f30765d4a8eef9fbbf4815d1, type: 3}
+  - _id: left_behind_2
+    _sprite: {fileID: 21300000, guid: e3f391544660f2d429b4ff55536031c8, type: 3}
+  - _id: "left_behind_\uB05D"
+    _sprite: {fileID: 21300000, guid: 16c022f7ffe922046a65c0d721df1f5b, type: 3}
+  - _id: life_trade_1
+    _sprite: {fileID: 21300000, guid: c6b2795d05c26b84b8bdb3df38033199, type: 3}
+  - _id: life_trade_2
+    _sprite: {fileID: 21300000, guid: 85d5731760b0a954e83b74ed12a0a951, type: 3}
+  - _id: "life_trade_\uB05D"
+    _sprite: {fileID: 21300000, guid: bd3df0d9247d47c41ba407fa719f5f8b, type: 3}
+  - _id: mad_smith_1
+    _sprite: {fileID: 21300000, guid: e33b1272758aee9488fa64666bbfd732, type: 3}
+  - _id: "mad_smith_\uB05D"
+    _sprite: {fileID: 21300000, guid: 61c967eff06acf748b4bf071e0722e53, type: 3}
+  - _id: mind_collapse_1
+    _sprite: {fileID: 21300000, guid: d6a452a89048602439f4ba4b8a729f14, type: 3}
+  - _id: "mind_collapse_\uB05D"
+    _sprite: {fileID: 21300000, guid: dfd50d6504bd62f409bd4ac547266ad7, type: 3}
+  - _id: money_change_1
+    _sprite: {fileID: 21300000, guid: b44b2fb311d92e34090f52588eebeae5, type: 3}
+  - _id: money_change_2
+    _sprite: {fileID: 21300000, guid: 2afac1409ca3f7a47880b12550435228, type: 3}
+  - _id: "money_change_\uB05D"
+    _sprite: {fileID: 21300000, guid: f0a9f6b178e2a2843ac9bae9beea2433, type: 3}
+  - _id: ownerless_relic_1
+    _sprite: {fileID: 21300000, guid: 7e96a6c4dd3fa5f4bb86b625a0576201, type: 3}
+  - _id: ownerless_relic_2
+    _sprite: {fileID: 21300000, guid: ac4062a1a46b3d040ba619395790d09b, type: 3}
+  - _id: "ownerless_relic_\uB05D"
+    _sprite: {fileID: 21300000, guid: e44c3afd0a409b4478865e1cad4e78e6, type: 3}
+  - _id: pandora_1
+    _sprite: {fileID: 21300000, guid: 2e0455f2e69a7b04a997993ca4055b35, type: 3}
+  - _id: "pandora_\uB05D"
+    _sprite: {fileID: 21300000, guid: d6e64398c584f8a4a9a3b5f422d68f65, type: 3}
+  - _id: plunder_1
+    _sprite: {fileID: 21300000, guid: 51e1159522ef327479ad25c431e82d17, type: 3}
+  - _id: plunder_2
+    _sprite: {fileID: 21300000, guid: 05e4357d87e2b2440a9bcfd52e4c4982, type: 3}
+  - _id: "plunder_\uB05D"
+    _sprite: {fileID: 21300000, guid: 30ce2d33eec37fd46b81247c441263c6, type: 3}
+  - _id: purification_1
+    _sprite: {fileID: 21300000, guid: ab63a24e5751caf47a5c1f10971948f9, type: 3}
+  - _id: purification_2
+    _sprite: {fileID: 21300000, guid: 26e0992023635f649ae2dc2565983b08, type: 3}
+  - _id: "purification_\uB05D"
+    _sprite: {fileID: 21300000, guid: 2566a8cb41a2ac640bae3c0b4e455b45, type: 3}
+  - _id: recovery_1
+    _sprite: {fileID: 21300000, guid: f0472911bc6cb95458d439c1ecbe7b14, type: 3}
+  - _id: recovery_2
+    _sprite: {fileID: 21300000, guid: 9b0b9bee098e366409ffe654931642a9, type: 3}
+  - _id: "recovery_\uB05D"
+    _sprite: {fileID: 21300000, guid: 589980979fb41264481a63298b168468, type: 3}
+  - _id: reflection_1
+    _sprite: {fileID: 21300000, guid: 6d9be7e48cf035548916b091a8f17dad, type: 3}
+  - _id: reflection_2
+    _sprite: {fileID: 21300000, guid: e7d0112ec5071d044a2e10a5a3066c1d, type: 3}
+  - _id: reflection_3
+    _sprite: {fileID: 21300000, guid: a08c3b3f3bafd72449a0961bdce2234d, type: 3}
+  - _id: "reflection_\uB05D"
+    _sprite: {fileID: 21300000, guid: 52f4aa8c26a73ec47876f5d2d8076f0b, type: 3}
+  - _id: relic_trade_1
+    _sprite: {fileID: 21300000, guid: 7da1e805b7bfa6a4ea3d3b0a16be6749, type: 3}
+  - _id: relic_trade_2
+    _sprite: {fileID: 21300000, guid: 1992838050342fe419eeb0bf3b7f5538, type: 3}
+  - _id: "relic_trade_\uB05D"
+    _sprite: {fileID: 21300000, guid: 4a3f18652f88d334e97ad69dae966e6b, type: 3}
+  - _id: sleeping_treasure_1
+    _sprite: {fileID: 21300000, guid: 972696fe982c20649b59c34300718b7b, type: 3}
+  - _id: sleeping_treasure_2
+    _sprite: {fileID: 21300000, guid: 14006bed5239e25479ede9bb0ed4f796, type: 3}
+  - _id: "sleeping_treasure_\uB05D"
+    _sprite: {fileID: 21300000, guid: 35090da402e73b54fa52ec60ca843b0c, type: 3}
+  - _id: "sleeping_treasure_\uB05D2"
+    _sprite: {fileID: 21300000, guid: d6ed706cd99354a4badefd5548095b5c, type: 3}
+  - _id: something_shiny_1
+    _sprite: {fileID: 21300000, guid: 20dc8625fa366004fab8b303b9cf7df6, type: 3}
+  - _id: something_shiny_2
+    _sprite: {fileID: 21300000, guid: bb74f0cfb1357aa4291a1ea593fff1fc, type: 3}
+  - _id: "something_shiny_\uB05D"
+    _sprite: {fileID: 21300000, guid: 038f0d8d302f9a44a941654c164b313d, type: 3}
+  - _id: suspicious_aura_1
+    _sprite: {fileID: 21300000, guid: 56056f3c55cd1434b8b1179ddff9c35a, type: 3}
+  - _id: suspicious_aura_2
+    _sprite: {fileID: 21300000, guid: 5764a681ef8c07d4484acf67de117136, type: 3}
+  - _id: "suspicious_aura_\uB05D"
+    _sprite: {fileID: 21300000, guid: 21df2fe4d4ab55a4f942c5b2ac3be31d, type: 3}
+  - _id: symbol_trade_1
+    _sprite: {fileID: 21300000, guid: 05bd6e6738c99ed45bfc7bb56a909f0a, type: 3}
+  - _id: symbol_trade_2
+    _sprite: {fileID: 21300000, guid: 611a66f99da8342408ca908b3a31a8d3, type: 3}
+  - _id: "symbol_trade_\uB05D"
+    _sprite: {fileID: 21300000, guid: 75ed39a28d120c94eaf3a32bf02b278a, type: 3}
+  - _id: two_boxes_1
+    _sprite: {fileID: 21300000, guid: 76b13ddcbf6cfd74f888a4ac8d9f603f, type: 3}
+  - _id: two_boxes_2A
+    _sprite: {fileID: 21300000, guid: 5731234aa9c2d9442af4c5e0fbed450f, type: 3}
+  - _id: two_boxes_2B
+    _sprite: {fileID: 21300000, guid: 36125a145f80be44ca778d560bbc544a, type: 3}
+  - _id: "two_boxes_\uB05D"
+    _sprite: {fileID: 21300000, guid: d07a39c42aca93e4e97697b8f167044d, type: 3}

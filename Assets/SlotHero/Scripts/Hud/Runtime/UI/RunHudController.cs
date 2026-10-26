@@ -153,7 +153,6 @@ namespace SlotHero.Hud.UI
             }
         }
 
-        /// <summary>기준점과 피벗을 화면 우측 하단에 맞춘다. 04 화면 공통 규칙 의 자리는 모두 그 모서리 기준이다.</summary>
         /// <summary>
         /// 설정이 고른 아래쪽 구석에 기준점과 피벗을 둔다.
         /// 자리 값은 `HudLayoutConfig` 가 같은 쪽 부호로 내준다.

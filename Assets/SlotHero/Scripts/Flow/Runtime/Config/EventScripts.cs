@@ -112,7 +112,7 @@ namespace SlotHero.Flow
                         "차가운 연기가 나는 통로",
                         "뜨거운 연기가 나는 통로",
                         "오직 어둠만이 존재하는 통로")
-                    .With(EventEffectLine.Gain(Named()))));
+                    .With(EventEffectLine.Gain("문양 " + Named()))));
 
             return script.Add(Ending("얻은 문양에서 피어오른 연기가 온몸을 감싸는 분위기",
                 "얻은 문양으로부터 피어오른 연기가 온 몸을 감싼다. 문양의 힘이 느껴진다."));
@@ -140,7 +140,9 @@ namespace SlotHero.Flow
                     "카드 5장을 고르고, 뒤집을 카드 1장을 고른다.")
                 .Add(EventScreenChoice.Advance("card", "{0}", "3")
                     .FilledWith(EventChoiceFill.RandomTags, 5, "{0}")
-                    .Remember("first")));
+                    .Remember("first")
+                    // 이 카드가 무엇에 쓰이는지 적는다. 예전에는 태그 이름만 있어 뜻을 알 수 없었다(2026년 10월 25일 원재).
+                    .With(EventEffectLine.Gain("이 태그와 다음 카드 태그를 함께 가진 문양"))));
 
             script.Add(new EventScreen("3", "고른 카드가 빛나는 가운데 다시 다섯 장 중 하나를 고르는 분위기",
                     "다시 카드 5장을 고르고, 뒤집을 카드 1장을 고른다.")
@@ -149,7 +151,7 @@ namespace SlotHero.Flow
                     .FilledWith(EventChoiceFill.RandomTags, 5, "{0}")
                     .Excluding("first")
                     .Revealing()
-                    .With(EventEffectLine.Gain(Decided(0)))));
+                    .With(EventEffectLine.Gain("문양 " + Decided(0)))));
 
             return script.Add(Ending("노파가 두 카드의 문양이 새겨진 사탕을 건네고 흔적 없이 사라지는 분위기",
                 "카드를 본 점쟁이가 기괴하게 웃으며 사탕 한 알을 건넨다. "
@@ -169,8 +171,8 @@ namespace SlotHero.Flow
                     "빨간 보석으로 장식된 상자가 보인다. 마치 뱀의 눈을 연상시키는 보석이다.\n"
                     + "열어보고 싶은 욕망에 휩싸이지만, 결과는 감히 예측할 수 없다.")
                 .Add(Act("open", "연다", new EventAction(EventActionKind.ChangeAllSymbols), "끝")
-                    .With(EventEffectLine.Cost("보유 문양 전체"))
-                    .With(EventEffectLine.Gain("무작위 문양")))
+                    .With(EventEffectLine.Cost("보유 문양 전부"))
+                    .With(EventEffectLine.Gain("같은 장수의 무작위 문양")))
                 .Add(EventScreenChoice.Finish("leave", "건드리지 않는다")));
 
             return script.Add(Ending("열린 상자에서 연기가 피어오르고 믿기지 않는 결과에 눈을 깜빡이는 분위기",
@@ -194,7 +196,7 @@ namespace SlotHero.Flow
                     + "우물 속으로 손을 뻗고 싶은 욕망에 휩싸인다.")
                 .Add(EventScreenChoice.Advance("symbol", "문양 선택", "2")
                     .FilledWith(EventChoiceFill.OwnedSymbols, 3, "문양 선택")
-                    .With(EventEffectLine.Cost(Named()))
+                    .With(EventEffectLine.Cost(Named() + " 의 태그 하나가 바뀐다"))
                     .Remember("symbol"))
                 .Add(EventScreenChoice.Finish("leave", "떠난다")));
 
@@ -205,7 +207,7 @@ namespace SlotHero.Flow
                     .FilledWith(EventChoiceFill.TagsOfRemembered, 2, "{0}")
                     .FilledFrom("symbol")
                     .Remember("drop")
-                    .With(EventEffectLine.Cost("이 태그를 바꾼다"))));
+                    .With(EventEffectLine.Cost("이 태그를 버린다"))));
 
             script.Add(new EventScreen("3", "물속에서 빛깔이 다른 보석 같은 돌들이 떠오르는 분위기",
                     "돌이 세 개 떠오른다. 아까처럼 기묘한 분위기의 돌이다. 하나를 골라야만 할 것 같다.")
@@ -214,7 +216,7 @@ namespace SlotHero.Flow
                     .FilledWith(EventChoiceFill.RandomTags, 3, "{0}")
                     .Excluding("symbol")
                     .Revealing()
-                    .With(EventEffectLine.Gain(Decided(0)))));
+                    .With(EventEffectLine.Gain("바뀐 문양 " + Decided(0)))));
 
             return script.Add(Ending("수면에 자신감에 가득 찬 얼굴이 비치고 미소 짓는 분위기",
                 "다시 우물에 자신을 비춰보자, 처음에 보았던 자신감에 가득 찬 얼굴이 비춰진다.\n"
@@ -245,7 +247,7 @@ namespace SlotHero.Flow
                 .Add(Act("catch", "{0}", EventAction.OnTarget(EventActionKind.PurgeTag), "끝")
                     .FilledWith(EventChoiceFill.OwnedTags, 3, "{0}")
                     .With(EventEffectLine.Cost("이 태그 문양 전부"))
-                    .With(EventEffectLine.Gain("무작위 문양")))
+                    .With(EventEffectLine.Gain("이 태그 없는 무작위 문양")))
                 .Add(EventScreenChoice.Finish("leave", "떠난다")));
 
             return script.Add(Ending("억센 손에 붙잡힌 불들이 움찔거리며 사그라드는 분위기",
@@ -300,7 +302,8 @@ namespace SlotHero.Flow
                     + "짐이, 어마무시하게 무거워보인다. 피곤할대로 피곤한데 지나칠까, 노인의 말을 믿어볼까.")
                 .Add(Act("pay", "체력으로 치른다",
                         EventAction.ByMaxHealth(EventActionKind.LoseHealth, 0.15f), "2")
-                    .With(EventEffectLine.Cost("체력 {hp}")))
+                    .With(EventEffectLine.Cost("체력 {hp}"))
+                    .With(EventEffectLine.Gain("원하는 문양을 고른다")))
                 .Add(EventScreenChoice.Finish("leave", "떠난다")));
 
             script.Add(new EventScreen("2", "짐을 다 올린 나에게 노인이 붓을 들고 원하는 힘을 묻는 분위기",
@@ -525,8 +528,9 @@ namespace SlotHero.Flow
                     + "돈이 부족한 상황이었나?")
                 .Add(Act("sell", "{0}", EventAction.OnTarget(EventActionKind.SellCoin), "끝")
                     .FilledWith(EventChoiceFill.OwnedCoins, 3, "코인 선택")
+                    .Revealing()
                     .With(EventEffectLine.Cost(Named()))
-                    .With(EventEffectLine.Gain("등급별 골드")))
+                    .With(EventEffectLine.Gain(EventRunner.ResultToken(0))))
                 .Add(EventScreenChoice.Finish("leave", "떠난다")));
 
             return script.Add(Ending("두둑해진 주머니를 들고 가벼운 발걸음으로 떠나는 분위기",
@@ -546,7 +550,7 @@ namespace SlotHero.Flow
                     + "거절하려 했지만 빼앗기고 만다.")
                 .Add(Act("accept", "받아들인다",
                         new EventAction(EventActionKind.DowngradeCoin).TargetingRarityAtLeast(1), "끝")
-                    .With(EventEffectLine.Cost("무작위 보유 코인 한 등급 아래로"))));
+                    .With(EventEffectLine.Cost("고급 이상 보유 코인 하나가 한 등급 아래 무작위 코인으로 바뀐다"))));
 
             return script.Add(Ending("대장장이가 멋쩍게 웃으며 도망치고 한숨을 쉬는 분위기",
                 "코인이 더 흔해지고 말았다. 대장장이가 멋쩍게 웃으며 도망친다.\n"
@@ -774,7 +778,7 @@ namespace SlotHero.Flow
                     "기합을 지르며 검으로 상대를 가른다.")
                 .Add(Act("fight", "싸운다", EventAction.Combat(true, true).Recalling("penalty"), "끝")
                     .With(EventEffectLine.Gain("이기면 보상 두 배"))
-                    .With(EventEffectLine.Cost("부정 효과"))));
+                    .With(EventEffectLine.Cost("앞에서 받은 부정 효과를 안고 전투"))));
 
             return script.Add(Ending("두둑한 보상을 손에 쥐고 기분 좋게 동굴을 떠나는 분위기",
                 "\"역시, 잘 싸울 줄 알았다니까.\"\n"
@@ -791,7 +795,7 @@ namespace SlotHero.Flow
                     + "칼을 빼들고 싸워볼까, 아니면 도망쳐볼까.")
                 // "무작위 부정 효과 1개를 받은 채 전투를 시작한다." 기억이 없으니 싸울 때 목록에서 하나를 뽑는다.
                 .Add(Act("fight", "싸운다", EventAction.Combat(false, true), "끝")
-                    .With(EventEffectLine.Cost("부정 효과")))
+                    .With(EventEffectLine.Cost("부정 효과 하나를 안고 전투")))
                 .Add(Act("flee", "도망친다",
                         EventAction.ByMaxHealth(EventActionKind.LoseHealth, 0.15f), "끝")
                     .With(EventEffectLine.Cost("체력 {hp}"))));
@@ -868,9 +872,12 @@ namespace SlotHero.Flow
         /// <summary>반반으로 갈리는 진행 선택지. 19 두 개의 상자 가 쓴다.</summary>
         private static EventScreenChoice FiftyFifty(string id, string label)
         {
+            // 무엇이 걸렸는지 적는다. 예전에는 "?" 만 있어 무엇을 얻고 잃는지 알 수 없었다(2026년 10월 25일 원재).
             return EventScreenChoice.Advance(id, label, string.Empty)
                 .Branch(50, "2A")
-                .Branch(50, "2B");
+                .Branch(50, "2B")
+                .With(EventEffectLine.Gain("보물이면 유물"))
+                .With(EventEffectLine.Cost("함정이면 체력 손실"));
         }
 
         /// <summary>
@@ -897,11 +904,14 @@ namespace SlotHero.Flow
         /// 기획서가 "화면 2에서 건 금액의 2배를 획득한다"로 정했는데
         /// 각본이 앞 화면에서 고른 값을 기억하지 않기 때문이다.
         /// 거는 금액이 둘뿐이라 화면을 둘로 나누는 쪽이 간단하다.
+        ///
+        /// 판돈은 치르는 값(`GoldCost`)이다. 건 금액이 다 있어야 고를 수 있다.
+        /// 예전에는 골드 잃기로 두어 1골드만 있어도 60G 를 걸고 이기면 120G 를 받았다(2026년 10월 25일 코덱스 검토).
         /// </summary>
         private static EventScreenChoice Bet(string id, string label, int amount)
         {
             return EventScreenChoice.Act(
-                    id, label, EventAction.Gold(EventActionKind.LoseGold, amount), string.Empty)
+                    id, label, EventAction.None().Costing(amount), string.Empty)
                 .Branch(50, "이김" + amount)
                 .Branch(50, "짐")
                 .With(EventEffectLine.Cost("골드 " + amount))

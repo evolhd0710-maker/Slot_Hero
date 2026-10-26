@@ -19,7 +19,7 @@ namespace SlotHero.Events.UI
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class EventChoiceView : MonoBehaviour,
-        IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+        IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler, IPointerMoveHandler
     {
         [SerializeField] private Button _button;
         [SerializeField] private Image _background;
@@ -28,6 +28,10 @@ namespace SlotHero.Events.UI
         private RectTransform _rectTransform;
         private EventVisualConfig _visual;
         private Action<EventChoiceView> _onClicked;
+        private Action<string, bool> _onItemHover;
+
+        /// 커서가 올라가 있는 물건 이름의 식별자. 없으면 null 이다.
+        private string _hoveredItem;
         private bool _hovering;
         private bool _pressed;
         private float _height;
@@ -81,16 +85,19 @@ namespace SlotHero.Events.UI
             }
         }
 
-        /// <summary>선택지 내용과 자리를 반영한다.</summary>
+        /// <summary>선택지 내용과 자리를 반영한다. onItemHover 는 글 속 물건 이름에 커서가 들고 날 때 그 식별자를 받는다.</summary>
         public void Bind(
             EventChoice choice,
             EventLayoutConfig layout,
             EventVisualConfig visual,
-            Action<EventChoiceView> onClicked)
+            Action<EventChoiceView> onClicked,
+            Action<string, bool> onItemHover)
         {
+            EndItemHover();
             Choice = choice;
             _visual = visual;
             _onClicked = onClicked;
+            _onItemHover = onItemHover;
             _hovering = false;
             _pressed = false;
 
@@ -111,7 +118,7 @@ namespace SlotHero.Events.UI
                 _label.textWrappingMode = TextWrappingModes.Normal;
                 _label.text = EventChoiceText.Build(choice, visual.GetTextFormat());
                 _label.fontSize = visual.ChoiceFontSize;
-                _label.color = visual.TextColor;
+                _label.color = visual.GetChoiceTextColor(choice.State);
             }
 
             _height = Measure(layout, visual);
@@ -191,7 +198,76 @@ namespace SlotHero.Events.UI
         {
             _hovering = false;
             _pressed = false;
+            EndItemHover();
             Refresh();
+        }
+
+        /// <summary>
+        /// 커서가 글 속 물건 이름(`EventRunner.LinkItem` 의 고리) 위에 오면 그 물건의 아이템 상세를 띄우게 알린다.
+        /// 얻거나 잃는 물건이 무엇인지 선택지에서 바로 볼 수 있게 한다(2026년 10월 25일 원재).
+        /// </summary>
+        public void OnPointerMove(PointerEventData eventData)
+        {
+            SetHoveredItem(FindItemAt(eventData.position, eventData.enterEventCamera));
+        }
+
+        /// <summary>그 화면 자리에 있는 물건 이름의 식별자. 없으면 null 이다.</summary>
+        public string FindItemAt(Vector2 screenPoint, Camera camera)
+        {
+            if (_label == null)
+            {
+                return null;
+            }
+
+            int index = TMP_TextUtilities.FindIntersectingLink(_label, new Vector3(screenPoint.x, screenPoint.y, 0f), camera);
+            if (index < 0 || index >= _label.textInfo.linkCount)
+            {
+                return null;
+            }
+
+            return _label.textInfo.linkInfo[index].GetLinkID();
+        }
+
+        /// <summary>커서가 올라간 물건을 바꾼다. 바뀌었을 때만 알린다.</summary>
+        public void SetHoveredItem(string id)
+        {
+            if (id == _hoveredItem)
+            {
+                return;
+            }
+
+            EndItemHover();
+
+            if (string.IsNullOrEmpty(id))
+            {
+                return;
+            }
+
+            _hoveredItem = id;
+            if (_onItemHover != null)
+            {
+                _onItemHover(id, true);
+            }
+        }
+
+        private void OnDisable()
+        {
+            EndItemHover();
+        }
+
+        private void EndItemHover()
+        {
+            if (_hoveredItem == null)
+            {
+                return;
+            }
+
+            string id = _hoveredItem;
+            _hoveredItem = null;
+            if (_onItemHover != null)
+            {
+                _onItemHover(id, false);
+            }
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -225,6 +301,12 @@ namespace SlotHero.Events.UI
             }
 
             _background.color = _visual.GetPanelColor(Choice.State, _hovering, _pressed);
+
+            // 고른 칸은 어둡게 가라앉으므로 글자를 크림색으로 바꾼다(2026년 10월 21일 코덱스 검토).
+            if (_label != null)
+            {
+                _label.color = _visual.GetChoiceTextColor(Choice.State);
+            }
         }
 
         private void HandleClick()

@@ -137,7 +137,7 @@ namespace SlotHero.Sanctum.UI
 
         /// <summary>
         /// 성소에 새로 들어온다. 진열을 만들고 성소 화면을 연다.
-        /// sanctumIndex 는 런 안에서 몇 번째 성소인지로, 같은 런에서 성소마다 다른 진열이 나오게 한다.
+        /// sanctumIndex 는 그 방을 런 전체에서 가리키는 번호(`GameFlowController.RoomKey`)로, 같은 런에서 성소마다 다른 진열이 나오게 한다.
         /// </summary>
         public void Enter(
             int runSeed,
@@ -312,7 +312,7 @@ namespace SlotHero.Sanctum.UI
         /// <summary>
         /// 성소를 나간다. 03 진입 흐름 의 성소 퇴장.
         ///
-        /// 이미 닫혀 있으면 아무 일도 하지 않는다.
+        /// 열려 있을 때만 나가고 `Exited` 를 알린다.
         /// `Exited` 를 듣는 쪽이 화면을 정리하면서 여기를 다시 부를 수 있는데
         /// 그때 또 알리면 서로 끝없이 부른다.
         /// </summary>

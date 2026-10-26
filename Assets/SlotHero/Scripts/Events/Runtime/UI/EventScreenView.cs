@@ -47,6 +47,9 @@ namespace SlotHero.Events.UI
         /// <summary>선택지를 눌렀을 때. 선택지 식별자를 넘긴다.</summary>
         public event Action<string> ChoiceClicked;
 
+        /// <summary>선택지 글 속 물건 이름에 커서가 들거나 날 때. 물건 식별자와 올라갔는지를 넘긴다.</summary>
+        public event Action<string, bool> ItemHoverChanged;
+
         /// <summary>한 화면에 놓을 수 있는 선택지 칸의 최대 수.</summary>
         public int MaxChoiceCount
         {
@@ -162,9 +165,10 @@ namespace SlotHero.Events.UI
 
             if (_bodyLabel != null)
             {
-                // 결과 문장의 얻은 것은 초록, 잃은 것은 빨강으로 칠한다. 선택지 칸과 같은 색이다.
+                // 결과 문장의 얻은 것은 초록, 잃은 것은 빨강으로 칠한다.
+                // 본문은 어두운 칸이라 선택지보다 밝은 초록과 빨강이다(2026년 10월 21일 코덱스 검토).
                 _bodyLabel.text = _visual != null
-                    ? EventChoiceText.ColorMarks(page.BodyText, _visual.GetTextFormat())
+                    ? EventChoiceText.ColorMarks(page.BodyText, _visual.GetBodyTextFormat())
                     : EventChoiceText.StripMarks(page.BodyText);
             }
 
@@ -248,7 +252,7 @@ namespace SlotHero.Events.UI
                     continue;
                 }
 
-                view.Bind(page.Choices[i], _layout, _visual, HandleChoiceClicked);
+                view.Bind(page.Choices[i], _layout, _visual, HandleChoiceClicked, HandleItemHover);
             }
 
             FitChoiceFont();
@@ -367,6 +371,14 @@ namespace SlotHero.Events.UI
             if (ChoiceClicked != null)
             {
                 ChoiceClicked(view.Choice.Id);
+            }
+        }
+
+        private void HandleItemHover(string itemId, bool hovering)
+        {
+            if (ItemHoverChanged != null)
+            {
+                ItemHoverChanged(itemId, hovering);
             }
         }
     }

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 72da63f396908e249abc107d35785dc9
+guid: 7e95c2318384cb74eb6b7d57cdd29376
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7092117117549651625
-    second: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_18_52 (8)_0"
+      213: -3030794605390870092
+    second: Golem_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,17 +98,43 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_18_52 (8)_0"
+      name: Golem_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1254
-        height: 1254
+        x: 52
+        y: 40
+        width: 408
+        height: 432
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +143,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7595cf6ae0db39d90800000000000000
-      internalID: -7092117117549651625
+      spriteID: 4b9c18e3d5470f5d0800000000000000
+      internalID: -3030794605390870092
       vertices: []
       indices: 
       edges: []
@@ -137,7 +163,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_18_52 (8)_0": -7092117117549651625
+      Golem_0: -3030794605390870092
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

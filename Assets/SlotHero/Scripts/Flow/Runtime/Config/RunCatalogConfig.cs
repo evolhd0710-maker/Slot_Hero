@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Combat;
 using SlotHero.Sanctum;
 
@@ -9,7 +10,7 @@ namespace SlotHero.Flow
     /// <summary>
     /// 런에 나오는 문양과 코인과 유물의 목록.
     ///
-    /// 문양 서른여섯은 저장소의 `SymbolTagAutoAssigner` 에 적힌 것을 그대로 옮겼다.
+    /// 문양 서른여섯의 이름과 태그는 전투 시스템 기획서 10c 의 04 문양/태그 표와 영문명 표를 따른다(2026년 10월 19일 원재).
     /// 아홉 행성에서 둘을 고르는 모든 짝이 한 번씩 나온다. 9 × 8 ÷ 2 = 36 이다.
     /// 그래서 문양은 늘 서로 다른 태그를 둘 가진다.
     ///
@@ -20,57 +21,81 @@ namespace SlotHero.Flow
     public class RunCatalogConfig : ScriptableObject
     {
         [Header("문양")]
-        public List<SymbolDefinition> Symbols = new List<SymbolDefinition>();
+        [FormerlySerializedAs("Symbols")]
+        [SerializeField] private List<SymbolDefinition> _symbols = new List<SymbolDefinition>();
+        public List<SymbolDefinition> Symbols { get { return _symbols; } set { _symbols = value; } }
 
         [Header("코인")]
-        public List<ItemDefinition> Coins = new List<ItemDefinition>();
+        [FormerlySerializedAs("Coins")]
+        [SerializeField] private List<ItemDefinition> _coins = new List<ItemDefinition>();
+        public List<ItemDefinition> Coins { get { return _coins; } set { _coins = value; } }
 
         [Header("유물")]
-        public List<ItemDefinition> Relics = new List<ItemDefinition>();
+        [FormerlySerializedAs("Relics")]
+        [SerializeField] private List<ItemDefinition> _relics = new List<ItemDefinition>();
+        public List<ItemDefinition> Relics { get { return _relics; } set { _relics = value; } }
 
         [Header("태그 가치")]
         [Tooltip("태그 하나의 값. 문양 값은 가진 태그 둘의 값을 더해 매긴다. " +
             "저장소 SymbolTagData 의 value 에 해당한다. " +
             "전투 시스템 기획서 10c / 04 문양·태그 표 대로 수성·금성 1, 지구·화성 2, 목성·토성 3, 천왕성·해왕성 4, 명왕성 5 다(SpecTagValues).")]
-        public List<TagValue> TagValues = new List<TagValue>();
+        [FormerlySerializedAs("TagValues")]
+        [SerializeField] private List<TagValue> _tagValues = new List<TagValue>();
+        public List<TagValue> TagValues { get { return _tagValues; } set { _tagValues = value; } }
 
         [Header("코인 매각")]
         [Tooltip("23 코인 매각 에서 등급마다 받는 골드. 차례가 등급이다(일반, 고급, 희귀, 특급, 전설). " +
             "이벤트 기획서는 \"희귀도에 따른 골드\" 라고만 적어, 성소 기획서 07 가격 의 코인 기준가 15 / 25 / 35 / 45 / 60 의 절반으로 두었다. " +
             "예전에는 이벤트 코드에 숫자로 박혀 있었다.")]
-        public List<int> CoinSellPrices = new List<int> { 8, 13, 18, 23, 30 };
+        [FormerlySerializedAs("CoinSellPrices")]
+        [SerializeField] private List<int> _coinSellPrices = new List<int> { 8, 13, 18, 23, 30 };
+        public List<int> CoinSellPrices { get { return _coinSellPrices; } set { _coinSellPrices = value; } }
 
         [Header("런 시작에 주는 것")]
         [Tooltip("런을 시작할 때 넣어 주는 문양. 같은 것을 여러 번 적으면 그만큼 들어간다.")]
-        public List<string> StartingSymbolIds = new List<string>();
+        [FormerlySerializedAs("StartingSymbolIds")]
+        [SerializeField] private List<string> _startingSymbolIds = new List<string>();
+        public List<string> StartingSymbolIds { get { return _startingSymbolIds; } set { _startingSymbolIds = value; } }
 
         [Tooltip("런을 시작할 때 넣어 주는 코인.")]
-        public List<string> StartingCoinIds = new List<string>();
+        [FormerlySerializedAs("StartingCoinIds")]
+        [SerializeField] private List<string> _startingCoinIds = new List<string>();
+        public List<string> StartingCoinIds { get { return _startingCoinIds; } set { _startingCoinIds = value; } }
 
         [Tooltip("런을 시작할 때 넣어 주는 유물.")]
-        public List<string> StartingRelicIds = new List<string>();
+        [FormerlySerializedAs("StartingRelicIds")]
+        [SerializeField] private List<string> _startingRelicIds = new List<string>();
+        public List<string> StartingRelicIds { get { return _startingRelicIds; } set { _startingRelicIds = value; } }
 
         [Tooltip("런을 시작할 때 주는 골드. 성소 기획서 06 재화 의 \"시작 수치 0\" 이다. " +
             "예전에는 100 이었다. 2026년 10월 8일 외부 검토가 기획서와 다르다고 짚어 0 으로 맞췄다.")]
-        public int StartingGold = 0;
+        [FormerlySerializedAs("StartingGold")]
+        [SerializeField] private int _startingGold = 0;
+        public int StartingGold { get { return _startingGold; } set { _startingGold = value; } }
 
         [Header("소지 한도")]
         [Tooltip("런을 시작할 때 코인을 최대 몇 개까지 가질 수 있는지. 전투 UI 기획서 stt 05 의 \"코인은 최대 5개까지 소유 가능\", " +
             "인게임 화면 기획서 13 의 \"코인 최대 5개\". 런 중에 조건에 따라 바뀔 수 있어 런 데이터에 따로 저장한다.")]
         [Min(1)]
-        public int StartingCoinCapacity = 5;
+        [FormerlySerializedAs("StartingCoinCapacity")]
+        [SerializeField] private int _startingCoinCapacity = 5;
+        public int StartingCoinCapacity { get { return _startingCoinCapacity; } set { _startingCoinCapacity = value; } }
 
         [Tooltip("런을 시작할 때 유물을 최대 몇 개까지 가질 수 있는지. 전투 UI 기획서 stt 의 \"유물 목록(최대 6개)\", " +
             "인게임 화면 기획서 13 의 \"슬롯은 6개\". 런 중에 조건에 따라 바뀔 수 있어 런 데이터에 따로 저장한다.")]
         [Min(1)]
-        public int StartingRelicCapacity = 6;
+        [FormerlySerializedAs("StartingRelicCapacity")]
+        [SerializeField] private int _startingRelicCapacity = 6;
+        public int StartingRelicCapacity { get { return _startingRelicCapacity; } set { _startingRelicCapacity = value; } }
 
         [Header("덱")]
         [Tooltip("문양 덱이 가져야 하는 가장 적은 장수. 문양을 잃는 선택지는 이 아래로 줄이지 못한다. " +
             "전투 시스템 기획서 04 가 \"문양 풀이 슬롯 릴 갯수보다 적은 경우는 존재하지 않는다\" 고 적었다(릴 5 ~ 7개). " +
             "2026년 10월 9일 원재가 6 으로 정했다.")]
         [Min(1)]
-        public int MinimumDeckSize = 6;
+        [FormerlySerializedAs("MinimumDeckSize")]
+        [SerializeField] private int _minimumDeckSize = 6;
+        public int MinimumDeckSize { get { return _minimumDeckSize; } set { _minimumDeckSize = value; } }
 
         /// <summary>
         /// 전투 시스템 기획서 10c / 04 문양·태그 표 의 태그 가치.
@@ -483,22 +508,36 @@ namespace SlotHero.Flow
     public struct SymbolDefinition
     {
         [Tooltip("저장소의 그림 파일 이름과 같게 둔다.")]
-        public string Id;
+        [FormerlySerializedAs("Id")]
+        [SerializeField] private string _id;
+        public string Id { get { return _id; } set { _id = value; } }
 
-        public string DisplayName;
+        [FormerlySerializedAs("DisplayName")]
+        [SerializeField] private string _displayName;
+        public string DisplayName { get { return _displayName; } set { _displayName = value; } }
 
         [Tooltip("첫 태그와 둘째 태그는 서로 달라야 한다.")]
-        public SymbolTagType FirstTag;
+        [FormerlySerializedAs("FirstTag")]
+        [SerializeField] private SymbolTagType _firstTag;
+        public SymbolTagType FirstTag { get { return _firstTag; } set { _firstTag = value; } }
 
-        public SymbolTagType SecondTag;
+        [FormerlySerializedAs("SecondTag")]
+        [SerializeField] private SymbolTagType _secondTag;
+        public SymbolTagType SecondTag { get { return _secondTag; } set { _secondTag = value; } }
 
-        public Sprite Icon;
+        [FormerlySerializedAs("Icon")]
+        [SerializeField] private Sprite _icon;
+        public Sprite Icon { get { return _icon; } set { _icon = value; } }
 
         [Tooltip("보상과 행상에 나오기 시작하는 스테이지. 0 이하면 첫 스테이지부터. 기획서에 수치가 없어 비워 둔다.")]
-        public int MinStage;
+        [FormerlySerializedAs("MinStage")]
+        [SerializeField] private int _minStage;
+        public int MinStage { get { return _minStage; } set { _minStage = value; } }
 
         [Tooltip("보상과 행상에 마지막으로 나오는 스테이지. 0 이하면 끝까지.")]
-        public int MaxStage;
+        [FormerlySerializedAs("MaxStage")]
+        [SerializeField] private int _maxStage;
+        public int MaxStage { get { return _maxStage; } set { _maxStage = value; } }
 
         /// <summary>그 스테이지의 보상과 행상에 나올 수 있는지. 0 이하는 따지지 않는다(`StageRange`).</summary>
         public bool AppearsIn(int stage)
@@ -511,23 +550,42 @@ namespace SlotHero.Flow
     [Serializable]
     public struct ItemDefinition
     {
-        public string Id;
-        public string DisplayName;
-        public ItemRarity Rarity;
-        public Sprite Icon;
+        [FormerlySerializedAs("Id")]
+        [SerializeField] private string _id;
+        public string Id { get { return _id; } set { _id = value; } }
+
+        [FormerlySerializedAs("DisplayName")]
+        [SerializeField] private string _displayName;
+        public string DisplayName { get { return _displayName; } set { _displayName = value; } }
+
+        [FormerlySerializedAs("Rarity")]
+        [SerializeField] private ItemRarity _rarity;
+        public ItemRarity Rarity { get { return _rarity; } set { _rarity = value; } }
+
+        [FormerlySerializedAs("Icon")]
+        [SerializeField] private Sprite _icon;
+        public Sprite Icon { get { return _icon; } set { _icon = value; } }
 
         [Tooltip("보상과 행상에 나오기 시작하는 스테이지. 0 이하면 첫 스테이지부터. 기획서에 수치가 없어 비워 둔다.")]
-        public int MinStage;
+        [FormerlySerializedAs("MinStage")]
+        [SerializeField] private int _minStage;
+        public int MinStage { get { return _minStage; } set { _minStage = value; } }
 
         [Tooltip("보상과 행상에 마지막으로 나오는 스테이지. 0 이하면 끝까지.")]
-        public int MaxStage;
+        [FormerlySerializedAs("MaxStage")]
+        [SerializeField] private int _maxStage;
+        public int MaxStage { get { return _maxStage; } set { _maxStage = value; } }
 
         [Tooltip("이 경로로는 나오지 않는다. 없음이면 모든 경로에서 나온다.\n" +
             "행상에서 미등장: 행상\n행상에서만 등장: 보상 + 이벤트\n특정 이벤트에서만 등장: 보상 + 행상, 아래 이벤트 목록에 그 이벤트")]
-        public ItemSource ExcludedFrom;
+        [FormerlySerializedAs("ExcludedFrom")]
+        [SerializeField] private ItemSource _excludedFrom;
+        public ItemSource ExcludedFrom { get { return _excludedFrom; } set { _excludedFrom = value; } }
 
         [Tooltip("비어 있지 않으면 이벤트로는 여기 적은 이벤트에서만 나온다. 이벤트 식별자를 적는다. 비우면 모든 이벤트다.")]
-        public List<string> OnlyInEvents;
+        [FormerlySerializedAs("OnlyInEvents")]
+        [SerializeField] private List<string> _onlyInEvents;
+        public List<string> OnlyInEvents { get { return _onlyInEvents; } set { _onlyInEvents = value; } }
 
         /// <summary>그 스테이지의 보상과 행상에 나올 수 있는지. 0 이하는 따지지 않는다(`StageRange`).</summary>
         public bool AppearsIn(int stage)
@@ -559,13 +617,18 @@ namespace SlotHero.Flow
     [Serializable]
     public struct TagValue
     {
-        public SymbolTagType Tag;
-        public int Value;
+        [FormerlySerializedAs("Tag")]
+        [SerializeField] private SymbolTagType _tag;
+        public SymbolTagType Tag { get { return _tag; } set { _tag = value; } }
+
+        [FormerlySerializedAs("Value")]
+        [SerializeField] private int _value;
+        public int Value { get { return _value; } set { _value = value; } }
 
         public TagValue(SymbolTagType tag, int value)
         {
-            Tag = tag;
-            Value = value;
+            _tag = tag;
+            _value = value;
         }
     }
 }

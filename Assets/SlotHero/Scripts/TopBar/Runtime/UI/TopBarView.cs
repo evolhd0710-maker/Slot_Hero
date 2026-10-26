@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using SlotHero.Ui;
 
 namespace SlotHero.TopBar.UI
 {
@@ -21,6 +22,9 @@ namespace SlotHero.TopBar.UI
         [Header("배경")]
         [SerializeField] private Image _background;
 
+        [Tooltip("표시줄 아래 바깥에 붙는 장식 띠. 표시줄 64 영역에는 들어가지 않는다(2026년 10월 20일 원재).")]
+        [SerializeField] private Image _bottomTrim;
+
         [Header("① 플레이 시간")]
         [SerializeField] private RectTransform _playTimeRoot;
         [SerializeField] private TMP_Text _playTimeLabel;
@@ -30,6 +34,9 @@ namespace SlotHero.TopBar.UI
         [SerializeField] private Image _stageIcon;
         [SerializeField] private TMP_Text _stageLabel;
         [SerializeField] private Image _roomIcon;
+
+        [Tooltip("현재 방 아이콘 위에 얹는 안쪽 무늬. 방 아이콘을 꽉 채우는 자식이다(2026년 10월 25일 원재).")]
+        [SerializeField] private Image _roomIconDetail;
         [SerializeField] private TopBarHoverArea _locationHover;
 
         [Header("③ 체력")]
@@ -147,7 +154,7 @@ namespace SlotHero.TopBar.UI
             {
                 _playTimeLabel.fontSize = _visual.PlayTimeFontSize;
                 _playTimeLabel.color = _visual.PlayTimeColor;
-                ApplyOutline(_playTimeLabel, _visual.PlayTimeOutlineColor, _visual.PlayTimeOutlineWidth);
+                TextOutline.Apply(_playTimeLabel, _visual.PlayTimeOutlineColor, _visual.PlayTimeOutlineWidth);
             }
 
             if (_stageLabel != null)
@@ -159,6 +166,11 @@ namespace SlotHero.TopBar.UI
             if (_roomIcon != null)
             {
                 _roomIcon.color = _visual.RoomIconColor;
+            }
+
+            if (_roomIconDetail != null)
+            {
+                _roomIconDetail.color = _visual.RoomIconDetailColor;
             }
 
             if (_healthField != null)
@@ -186,8 +198,11 @@ namespace SlotHero.TopBar.UI
             }
         }
 
-        /// <summary>② 위치. 스테이지 아이콘과 단계 숫자, 현재 방 아이콘을 함께 보여 준다.</summary>
-        public void SetLocation(Sprite stageIcon, string stageText, Sprite roomIcon)
+        /// <summary>
+        /// ② 위치. 스테이지 아이콘과 단계 숫자, 현재 방 아이콘을 함께 보여 준다.
+        /// roomDetail 은 방 아이콘의 안쪽 무늬다. 없으면 얹지 않는다.
+        /// </summary>
+        public void SetLocation(Sprite stageIcon, string stageText, Sprite roomIcon, Sprite roomDetail)
         {
             if (_stageIcon != null)
             {
@@ -204,14 +219,18 @@ namespace SlotHero.TopBar.UI
                 _stageLabel.text = stageText;
             }
 
+            // 방 아이콘은 받은 그대로 둔다. 아직 방에 들어가지 않아 비어 있으면 감춘다.
+            // 예전 그림을 남겨 두면 런을 시작한 맵 화면에 확인용 견본 그림이 그대로 보였다(2026년 10월 20일 원재).
             if (_roomIcon != null)
             {
-                if (roomIcon != null)
-                {
-                    _roomIcon.sprite = roomIcon;
-                }
+                _roomIcon.sprite = roomIcon;
+                _roomIcon.enabled = roomIcon != null;
+            }
 
-                _roomIcon.enabled = _roomIcon.sprite != null;
+            if (_roomIconDetail != null)
+            {
+                _roomIconDetail.sprite = roomDetail;
+                _roomIconDetail.enabled = roomIcon != null && roomDetail != null;
             }
         }
 
@@ -288,6 +307,19 @@ namespace SlotHero.TopBar.UI
             rect.pivot = new Vector2(0.5f, 1f);
             rect.sizeDelta = new Vector2(0f, _layout.BarHeight);
             rect.anchoredPosition = Vector2.zero;
+
+            // 장식 띠는 표시줄 아래 가장자리에 윗변을 붙여 바깥으로 늘어뜨린다.
+            if (_bottomTrim != null)
+            {
+                RectTransform trim = _bottomTrim.rectTransform;
+                trim.anchorMin = new Vector2(0f, 0f);
+                trim.anchorMax = new Vector2(1f, 0f);
+                trim.pivot = new Vector2(0.5f, 1f);
+                trim.sizeDelta = new Vector2(0f, _layout.TrimHeight);
+                trim.anchoredPosition = Vector2.zero;
+                _bottomTrim.raycastTarget = false;
+                _bottomTrim.enabled = _bottomTrim.sprite != null;
+            }
         }
 
         /// <summary>런 요약 한 칸을 표시줄 왼쪽 기준 x 에 놓는다.</summary>
@@ -315,10 +347,5 @@ namespace SlotHero.TopBar.UI
             icon.rectTransform.sizeDelta = new Vector2(iconSize, iconSize);
         }
 
-        private static void ApplyOutline(TMP_Text label, Color color, float width)
-        {
-            label.outlineColor = color;
-            label.outlineWidth = width;
-        }
     }
 }

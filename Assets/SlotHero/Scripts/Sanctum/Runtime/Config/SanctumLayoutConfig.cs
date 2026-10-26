@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Ui;
 
 namespace SlotHero.Sanctum
@@ -21,21 +22,31 @@ namespace SlotHero.Sanctum
     {
         [Header("기준")]
         [Tooltip("모든 규격의 기준 해상도. 1920 × 1080 FHD.")]
-        public Vector2 ReferenceResolution = UiScale.V(1920f, 1080f);
+        [FormerlySerializedAs("ReferenceResolution")]
+        [SerializeField] private Vector2 _referenceResolution = UiScale.V(1920f, 1080f);
+        public Vector2 ReferenceResolution { get { return _referenceResolution; } set { _referenceResolution = value; } }
 
         [Header("야영")]
         [Tooltip("모닥불 그림의 왼쪽 위. (35, 374)")]
-        public Vector2 CampPosition = UiScale.V(30f, 370f);
+        [FormerlySerializedAs("CampPosition")]
+        [SerializeField] private Vector2 _campPosition = UiScale.V(30f, 370f);
+        public Vector2 CampPosition { get { return _campPosition; } set { _campPosition = value; } }
 
         [Tooltip("모닥불 그림의 크기. (851 × 556)")]
-        public Vector2 CampSize = UiScale.V(850f, 560f);
+        [FormerlySerializedAs("CampSize")]
+        [SerializeField] private Vector2 _campSize = UiScale.V(850f, 560f);
+        public Vector2 CampSize { get { return _campSize; } set { _campSize = value; } }
 
         [Header("행상")]
         [Tooltip("행상인 그림의 왼쪽 위. (1056, 316)")]
-        public Vector2 MerchantPosition = UiScale.V(1060f, 320f);
+        [FormerlySerializedAs("MerchantPosition")]
+        [SerializeField] private Vector2 _merchantPosition = UiScale.V(1060f, 320f);
+        public Vector2 MerchantPosition { get { return _merchantPosition; } set { _merchantPosition = value; } }
 
         [Tooltip("행상인 그림의 크기. (777 × 531)")]
-        public Vector2 MerchantSize = UiScale.V(780f, 530f);
+        [FormerlySerializedAs("MerchantSize")]
+        [SerializeField] private Vector2 _merchantSize = UiScale.V(780f, 530f);
+        public Vector2 MerchantSize { get { return _merchantSize; } set { _merchantSize = value; } }
 
         [Header("나가기")]
         [Tooltip(
@@ -44,16 +55,24 @@ namespace SlotHero.Sanctum
             "현재 빌드 버튼은 04 화면 공통 규칙 이 우측 하단 1650 부터로 정해 둔 고정 자리다.\n" +
             "화살표를 PSD 자리로 되돌리려면 현재 빌드 버튼을 왼쪽 아래로 옮겨야 한다. " +
             "`HudLayoutConfig.OnLeftCorner` 로 바꾼다.")]
-        public Vector2 ExitPosition = UiScale.V(1310f, 900f);
+        [FormerlySerializedAs("ExitPosition")]
+        [SerializeField] private Vector2 _exitPosition = UiScale.V(1310f, 900f);
+        public Vector2 ExitPosition { get { return _exitPosition; } set { _exitPosition = value; } }
 
         [Tooltip("화살표 버튼의 크기. (343 × 161)")]
-        public Vector2 ExitSize = UiScale.V(340f, 160f);
+        [FormerlySerializedAs("ExitSize")]
+        [SerializeField] private Vector2 _exitSize = UiScale.V(340f, 160f);
+        public Vector2 ExitSize { get { return _exitSize; } set { _exitSize = value; } }
 
         [Tooltip("화살표 안에 적는 글자 크기.")]
-        public float ExitFontSize = UiScale.Px(44f);
+        [FormerlySerializedAs("ExitFontSize")]
+        [SerializeField] private float _exitFontSize = UiScale.Px(44f);
+        public float ExitFontSize { get { return _exitFontSize; } set { _exitFontSize = value; } }
 
         [Tooltip("글자를 화살표 머리 쪽으로 밀지 않으려고 오른쪽에 비워 두는 폭. (화살표 머리 약 90)")]
-        public float ExitArrowHeadWidth = UiScale.Px(90f);
+        [FormerlySerializedAs("ExitArrowHeadWidth")]
+        [SerializeField] private float _exitArrowHeadWidth = UiScale.Px(90f);
+        public float ExitArrowHeadWidth { get { return _exitArrowHeadWidth; } set { _exitArrowHeadWidth = value; } }
 
         /// <summary>야영과 행상 그림이 서로 겹치지 않는지.</summary>
         public bool CampAndMerchantDoNotOverlap()
@@ -86,13 +105,13 @@ namespace SlotHero.Sanctum
 
         private void OnValidate()
         {
-            CampSize.x = Mathf.Max(1f, CampSize.x);
-            CampSize.y = Mathf.Max(1f, CampSize.y);
-            MerchantSize.x = Mathf.Max(1f, MerchantSize.x);
-            MerchantSize.y = Mathf.Max(1f, MerchantSize.y);
-            ExitSize.x = Mathf.Max(1f, ExitSize.x);
-            ExitSize.y = Mathf.Max(1f, ExitSize.y);
-            ExitArrowHeadWidth = Mathf.Clamp(ExitArrowHeadWidth, 0f, ExitSize.x - 1f);
+            _campSize.x = Mathf.Max(1f, _campSize.x);
+            _campSize.y = Mathf.Max(1f, _campSize.y);
+            _merchantSize.x = Mathf.Max(1f, _merchantSize.x);
+            _merchantSize.y = Mathf.Max(1f, _merchantSize.y);
+            _exitSize.x = Mathf.Max(1f, _exitSize.x);
+            _exitSize.y = Mathf.Max(1f, _exitSize.y);
+            _exitArrowHeadWidth = Mathf.Clamp(_exitArrowHeadWidth, 0f, _exitSize.x - 1f);
         }
     }
 }

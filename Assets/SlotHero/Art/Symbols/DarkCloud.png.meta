@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 88bb58d6aabcc1b4b84ca95509ac9bf5
+guid: fc1a6e557d168b44a87e67a5633344aa
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 501313089418352175
-    second: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_52 (6)_0"
+      213: -4066759191116636810
+    second: DarkCloud_0
+  - first:
+      213: 3338775210382988743
+    second: DarkCloud_1
+  - first:
+      213: 8227866842966369502
+    second: DarkCloud_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,17 +104,43 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_52 (6)_0"
+      name: DarkCloud_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1254
-        height: 1254
+        x: 46
+        y: 67
+        width: 425
+        height: 391
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +149,52 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f26d808499505f600800000000000000
-      internalID: 501313089418352175
+      spriteID: 67d1072ff08ff87c0800000000000000
+      internalID: -4066759191116636810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DarkCloud_1
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 48
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c512cf3d56b55e20800000000000000
+      internalID: 3338775210382988743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DarkCloud_2
+      rect:
+        serializedVersion: 2
+        x: 212
+        y: 46
+        width: 13
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed4a932fc414f2270800000000000000
+      internalID: 8227866842966369502
       vertices: []
       indices: 
       edges: []
@@ -137,7 +213,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_52 (6)_0": 501313089418352175
+      DarkCloud_0: -4066759191116636810
+      DarkCloud_1: 3338775210382988743
+      DarkCloud_2: 8227866842966369502
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

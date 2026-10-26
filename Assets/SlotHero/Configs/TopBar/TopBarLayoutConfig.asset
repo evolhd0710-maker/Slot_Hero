@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4add735ac3721274a90847e6569e5212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.TopBar.TopBarLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  BarHeight: 64
-  IconMaxSize: 60
-  IconVerticalPadding: 2
-  PlayTimeX: 30
-  LocationX: 270
-  HealthX: 840
-  GoldX: 1280
-  ButtonHitSize: 64
-  ButtonSpacing: 10
-  ButtonRightMargin: 10
+  _referenceResolution: {x: 1920, y: 1080}
+  _barHeight: 64
+  _trimHeight: 12
+  _iconMaxSize: 50
+  _iconVerticalPadding: 2
+  _playTimeX: 30
+  _locationX: 270
+  _healthX: 840
+  _goldX: 1280
+  _buttonHitSize: 64
+  _buttonSpacing: 10
+  _buttonRightMargin: 10

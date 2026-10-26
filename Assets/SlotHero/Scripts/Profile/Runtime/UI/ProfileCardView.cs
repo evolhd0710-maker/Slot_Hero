@@ -289,11 +289,17 @@ namespace SlotHero.Profile.UI
             if (_nameInput != null)
             {
                 _nameInput.text = startingName == null ? string.Empty : startingName;
+            }
+
+            // 입력칸을 먼저 켠 뒤에 포커스를 준다. 꺼진 입력칸은 포커스 요청을 그냥 넘겨,
+            // 칸을 한 번 더 눌러야 이름이 쳐졌다(2026년 10월 22일 코덱스 검토).
+            Refresh();
+
+            if (_nameInput != null && _nameInput.gameObject.activeInHierarchy)
+            {
                 _nameInput.Select();
                 _nameInput.ActivateInputField();
             }
-
-            Refresh();
         }
 
         /// <summary>이름 고치기를 끝낸다.</summary>

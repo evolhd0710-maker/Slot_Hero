@@ -57,6 +57,13 @@ namespace SlotHero.Save
         /// </summary>
         public event Action<RunSaveData> RunSaving;
 
+        /// <summary>
+        /// 불러온 런을 지금 게임으로 이어 할 수 있는지. 흐름이 물린다. 물리지 않으면 보지 않는다.
+        /// 업데이트로 지도 생성 규칙이 바뀌어 같은 시드에서 다른 지도가 나오면 false 를 돌려준다.
+        /// false 면 런을 지우고 `RunOutdated` 를 알린다(2026년 10월 22일 원재).
+        /// </summary>
+        public Func<RunSaveData, bool> RunStillPlayable { get; set; }
+
         /// <summary>지금 고른 프로필 번호. 아직 고르지 않았으면 -1 이다.</summary>
         public int ProfileIndex
         {
@@ -93,10 +100,13 @@ namespace SlotHero.Save
         /// </summary>
         public Func<string> Today;
 
-        /// <summary>메타에 적는 오늘 날짜. `yyyy-MM-dd` 라 글자끼리 견주면 날짜 순서가 된다.</summary>
+        /// <summary>
+        /// 메타에 적는 오늘 날짜. `yyyy-MM-dd` 라 글자끼리 견주면 날짜 순서가 된다.
+        /// 기기 언어와 상관없이 양력으로 적는다. 문화권을 따르면 태국어 기기는 불기를 써 2026년을 2569년으로 적는다. 2026년 10월 18일 검토에서 고쳤다.
+        /// </summary>
         public static string FormatToday()
         {
-            return DateTime.Now.ToString("yyyy-MM-dd");
+            return DateTime.Now.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         private void Awake()
@@ -338,6 +348,15 @@ namespace SlotHero.Save
                 SaveCurrentMeta();
             }
 
+            // 업데이트로 지도 생성 규칙이 바뀌어 이어 할 수 없는 런이면 지운다(2026년 10월 22일 원재).
+            // 저장 영역은 지도를 모르므로 흐름이 물린 검사로 본다. 런 번호는 `DiscardRun` 이 센다.
+            if (_run != null && RunStillPlayable != null && !RunStillPlayable(_run))
+            {
+                DiscardRun();
+                Report(SaveOutcome.RunOutdated);
+                return;
+            }
+
             // 런 횟수를 시작할 때 세기 전에 시작한 런이면 그 번호까지 맞춘다.
             // 안 맞추면 그 런을 버리고 새로 시작할 때 같은 번호가 다시 붙는다. 2026년 10월 9일 외부 검토.
             if (CountRun(_run))
@@ -537,8 +556,10 @@ namespace SlotHero.Save
             // 이것은 프로필을 고를 때 메타의 적힌 값만 내리면 된다. 거꾸로면 "런 없음" 인데 런 파일이 남아 그 런을 지운다.
             // 메타 쓰기가 실패하면 런을 저장할 때마다 다시 쓴다(`WriteRun`). 2026년 10월 9일 외부 검토, 원재가 고치라고 했다.
             SaveCurrentMeta();
-            WriteRunFile();
-            Notify(AutoSavePoint.RunStarted);
+            if (WriteRunFile() && !_metaPending)
+            {
+                Notify(AutoSavePoint.RunStarted);
+            }
 
             return _run;
         }
@@ -546,12 +567,14 @@ namespace SlotHero.Save
         /// <summary>
         /// 런 데이터를 쓴다. 런을 쓰는 곳은 모두 이것을 지난다.
         /// 마지막으로 논 날짜가 오늘이 아니거나 앞서 메타를 쓰지 못했으면 메타를 먼저 쓴다. 그 밖에는 메타를 쓰지 않는다.
+        /// 메타와 런을 모두 썼으면 true 다. 실패하면 자동 저장 표시를 띄우지 않는다.
+        /// 예전에는 쓰기 실패 팝업과 저장 표시가 함께 떴다(2026년 10월 22일 코덱스 검토).
         /// </summary>
-        private void WriteRun()
+        private bool WriteRun()
         {
             if (_run == null)
             {
-                return;
+                return false;
             }
 
             if (MarkPlayedToday() || _metaPending)
@@ -559,7 +582,7 @@ namespace SlotHero.Save
                 SaveCurrentMeta();
             }
 
-            WriteRunFile();
+            return WriteRunFile() && !_metaPending;
         }
 
         /// <summary>
@@ -581,12 +604,12 @@ namespace SlotHero.Save
             Report(outcome);
         }
 
-        /// <summary>런 파일만 쓴다. 쓰기 전에 `RunSaving` 을 알린다.</summary>
-        private void WriteRunFile()
+        /// <summary>런 파일만 쓴다. 쓰기 전에 `RunSaving` 을 알린다. 썼으면 true 다.</summary>
+        private bool WriteRunFile()
         {
             if (_run == null)
             {
-                return;
+                return false;
             }
 
             if (RunSaving != null)
@@ -594,7 +617,9 @@ namespace SlotHero.Save
                 RunSaving(_run);
             }
 
-            Report(_repository.SaveRun(_profileIndex, _run));
+            SaveOutcome outcome = _repository.SaveRun(_profileIndex, _run);
+            Report(outcome);
+            return SaveOutcomes.IsSuccess(outcome);
         }
 
         /// <summary>메모리의 메타에 마지막으로 논 날짜를 오늘로 적는다. 바뀌었으면 true 다. 쓰지는 않는다.</summary>
@@ -626,15 +651,17 @@ namespace SlotHero.Save
                 _run.VisitedNodeIds.Add(nodeId);
             }
 
-            WriteRun();
-            Notify(AutoSavePoint.RoomEntered);
+            if (WriteRun())
+            {
+                Notify(AutoSavePoint.RoomEntered);
+            }
         }
 
         /// <summary>
         /// 방을 깨고 보상 목록이 정해졌다. 런 데이터를 덮어쓴다.
         /// 보상을 고르기 전에 저장하므로 되돌아와도 보상을 두 번 받을 수 없다.
         ///
-        /// 이미 깬 방이면 아무 일도 하지 않는다.
+        /// 아직 깨지 않은 방일 때만 센다.
         /// 화면을 정리하는 길이 여럿이라 같은 방에서 두 번 불릴 수 있는데
         /// 그때마다 세면 지나온 방 수가 부풀어 오른다.
         /// </summary>
@@ -648,8 +675,10 @@ namespace SlotHero.Save
             _run.CurrentRoomCleared = true;
             _run.Statistics.RoomsCleared++;
 
-            WriteRun();
-            Notify(AutoSavePoint.RoomCleared);
+            if (WriteRun())
+            {
+                Notify(AutoSavePoint.RoomCleared);
+            }
         }
 
         /// <summary>스테이지를 넘긴다. 지나온 방 목록을 비우고 다시 센다.</summary>

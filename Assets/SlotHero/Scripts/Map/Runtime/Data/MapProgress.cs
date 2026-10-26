@@ -31,22 +31,6 @@ namespace SlotHero.Map
             return VisitedNodeIds.Contains(nodeId);
         }
 
-        /// <summary>해당 노드를 완료했는지. 현재 방은 완료 표시 전까지 완료가 아니다.</summary>
-        public bool IsCleared(int nodeId)
-        {
-            if (!IsVisited(nodeId))
-            {
-                return false;
-            }
-
-            if (nodeId == CurrentNodeId)
-            {
-                return CurrentRoomCleared;
-            }
-
-            return true;
-        }
-
         /// <summary>간선을 지나왔는지. 지나온 노드가 순서대로 이어진 경우에만 참이다.</summary>
         public bool IsTraveled(MapEdge edge)
         {

@@ -48,6 +48,9 @@ namespace SlotHero.ToolsEditor
         /// 배경이 없을 때 까는 색. 와이어프레임의 어두운 바탕을 흉내 낸 것이다.
         private static readonly Color DarkBackground = new Color(0.125f, 0.114f, 0.102f, 1f);
 
+        /// <summary>스테이지 아이콘 칸 수. 스테이지는 다섯이다(2026년 10월 20일 원재).</summary>
+        private const int StageIconCount = 5;
+
         /// 타이틀 배경 대신 까는 색. 배경 요청 기획서의 지구라트 딥 브라운 `#4A3A28` 이다.
         /// 발주한 그림이 오면 이 색은 쓰이지 않는다.
         private static readonly Color TitleStandInBackground =
@@ -184,7 +187,6 @@ namespace SlotHero.ToolsEditor
             TitleScreenView view = root.gameObject.AddComponent<TitleScreenView>();
             UiSceneBuilder.SetField(view, "_layout", layout);
             UiSceneBuilder.SetField(view, "_visual", visual);
-            UiSceneBuilder.SetField(view, "_background", background);
             UiSceneBuilder.SetField(view, "_logo", logo);
             UiSceneBuilder.SetField(view, "_menuLayer", menuLayer);
             UiSceneBuilder.SetField(view, "_menuPrefab", menuPrefab.GetComponent<TitleMenuItemView>());
@@ -226,6 +228,14 @@ namespace SlotHero.ToolsEditor
             Image background = UiSceneBuilder.NewFlatImage("Background", root, visual.BackgroundColor);
             UiSceneBuilder.Stretch(background.rectTransform);
 
+            // 회색 바탕 대신 방 화면과 같은 돌벽 그림을 깐다(2026년 10월 20일 원재).
+            Sprite profileBackdrop = ImportArt.LoadItemArt("배경_돌벽");
+            if (profileBackdrop != null)
+            {
+                background.sprite = profileBackdrop;
+                background.type = Image.Type.Simple;
+            }
+
             Image titlePanel = UiSceneBuilder.NewImage("TitlePanel", root, visual.PanelColor);
             TMP_Text titleLabel = UiSceneBuilder.NewText(
                 "TitleLabel", titlePanel.transform, visual.TitleText,
@@ -239,7 +249,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.AddButton(backPanel.gameObject);
             TMP_Text backLabel = UiSceneBuilder.NewText(
                 "BackLabel", backPanel.transform, visual.BackText,
-                visual.BackFontSize, visual.NameColor, TextAlignmentOptions.Center, true);
+                visual.BackFontSize, visual.ButtonTextColor, TextAlignmentOptions.Center, true);
             UiSceneBuilder.Stretch(backLabel.rectTransform);
 
             ProfileSelectScreenView view = root.gameObject.AddComponent<ProfileSelectScreenView>();
@@ -297,7 +307,7 @@ namespace SlotHero.ToolsEditor
             Image titlePanel = UiSceneBuilder.NewImage("TitlePanel", root, visual.PanelColor);
             TMP_Text titleLabel = UiSceneBuilder.NewText(
                 "TitleLabel", titlePanel.transform, visual.TitleText,
-                visual.TitleFontSize, visual.ItemTextColor, TextAlignmentOptions.Left, true);
+                visual.TitleFontSize, visual.TitleTextColor, TextAlignmentOptions.Left, true);
             InsetText(titleLabel.rectTransform, UiScale.Px(30f));
 
             Image tabPanel = UiSceneBuilder.NewImage("TabPanel", root, visual.PanelColor);
@@ -445,7 +455,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.AddButton(titleButtonPanel.gameObject);
             TMP_Text titleButtonLabel = UiSceneBuilder.NewText(
                 "TitleButtonLabel", titleButtonPanel.transform, visual.TitleButtonText,
-                visual.ButtonFontSize, visual.TextColor, TextAlignmentOptions.Center, true);
+                visual.ButtonFontSize, visual.ButtonTextColor, TextAlignmentOptions.Center, true);
             UiSceneBuilder.Stretch(titleButtonLabel.rectTransform);
 
             RunResultScreenView view = root.gameObject.AddComponent<RunResultScreenView>();
@@ -536,7 +546,7 @@ namespace SlotHero.ToolsEditor
             Button skipButton = UiSceneBuilder.AddButton(skipPanel.gameObject);
             TMP_Text skipLabel = UiSceneBuilder.NewText(
                 "SkipLabel", skipPanel.transform, visual.SkipText,
-                visual.SkipFontSize, visual.TextColor, TextAlignmentOptions.Center, true);
+                visual.SkipFontSize, visual.SkipTextColor, TextAlignmentOptions.Center, true);
             UiSceneBuilder.Stretch(skipLabel.rectTransform);
 
             RewardScreenView view = root.gameObject.AddComponent<RewardScreenView>();
@@ -580,7 +590,8 @@ namespace SlotHero.ToolsEditor
             rect.sizeDelta = layout.CardSize;
 
             // 테두리가 배경보다 뒤에 있어야 고른 카드에서 테두리만 삐져나와 보인다.
-            Image border = UiSceneBuilder.NewImage("Border", go.transform, visual.SelectedBorderColor);
+            // 그린 칸 그림을 쓰면 쇠 모서리가 카드 둘레에 한 겹 더 생긴다. 둥근 단색 띠로 둔다(2026년 10월 20일 원재).
+            Image border = NewRoundedBar("Border", go.transform, visual.SelectedBorderColor);
             UiSceneBuilder.Stretch(border.rectTransform);
 
             Image background = UiSceneBuilder.NewButtonImage("Background", go.transform, visual.CardColor);
@@ -592,11 +603,22 @@ namespace SlotHero.ToolsEditor
 
             Button button = UiSceneBuilder.AddButton(go, background);
 
-            Image icon = UiSceneBuilder.NewFlatImage("Icon", go.transform, Color.white);
+            // 그림 자리. 문양 카드는 여기에 흑요석 판, 문양 그림, 태그 테두리를 차례로 쌓는다.
+            // 코인과 유물 카드는 판과 테두리를 감추고 그림만 자리를 꽉 채운다.
+            RectTransform iconFrame = UiSceneBuilder.NewRect("IconFrame", go.transform);
             PlaceTopLeftInCard(
-                icon.rectTransform, layout,
+                iconFrame, layout,
                 (layout.CardSize.x - layout.CardIconSize) * 0.5f, layout.CardIconTop,
                 layout.CardIconSize, layout.CardIconSize);
+
+            Image icon = UiSceneBuilder.NewFlatImage("Icon", iconFrame, Color.white);
+            UiSceneBuilder.Stretch(icon.rectTransform);
+
+            // 문양 카드는 판 안쪽에 태그 테두리 둘을 얹고 문양 그림을 테두리에 꼭 맞춘다(2026년 10월 20일 원재).
+            // 판은 그림보다 먼저 그려지게 맨 앞자리로 옮긴다.
+            TagCorners cardCorners = UiSceneBuilder.NewTagCorners(iconFrame, icon.rectTransform);
+            Image cardPlate = UiSceneBuilder.NewSymbolPlate(iconFrame, cardCorners);
+            cardPlate.rectTransform.SetSiblingIndex(0);
 
             TMP_Text nameLabel = UiSceneBuilder.NewText(
                 "NameLabel", go.transform, "이름", visual.CardNameFontSize,
@@ -617,6 +639,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_background", background);
             UiSceneBuilder.SetField(view, "_border", border);
             UiSceneBuilder.SetField(view, "_icon", icon);
+            UiSceneBuilder.SetField(view, "_tagCorners", cardCorners);
             UiSceneBuilder.SetField(view, "_nameLabel", nameLabel);
             UiSceneBuilder.SetField(view, "_tagLabel", tagLabel);
 
@@ -913,12 +936,11 @@ namespace SlotHero.ToolsEditor
                 "SymbolLabel", scrollContent, "문양", visual.SectionFontSize,
                 visual.TextColor, TextAlignmentOptions.Left, true);
 
+            // 칸 사이 빈 곳에서도 휠이 먹도록 `AddScroll` 이 창에 투명한 바탕을 깐다.
             ScrollRect scroll = UiSceneBuilder.AddScroll(scrollViewport, scrollContent);
 
-            // 칸 사이 빈 곳에서도 휠이 먹도록 창에 투명한 바탕을 깐다.
-            // 바탕이 없으면 칸 위에서만 휠이 들고 빈 곳에서는 뒤의 어두운 막이 받아 아무 일도 없다.
-            Image scrollCatcher = scrollViewport.gameObject.AddComponent<Image>();
-            scrollCatcher.color = new Color(0f, 0f, 0f, 0f);
+            // 창이 화면 맨 위부터라 바가 상단 표시줄을 가로지른다. 오른쪽 태그 칸의 윗줄에 맞춰 내린다.
+            UiSceneBuilder.SetScrollBarTop(scroll, layout.TagPanelPosition.y);
 
             RectTransform relicLayer = UiSceneBuilder.NewRect("RelicLayer", scrollContent);
             UiSceneBuilder.Stretch(relicLayer);
@@ -927,7 +949,10 @@ namespace SlotHero.ToolsEditor
             RectTransform symbolLayer = UiSceneBuilder.NewRect("SymbolLayer", scrollContent);
             UiSceneBuilder.Stretch(symbolLayer);
 
-            Image sortPanel = UiSceneBuilder.NewButtonImage("SortPanel", root, visual.PanelColor);
+            // 정렬 칸도 스크롤 안에 둔다. `문양` 줄 이름 옆 자리라 밖에 두면
+            // 스크롤할 때 글자만 올라가고 정렬 칸은 문양 칸 위에 떠 남는다(2026년 10월 21일 원재).
+            // 칸 층보다 뒤에 만들어 문양 칸 위에 그려지게 한다.
+            Image sortPanel = UiSceneBuilder.NewImage("SortPanel", scrollContent, visual.PanelColor);
             UiSceneBuilder.AddShadowPx(sortPanel, 8f, 5f);
             UiSceneBuilder.AddButton(sortPanel.gameObject);
             TMP_Text sortLabel = UiSceneBuilder.NewText(
@@ -953,7 +978,8 @@ namespace SlotHero.ToolsEditor
             RectTransform tagLayer = UiSceneBuilder.NewRect("TagLayer", root);
             UiSceneBuilder.Stretch(tagLayer);
 
-            Image closePanel = UiSceneBuilder.NewButtonImage("ClosePanel", root, visual.PanelColor);
+            // 이 화면은 어두워 버튼도 어두운 칸 그림을 쓴다. 글자는 크림색 그대로다(2026년 10월 20일 원재).
+            Image closePanel = UiSceneBuilder.NewImage("ClosePanel", root, visual.PanelColor);
             UiSceneBuilder.AddButton(closePanel.gameObject);
             TMP_Text closeLabel = UiSceneBuilder.NewText(
                 "CloseLabel", closePanel.transform, "닫기", visual.PanelTitleFontSize,
@@ -1042,11 +1068,12 @@ namespace SlotHero.ToolsEditor
 
             RectTransform viewport = UiSceneBuilder.NewRect("ScrollViewport", root);
             viewport.gameObject.AddComponent<RectMask2D>();
-            Image catcher = viewport.gameObject.AddComponent<Image>();
-            catcher.color = new Color(0f, 0f, 0f, 0f);
             RectTransform content = UiSceneBuilder.NewRect("ScrollContent", viewport);
             UiSceneBuilder.Stretch(content);
             ScrollRect scroll = UiSceneBuilder.AddScroll(viewport, content);
+
+            // 현재 빌드 화면과 같이 바를 태그 칸 윗줄부터 둔다. 상단 표시줄을 가로지르지 않게 한다.
+            UiSceneBuilder.SetScrollBarTop(scroll, layout.TagPanelPosition.y);
 
             TMP_Text titleLabel = UiSceneBuilder.NewText(
                 "TitleLabel", content, "문양 선택", visual.SectionFontSize,
@@ -1054,7 +1081,7 @@ namespace SlotHero.ToolsEditor
             RectTransform slotLayer = UiSceneBuilder.NewRect("SlotLayer", content);
             UiSceneBuilder.Stretch(slotLayer);
 
-            Image sortPanel = UiSceneBuilder.NewButtonImage("SortPanel", root, visual.PanelColor);
+            Image sortPanel = UiSceneBuilder.NewImage("SortPanel", root, visual.PanelColor);
             UiSceneBuilder.AddShadowPx(sortPanel, 8f, 5f);
             UiSceneBuilder.AddButton(sortPanel.gameObject);
             TMP_Text sortLabel = UiSceneBuilder.NewText(
@@ -1083,14 +1110,14 @@ namespace SlotHero.ToolsEditor
                 visual.TextColor, TextAlignmentOptions.Left, true, true);
             InsetText(resultLabel.rectTransform, UiScale.Px(20f));
 
-            Image confirmPanel = UiSceneBuilder.NewButtonImage("ConfirmPanel", root, visual.PanelColor);
+            Image confirmPanel = UiSceneBuilder.NewImage("ConfirmPanel", root, visual.PanelColor);
             UiSceneBuilder.AddButton(confirmPanel.gameObject);
             TMP_Text confirmLabel = UiSceneBuilder.NewText(
                 "ConfirmLabel", confirmPanel.transform, visual.PickConfirmText, visual.SectionFontSize,
                 visual.TextColor, TextAlignmentOptions.Center, true, true);
             UiSceneBuilder.Stretch(confirmLabel.rectTransform);
 
-            Image cancelPanel = UiSceneBuilder.NewButtonImage("CancelPanel", root, visual.PanelColor);
+            Image cancelPanel = UiSceneBuilder.NewImage("CancelPanel", root, visual.PanelColor);
             UiSceneBuilder.AddButton(cancelPanel.gameObject);
             TMP_Text cancelLabel = UiSceneBuilder.NewText(
                 "CancelLabel", cancelPanel.transform, visual.PickCancelText, visual.SectionFontSize,
@@ -1270,6 +1297,11 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.PlaceTopLeft(
                 background.rectTransform, Vector2.zero, new Vector2(UiScale.Px(1920f), layout.BarHeight));
 
+            // 장식 띠는 표시줄 64 아래 바깥에 붙인다. 자리는 뷰가 잡는다(2026년 10월 20일 원재).
+            Image bottomTrim = UiSceneBuilder.NewFlatImage("BottomTrim", bar, Color.white);
+            bottomTrim.sprite = ImportArt.LoadTopBar("표시줄_장식");
+            bottomTrim.raycastTarget = false;
+
             // 묶음의 원점이 왼쪽 가운데라 자식은 그 오른쪽으로 늘어놓는다.
             // 사이 간격은 예시 이미지에서 잰 값이다.
             RectTransform playTimeRoot = UiSceneBuilder.NewRect("PlayTimeRoot", bar);
@@ -1289,6 +1321,11 @@ namespace SlotHero.ToolsEditor
 
             Image roomIcon = UiSceneBuilder.NewFlatImage("RoomIcon", locationRoot, Color.white);
             PlaceInRow(roomIcon.rectTransform, UiScale.Px(100f), 0f, UiScale.Px(40f), UiScale.Px(40f));
+
+            // 방 아이콘의 안쪽 무늬. 방 아이콘을 꽉 채워 크기가 바뀌어도 따라간다(2026년 10월 25일 원재).
+            Image roomIconDetail = UiSceneBuilder.NewFlatImage("Detail", roomIcon.transform, visual.RoomIconDetailColor);
+            UiSceneBuilder.Stretch(roomIconDetail.rectTransform);
+            roomIconDetail.raycastTarget = false;
 
             locationRoot.gameObject.AddComponent<TopBarHoverArea>();
 
@@ -1314,16 +1351,29 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_stageIcon", stageIcon);
             UiSceneBuilder.SetField(view, "_stageLabel", stageLabel);
             UiSceneBuilder.SetField(view, "_roomIcon", roomIcon);
+            UiSceneBuilder.SetField(view, "_roomIconDetail", roomIconDetail);
             UiSceneBuilder.SetField(view, "_locationHover", locationRoot.GetComponent<TopBarHoverArea>());
             UiSceneBuilder.SetField(view, "_healthField", healthField);
             UiSceneBuilder.SetField(view, "_goldField", goldField);
             UiSceneBuilder.SetField(view, "_tooltip", tooltip);
+            UiSceneBuilder.SetField(view, "_bottomTrim", bottomTrim);
             SetButtonArray(view, buttons);
 
             TopBarController controller = bar.gameObject.AddComponent<TopBarController>();
             UiSceneBuilder.SetField(controller, "_view", view);
             UiSceneBuilder.SetField(controller, "_visual", visual);
             UiSceneBuilder.SetField(controller, "_stageIcon", ImportArt.LoadTopBar("아이콘_깃발"));
+
+            // 스테이지 아이콘 다섯. 1스테이지는 깃발이고 2 ~ 5 는 `아이콘_스테이지_<번호>` 다(2026년 10월 20일 원재).
+            // 그림이 없는 스테이지는 비워 두어 깃발로 넘어간다.
+            UnityEngine.Object[] stageIcons = new UnityEngine.Object[StageIconCount];
+            stageIcons[0] = ImportArt.LoadTopBar("아이콘_깃발");
+            for (int i = 1; i < stageIcons.Length; i++)
+            {
+                stageIcons[i] = ImportArt.LoadTopBar("아이콘_스테이지_" + (i + 1));
+            }
+
+            UiSceneBuilder.SetArrayField(controller, "_stageIcons", stageIcons);
             UiSceneBuilder.SetField(controller, "_healthIcon", ImportArt.LoadTopBar("아이콘_체력"));
             UiSceneBuilder.SetField(controller, "_goldIcon", ImportArt.LoadTopBar("아이콘_골드"));
 
@@ -1332,7 +1382,7 @@ namespace SlotHero.ToolsEditor
             // 예시 이미지와 같은 값을 넣는다.
             view.SetPlayTime("59:40");
             view.SetLocation(
-                ImportArt.LoadTopBar("아이콘_깃발"), "5", ImportArt.LoadTopBar("아이콘_방_성소"));
+                ImportArt.LoadTopBar("아이콘_깃발"), "5", ImportArt.LoadMap("노드_성소"), ImportArt.LoadMap("노드_성소_무늬"));
             view.SetHealthIcon(ImportArt.LoadTopBar("아이콘_체력"));
             view.SetHealthText("48/99");
             view.SetGoldIcon(ImportArt.LoadTopBar("아이콘_골드"));
@@ -1486,8 +1536,16 @@ namespace SlotHero.ToolsEditor
             NewPicture("RightMat", panel, ImportArt.LoadSanctum("행상_양탄자"),
                 layout.RightMatPosition, layout.RightMatSize);
 
-            // 문양 바닥은 자리마다 조금씩 다른 넉 장이다. PSD 도 그렇게 되어 있다.
-            string[] symbolBaseNames = { "문양_바닥", "문양_바닥_b", "문양_바닥_c", "문양_바닥_d" };
+            // 유물 칸 셋을 얹는 육각 받침. 꾸밈이라 커서를 받지 않는다.
+            // 예전에는 문양 변경 액자, 구슬, 받침, 유물 칸이 양탄자 한 장에 박혀 있어 버튼마다 그림이 따로 놀지 않았다.
+            // 2026년 10월 19일 원재가 버튼마다 그림을 나누라고 해 따로 떼었다.
+            Image relicBoard = NewPicture("RelicBoard", panel, ImportArt.LoadSanctum("행상_유물받침"),
+                layout.RelicBoardPosition, layout.RelicBoardSize);
+            relicBoard.raycastTarget = false;
+
+            // 문양 바닥은 한 장이다. PSD 는 자리마다 조금씩 다른 넉 장이었는데
+            // 2026년 10월 25일 원재가 가장 깔끔한 한 장으로 모으라고 했다.
+            string[] symbolBaseNames = { "문양_바닥" };
             Sprite coinBase = ImportArt.LoadSanctum("행상_코인받침");
 
             MerchantSlotView[] symbolSlots = new MerchantSlotView[config.SymbolSlotCount];
@@ -1511,18 +1569,13 @@ namespace SlotHero.ToolsEditor
             for (int i = 0; i < relicSlots.Length; i++)
             {
                 relicSlots[i] = BuildMerchantSlot(
-                    "RelicSlot" + i, panel, layout, null,
+                    "RelicSlot" + i, panel, layout, ImportArt.LoadSanctum("행상_유물칸"),
                     layout.GetRelicPosition(i), layout.RelicSlotSize, layout.RelicPriceOffsetY);
             }
 
-            // 문양 변경.
-            //
-            // **그림이 아직 없다.** 보라 소용돌이가 양탄자에 그려져 있을 줄 알고
-            // 투명한 누르는 칸만 얹어 두었는데, 잘라 온 양탄자에는 그것이 없다.
-            // 그래서 화면에 아무것도 없는 자리를 눌러야 하는 꼴이 됐다.
-            //
-            // 그림이 올 때까지 PSD 에서 잰 보라색으로 자리를 그려 둔다.
-            // `행상_문양변경.png` 를 `코드/Sanctum/Art` 에 넣으면 그쪽을 쓴다.
+            // 문양 변경. 액자 그림(`행상_문양변경.png`) 자체가 버튼이다.
+            // 가격은 액자 한가운데에 적으므로 그림은 가운데를 어둡고 비게 그렸다(2026년 10월 19일 원재).
+            // 그림이 없을 때만 PSD 에서 잰 보라색 칸과 글자로 자리를 알린다.
             Sprite changeSprite = ImportArt.LoadSanctum("행상_문양변경");
 
             Image changeHit = changeSprite != null
@@ -1550,7 +1603,8 @@ namespace SlotHero.ToolsEditor
             TMP_Text changePrice = NewPriceLabel(
                 "SymbolChangePrice", panel, layout, layout.GetSymbolChangePricePosition());
 
-            // 유물 새로고침. 구슬 그림 위에 표시만 얹는다.
+            // 유물 새로고침. 받침대 위의 구슬 그림(`행상_새로고침.png`) 자체가 버튼이다.
+            // 예전에는 양탄자에 박힌 구슬 위에 작은 표시만 얹었다.
             Image refresh = NewPicture(
                 "RelicRefreshButton", panel, ImportArt.LoadSanctum("행상_새로고침"),
                 layout.RefreshPosition, layout.RefreshSize);
@@ -1595,7 +1649,7 @@ namespace SlotHero.ToolsEditor
             RectTransform slot = UiSceneBuilder.NewRect(name, parent);
             UiSceneBuilder.PlaceTopLeft(slot, position, size);
 
-            // 바닥 그림. 유물은 양탄자에 칸이 그려져 있어 바닥을 두지 않는다.
+            // 바닥 그림. 문양은 검은 유리 칸, 코인은 받침, 유물은 칸 그림(`행상_유물칸`)이다.
             Image slotImage = slot.gameObject.AddComponent<Image>();
             slotImage.sprite = baseSprite;
             slotImage.type = Image.Type.Simple;
@@ -1612,6 +1666,10 @@ namespace SlotHero.ToolsEditor
             iconRect.offsetMax = Vector2.zero;
             icon.preserveAspect = true;
             icon.sprite = null;
+
+            // 문양 상품은 칸 둘레에 태그 테두리 둘을 얹는다.
+            // 진열 칸 그림이 흑요석 판이라 테두리와 문양 그림을 판 안쪽에 맞춘다(2026년 10월 20일 원재).
+            TagCorners slotCorners = UiSceneBuilder.NewTagCorners(slot, iconRect);
 
             // 가격 줄은 자리 바깥이라 자리의 형제로 둔다. 자리를 감추면 가격도 함께 감춘다.
             RectTransform priceRoot = UiSceneBuilder.NewRect(name + "Price", parent);
@@ -1640,6 +1698,7 @@ namespace SlotHero.ToolsEditor
 
             MerchantSlotView view = slot.gameObject.AddComponent<MerchantSlotView>();
             UiSceneBuilder.SetField(view, "_icon", icon);
+            UiSceneBuilder.SetField(view, "_tagCorners", slotCorners);
             UiSceneBuilder.SetField(view, "_button", slot.GetComponent<Button>());
             UiSceneBuilder.SetField(view, "_priceRoot", priceRoot.gameObject);
             UiSceneBuilder.SetField(view, "_priceLabel", priceLabel);
@@ -1711,12 +1770,13 @@ namespace SlotHero.ToolsEditor
                 visual.BodyFontSize, visual.TextColor, TextAlignmentOptions.TopLeft);
 
             // 글은 보이는 칸 위쪽에 붙어 아래로 자란다. 높이는 줄 수에 맞춰 뷰가 잡는다.
+            // 오른쪽은 스크롤 바 자리만큼 비운다. 피벗을 왼쪽에 두어 오른쪽만 줄어든다(2026년 10월 22일 원재).
             RectTransform labelRect = label.rectTransform;
             labelRect.anchorMin = new Vector2(0f, 1f);
             labelRect.anchorMax = new Vector2(1f, 1f);
-            labelRect.pivot = new Vector2(0.5f, 1f);
+            labelRect.pivot = new Vector2(0f, 1f);
             labelRect.anchoredPosition = Vector2.zero;
-            labelRect.sizeDelta = Vector2.zero;
+            labelRect.sizeDelta = new Vector2(-UiSceneBuilder.ScrollBarSpace, 0f);
 
             ScrollRect scroll = UiSceneBuilder.AddScroll(viewport, labelRect);
             scroll.movementType = ScrollRect.MovementType.Clamped;
@@ -1874,6 +1934,12 @@ namespace SlotHero.ToolsEditor
             Image icon = UiSceneBuilder.NewFlatImage("Icon", go.transform, Color.white);
             UiSceneBuilder.Stretch(icon.rectTransform);
 
+            // 안쪽 무늬는 아이콘의 자식으로 아이콘을 꽉 채운다. 고를 수 있는 노드가 커질 때 함께 커진다(2026년 10월 25일 원재).
+            Image detail = UiSceneBuilder.NewFlatImage("Detail", icon.transform, Color.white);
+            UiSceneBuilder.Stretch(detail.rectTransform);
+            detail.raycastTarget = false;
+            detail.enabled = false;
+
             // 완료 체크는 노드 오른쪽 위에 겹쳐 놓는다. 크기와 자리는 MapNodeView.Bind 가 MapVisualConfig 에서 읽어 다시 맞춘다.
             MapVisualConfig visualDefaults = ScriptableObject.CreateInstance<MapVisualConfig>();
             Image check = UiSceneBuilder.NewFlatImage("CheckMark", go.transform, Color.white);
@@ -1889,6 +1955,7 @@ namespace SlotHero.ToolsEditor
 
             MapNodeView view = go.AddComponent<MapNodeView>();
             UiSceneBuilder.SetField(view, "_icon", icon);
+            UiSceneBuilder.SetField(view, "_detail", detail);
             UiSceneBuilder.SetField(view, "_checkMark", check);
             UiSceneBuilder.SetField(view, "_button", go.GetComponent<Button>());
 
@@ -1925,7 +1992,7 @@ namespace SlotHero.ToolsEditor
             // `EventChoiceView` 가 글을 넣으면서 높이를 재고 칸을 그만큼 키운다.
             TMP_Text label = UiSceneBuilder.NewText(
                 "Label", go.transform, "선택지", visual.ChoiceFontSize,
-                visual.TextColor, TextAlignmentOptions.MidlineLeft);
+                visual.ChoiceTextColor, TextAlignmentOptions.MidlineLeft);
             InsetText(label.rectTransform, visual.ChoicePadding);
 
             EventChoiceView view = go.AddComponent<EventChoiceView>();
@@ -1968,7 +2035,8 @@ namespace SlotHero.ToolsEditor
 
             // 고른 칸의 테두리. 배경보다 먼저 두어 배경 뒤에 깔리고 바깥으로만 삐져나온다.
             // 고르기 화면에서만 켠다. 현재 빌드 화면에서는 늘 꺼져 있다.
-            Image selectedBorder = UiSceneBuilder.NewImage("SelectedBorder", go.transform, visual.PickSelectedBorderColor);
+            // 그림 없는 단색으로 깐다. 유니티 기본 둥근 그림은 회색 음영이 있어 초록이 검게 죽어 잘 보이지 않았다(2026년 10월 25일 원재).
+            Image selectedBorder = UiSceneBuilder.NewFlatImage("SelectedBorder", go.transform, visual.PickSelectedBorderColor);
             UiSceneBuilder.Stretch(selectedBorder.rectTransform);
             selectedBorder.raycastTarget = false;
             selectedBorder.gameObject.SetActive(false);
@@ -1976,13 +2044,34 @@ namespace SlotHero.ToolsEditor
             Image background = UiSceneBuilder.NewButtonImage("Background", go.transform, visual.SlotColor);
             UiSceneBuilder.Stretch(background.rectTransform);
 
-            // 물건 그림이 아직 없어 자리를 알아볼 수 있게 옅은 칸을 둔다.
-            Image icon = UiSceneBuilder.NewImage("Icon", go.transform, new Color(1f, 1f, 1f, 0.2f));
+            // 빈 칸의 점선 테두리. 늘이면 점 간격도 늘어나므로 바둑판으로 깐다(2026년 10월 21일 원재).
+            Image emptyOutline = UiSceneBuilder.NewFlatImage("EmptyOutline", go.transform, visual.EmptyOutlineColor);
+            UiSceneBuilder.Stretch(emptyOutline.rectTransform);
+            emptyOutline.sprite = UiSceneBuilder.LoadSkin("점선");
+            emptyOutline.type = Image.Type.Tiled;
+            emptyOutline.raycastTarget = false;
+            emptyOutline.enabled = false;
+
+            // 판, 물건 그림, 태그 테두리는 모두 배경의 자식이다.
+            // 고른 칸에서 배경이 줄면 셋이 함께 줄어 판 안쪽 자리가 그대로 남는다(2026년 10월 21일 코덱스 검토).
+            // 물건 그림은 칸 스킨이 아니라 그림 그대로다. 스킨으로 만들면 늘어나고 옅게 보였다.
+            Image icon = UiSceneBuilder.NewFlatImage("Icon", background.transform, Color.white);
             RectTransform iconRect = icon.rectTransform;
             iconRect.anchorMin = new Vector2(0.15f, 0.15f);
             iconRect.anchorMax = new Vector2(0.85f, 0.85f);
             iconRect.offsetMin = Vector2.zero;
             iconRect.offsetMax = Vector2.zero;
+            icon.type = Image.Type.Simple;
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            icon.enabled = false;
+
+            // 문양 칸은 판 안쪽에 태그 테두리 둘을 얹는다. 개수 배지가 그 위에 온다.
+            TagCorners slotCorners = UiSceneBuilder.NewTagCorners(background.transform, iconRect);
+
+            // 문양 칸은 그림 뒤에 흑요석 판을 깐다. 그림보다 먼저 그려지게 맨 앞자리로 옮긴다.
+            Image slotPlate = UiSceneBuilder.NewSymbolPlate(background.transform, slotCorners);
+            slotPlate.rectTransform.SetSiblingIndex(0);
 
             Image countBackground = UiSceneBuilder.NewImage(
                 "CountBackground", go.transform, visual.CountBadgeColor);
@@ -1994,6 +2083,8 @@ namespace SlotHero.ToolsEditor
             BuildSlotView view = go.AddComponent<BuildSlotView>();
             UiSceneBuilder.SetField(view, "_background", background);
             UiSceneBuilder.SetField(view, "_icon", icon);
+            UiSceneBuilder.SetField(view, "_emptyOutline", emptyOutline);
+            UiSceneBuilder.SetField(view, "_tagCorners", slotCorners);
             UiSceneBuilder.SetField(view, "_countRoot", countBackground.gameObject);
             UiSceneBuilder.SetField(view, "_countBackground", countBackground);
             UiSceneBuilder.SetField(view, "_countLabel", countLabel);
@@ -2032,7 +2123,7 @@ namespace SlotHero.ToolsEditor
             PlaceInRow(symbolLabel.rectTransform, 0f, UiScale.Px(-10f), UiScale.Px(60f), UiScale.Px(60f));
 
             TMP_Text nameLabel = UiSceneBuilder.NewText(
-                "NameLabel", go.transform, "태그", visual.TagFontSize,
+                "NameLabel", go.transform, "태그", visual.TagNameFontSize,
                 visual.SubTextColor, TextAlignmentOptions.Left);
             PlaceInRow(nameLabel.rectTransform, BarX, 0f, UiScale.Px(150f), UiScale.Px(30f));
 
@@ -2041,13 +2132,14 @@ namespace SlotHero.ToolsEditor
                 visual.SubTextColor, TextAlignmentOptions.Right);
             PlaceInRow(countLabel.rectTransform, BarX + UiScale.Px(150f), 0f, UiScale.Px(150f), UiScale.Px(30f));
 
-            Image barBackground = UiSceneBuilder.NewImage(
+            // 얇은 막대라 그린 칸 그림 대신 둥근 단색 막대를 쓴다(2026년 10월 20일 원재).
+            Image barBackground = NewRoundedBar(
                 "BarBackground", go.transform, visual.TagBarBackColor);
             PlaceInRow(barBackground.rectTransform, BarX, UiScale.Px(-30f), BarWidth, UiScale.Px(20f));
 
             // 채워지는 막대는 배경 막대 안에 둔다.
             // Bind 가 자리를 0 으로 놓으므로 바깥에 두면 줄 왼쪽 끝에서 시작해 버린다.
-            Image bar = UiSceneBuilder.NewImage("Bar", barBackground.transform, Color.white);
+            Image bar = NewRoundedBar("Bar", barBackground.transform, Color.white);
 
             BuildTagBarView view = go.AddComponent<BuildTagBarView>();
             UiSceneBuilder.SetField(view, "_symbolIcon", symbolIcon);
@@ -2185,7 +2277,8 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SizeDefault((RectTransform)go.transform);
             UiSceneBuilder.AddButton(go);
 
-            Image background = UiSceneBuilder.NewFlatImage("Background", go.transform, visual.ItemColor);
+            // 펼친 선택지도 다른 항목과 같은 베이지 버튼 그림을 쓴다. 단색이면 흰 칸만 따로 놀았다(2026년 10월 21일 코덱스 검토).
+            Image background = UiSceneBuilder.NewButtonImage("Background", go.transform, visual.ItemColor);
             UiSceneBuilder.Stretch(background.rectTransform);
 
             TMP_Text label = UiSceneBuilder.NewText(
@@ -2207,6 +2300,11 @@ namespace SlotHero.ToolsEditor
             GameObject go = new GameObject("TitleMenuItem", typeof(RectTransform));
             UiSceneBuilder.SizeDefault((RectTransform)go.transform);
             UiSceneBuilder.AddButton(go);
+
+            // 누르는 칸. 글자는 커서를 받지 않으므로 항목 전체를 덮는 투명한 그림이 대신 받는다.
+            // 버튼의 눌림 그림 바꾸기에 걸리지 않게 `AddButton` 뒤에 붙인다. 2026년 10월 18일 검토.
+            Image hit = go.AddComponent<Image>();
+            hit.color = new Color(1f, 1f, 1f, 0f);
 
             RectTransform content = UiSceneBuilder.NewRect("Content", go.transform);
             UiSceneBuilder.Stretch(content);
@@ -2238,9 +2336,15 @@ namespace SlotHero.ToolsEditor
             RectTransform content = UiSceneBuilder.NewRect("Content", go.transform);
             UiSceneBuilder.Stretch(content);
 
-            Image background = UiSceneBuilder.NewButtonImage("Background", content, Color.white);
+            // 카드는 다른 칸과 같은 어두운 쇠 테 칸 그림에 자리마다 옅은 색을 곱한다(2026년 10월 22일 원재).
+            // 예전에는 베이지 버튼 그림에 진한 빨강 · 초록 · 파랑을 곱해 다른 UI 와 따로 놀았다.
+            Image background = UiSceneBuilder.NewImage("Background", content, Color.white);
             UiSceneBuilder.AddButton(go, background);
             UiSceneBuilder.Stretch(background.rectTransform);
+
+            // 카드는 `ProfileCardView` 가 Content 를 `CardHoverScale` 만큼 키운다(기획서 04 의 5퍼센트).
+            // `AddButton` 이 뿌리에 붙인 호버 확대까지 두면 두 번 곱해져 10퍼센트 가까이 커진다. 2026년 10월 18일 검토에서 뺐다.
+            Object.DestroyImmediate(go.GetComponent<HoverScale>());
 
             TMP_Text nameLabel = UiSceneBuilder.NewText(
                 "NameLabel", content, "프로필", visual.NameFontSize,
@@ -2314,18 +2418,11 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.AddButton(go, fill);
             UiSceneBuilder.Stretch(fill.rectTransform);
 
+            // 다른 칸과 같은 어두운 쇠 테 칸 그림 하나로 그린다. 커서를 올리면 이 칸이 밝아진다.
+            // 예전에는 흰 테두리 안을 검은 칸으로 덮어 검은 상자로 보였다(2026년 10월 22일 원재).
             Image border = UiSceneBuilder.NewImage(
                 "Border", go.transform, visual.CurrentButtonBorderColor);
             UiSceneBuilder.Stretch(border.rectTransform);
-
-            // 테두리만 그리는 그림이 아직 없어, 안쪽을 바탕색으로 덮어 테두리처럼 보이게 한다.
-            // 그림이 생기면 이 Inner 를 지우고 Border 에 그 그림을 물리면 된다.
-            Image inner = UiSceneBuilder.NewImage("Inner", border.transform, DarkBackground);
-            RectTransform innerRect = inner.rectTransform;
-            innerRect.anchorMin = Vector2.zero;
-            innerRect.anchorMax = Vector2.one;
-            innerRect.offsetMin = UiScale.V(2f, 2f);
-            innerRect.offsetMax = UiScale.V(-2f, -2f);
 
             TMP_Text label = UiSceneBuilder.NewText(
                 "Label", go.transform, profileName, visual.CurrentButtonFontSize,

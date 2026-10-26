@@ -88,9 +88,14 @@ namespace SlotHero.RunResult.UI
             }
         }
 
-        /// <summary>화면을 감춘다. 다시 열면 런 데이터 삭제를 또 알리지 않는다.</summary>
+        /// <summary>
+        /// 화면을 감춘다. 다음에 열면 런 데이터 삭제를 다시 알린다.
+        /// 예전에는 알림 표시를 풀지 않아 한 번 켠 게임에서 두 번째로 끝난 런부터 알리지 않았다. 2026년 10월 18일 검토에서 고쳤다.
+        /// </summary>
         public void Close()
         {
+            _deleteRequested = false;
+
             if (_view != null)
             {
                 _view.SetVisible(false);

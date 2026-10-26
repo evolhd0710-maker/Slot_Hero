@@ -77,7 +77,8 @@ namespace SlotHero.ToolsEditor
                 return;
             }
 
-            AssetDatabase.ImportPackage(package, false);
+            // 유니티 6.6 에서 `AssetDatabase.ImportPackage` 가 낡은 것이 되어 새 창구로 바꿨다. 2026년 10월 18일 검토.
+            UnityEditor.AssetPackage.Package.Import(package, false);
             AssetDatabase.Refresh();
             Debug.Log("TMP 기본 리소스를 가져왔다: " + package);
         }

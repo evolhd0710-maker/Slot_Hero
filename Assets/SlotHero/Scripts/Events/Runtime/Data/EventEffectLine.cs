@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Events
 {
@@ -14,22 +16,28 @@ namespace SlotHero.Events
     [Serializable]
     public struct EventEffectLine
     {
-        public EventEffectKind Kind;
+        [FormerlySerializedAs("Kind")]
+        [SerializeField] private EventEffectKind _kind;
+        public EventEffectKind Kind { get { return _kind; } set { _kind = value; } }
 
         /// <summary>화면에 적을 글. "체력 5 증가", "간식" 처럼 내용만 담는다.</summary>
-        public string Text;
+        [FormerlySerializedAs("Text")]
+        [SerializeField] private string _text;
+        public string Text { get { return _text; } set { _text = value; } }
 
         /// <summary>
         /// 필요한 것을 갖췄는지. <see cref="EventEffectKind.Requirement"/>에만 쓴다.
         /// 갖췄으면 초록색, 아니면 빨간색으로 적는다.
         /// </summary>
-        public bool Met;
+        [FormerlySerializedAs("Met")]
+        [SerializeField] private bool _met;
+        public bool Met { get { return _met; } set { _met = value; } }
 
         public EventEffectLine(EventEffectKind kind, string text, bool met)
         {
-            Kind = kind;
-            Text = text;
-            Met = met;
+            _kind = kind;
+            _text = text;
+            _met = met;
         }
 
         public static EventEffectLine Gain(string text)

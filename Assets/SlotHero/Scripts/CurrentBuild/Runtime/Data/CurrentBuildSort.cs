@@ -3,7 +3,7 @@ using System.Collections.Generic;
 namespace SlotHero.CurrentBuild
 {
     /// <summary>
-    /// 문양과 태그를 늘어놓는 차례를 정한다.
+    /// 문양을 늘어놓는 차례를 정한다.
     /// 인게임 화면 기획서 v0.2 / 13 현재 빌드 화면 의
     /// "개수 순, 태그 순, 이름 순 등의 정렬을 지원한다"를 따른다.
     ///
@@ -23,30 +23,6 @@ namespace SlotHero.CurrentBuild
             symbols.Sort(delegate (BuildEntry left, BuildEntry right)
             {
                 return CompareEntries(left, right, order);
-            });
-        }
-
-        /// <summary>태그 통계를 고른 차례대로 늘어놓는다.</summary>
-        public static void SortTagStats(List<BuildTagStat> stats, BuildSortOrder order)
-        {
-            if (stats == null)
-            {
-                return;
-            }
-
-            stats.Sort(delegate (BuildTagStat left, BuildTagStat right)
-            {
-                // 이름 순은 태그에 쓸 이름이 따로 없으므로 태그 차례로 본다.
-                if (order == BuildSortOrder.Count)
-                {
-                    int byCount = right.Count.CompareTo(left.Count);
-                    if (byCount != 0)
-                    {
-                        return byCount;
-                    }
-                }
-
-                return ((int)left.Tag).CompareTo((int)right.Tag);
             });
         }
 

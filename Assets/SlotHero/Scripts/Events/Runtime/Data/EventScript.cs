@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Events
 {
@@ -35,29 +37,41 @@ namespace SlotHero.Events
     public class EventScript
     {
         /// <summary>이벤트 식별자.</summary>
-        public string EventId = string.Empty;
+        [FormerlySerializedAs("EventId")]
+        [SerializeField] private string _eventId = string.Empty;
+        public string EventId { get { return _eventId; } set { _eventId = value; } }
 
         /// <summary>이벤트 이름. 5장 이벤트 목록 의 이름이다.</summary>
-        public string Title = string.Empty;
+        [FormerlySerializedAs("Title")]
+        [SerializeField] private string _title = string.Empty;
+        public string Title { get { return _title; } set { _title = value; } }
 
         /// <summary>이벤트 성격.</summary>
-        public EventNature Nature = EventNature.Good;
+        [FormerlySerializedAs("Nature")]
+        [SerializeField] private EventNature _nature = EventNature.Good;
+        public EventNature Nature { get { return _nature; } set { _nature = value; } }
 
         /// <summary>
         /// 나오기 시작하는 스테이지. **0 이하면 첫 스테이지부터다.**
         /// 2026년 10월 9일 외부 검토가 스테이지별 등장 조건을 권해 칸만 만들었다. 수치는 기획서가 오면 에디터에서 넣는다.
         /// 칸이 없던 예전 에셋은 0 으로 읽혀 모든 스테이지에 나온다.
         /// </summary>
-        public int MinStage;
+        [FormerlySerializedAs("MinStage")]
+        [SerializeField] private int _minStage;
+        public int MinStage { get { return _minStage; } set { _minStage = value; } }
 
         /// <summary>마지막으로 나오는 스테이지. 0 이하면 끝까지다.</summary>
-        public int MaxStage;
+        [FormerlySerializedAs("MaxStage")]
+        [SerializeField] private int _maxStage;
+        public int MaxStage { get { return _maxStage; } set { _maxStage = value; } }
 
         /// <summary>
         /// 출현 비중. 나올 수 있는 이벤트끼리 이 비중대로 뽑는다. **0 이하는 1 로 본다.**
         /// 칸이 없던 예전 에셋이 0 으로 읽혀도 고르게 나오게 하려는 것이다. 빼려면 스테이지 범위를 좁힌다.
         /// </summary>
-        public int Weight = 1;
+        [FormerlySerializedAs("Weight")]
+        [SerializeField] private int _weight = 1;
+        public int Weight { get { return _weight; } set { _weight = value; } }
 
         /// <summary>그 스테이지에 나올 수 있는지.</summary>
         public bool AppearsIn(int stage)
@@ -72,7 +86,9 @@ namespace SlotHero.Events
         }
 
         /// <summary>화면들. 첫 화면이 시작 화면이다.</summary>
-        public List<EventScreen> Screens = new List<EventScreen>();
+        [FormerlySerializedAs("Screens")]
+        [SerializeField] private List<EventScreen> _screens = new List<EventScreen>();
+        public List<EventScreen> Screens { get { return _screens; } set { _screens = value; } }
 
         /// <summary>시작 화면. 없으면 null 이다.</summary>
         public EventScreen StartScreen

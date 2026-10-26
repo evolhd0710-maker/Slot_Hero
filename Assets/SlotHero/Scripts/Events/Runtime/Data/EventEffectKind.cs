@@ -9,7 +9,7 @@ namespace SlotHero.Events
         /// <summary>얻는 것. 초록색으로 적는다.</summary>
         Gain = 0,
 
-        /// <summary>치르는 것. 기본 글자색으로 적는다.</summary>
+        /// <summary>치르는 것. 빨간색으로 적는다(`EventVisualConfig.CostColor`).</summary>
         Cost = 1,
 
         /// <summary>

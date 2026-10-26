@@ -18,12 +18,35 @@ namespace SlotHero.Combat
         /// <summary>쌓인 횟수. 12개의 금화처럼 영구히 오르는 유물이 쓴다.</summary>
         public int Stack;
 
+        /// <summary>
+        /// 물건 목록의 등급. 0 일반, 1 고급, 2 희귀, 3 특급, 4 전설이다. 흐름이 목록에서 찾아 넣고, 못 찾으면 -1 이다.
+        /// 전투 화면 유물 칸 색을 정한다(2026년 10월 26일 원재).
+        /// </summary>
+        public int Rarity = -1;
+
         public CombatRelic(string id, string displayName, RelicDefinition definition, int stack)
         {
             Id = id;
             DisplayName = displayName;
             Definition = definition;
             Stack = stack;
+        }
+
+        /// <summary>
+        /// 칸 색을 고를 등급. 0 일반 ~ 4 전설.
+        /// 목록 등급이 없으면 유물 정보시트의 희귀도(1 ~ 5)에서 1 을 뺀 값, 그것도 없으면 일반이다.
+        /// </summary>
+        public int Grade
+        {
+            get
+            {
+                if (Rarity >= 0)
+                {
+                    return Rarity;
+                }
+
+                return Definition != null ? System.Math.Max(0, Definition.Rarity - 1) : 0;
+            }
         }
 
         /// <summary>유물 고유 수치. 정의가 없으면 0 이다.</summary>

@@ -22,7 +22,7 @@ namespace SlotHero.Events
     ///
     /// 결과가 공개된 선택지는 <see cref="Lines"/>에 획득과 소모를 담고,
     /// 결과를 알 수 없는 선택지는 <see cref="ResultHidden"/>을 켜 물음표만 나오게 하며,
-    /// 조건을 채우지 못한 선택지는 <see cref="EventEffectKind.Missing"/> 줄을 넣는다.
+    /// 조건을 채우지 못한 선택지는 <see cref="EventEffectKind.Requirement"/> 줄을 가지지 않은 것으로(Met 이 false) 넣는다.
     ///
     /// 어떤 조건을 보고 무엇을 주는지는 이벤트 기획서 소관이라
     /// 그 판정을 마친 결과만 이 자료로 넘겨받는다.

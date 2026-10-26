@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using SlotHero.Ui;
 
 namespace SlotHero.Sanctum.UI
 {
@@ -15,16 +16,22 @@ namespace SlotHero.Sanctum.UI
     /// 프리팹 구성: 루트에 이 스크립트와 Button, 자식에 물건 그림 Image,
     /// 가격 묶음(골드 아이콘 Image + 가격 TMP_Text)을 둔다.
     /// 자리는 문양, 코인, 유물이 모두 같은 프리팹을 쓸 수 있다.
+    ///
+    /// 커서를 올렸을 때의 5퍼센트 확대는 같은 칸의 `HoverScale` 이 맡는다.
+    /// 예전에는 여기서도 크기를 바꿔 두 곳이 같은 일을 했다. 2026년 10월 18일 검토에서 하나로 모았다.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
     public class MerchantSlotView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private Image _icon;
+
+        [Tooltip("문양 상품에서 태그 둘을 우상단과 좌하단에 보여 주는 테두리. 코인과 유물에서는 감춘다(2026년 10월 19일 원재).")]
+        [SerializeField] private TagCorners _tagCorners;
+
         [SerializeField] private Button _button;
         [SerializeField] private GameObject _priceRoot;
         [SerializeField] private TMP_Text _priceLabel;
 
-        private RectTransform _rectTransform;
         private SanctumVisualConfig _visual;
         private Action<MerchantSlotView> _onClicked;
         private Action<MerchantSlotView, bool> _onHoverChanged;
@@ -35,19 +42,6 @@ namespace SlotHero.Sanctum.UI
 
         /// <summary>지금 골드로 살 수 있는 자리인지.</summary>
         public bool Affordable { get; private set; }
-
-        public RectTransform RectTransform
-        {
-            get
-            {
-                if (_rectTransform == null)
-                {
-                    _rectTransform = (RectTransform)transform;
-                }
-
-                return _rectTransform;
-            }
-        }
 
         private void Awake()
         {
@@ -90,6 +84,14 @@ namespace SlotHero.Sanctum.UI
 
             // 팔린 자리를 감추는 설정이면 자리째 끈다.
             bool visible = hasItem && (!sold || visual == null || !visual.HideSoldSlots);
+
+            // 팔렸거나 감추는 자리면 커서가 벗어났다고 먼저 알린다. 꺼진 자리에는 벗어남이 오지 않아
+            // 산 물건의 상세 설명이 커서를 따라다녔다(2026년 10월 22일 코덱스 검토).
+            if (!visible || sold)
+            {
+                EndHover();
+            }
+
             if (gameObject.activeSelf != visible)
             {
                 gameObject.SetActive(visible);
@@ -97,19 +99,42 @@ namespace SlotHero.Sanctum.UI
 
             if (!visible)
             {
-                _hovering = false;
+                // 가격 줄은 자리의 형제라 자리를 꺼도 남는다. 함께 끈다(2026년 10월 21일 코덱스 검토).
+                if (_priceRoot != null)
+                {
+                    _priceRoot.SetActive(false);
+                }
+
                 return;
             }
 
             if (_icon != null)
             {
+                // 그림이 없는 물건이면 비워 둔다. 예전 물건의 그림이 남으면 다른 물건을 사게 된다.
                 Sprite sprite = icons != null ? icons.GetIcon(slot.Item) : null;
-                if (sprite != null)
-                {
-                    _icon.sprite = sprite;
-                }
-
+                _icon.sprite = sprite;
+                _icon.enabled = sprite != null;
                 _icon.color = GetTint(sold);
+            }
+
+            if (_tagCorners != null)
+            {
+                Sprite topRight;
+                Sprite bottomLeft;
+                if (icons != null && icons.TryGetTagCorners(slot.Item, out topRight, out bottomLeft))
+                {
+                    // 진열 칸 그림이 이미 흑요석 판이라 판은 따로 깔지 않는다.
+                    _tagCorners.Show(topRight, bottomLeft, null, icons.SymbolFrameInset);
+
+                    Sprite topGlyph;
+                    Sprite bottomGlyph;
+                    icons.TryGetTagGlyphs(slot.Item, out topGlyph, out bottomGlyph);
+                    _tagCorners.ShowGlyphs(topGlyph, bottomGlyph, icons.CornerGlyphSizeRatio, icons.CornerGlyphFromCorner);
+                }
+                else
+                {
+                    _tagCorners.Hide();
+                }
             }
 
             if (_priceRoot != null)
@@ -132,7 +157,6 @@ namespace SlotHero.Sanctum.UI
                 _button.interactable = !sold;
             }
 
-            ApplyHoverScale();
             gameObject.name = hasItem ? "Slot_" + slot.Item.Id : "Slot_빈자리";
         }
 
@@ -144,7 +168,6 @@ namespace SlotHero.Sanctum.UI
             }
 
             _hovering = true;
-            ApplyHoverScale();
 
             if (_onHoverChanged != null)
             {
@@ -154,24 +177,28 @@ namespace SlotHero.Sanctum.UI
 
         public void OnPointerExit(PointerEventData eventData)
         {
+            EndHover();
+        }
+
+        /// <summary>화면이 닫혀 자리가 꺼질 때도 벗어남이 오지 않는다. 띄워 둔 상세가 남지 않게 알린다.</summary>
+        private void OnDisable()
+        {
+            EndHover();
+        }
+
+        private void EndHover()
+        {
             if (!_hovering)
             {
                 return;
             }
 
             _hovering = false;
-            ApplyHoverScale();
 
             if (_onHoverChanged != null)
             {
                 _onHoverChanged(this, false);
             }
-        }
-
-        private void ApplyHoverScale()
-        {
-            float scale = _hovering && _visual != null ? _visual.HoverScale : 1f;
-            RectTransform.localScale = new Vector3(scale, scale, 1f);
         }
 
         private Color GetTint(bool sold)

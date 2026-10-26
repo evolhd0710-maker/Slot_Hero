@@ -159,6 +159,32 @@ namespace SlotHero.Combat.UI
             Run(Intro());
         }
 
+        /// <summary>
+        /// 새 런을 시작하거나 다른 런을 이어 할 때 앞 런의 전투를 모두 비운다.
+        /// 전투 진행과 화면에 남은 릴, 코인, 유물, 체력, 적, 안내 글을 지운다.
+        /// 앞 런의 데이터가 다음 전투를 열 때 잠깐 보이지 않게 한다(2026년 10월 26일 원재).
+        /// </summary>
+        public void ResetForNewRun()
+        {
+            StopRunning();
+
+            if (_battle != null)
+            {
+                _battle.RelicStackChanged -= HandleRelicStackChanged;
+            }
+
+            _battle = null;
+            _setup = null;
+            _finished = false;
+            _busy = false;
+
+            if (_view != null)
+            {
+                _view.ClearRunData();
+                _view.Hide();
+            }
+        }
+
         /// <summary>화면을 닫는다. 알리지 않는다.</summary>
         public void Close()
         {
@@ -560,7 +586,17 @@ namespace SlotHero.Combat.UI
                 return;
             }
 
+            MarkChosen(TagDialView.GetSectorIndex(tag));
             Run(AttackRoutine(() => _battle.Attack(tag)));
+        }
+
+        /// <summary>공격 예정 표시를 켤 칸을 원판에 알린다. 피그마 디자인은 원판 전체 대신 고른 칸만 빛낸다.</summary>
+        private void MarkChosen(int sectorIndex)
+        {
+            if (_view != null && _view.TagDial != null)
+            {
+                _view.TagDial.MarkChosen(sectorIndex);
+            }
         }
 
         private void HandleVortexClicked()
@@ -570,6 +606,7 @@ namespace SlotHero.Combat.UI
                 return;
             }
 
+            MarkChosen(TagDialView.VortexIndex);
             Run(AttackRoutine(() => _battle.AttackWithVortex()));
         }
 

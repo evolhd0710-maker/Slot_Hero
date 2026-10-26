@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using SlotHero.Ui;
 
 namespace SlotHero.Settings
@@ -18,94 +19,148 @@ namespace SlotHero.Settings
     {
         [Header("기준")]
         [Tooltip("모든 규격의 기준 해상도. 1920 × 1080 FHD.")]
-        public Vector2 ReferenceResolution = UiScale.V(1920f, 1080f);
+        [FormerlySerializedAs("ReferenceResolution")]
+        [SerializeField] private Vector2 _referenceResolution = UiScale.V(1920f, 1080f);
+        public Vector2 ReferenceResolution { get { return _referenceResolution; } set { _referenceResolution = value; } }
 
         [Header("제목")]
         [Tooltip("제목 칸의 자리. 와이어프레임 실측 x 115 · y 76 을 10 단위로 옮긴 값이다.")]
-        public Vector2 TitlePosition = UiScale.V(120f, 80f);
+        [FormerlySerializedAs("TitlePosition")]
+        [SerializeField] private Vector2 _titlePosition = UiScale.V(120f, 80f);
+        public Vector2 TitlePosition { get { return _titlePosition; } set { _titlePosition = value; } }
 
         [Tooltip("제목 칸의 크기. 와이어프레임 실측 576 × 86 을 10 단위로 옮긴 값이다.")]
-        public Vector2 TitleSize = UiScale.V(580f, 90f);
+        [FormerlySerializedAs("TitleSize")]
+        [SerializeField] private Vector2 _titleSize = UiScale.V(580f, 90f);
+        public Vector2 TitleSize { get { return _titleSize; } set { _titleSize = value; } }
 
         [Header("분류 탭")]
         [Tooltip("탭 칸의 자리. 와이어프레임 실측 x 115 · y 205 를 10 단위로 옮긴 값이다.")]
-        public Vector2 TabPanelPosition = UiScale.V(120f, 210f);
+        [FormerlySerializedAs("TabPanelPosition")]
+        [SerializeField] private Vector2 _tabPanelPosition = UiScale.V(120f, 210f);
+        public Vector2 TabPanelPosition { get { return _tabPanelPosition; } set { _tabPanelPosition = value; } }
 
         [Tooltip("탭 칸의 크기. 와이어프레임 실측 384 × 680 을 10 단위로 옮긴 값이다.")]
-        public Vector2 TabPanelSize = UiScale.V(380f, 680f);
+        [FormerlySerializedAs("TabPanelSize")]
+        [SerializeField] private Vector2 _tabPanelSize = UiScale.V(380f, 680f);
+        public Vector2 TabPanelSize { get { return _tabPanelSize; } set { _tabPanelSize = value; } }
 
         [Tooltip("탭 하나의 크기. 와이어프레임 실측 352 × 88 을 10 단위로 옮긴 값이다.")]
-        public Vector2 TabSize = UiScale.V(350f, 90f);
+        [FormerlySerializedAs("TabSize")]
+        [SerializeField] private Vector2 _tabSize = UiScale.V(350f, 90f);
+        public Vector2 TabSize { get { return _tabSize; } set { _tabSize = value; } }
 
         [Tooltip("탭 사이 간격. 와이어프레임 실측 12 를 10 단위로 옮긴 값이다.")]
         [Min(0f)]
-        public float TabSpacing = UiScale.Px(10f);
+        [FormerlySerializedAs("TabSpacing")]
+        [SerializeField] private float _tabSpacing = UiScale.Px(10f);
+        public float TabSpacing { get { return _tabSpacing; } set { _tabSpacing = value; } }
 
         [Tooltip("탭 칸 안쪽 좌우 여백. 와이어프레임 실측 16 을 10 단위로 옮긴 값이다.")]
-        public float TabPanelPadding = UiScale.Px(20f);
+        [FormerlySerializedAs("TabPanelPadding")]
+        [SerializeField] private float _tabPanelPadding = UiScale.Px(20f);
+        public float TabPanelPadding { get { return _tabPanelPadding; } set { _tabPanelPadding = value; } }
 
         [Tooltip("탭 칸 위쪽 여백. 와이어프레임 기준 20.")]
-        public float TabPanelTopPadding = UiScale.Px(20f);
+        [FormerlySerializedAs("TabPanelTopPadding")]
+        [SerializeField] private float _tabPanelTopPadding = UiScale.Px(20f);
+        public float TabPanelTopPadding { get { return _tabPanelTopPadding; } set { _tabPanelTopPadding = value; } }
 
         [Header("설정 목록")]
         [Tooltip("목록 칸의 자리. 탭 칸과 60 띄운 값이다.")]
-        public Vector2 ListPanelPosition = UiScale.V(560f, 210f);
+        [FormerlySerializedAs("ListPanelPosition")]
+        [SerializeField] private Vector2 _listPanelPosition = UiScale.V(560f, 210f);
+        public Vector2 ListPanelPosition { get { return _listPanelPosition; } set { _listPanelPosition = value; } }
 
         [Tooltip("목록 칸의 크기. 오른쪽 끝이 1800 이 되어 왼쪽 여백 120 과 대칭이 되는 값이다.")]
-        public Vector2 ListPanelSize = UiScale.V(1240f, 680f);
+        [FormerlySerializedAs("ListPanelSize")]
+        [SerializeField] private Vector2 _listPanelSize = UiScale.V(1240f, 680f);
+        public Vector2 ListPanelSize { get { return _listPanelSize; } set { _listPanelSize = value; } }
 
         [Tooltip("항목 하나의 크기. 목록 칸에서 좌우 여백을 뺀 폭이다.")]
-        public Vector2 ItemSize = UiScale.V(1160f, 70f);
+        [FormerlySerializedAs("ItemSize")]
+        [SerializeField] private Vector2 _itemSize = UiScale.V(1160f, 70f);
+        public Vector2 ItemSize { get { return _itemSize; } set { _itemSize = value; } }
 
         [Tooltip("항목 사이 간격. 와이어프레임 실측 25 를 10 단위로 옮긴 값이다.")]
         [Min(0f)]
-        public float ItemSpacing = UiScale.Px(20f);
+        [FormerlySerializedAs("ItemSpacing")]
+        [SerializeField] private float _itemSpacing = UiScale.Px(20f);
+        public float ItemSpacing { get { return _itemSpacing; } set { _itemSpacing = value; } }
 
         [Tooltip("목록 칸 안쪽 좌우 여백. 와이어프레임 실측 38 을 10 단위로 옮긴 값이다.")]
-        public float ListPanelPadding = UiScale.Px(40f);
+        [FormerlySerializedAs("ListPanelPadding")]
+        [SerializeField] private float _listPanelPadding = UiScale.Px(40f);
+        public float ListPanelPadding { get { return _listPanelPadding; } set { _listPanelPadding = value; } }
 
         [Tooltip("목록 칸 위쪽 여백. 와이어프레임 실측 54 를 10 단위로 옮긴 값이다.")]
-        public float ListPanelTopPadding = UiScale.Px(50f);
+        [FormerlySerializedAs("ListPanelTopPadding")]
+        [SerializeField] private float _listPanelTopPadding = UiScale.Px(50f);
+        public float ListPanelTopPadding { get { return _listPanelTopPadding; } set { _listPanelTopPadding = value; } }
 
         [Tooltip("항목 칸 안쪽 좌우 여백. 와이어프레임 실측 24 를 10 단위로 옮긴 값이다.")]
-        public float ItemPadding = UiScale.Px(20f);
+        [FormerlySerializedAs("ItemPadding")]
+        [SerializeField] private float _itemPadding = UiScale.Px(20f);
+        public float ItemPadding { get { return _itemPadding; } set { _itemPadding = value; } }
 
         [Header("소리 크기 줄")]
         [Tooltip("막대가 시작하는 자리. 항목 칸 왼쪽 끝에서 잰다. 이름이 들어갈 자리를 남긴다.\n" +
                  "와이어프레임에 사운드 탭이 없어 일반 탭의 칸 크기에 맞춰 내가 정했다.")]
-        public float SliderLeft = UiScale.Px(300f);
+        [FormerlySerializedAs("SliderLeft")]
+        [SerializeField] private float _sliderLeft = UiScale.Px(300f);
+        public float SliderLeft { get { return _sliderLeft; } set { _sliderLeft = value; } }
 
         [Tooltip("막대의 높이. 끄는 손잡이는 이보다 크다.")]
-        public float SliderHeight = UiScale.Px(14f);
+        [FormerlySerializedAs("SliderHeight")]
+        [SerializeField] private float _sliderHeight = UiScale.Px(14f);
+        public float SliderHeight { get { return _sliderHeight; } set { _sliderHeight = value; } }
 
         [Tooltip("끄는 손잡이 한 변.")]
-        public float SliderHandleSize = UiScale.Px(30f);
+        [FormerlySerializedAs("SliderHandleSize")]
+        [SerializeField] private float _sliderHandleSize = UiScale.Px(30f);
+        public float SliderHandleSize { get { return _sliderHandleSize; } set { _sliderHandleSize = value; } }
 
         [Tooltip("막대 오른쪽에 숫자를 적는 칸의 폭. 100 이 들어간다.")]
-        public float SliderValueWidth = UiScale.Px(80f);
+        [FormerlySerializedAs("SliderValueWidth")]
+        [SerializeField] private float _sliderValueWidth = UiScale.Px(80f);
+        public float SliderValueWidth { get { return _sliderValueWidth; } set { _sliderValueWidth = value; } }
 
         [Tooltip("음소거 버튼의 크기. 항목 칸 오른쪽 끝에 붙는다.")]
-        public Vector2 MuteButtonSize = UiScale.V(130f, 50f);
+        [FormerlySerializedAs("MuteButtonSize")]
+        [SerializeField] private Vector2 _muteButtonSize = UiScale.V(130f, 50f);
+        public Vector2 MuteButtonSize { get { return _muteButtonSize; } set { _muteButtonSize = value; } }
 
         [Tooltip("막대, 숫자, 음소거 버튼 사이 간격.")]
-        public float SliderGap = UiScale.Px(20f);
+        [FormerlySerializedAs("SliderGap")]
+        [SerializeField] private float _sliderGap = UiScale.Px(20f);
+        public float SliderGap { get { return _sliderGap; } set { _sliderGap = value; } }
 
         [Header("드롭다운")]
         [Tooltip("펼친 목록의 선택지 한 칸 크기. 항목 칸 오른쪽 끝에 맞춰 그 아래로 펼친다.")]
-        public Vector2 OptionSize = UiScale.V(300f, 60f);
+        [FormerlySerializedAs("OptionSize")]
+        [SerializeField] private Vector2 _optionSize = UiScale.V(300f, 60f);
+        public Vector2 OptionSize { get { return _optionSize; } set { _optionSize = value; } }
 
         [Header("아래 버튼")]
         [Tooltip("기본값 복원의 자리. 와이어프레임 실측 x 115 · y 929 를 10 단위로 옮긴 값이다.")]
-        public Vector2 RestorePosition = UiScale.V(120f, 930f);
+        [FormerlySerializedAs("RestorePosition")]
+        [SerializeField] private Vector2 _restorePosition = UiScale.V(120f, 930f);
+        public Vector2 RestorePosition { get { return _restorePosition; } set { _restorePosition = value; } }
 
         [Tooltip("기본값 복원의 크기. 와이어프레임 실측 365 × 86 을 10 단위로 옮긴 값이다.")]
-        public Vector2 RestoreSize = UiScale.V(360f, 90f);
+        [FormerlySerializedAs("RestoreSize")]
+        [SerializeField] private Vector2 _restoreSize = UiScale.V(360f, 90f);
+        public Vector2 RestoreSize { get { return _restoreSize; } set { _restoreSize = value; } }
 
         [Tooltip("닫기의 자리. 오른쪽 끝을 목록 칸의 오른쪽 끝 1800 에 맞춘 값이다.")]
-        public Vector2 ClosePosition = UiScale.V(1450f, 930f);
+        [FormerlySerializedAs("ClosePosition")]
+        [SerializeField] private Vector2 _closePosition = UiScale.V(1450f, 930f);
+        public Vector2 ClosePosition { get { return _closePosition; } set { _closePosition = value; } }
 
         [Tooltip("닫기의 크기. 와이어프레임 실측 346 × 86 을 10 단위로 옮긴 값이다.")]
-        public Vector2 CloseSize = UiScale.V(350f, 90f);
+        [FormerlySerializedAs("CloseSize")]
+        [SerializeField] private Vector2 _closeSize = UiScale.V(350f, 90f);
+        public Vector2 CloseSize { get { return _closeSize; } set { _closeSize = value; } }
 
         /// <summary>탭 하나의 자리. 화면 왼쪽 위를 기준으로 잡은 값이다.</summary>
         public Vector2 GetTabPosition(int index)
@@ -189,12 +244,12 @@ namespace SlotHero.Settings
 
         private void OnValidate()
         {
-            TabSize.x = Mathf.Max(1f, TabSize.x);
-            TabSize.y = Mathf.Max(1f, TabSize.y);
-            ItemSize.x = Mathf.Max(1f, ItemSize.x);
-            ItemSize.y = Mathf.Max(1f, ItemSize.y);
-            TabSpacing = Mathf.Max(0f, TabSpacing);
-            ItemSpacing = Mathf.Max(0f, ItemSpacing);
+            _tabSize.x = Mathf.Max(1f, _tabSize.x);
+            _tabSize.y = Mathf.Max(1f, _tabSize.y);
+            _itemSize.x = Mathf.Max(1f, _itemSize.x);
+            _itemSize.y = Mathf.Max(1f, _itemSize.y);
+            _tabSpacing = Mathf.Max(0f, _tabSpacing);
+            _itemSpacing = Mathf.Max(0f, _itemSpacing);
         }
     }
 }

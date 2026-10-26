@@ -28,7 +28,8 @@ namespace SlotHero.Tools
     /// 씬에 있는 화면 조종기를 찾아 보기 자료로 열고, 눌렀을 때 일어난 일을 기록에 남긴다.
     ///
     /// 플레이를 눌러야 움직인다. 눌린 결과는 콘솔 창에서 본다.
-    /// **게임 코드가 아니다.** 실제 흐름이 생기면 이 파일은 지운다.
+    /// **게임 코드가 아니다.** 게임 흐름(`GameFlowController`)은 이것을 쓰지 않는다.
+    /// 확인용 씬에서 화면 하나씩 눌러 보는 데 쓰므로 남겨 둔다. 확인용 씬 검사(`CheckPreviewScenes`)가 이것이 있는지 본다.
     /// </summary>
     public class PreviewDriver : MonoBehaviour
     {

@@ -42,7 +42,7 @@ namespace SlotHero.Ui
         [Range(1f, 1.5f)]
         [SerializeField] private float _ratio = DefaultRatio;
 
-        [Tooltip("긴 변이 늘어날 수 있는 가장 긴 길이. 0 이면 막지 않는다. 기준 해상도 픽셀의 12 배 단위다.")]
+        [Tooltip("긴 변이 늘어날 수 있는 가장 긴 길이. 0 이면 막지 않는다. 1920 × 1080 기준 픽셀이다.")]
         [Min(0f)]
         [SerializeField] private float _maxGrow = DefaultMaxGrow;
 
@@ -198,20 +198,6 @@ namespace SlotHero.Ui
             }
 
             return _selectable == null || _selectable.interactable;
-        }
-
-        /// <summary>
-        /// 원래 크기를 다시 재 둔다.
-        /// 자리를 잡는 쪽이 크기를 바꾼 뒤에 부르면 그 크기를 기준으로 삼는다.
-        /// </summary>
-        public void RememberScale()
-        {
-            if (_target != null)
-            {
-                Vector2 size = new Vector2(_target.rect.width, _target.rect.height);
-                float ratio = CapRatio(_ratio, size, _target.localScale, _maxGrow);
-                _baseScale = ShouldGrow() ? _target.localScale / ratio : _target.localScale;
-            }
         }
     }
 }

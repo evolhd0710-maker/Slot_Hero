@@ -106,6 +106,12 @@ namespace SlotHero.CurrentBuild.UI
 
             SetActive(true);
             Refresh();
+
+            // 새로 열 때만 맨 위에서 시작한다. 칸을 고르거나 정렬을 바꿀 때는 보던 자리를 지킨다.
+            if (_view != null)
+            {
+                _view.ScrollToTop();
+            }
         }
 
         /// <summary>화면만 닫는다. 아무것도 알리지 않는다. 흐름이 화면을 치울 때 쓴다.</summary>
@@ -128,7 +134,7 @@ namespace SlotHero.CurrentBuild.UI
             Refresh();
         }
 
-        /// <summary>고른 것으로 정하고 닫는다. 고른 것이 없으면 아무 일도 없다.</summary>
+        /// <summary>고른 것으로 정하고 닫는다. 고른 것이 있을 때만 닫는다.</summary>
         public void Confirm()
         {
             if (_request == null || string.IsNullOrEmpty(_selectedId))
@@ -151,7 +157,7 @@ namespace SlotHero.CurrentBuild.UI
             get { return _request == null || _request.Cancellable; }
         }
 
-        /// <summary>고르지 않고 닫는다. 반드시 골라야 하는 요청이면 아무 일도 없다.</summary>
+        /// <summary>고르지 않고 닫는다. 반드시 골라야 하는 요청이면 열어 둔다.</summary>
         public void Cancel()
         {
             if (!IsOpen || !CanCancel)

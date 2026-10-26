@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: 86ea627fc1d27b543936787428e7696e
+guid: 6390f295d67e3684f9c27ee5b198605e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6038556720123241740
-    second: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_52 (7)_0"
+      213: 8191787836398006521
+    second: Tsunami_0
+  - first:
+      213: -6944665994890271344
+    second: Tsunami_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -98,17 +101,43 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WindowsStoreApps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_52 (7)_0"
+      name: Tsunami_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1254
-        height: 1254
+        x: 40
+        y: 44
+        width: 432
+        height: 424
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,8 +146,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4fa910d18acb23ca0800000000000000
-      internalID: -6038556720123241740
+      spriteID: 9f07edf92a31fa170800000000000000
+      internalID: 8191787836398006521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tsunami_1
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 338
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 095a4d272179f9f90800000000000000
+      internalID: -6944665994890271344
       vertices: []
       indices: 
       edges: []
@@ -137,7 +188,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "ChatGPT Image 2026\uB144 9\uC6D4 7\uC77C \uC624\uD6C4 12_14_52 (7)_0": -6038556720123241740
+      Tsunami_0: 8191787836398006521
+      Tsunami_1: -6944665994890271344
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

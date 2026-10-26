@@ -74,7 +74,8 @@ namespace SlotHero.MapEditor
 
                 if (GUILayout.Button("시드 바꿔 생성"))
                 {
-                    _seed = Random.Range(int.MinValue, int.MaxValue);
+                    // 시드만 새로 뽑으면 되므로 시계를 쓴다. `UnityEngine.Random` 은 쓰지 않는다는 코드 규칙을 따른다.
+                    _seed = System.Environment.TickCount;
                     GenerateOnce(_seed);
                 }
 

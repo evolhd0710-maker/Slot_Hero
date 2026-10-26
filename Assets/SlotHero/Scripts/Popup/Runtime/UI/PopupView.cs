@@ -163,15 +163,35 @@ namespace SlotHero.Popup.UI
                 _bodyScroll.vertical = true;
             }
 
+            // `_bodyContent` 는 스크롤이 내다보는 창이고 굴러가는 것은 본문 글이다.
+            // 창은 본문 칸에서 위아래 여백만큼 들여 칸 크기에 묶는다. 칸 그림 가장자리에 쇠 테가 있어
+            // 여백 없이 두면 글이 테에 닿는다(2026년 10월 20일 원재).
+            // 예전에는 창을 글 높이만큼 늘려, 본문이 최대 높이를 넘으면 스크롤 대신 글이 아래 버튼 위로 넘쳤다.
+            // 글은 창 위쪽에 붙어 아래로 자라고, 좌우는 여백만큼 들인다. 오른쪽 여백 안에 스크롤 바가 선다(2026년 10월 22일).
             if (_bodyContent != null)
             {
-                float inner = contentWidth - _layout.BodyPadding * 2f;
-                float height = desired > bodyHeight ? desired : bodyHeight;
-                _bodyContent.anchorMin = new Vector2(0f, 1f);
-                _bodyContent.anchorMax = new Vector2(0f, 1f);
-                _bodyContent.pivot = new Vector2(0f, 1f);
-                _bodyContent.anchoredPosition = Vector2.zero;
-                _bodyContent.sizeDelta = new Vector2(inner, height);
+                _bodyContent.anchorMin = Vector2.zero;
+                _bodyContent.anchorMax = Vector2.one;
+                _bodyContent.pivot = new Vector2(0.5f, 0.5f);
+                _bodyContent.offsetMin = new Vector2(0f, _layout.BodyPadding);
+                _bodyContent.offsetMax = new Vector2(0f, -_layout.BodyPadding);
+            }
+
+            if (_bodyLabel != null)
+            {
+                float textHeight = desired - _layout.BodyPadding * 2f;
+                RectTransform label = _bodyLabel.rectTransform;
+                label.anchorMin = new Vector2(0f, 1f);
+                label.anchorMax = new Vector2(1f, 1f);
+                label.pivot = new Vector2(0.5f, 1f);
+                label.sizeDelta = new Vector2(-_layout.BodyPadding * 2f, textHeight > 0f ? textHeight : 0f);
+                label.anchoredPosition = Vector2.zero;
+            }
+
+            if (_bodyScroll != null)
+            {
+                _bodyScroll.StopMovement();
+                _bodyScroll.verticalNormalizedPosition = 1f;
             }
 
             PlaceButtons(popupSize);
@@ -205,7 +225,7 @@ namespace SlotHero.Popup.UI
                 _buttons.Add(Instantiate(_buttonPrefab, _buttonLayer));
             }
 
-            Vector2 size = new Vector2(PopupLayoutMath.GetButtonWidth(count), _layout.ButtonHeight);
+            Vector2 size = new Vector2(PopupLayoutMath.GetButtonWidth(_layout, count), _layout.ButtonHeight);
 
             for (int i = 0; i < _buttons.Count; i++)
             {
@@ -251,7 +271,7 @@ namespace SlotHero.Popup.UI
                 }
 
                 // 가로는 본체 가운데를 0으로 본 값이고 세로는 본체 위에서부터 잰다.
-                float offsetX = PopupLayoutMath.GetButtonCenterOffset(count, i);
+                float offsetX = PopupLayoutMath.GetButtonCenterOffset(_layout, count, i);
 
                 RectTransform rect = view.RectTransform;
                 rect.anchorMin = new Vector2(0.5f, 1f);

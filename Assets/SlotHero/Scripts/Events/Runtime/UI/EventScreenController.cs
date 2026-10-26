@@ -30,6 +30,9 @@ namespace SlotHero.Events.UI
         /// <summary>이어지는 선택지가 없어 이벤트가 끝났을 때. 이벤트 식별자를 넘긴다.</summary>
         public event Action<string> Finished;
 
+        /// <summary>선택지 글 속 물건 이름에 커서가 들거나 날 때. 흐름이 아이템 상세를 띄운다(2026년 10월 25일 원재).</summary>
+        public event Action<string, bool> ItemHoverChanged;
+
         /// <summary>지금 보고 있는 페이지.</summary>
         public EventPage Page
         {
@@ -53,6 +56,7 @@ namespace SlotHero.Events.UI
             if (_view != null)
             {
                 _view.ChoiceClicked += HandleChoiceClicked;
+                _view.ItemHoverChanged += HandleItemHover;
             }
         }
 
@@ -61,6 +65,15 @@ namespace SlotHero.Events.UI
             if (_view != null)
             {
                 _view.ChoiceClicked -= HandleChoiceClicked;
+                _view.ItemHoverChanged -= HandleItemHover;
+            }
+        }
+
+        private void HandleItemHover(string itemId, bool hovering)
+        {
+            if (ItemHoverChanged != null)
+            {
+                ItemHoverChanged(itemId, hovering);
             }
         }
 

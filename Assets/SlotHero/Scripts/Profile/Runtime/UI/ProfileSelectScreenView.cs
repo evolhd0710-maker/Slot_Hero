@@ -136,7 +136,7 @@ namespace SlotHero.Profile.UI
             {
                 _backLabel.text = _visual.BackText;
                 _backLabel.fontSize = _visual.BackFontSize;
-                _backLabel.color = _visual.NameColor;
+                _backLabel.color = _visual.ButtonTextColor;
                 _backLabel.alignment = TextAlignmentOptions.Center;
             }
         }

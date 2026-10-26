@@ -165,47 +165,48 @@ namespace SlotHero.Sanctum
                 return false;
             }
 
-            List<string> avoid = new List<string>();
-            if (config.SymbolChangeExcludesOwned)
-            {
-                List<MerchantItem> owned = new List<MerchantItem>();
-                catalog.CollectOwnedSymbols(owned);
-                for (int i = 0; i < owned.Count; i++)
-                {
-                    avoid.Add(owned[i].Id);
-                }
-            }
-            else if (config.SymbolChangeExcludesSource && !string.IsNullOrEmpty(sourceSymbolId))
-            {
-                avoid.Add(sourceSymbolId);
-            }
-
+            // **바뀐 문양은 늘 바꾸기 전과 다른 문양이다**(2026년 10월 25일 원재).
+            // 예전에는 다른 후보가 없으면 후보 전체에서 다시 골라 같은 문양을 받고 골드만 낼 수 있었다.
+            // 문양은 서른여섯 종에서 줄지 않으므로 그 대비를 지웠다.
             List<MerchantItem> allowed = new List<MerchantItem>();
             for (int i = 0; i < candidates.Count; i++)
             {
-                if (!Contains(avoid, candidates[i].Id))
+                if (candidates[i].Id != sourceSymbolId)
                 {
                     allowed.Add(candidates[i]);
                 }
             }
 
-            // 제한을 다 지키면 뽑을 것이 없는 경우가 있다.
-            // 바꾸기 전과 같은 문양만 막고 다시 고른다.
-            if (allowed.Count == 0 && config.SymbolChangeExcludesSource && !string.IsNullOrEmpty(sourceSymbolId))
+            // 이미 가진 문양도 피하는 설정. 시작 덱이 모든 문양 한 장씩이라 다 피하면 남는 것이 없어
+            // 그때는 이 제한만 풀고 바꾸기 전 문양은 계속 뺀다.
+            if (config.SymbolChangeExcludesOwned)
             {
-                for (int i = 0; i < candidates.Count; i++)
+                List<MerchantItem> owned = new List<MerchantItem>();
+                catalog.CollectOwnedSymbols(owned);
+                List<string> ownedIds = new List<string>();
+                for (int i = 0; i < owned.Count; i++)
                 {
-                    if (candidates[i].Id != sourceSymbolId)
+                    ownedIds.Add(owned[i].Id);
+                }
+
+                List<MerchantItem> fresh = new List<MerchantItem>();
+                for (int i = 0; i < allowed.Count; i++)
+                {
+                    if (!Contains(ownedIds, allowed[i].Id))
                     {
-                        allowed.Add(candidates[i]);
+                        fresh.Add(allowed[i]);
                     }
+                }
+
+                if (fresh.Count > 0)
+                {
+                    allowed = fresh;
                 }
             }
 
-            // 그래도 없으면 후보 전체에서 고른다.
             if (allowed.Count == 0)
             {
-                allowed.AddRange(candidates);
+                return false;
             }
 
             picked = allowed[random.Range(0, allowed.Count)];

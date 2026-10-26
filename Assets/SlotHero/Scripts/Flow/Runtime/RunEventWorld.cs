@@ -17,7 +17,7 @@ namespace SlotHero.Flow
     ///
     /// 체력 수치는 거의 최대 체력의 비율로 적혀 있어 여기서 정수로 바꾼다.
     /// 올림이 아니라 반올림으로 하고 최소 1 은 깎거나 채우게 한다.
-    /// 최대 체력이 작을 때 0 이 되어 아무 일도 안 일어나는 것을 막으려는 것이다.
+    /// 최대 체력이 작아도 선택지가 적은 만큼은 늘 체력을 바꾸게 하려는 것이다.
     /// </summary>
     public class RunEventWorld : IEventWorld
     {
@@ -319,6 +319,16 @@ namespace SlotHero.Flow
 
                     break;
 
+                // 23 코인 매각. 그 코인을 팔면 받는 골드를 미리 적는다. "등급별 골드" 로는 얼마인지 알 수 없었다(2026년 10월 25일 원재).
+                // 골드는 물건이 아니라 식별자를 비워 아이템 상세 고리를 달지 않는다.
+                case EventActionKind.SellCoin:
+                    if (!string.IsNullOrEmpty(target.Id))
+                    {
+                        into.Add(new EventItem(string.Empty, "골드 " + _config.GetCoinSellPrice(GetRarity(_config.Coins, target.Id))));
+                    }
+
+                    break;
+
                 case EventActionKind.GainRelic:
                     DecideRelics(action.Count - (string.IsNullOrEmpty(target.Id) ? 0 : 1), target.Id, random, into);
                     break;
@@ -548,8 +558,6 @@ namespace SlotHero.Flow
         /// <inheritdoc />
         public string Apply(EventAction action, EventTarget target, EventRandom random)
         {
-            string targetId = target.Id;
-
             if (action == null || _context == null || _config == null)
             {
                 return string.Empty;
@@ -1095,10 +1103,10 @@ namespace SlotHero.Flow
 
             if (changed == 0)
             {
-                return GetTagName(tag) + " 을 가진 문양이 없었다.";
+                return SymbolTags.GetName(tag, _tagNames) + " 을 가진 문양이 없었다.";
             }
 
-            return Cost(GetTagName(tag) + " 을 가진 문양 " + changed + "장") + " 이 " + Gain("다른 문양") + " 으로 바뀌었다.";
+            return Cost(SymbolTags.GetName(tag, _tagNames) + " 을 가진 문양 " + changed + "장") + " 이 " + Gain("다른 문양") + " 으로 바뀌었다.";
         }
 
         /// <summary>태그 목록을 후보로 넣는다. 뺄 것은 뺀다.</summary>
@@ -1113,7 +1121,7 @@ namespace SlotHero.Flow
                     continue;
                 }
 
-                into.Add(new EventItem(tags[i].ToString(), GetTagName(tags[i])));
+                into.Add(new EventItem(tags[i].ToString(), SymbolTags.GetName(tags[i], _tagNames)));
             }
         }
 
@@ -1250,18 +1258,6 @@ namespace SlotHero.Flow
             tag = SymbolTagType.Mercury;
             return !string.IsNullOrEmpty(id) && Enum.TryParse(id, out tag)
                 && Enum.IsDefined(typeof(SymbolTagType), tag);
-        }
-
-        /// <summary>현재 빌드 화면과 같은 태그 이름. 설정이 없으면 영어 이름이다.</summary>
-        private string GetTagName(SymbolTagType tag)
-        {
-            if (_tagNames == null)
-            {
-                return tag.ToString();
-            }
-
-            string name = _tagNames.GetTagVisual(tag).DisplayName;
-            return string.IsNullOrEmpty(name) ? tag.ToString() : name;
         }
 
         // ---- 유물 ----

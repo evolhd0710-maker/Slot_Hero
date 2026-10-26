@@ -78,6 +78,12 @@ namespace SlotHero.Flow
             _context = null;
         }
 
+        /// <summary>대역은 전투 표시를 따로 그리지 않아 이어 오던 전투만 놓는다.</summary>
+        public void ResetForNewRun()
+        {
+            Leave();
+        }
+
         private void HandleChosen(string buttonId)
         {
             Finish(buttonId == "victory");

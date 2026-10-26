@@ -119,6 +119,16 @@ namespace SlotHero.ToolsEditor
                     continue;
                 }
 
+                // 저장 창구의 Awake 는 진짜 파일 창구로 준비해 진짜 저장 폴더를 건드린다.
+                // 대신 메모리 창구로 준비한다(2026년 10월 22일 코덱스 검토).
+                SlotHero.Save.SaveService save = behaviour as SlotHero.Save.SaveService;
+                if (save != null)
+                {
+                    save.Initialize(new SlotHero.Save.MemorySaveStorage());
+                    count++;
+                    continue;
+                }
+
                 System.Reflection.MethodInfo awake = type.GetMethod(
                     "Awake",
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

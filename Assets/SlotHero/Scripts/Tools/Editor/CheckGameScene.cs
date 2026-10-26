@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
 using UnityEditor;
@@ -76,16 +76,23 @@ namespace SlotHero.ToolsEditor
             Report("흐름 조종기가 있다", flow != null);
             Report("저장 창구가 있다", save != null);
 
+            // 저장 설정이 빠지면 저장 창구가 준비를 건너뛰고, 빌드한 게임이 프로필 목록을 만들다 멈춘다.
+            // 2026년 10월 19일 코덱스 빌드 검토가 짚었다. 씬에서 빠지지 않았는지 여기서 막는다.
+            Report("저장 창구에 저장 설정이 물려 있다", save != null && GetField<SaveConfig>(save, "_config") != null);
+
             if (flow == null || save == null)
             {
                 Done();
                 return;
             }
 
+            // 진짜 저장 폴더를 검사 끝에 다시 보아 손대지 않았는지 확인한다(`Done`).
+            SnapshotRealSaveFolder(GetField<SaveConfig>(save, "_config"));
             UsePlaceholderCombat(flow);
 
             CheckInputHandling();
             CheckNoDemoItems();
+            CheckCatalogItems(GetField<RunCatalogConfig>(flow, "_catalogConfig"));
             CheckBackdrops();
 
             // 게임 씬이 모든 화면을 끈 상태에서 구조를 본다.
@@ -99,11 +106,14 @@ namespace SlotHero.ToolsEditor
             Report("켜도 안 보이는 칸이 없다", structure.Count, 0);
 
             // 플레이 모드와 같은 상태로 만든다. 저장은 메모리 창구를 쓴다.
-            _awakened = new HashSet<MonoBehaviour>();
-            AwakenNew();
-
+            // **메모리 창구를 먼저 물리고 저장 창구의 Awake 는 건너뛴다.** Awake 는 진짜 파일 창구로 준비해
+            // 진짜 저장 폴더의 임시 파일을 치우고 첫 프로필까지 만들었다(2026년 10월 22일 코덱스 검토).
             MemorySaveStorage storage = new MemorySaveStorage();
             save.Initialize(storage);
+
+            _awakened = new HashSet<MonoBehaviour>();
+            _awakened.Add(save);
+            AwakenNew();
 
             CallOn("OnEnable", new HashSet<MonoBehaviour>());
 
@@ -116,6 +126,7 @@ namespace SlotHero.ToolsEditor
             Report("아직 저장된 런이 없다", save.GetSavedRunState() == SlotHero.Title.SavedRunState.None);
             CheckTitleArt();
             CapturePreviewScenes.CaptureOpenScene("게임 2 타이틀");
+            ProbeTitleMenu();
 
             // 타이틀 오른쪽 위의 현재 프로필 버튼으로 프로필 선택 화면에 간다.
             // 이 길이 막히면 프로필을 바꿀 방법이 아예 없다.
@@ -131,6 +142,7 @@ namespace SlotHero.ToolsEditor
 
             CheckFirstProfilePrefilled(save, storage);
             CapturePreviewScenes.CaptureOpenScene("게임 1 프로필 선택");
+            ProbeProfileCardHover();
 
             // 빈 자리를 눌러 이름을 치고 프로필을 만든다.
             // 이 길이 막히면 실제 빌드에서 게임을 시작할 수가 없다.
@@ -190,6 +202,31 @@ namespace SlotHero.ToolsEditor
                 save.Run.Owned.TotalSymbolCount == symbolKinds, save.Run.Owned.TotalSymbolCount);
             Report("시작 덱에 같은 문양이 겹치지 않는다",
                 save.Run.Owned.Symbols.Count == symbolKinds, save.Run.Owned.Symbols.Count);
+
+            // 문양 이름은 전투 시스템 기획서 10c 의 04 표를 따른다(2026년 10월 19일 원재).
+            // 현재 빌드, 행상 진열, 고르기 화면은 모두 물건 목록의 이름을 쓰므로 목록과 덱을 본다.
+            Report("시작 덱에 새 식별자의 문양 셋이 있다",
+                save.Run.Owned.GetSymbolCount("Quicksilver") == 1
+                && save.Run.Owned.GetSymbolCount("Pheonix") == 1
+                && save.Run.Owned.GetSymbolCount("Shipwerck") == 1);
+            Report("시작 덱에 옛 식별자가 남지 않았다",
+                save.Run.Owned.GetSymbolCount("QuickSilver") == 0
+                && save.Run.Owned.GetSymbolCount("Phoenix") == 0
+                && save.Run.Owned.GetSymbolCount("Shipwreck") == 0);
+            // 문양 그림. 저장소 그림이 오기 전까지는 코덱스로 만든 임시 그림이 붙는다(2026년 10월 19일 원재).
+            int symbolsWithIcon = 0;
+            for (int i = 0; catalog != null && i < catalog.Symbols.Count; i++)
+            {
+                if (catalog.Symbols[i].Icon != null)
+                {
+                    symbolsWithIcon++;
+                }
+            }
+
+            Report("문양마다 그림이 붙는다", symbolsWithIcon, symbolKinds);
+            Report("금성과 목성의 문양 이름이 금월계관",
+                catalog != null && catalog.GetDisplayName("GoldLaurel") == "금월계관",
+                catalog != null ? catalog.GetDisplayName("GoldLaurel") : "목록 빠짐");
             // 성소 기획서 06 재화 의 "시작 수치 0". 2026년 10월 8일에 100 에서 고쳤다.
             Report("시작 골드 0", save.Run.Status.Gold == 0, save.Run.Status.Gold);
             Report("체력이 가득", save.Run.Status.Health == save.Run.Status.MaxHealth,
@@ -211,6 +248,7 @@ namespace SlotHero.ToolsEditor
             CheckCurrentBuildButton();
             CheckTooltip();
             CheckEveryButtonShowsHover();
+            CheckHitAreas();
             CapturePreviewScenes.CaptureOpenScene("게임 3 맵");
 
             CheckPauseAndSettings(flow, save);
@@ -232,8 +270,16 @@ namespace SlotHero.ToolsEditor
             // 흐름을 직접 부르지 않고 **상단 표시줄 버튼을 눌러 런 포기를 고른다.**
             // 플레이어가 실제로 지나가는 길이 이것이다.
             int runsBefore = save.Meta.Lifetime.RunsPlayed;
+
+            // 전투 중에 런을 포기한 것처럼 전투 배경을 켜 둔다. 포기하면 꺼져야 한다.
+            // 예전에는 런을 끝내도 전투 화면과 전투 배경이 남아 새 게임 뒤에도 보였다(2026년 10월 26일 원재).
+            GameObject battleBackground = GetField<GameObject>(flow, "_battleBackground");
+            Invoke(flow, "ShowBattleBackground", true);
+            Report("포기 전 전투 배경을 켰다", battleBackground != null && battleBackground.activeSelf);
+
             PressEndRun("abandon");
 
+            Report("런을 포기하면 전투 배경이 꺼진다", battleBackground == null || !battleBackground.activeSelf);
             Report("런을 끝내면 결과 화면이 열린다", flow.Screen == GameScreen.RunResult);
             Report("런 파일이 지워졌다", !storage.Exists("profile0_run.json"));
             Report("메타가 런이 없다고 적는다", !save.Meta.HasSavedRun);
@@ -242,6 +288,7 @@ namespace SlotHero.ToolsEditor
             Report("메타 파일이 남아 있다", storage.Exists("profile0_meta.json"));
             Report("메타 백업도 남아 있다", storage.Exists("profile0_meta.backup.json"));
             CapturePreviewScenes.CaptureOpenScene("게임 5 런 종료 결과");
+            ProbeWheelsUnder("런 결과", "RunResultScreen", 3);
 
             // 결과 화면에서 타이틀로 돌아간다.
             flow.GoToTitle();
@@ -692,6 +739,10 @@ namespace SlotHero.ToolsEditor
 
             Canvas.ForceUpdateCanvases();
             CapturePreviewScenes.CaptureOpenScene("게임 설정 사운드");
+
+            SettingsScreenView settingsView = Object.FindAnyObjectByType<SettingsScreenView>();
+            ProbeWheel("설정 목록", settingsView != null ? GetField<ScrollRect>(settingsView, "_listScroll") : null);
+            CheckScrollBarByContent("설정 목록", settingsView != null ? GetField<ScrollRect>(settingsView, "_listScroll") : null);
         }
 
         private static SettingsRowView FindRow(List<SettingsRowView> rows, string id)
@@ -764,6 +815,14 @@ namespace SlotHero.ToolsEditor
             TMP_InputField field = GetField<TMP_InputField>(empty, "_nameInput");
 
             Report("이름 칸이 켜진다", field.gameObject.activeSelf);
+
+            // 켜진 뒤에 포커스를 요청해야 TMP 가 받아 준다. 꺼진 칸에 요청하면 그냥 넘겨 칸을 다시 눌러야 쳐졌다.
+            // TMP 는 요청을 받으면 다음 프레임에 켜려고 이 표시를 세운다(2026년 10월 22일 코덱스 검토).
+            FieldInfo activateNext = typeof(TMP_InputField).GetField(
+                "m_ShouldActivateNextUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
+            Report("빈 자리를 누르면 이름 칸이 바로 입력을 받을 준비를 한다",
+                activateNext != null && (bool)activateNext.GetValue(field),
+                activateNext == null ? "TMP 안쪽 이름이 바뀜" : "요청 없음");
 
             // 이름을 치고 확인한다.
             field.text = "확인용";
@@ -1416,9 +1475,13 @@ namespace SlotHero.ToolsEditor
             if (generation != null)
             {
                 float closest = visual.ClosestNodeDistance(12, 5, generation.JitterX, generation.JitterY);
-                Report("이웃 노드의 누르는 영역이 겹치지 않는다",
-                    visual.ClickAreasNeverOverlap(12, 5, generation.JitterX, generation.JitterY),
-                    (int)UiScale.ToWireframe(closest));
+                MapScreenView mapView = GetField<MapScreenView>(map, "_view");
+                MapNodeView nodePrefab = mapView != null ? GetField<MapNodeView>(mapView, "_nodePrefab") : null;
+                HoverScale nodeHover = nodePrefab != null ? nodePrefab.GetComponent<HoverScale>() : null;
+                float hoverRatio = nodeHover != null ? nodeHover.Ratio : 1f;
+                Report("고를 수 있는 노드끼리 커서를 올려 커져도 누르는 영역이 겹치지 않는다",
+                    visual.ClickAreasNeverOverlap(5, generation.JitterY, hoverRatio),
+                    hoverRatio.ToString("0.00"));
                 Report("가장 넓은 아이콘 모양끼리 닿아도 4 안쪽이다",
                     visual.NodeSize * visual.WidestIconShapeRatio - closest < UiScale.Px(4f));
             }
@@ -1475,6 +1538,20 @@ namespace SlotHero.ToolsEditor
             // 노드는 맵을 만들 때 찍어 낸 것이라 편집 모드에서는 아직 Awake 를 받지 못했다.
             // 빠뜨리면 호버 확대가 키울 칸을 몰라 아무 일도 안 한다. 플레이 모드에서는 유니티가 부른다.
             AwakenNew();
+
+            // 고를 수 있는 노드만 커서를 받는다. 커진 노드 가장자리를 이웃 노드가 가로채지 않게 한다(2026년 10월 22일 코덱스 검토).
+            int wrongTarget = 0;
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                Image nodeIcon = GetField<Image>(nodes[i], "_icon");
+                bool selectableNode = nodes[i].State == MapNodeDisplayState.Selectable;
+                if (nodeIcon != null && nodeIcon.raycastTarget != selectableNode)
+                {
+                    wrongTarget++;
+                }
+            }
+
+            Report("고를 수 있는 노드만 커서를 받는다", wrongTarget, 0);
 
             MapNodeView selectable = null;
 
@@ -1538,6 +1615,15 @@ namespace SlotHero.ToolsEditor
             }
 
             Report("전투 방에서 대역 팝업이 열려 있다", popup.IsOpen);
+
+            // 전투 방에서만 무너진 제국 전투 배경이 공용 배경 위에 보인다(2026년 10월 25일 원재).
+            GameObject canvasGo = GameObject.Find("GameCanvas");
+            Transform battle = canvasGo != null ? canvasGo.transform.Find("BattleBackground") : null;
+            Image battleImage = battle != null ? battle.GetComponent<Image>() : null;
+            Report("전투 방에서 전투 배경이 보인다",
+                battleImage != null && battleImage.sprite != null && battle.gameObject.activeInHierarchy);
+            Report("전투 배경이 공용 배경 바로 위에 있다", battle != null && battle.GetSiblingIndex() == 1,
+                battle != null ? battle.GetSiblingIndex() : -1);
             Report("팝업이 뜨면 뒤가 막힌다", DimIsShowing());
 
             // 팝업 버튼은 방금 찍어 낸 것이라 아직 귀를 대지 못했다.
@@ -1588,6 +1674,7 @@ namespace SlotHero.ToolsEditor
             }
 
             Report("승리를 누르면 팝업이 닫힌다", !popup.IsOpen);
+            Report("전투가 끝나면 전투 배경을 끈다", battle != null && !battle.gameObject.activeInHierarchy);
         }
 
         /// <summary>
@@ -1659,6 +1746,81 @@ namespace SlotHero.ToolsEditor
         ///
         /// 칸은 게임이 돌면서 만드는 것이므로 씬을 막 열었을 때는 하나도 없어야 맞다.
         /// </summary>
+        /// <summary>
+        /// 물건 목록의 유물과 코인. 세계관 유물 스물과 금 · 은 · 동 코인 열씩이 들어 있고,
+        /// 코인 등급이 동 고급 · 은 희귀 · 금 영웅이며, 모든 유물과 코인에 그림이 붙었는지 본다(2026년 10월 22일 원재).
+        /// </summary>
+        private static void CheckCatalogItems(RunCatalogConfig catalog)
+        {
+            Report("흐름에 물건 목록이 물려 있다", catalog != null);
+            if (catalog == null)
+            {
+                return;
+            }
+
+            int gold = 0;
+            int silver = 0;
+            int bronze = 0;
+            int wrongRarity = 0;
+            int missingIcon = 0;
+
+            for (int i = 0; i < catalog.Coins.Count; i++)
+            {
+                ItemDefinition coin = catalog.Coins[i];
+                if (coin.Icon == null)
+                {
+                    missingIcon++;
+                    Debug.LogWarning("  물건  그림이 없는 코인: " + coin.Id);
+                }
+
+                if (coin.Id.StartsWith("coin_gold_"))
+                {
+                    gold++;
+                    wrongRarity += coin.Rarity == ItemRarity.Epic ? 0 : 1;
+                }
+                else if (coin.Id.StartsWith("coin_silver_"))
+                {
+                    silver++;
+                    wrongRarity += coin.Rarity == ItemRarity.Rare ? 0 : 1;
+                }
+                else if (coin.Id.StartsWith("coin_bronze_"))
+                {
+                    bronze++;
+                    wrongRarity += coin.Rarity == ItemRarity.Uncommon ? 0 : 1;
+                }
+            }
+
+            // 유물 정보시트의 열 개는 아직 그림이 없어 세계관 유물만 본다(2026년 10월 26일).
+            int sheetWithoutIcon = 0;
+            System.Collections.Generic.List<SlotHero.Combat.RelicDefinition> sheet = SlotHero.Combat.RelicConfig.SheetRelics();
+            for (int i = 0; i < catalog.Relics.Count; i++)
+            {
+                bool fromSheet = sheet.Exists(r => r.Id == catalog.Relics[i].Id);
+                if (catalog.Relics[i].Icon == null)
+                {
+                    if (fromSheet)
+                    {
+                        sheetWithoutIcon++;
+                        continue;
+                    }
+
+                    missingIcon++;
+                    Debug.LogWarning("  물건  그림이 없는 유물: " + catalog.Relics[i].Id);
+                }
+            }
+
+            if (sheetWithoutIcon > 0)
+            {
+                Debug.Log("  물건  유물 정보시트의 유물 " + sheetWithoutIcon + "개는 아직 그림이 없다");
+            }
+
+            Report("금화 · 은화 · 동전이 열씩 있다", gold == 10 && silver == 10 && bronze == 10,
+                gold + " / " + silver + " / " + bronze);
+            Report("코인 등급이 동 고급 · 은 희귀 · 금 영웅이다", wrongRarity, 0);
+            Report("유물이 유물 정보시트 열과 세계관 스물로 서른이다", catalog.Relics.Count, 30);
+            Report("세계관 유물과 모든 코인에 그림이 붙었다", missingIcon, 0);
+        }
+
         private static void CheckNoDemoItems()
         {
             Report("예시 선택지가 남아 있지 않다", CountOf<EventChoiceView>(), 0);
@@ -1715,7 +1877,8 @@ namespace SlotHero.ToolsEditor
             MerchantSlotView[] all = Object.FindObjectsByType<MerchantSlotView>(FindObjectsInactive.Include);
             for (int i = 0; i < all.Length; i++)
             {
-                if (all[i].Slot.HasItem)
+                // 물건이 모자라면 빈 자리에 null 을 묶는다. 그 자리는 세지 않는다(2026년 10월 21일 코덱스 검토).
+                if (all[i].Slot != null && all[i].Slot.HasItem)
                 {
                     withIcon++;
                 }
@@ -1723,11 +1886,47 @@ namespace SlotHero.ToolsEditor
 
             Report("진열에 물건이 찼다", withIcon > 0, withIcon);
 
+            // 진열 칸 그림이 흑요석 판이다. 문양 상품은 테두리와 문양 그림이 그 판 안쪽에 들어가야 한다(2026년 10월 20일 원재).
+            CurrentBuildVisualConfig frameVisual =
+                UiSceneBuilder.LoadConfig<CurrentBuildVisualConfig>("CurrentBuild", "CurrentBuildVisualConfig");
+            float frameInset = frameVisual != null ? frameVisual.SymbolFrameInset : -1f;
+            int symbolGoods = 0;
+            int notFramedGoods = 0;
             for (int i = 0; i < all.Length; i++)
             {
-                if (all[i].Slot.HasItem && all[i].gameObject.activeInHierarchy)
+                if (all[i].Slot == null || !all[i].Slot.HasItem || all[i].Slot.Item.Kind != SanctumItemKind.Symbol)
+                {
+                    continue;
+                }
+
+                symbolGoods++;
+                TagCorners corners = GetField<TagCorners>(all[i], "_tagCorners");
+                if (corners == null || corners.TopRight == null || !FramedInside(corners, frameInset))
+                {
+                    notFramedGoods++;
+                }
+            }
+
+            Report("행상 진열에 문양 상품이 있다", symbolGoods > 0, symbolGoods);
+            Report("행상 문양 상품마다 테두리와 문양 그림이 판 안쪽에 함께 들어간다", notFramedGoods, 0);
+
+            for (int i = 0; i < all.Length; i++)
+            {
+                if (all[i].Slot != null && all[i].Slot.HasItem && all[i].gameObject.activeInHierarchy)
                 {
                     CheckItemDetailHover("행상 진열", all[i], true);
+                    break;
+                }
+            }
+
+            for (int i = 0; i < all.Length; i++)
+            {
+                if (all[i].Slot.IsBuyable && all[i].gameObject.activeInHierarchy)
+                {
+                    RectTransform slotRect = (RectTransform)all[i].transform;
+                    float grown = HoverGrowth(slotRect, slotRect);
+                    Report("행상 칸에 실제로 커서를 올리면 5퍼센트만 커진다",
+                        grown > 1.045f && grown < 1.055f, grown.ToString("0.000"));
                     break;
                 }
             }
@@ -1819,7 +2018,14 @@ namespace SlotHero.ToolsEditor
             int ownedBefore = save.Run.Owned.TotalSymbolCount + save.Run.Owned.Relics.Count
                 + save.Run.Owned.CoinIds.Count;
 
+            // 커서를 올려 상세를 띄운 채로 산다. 산 자리가 꺼져도 상세가 남지 않아야 한다(2026년 10월 22일 코덱스 검토).
+            ItemDetailView detail = flow != null ? GetField<ItemDetailView>(flow, "_itemDetail") : null;
+            target.OnPointerEnter(new PointerEventData(EventSystem.current));
+            Report("행상 물건에 커서를 올리면 상세가 뜬다", detail != null && detail.IsShowing);
+
             Invoke(sanctum, "HandleSlotClicked", target);
+
+            Report("행상에서 산 뒤에는 그 물건의 상세가 닫힌다", detail != null && !detail.IsShowing);
 
             int ownedAfter = save.Run.Owned.TotalSymbolCount + save.Run.Owned.Relics.Count
                 + save.Run.Owned.CoinIds.Count;
@@ -1928,7 +2134,9 @@ namespace SlotHero.ToolsEditor
                 return;
             }
 
-            Image background = GetField<Image>(view, "_background");
+            // 배경은 표시가 들지 않으므로 화면 안의 `Background` 그림을 찾는다.
+            Transform backgroundNode = view.transform.Find("Background");
+            Image background = backgroundNode != null ? backgroundNode.GetComponent<Image>() : null;
             Image logo = GetField<Image>(view, "_logo");
 
             Report("타이틀 배경 칸이 있다", background != null);
@@ -2051,6 +2259,9 @@ namespace SlotHero.ToolsEditor
             {
                 return;
             }
+
+            // 카드는 제가 Content 를 키운다. 뿌리에 호버 확대가 또 붙으면 두 번 커진다.
+            Report("프로필 카드는 호버 때 한 번만 커진다", card.GetComponent<HoverScale>() == null);
 
             Button deleteButton = GetField<Button>(card, "_deleteButton");
             Report("카드에 삭제 버튼이 있다", deleteButton != null);
@@ -2216,6 +2427,53 @@ namespace SlotHero.ToolsEditor
             PressPopupButton(popup, "confirm");
             Report("확인을 누르면 팝업이 닫히고 타이틀에 남는다",
                 !popup.IsOpen && flow.Screen == GameScreen.Title, (int)flow.Screen);
+
+            CheckOutdatedMapRun(flow, save, storage, popup);
+        }
+
+        /// <summary>
+        /// 업데이트로 지도 생성 규칙이 바뀐 런을 이어 하면 지우는지(2026년 10월 22일 원재).
+        /// 런을 시작하면 지도 지문이 적히는지 보고, 파일의 지문을 다른 규칙의 것처럼 바꾼 뒤 이어하기를 누른다.
+        /// </summary>
+        private static void CheckOutdatedMapRun(
+            GameFlowController flow, SaveService save, MemorySaveStorage storage, PopupPresenter popup)
+        {
+            const string runFile = "profile0_run.json";
+
+            flow.StartNewRun();
+            MapScreenController map = GetField<MapScreenController>(flow, "_map");
+            string expected = map != null && save.Run != null ? map.GetFingerprint(save.Run.Seed, save.Run.StageIndex) : string.Empty;
+            Report("런을 시작하면 지도 지문이 적힌다",
+                save.Run != null && !string.IsNullOrEmpty(save.Run.MapFingerprint) && save.Run.MapFingerprint == expected,
+                save.Run != null ? save.Run.MapFingerprint : "런 없음");
+
+            flow.GoToTitle();
+
+            // 파일의 지문을 다른 규칙으로 만든 지도의 것처럼 바꾼다. 체크섬도 다시 매겨 손상과 구분한다.
+            RunSaveData onDisk = JsonUtility.FromJson<RunSaveData>(storage.Read(runFile));
+            onDisk.MapFingerprint = "0000000000000000";
+            SaveRepository.StampRun(onDisk);
+            storage.Put(runFile, JsonUtility.ToJson(onDisk));
+
+            while (popup.IsOpen)
+            {
+                popup.Dismiss();
+            }
+
+            flow.ContinueRun();
+
+            PopupSpec shown = popup.Current;
+            Report("지도 규칙이 바뀐 런을 이어 하면 팝업이 뜬다",
+                popup.IsOpen && shown != null && shown.Title == "런 데이터 삭제", shown != null ? shown.Title : "없음");
+            Report("지도 규칙이 바뀐 런 파일은 지워졌다", !storage.Exists(runFile));
+            Report("지도 규칙이 바뀐 런을 지우면 메타도 런이 없다고 적는다", save.Meta != null && !save.Meta.HasSavedRun);
+            Report("지도 규칙이 바뀐 런은 이어 하지 않고 타이틀에 남는다",
+                flow.Screen == GameScreen.Title && save.Run == null, (int)flow.Screen);
+
+            while (popup.IsOpen)
+            {
+                PressPopupButton(popup, "confirm");
+            }
         }
 
         /// <summary>
@@ -2568,6 +2826,195 @@ namespace SlotHero.ToolsEditor
         }
 
         /// <summary>
+        /// 문양 칸의 태그 테두리와 문양 그림이 판 가장자리에서 inset 비율만큼 안쪽에 함께 들어가 있는지.
+        /// 테두리가 판 가장자리에 걸쳐 어색하다고 2026년 10월 20일 원재가 짚었다. 문양 그림은 테두리와 같은 넓이여야 한다.
+        /// </summary>
+        private static bool FramedInside(TagCorners corners, float inset)
+        {
+            if (corners == null)
+            {
+                return false;
+            }
+
+            RectTransform frame = (RectTransform)corners.transform;
+            RectTransform symbol = GetField<RectTransform>(corners, "_symbol");
+            if (symbol == null || symbol.parent != frame.parent)
+            {
+                return false;
+            }
+
+            bool frameInside = frame.anchorMin.x > 0f
+                && Mathf.Abs(frame.anchorMin.x - inset) < 0.0001f
+                && Mathf.Abs(frame.anchorMin.y - inset) < 0.0001f
+                && Mathf.Abs(frame.anchorMax.x - (1f - inset)) < 0.0001f
+                && Mathf.Abs(frame.anchorMax.y - (1f - inset)) < 0.0001f
+                && frame.offsetMin == Vector2.zero && frame.offsetMax == Vector2.zero;
+
+            bool symbolFits = symbol.anchorMin == frame.anchorMin && symbol.anchorMax == frame.anchorMax
+                && symbol.offsetMin == Vector2.zero && symbol.offsetMax == Vector2.zero;
+
+            // 앵커만 보면 판이 다른 부모 아래서 따로 줄어도 통과한다. 화면 위 실제 경계로 다시 잰다(2026년 10월 21일 코덱스 검토).
+            // 판이 따로 없으면(행상 진열) 칸 그림 자체가 판이라 테두리의 부모를 판으로 본다.
+            Image plateImage = GetField<Image>(corners, "_plate");
+            RectTransform plate = plateImage != null ? plateImage.rectTransform : frame.parent as RectTransform;
+            bool plateMatches = plate != null && FrameRatioInPlate(frame, plate, inset);
+
+            return frameInside && symbolFits && plateMatches;
+        }
+
+        /// <summary>테두리의 화면 위 경계가 판 경계에서 각 변 inset 비율만큼 안쪽인지.</summary>
+        private static bool FrameRatioInPlate(RectTransform frame, RectTransform plate, float inset)
+        {
+            Vector3[] f = new Vector3[4];
+            Vector3[] p = new Vector3[4];
+            frame.GetWorldCorners(f);
+            plate.GetWorldCorners(p);
+
+            float plateWidth = p[2].x - p[0].x;
+            float plateHeight = p[2].y - p[0].y;
+            if (plateWidth <= 0f || plateHeight <= 0f)
+            {
+                return false;
+            }
+
+            // 판과 문양, 태그 테두리가 모두 정사각 그림이라 판 자리도 정사각이어야 늘어나 보이지 않는다(2026년 10월 21일 원재).
+            if (Mathf.Abs(plateWidth - plateHeight) / plateWidth > 0.02f)
+            {
+                return false;
+            }
+
+            const float tolerance = 0.01f;
+            return Mathf.Abs((f[0].x - p[0].x) / plateWidth - inset) < tolerance
+                && Mathf.Abs((p[2].x - f[2].x) / plateWidth - inset) < tolerance
+                && Mathf.Abs((f[0].y - p[0].y) / plateHeight - inset) < tolerance
+                && Mathf.Abs((p[2].y - f[2].y) / plateHeight - inset) < tolerance;
+        }
+
+        /// <summary>
+        /// 현재 빌드의 문양 칸마다 첫 태그 테두리가 우상단, 둘째 태그 테두리가 좌하단에 놓이는지.
+        /// 유물과 코인 칸에는 테두리가 없어야 한다. 2026년 10월 19일 원재가 문양 칸에 태그를 보이게 했다.
+        /// </summary>
+        private static void CheckTagCorners(BuildSlotView[] slots, CurrentBuildVisualConfig visual)
+        {
+            if (visual == null)
+            {
+                Report("흐름에 태그 표시 설정이 물려 있다", false);
+                return;
+            }
+
+            int symbols = 0;
+            int wrong = 0;
+            int items = 0;
+            int itemsWithCorners = 0;
+            int wrongPlate = 0;
+            int notFramed = 0;
+            int itemsWithPlate = 0;
+
+            for (int i = 0; i < slots.Length; i++)
+            {
+                BuildSlotView slot = slots[i];
+                if (!slot.Entry.IsValid || !slot.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                TagCorners corners = GetField<TagCorners>(slot, "_tagCorners");
+                if (slot.Entry.HasTwoDifferentTags)
+                {
+                    symbols++;
+                    Sprite topRight;
+                    Sprite bottomLeft;
+                    visual.GetTagCorners(slot.Entry.FirstTag, slot.Entry.SecondTag, out topRight, out bottomLeft);
+
+                    if (corners == null || topRight == null || bottomLeft == null
+                        || corners.TopRight != topRight || corners.BottomLeft != bottomLeft)
+                    {
+                        wrong++;
+                        Debug.LogWarning("  태그 테두리  " + slot.Entry.Id + " 의 테두리가 맞지 않다");
+                    }
+
+                    if (corners == null || corners.Plate == null || corners.Plate != visual.GetSymbolPlate(slot.Entry.Id))
+                    {
+                        wrongPlate++;
+                        Debug.LogWarning("  문양 판  " + slot.Entry.Id + " 의 판이 맞지 않다");
+                    }
+
+                    if (!FramedInside(corners, visual.SymbolFrameInset))
+                    {
+                        notFramed++;
+                        Debug.LogWarning("  문양 판  " + slot.Entry.Id + " 의 테두리나 그림이 판 안쪽에 맞지 않다");
+                    }
+                }
+                else
+                {
+                    items++;
+                    if (corners != null && (corners.TopRight != null || corners.BottomLeft != null))
+                    {
+                        itemsWithCorners++;
+                    }
+
+                    if (corners != null && corners.Plate != null)
+                    {
+                        itemsWithPlate++;
+                    }
+                }
+            }
+
+            // 빈 칸은 점선 테두리만, 가진 칸은 반투명 배경이다(2026년 10월 21일 원재).
+            int emptySlots = 0;
+            int emptyWrong = 0;
+            int ownedOpaque = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                BuildSlotView slot = slots[i];
+                if (!slot.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                Image background = GetField<Image>(slot, "_background");
+                Image outline = GetField<Image>(slot, "_emptyOutline");
+                if (!slot.Entry.IsValid)
+                {
+                    emptySlots++;
+                    bool outlineOnly = outline != null && outline.enabled && outline.sprite != null
+                        && (background == null || !background.enabled);
+                    if (!outlineOnly)
+                    {
+                        emptyWrong++;
+                    }
+                }
+                else if (background != null && background.enabled && background.color.a >= 1f)
+                {
+                    ownedOpaque++;
+                }
+            }
+
+            Report("현재 빌드에 빈 칸이 있다", emptySlots > 0, emptySlots);
+            Report("빈 칸은 배경 없이 점선 테두리만 남는다", emptyWrong, 0);
+            Report("가진 칸의 배경은 반투명이다", ownedOpaque, 0);
+
+            Report("현재 빌드에 문양 칸이 있다", symbols > 0, symbols);
+            Report("문양 칸마다 첫 태그는 우상단, 둘째 태그는 좌하단 테두리가 놓인다", wrong, 0);
+            Report("유물과 코인 칸에는 태그 테두리가 없다", itemsWithCorners, 0);
+            Report("문양 칸마다 문양 뒤에 흑요석 판이 깔린다", wrongPlate, 0);
+            Report("문양 칸마다 테두리와 문양 그림이 판 안쪽에 함께 들어간다", notFramed, 0);
+            Report("유물과 코인 칸에는 흑요석 판이 없다", itemsWithPlate, 0);
+            Report("흑요석 판 그림 한 장이 물려 있다", visual.SymbolPlates != null ? visual.SymbolPlates.Length : 0, 1);
+
+            int linked = 0;
+            for (int i = 0; i < visual.TagVisuals.Count; i++)
+            {
+                if (visual.TagVisuals[i].CornerTopRight != null && visual.TagVisuals[i].CornerBottomLeft != null)
+                {
+                    linked++;
+                }
+            }
+
+            Report("태그 9종 모두 테두리 그림 둘이 물려 있다", linked, 9);
+        }
+
+        /// <summary>
         /// 현재 빌드 화면에서 휠을 굴리면 문양 줄이 실제로 움직이는지.
         ///
         /// 2026년 10월 5일 원재가 문양이 세 줄을 넘으면 아래를 볼 수 없다고 짚었다.
@@ -2611,6 +3058,7 @@ namespace SlotHero.ToolsEditor
             Report("문양이 많으면 스크롤 내용이 창보다 길다",
                 scroll.content.rect.height > scroll.viewport.rect.height + 1f,
                 Mathf.RoundToInt(scroll.content.rect.height / UiScale.Factor));
+            CheckScrollBar("현재 빌드", scroll, true);
 
             float before = scroll.content.anchoredPosition.y;
             PointerEventData wheel = new PointerEventData(EventSystem.current);
@@ -2630,6 +3078,107 @@ namespace SlotHero.ToolsEditor
             scroll.content.anchoredPosition = new Vector2(scroll.content.anchoredPosition.x, before);
         }
 
+        /// <summary>
+        /// 현재 빌드의 정렬 칸을 **마우스 길로 눌러** 본다(2026년 10월 21일 원재).
+        ///
+        /// 정렬 칸을 스크롤 안으로 옮겼다. 그래서 세 가지를 본다.
+        /// 스크롤하면 `문양` 줄 이름과 같은 거리만큼 움직이는지,
+        /// 칸 가운데를 누르면 문양 칸이나 스크롤 바탕이 아니라 정렬 버튼이 받는지,
+        /// 누를 때마다 기준이 개수 → 태그 → 이름 → 개수로 돌고 글자도 따라 바뀌는지.
+        /// 스크롤을 내린 뒤에도 한 번 더 눌러 본다. 끝나면 기준과 스크롤을 처음대로 돌린다.
+        /// </summary>
+        private static void CheckBuildSortButton(CurrentBuildScreenController build)
+        {
+            CurrentBuildScreenView view = Object.FindAnyObjectByType<CurrentBuildScreenView>();
+            Button sortButton = view != null ? GetField<Button>(view, "_sortButton") : null;
+            TMP_Text sortValue = view != null ? GetField<TMP_Text>(view, "_sortValueLabel") : null;
+            TMP_Text symbolLabel = view != null ? GetField<TMP_Text>(view, "_symbolLabel") : null;
+            ScrollRect scroll = view != null ? GetField<ScrollRect>(view, "_scroll") : null;
+
+            Report("현재 빌드 정렬 버튼이 있다",
+                build != null && sortButton != null && sortValue != null && symbolLabel != null && scroll != null);
+            if (build == null || sortButton == null || sortValue == null || symbolLabel == null || scroll == null)
+            {
+                return;
+            }
+
+            RectTransform sortRect = (RectTransform)sortButton.transform;
+            Report("정렬 칸이 스크롤 안에 있다", sortRect.IsChildOf(scroll.content));
+
+            BuildSortOrder original = build.SortOrder;
+            float startY = scroll.content.anchoredPosition.y;
+
+            // 누를 때마다 기준이 하나씩 넘어가 세 번이면 처음으로 돌아온다.
+            BuildSortOrder[] expected = { BuildSortOrder.Tag, BuildSortOrder.Name, BuildSortOrder.Count };
+            build.SetSortOrder(BuildSortOrder.Count);
+            int wrong = 0;
+            string previousText = sortValue.text;
+            for (int i = 0; i < expected.Length; i++)
+            {
+                if (!ClickSort(sortButton) || build.SortOrder != expected[i] || sortValue.text == previousText)
+                {
+                    wrong++;
+                    Debug.LogWarning("  정렬  " + (i + 1) + "번째 누름 뒤 기준 " + build.SortOrder
+                        + " / 글자 " + sortValue.text + " (기대 " + expected[i] + ")");
+                }
+
+                previousText = sortValue.text;
+            }
+
+            Report("정렬 칸 가운데를 누르면 정렬 버튼이 받고 기준이 개수 → 태그 → 이름 → 개수로 돈다", wrong, 0);
+
+            // 스크롤을 내리면 정렬 칸이 `문양` 글자와 같은 거리만큼 올라간다.
+            // 누르기 검사가 캔버스 방식을 잠깐 바꿨다 돌려 세계 좌표가 한 박자 늦게 바뀐다.
+            // 그래서 스크롤 창 기준 자리로 잰다.
+            float sortBefore = YInViewport(scroll, sortRect);
+            float labelBefore = YInViewport(scroll, symbolLabel.rectTransform);
+            PointerEventData wheel = new PointerEventData(EventSystem.current);
+            wheel.scrollDelta = new Vector2(0f, -1f);
+            ExecuteEvents.ExecuteHierarchy(sortButton.gameObject, wheel, ExecuteEvents.scrollHandler);
+
+            float sortMoved = YInViewport(scroll, sortRect) - sortBefore;
+            float labelMoved = YInViewport(scroll, symbolLabel.rectTransform) - labelBefore;
+            Report("정렬 칸 위에서 굴린 휠도 스크롤을 움직인다",
+                scroll.content.anchoredPosition.y - startY >= UiScale.Px(20f),
+                Mathf.RoundToInt((scroll.content.anchoredPosition.y - startY) / UiScale.Factor));
+            Report("스크롤하면 정렬 칸이 문양 줄 이름과 같이 움직인다",
+                sortMoved > 0f && Mathf.Abs(sortMoved - labelMoved) < 0.01f,
+                sortMoved.ToString("0.000") + " / " + labelMoved.ToString("0.000"));
+
+            BuildSortOrder scrolledBefore = build.SortOrder;
+            Report("스크롤을 내린 뒤에도 정렬 칸을 누르면 기준이 바뀐다",
+                ClickSort(sortButton) && build.SortOrder != scrolledBefore, build.SortOrder.ToString());
+
+            build.SetSortOrder(original);
+            scroll.content.anchoredPosition = new Vector2(scroll.content.anchoredPosition.x, startY);
+        }
+
+        /// <summary>스크롤 창 안에서 그 칸의 세로 자리. 내용이 움직이면 함께 바뀐다.</summary>
+        private static float YInViewport(ScrollRect scroll, RectTransform rect)
+        {
+            return scroll.viewport.InverseTransformPoint(rect.position).y;
+        }
+
+        /// <summary>
+        /// 정렬 칸 가운데에 레이캐스트를 쏴 맨 위에서 받는 것이 정렬 버튼이면 누른다.
+        /// 다른 것이 받으면 누르지 않고 무엇이 가렸는지 남긴다.
+        /// </summary>
+        private static bool ClickSort(Button sortButton)
+        {
+            GameObject hit = TopHitAt((RectTransform)sortButton.transform);
+            GameObject handler = hit != null ? ExecuteEvents.GetEventHandler<IPointerClickHandler>(hit) : null;
+
+            if (handler != sortButton.gameObject)
+            {
+                Debug.LogWarning("  정렬  칸 가운데를 누르면 "
+                    + (hit != null ? PathOf(hit) : "빈 곳") + " 이 받는다");
+                return false;
+            }
+
+            ExecuteEvents.Execute(handler, new PointerEventData(EventSystem.current), ExecuteEvents.pointerClickHandler);
+            return true;
+        }
+
         private static void CheckRewardSelection(RewardScreenController reward, string title)
         {
             RewardScreenView view = GetField<RewardScreenView>(reward, "_view");
@@ -2645,6 +3194,20 @@ namespace SlotHero.ToolsEditor
             // 버튼에 귀가 달리지 않는다. 플레이 모드에서는 유니티가 부른다.
             AwakenNew();
 
+            // 보상 화면을 여러 번 열어도 실제로 놓인 카드는 이번 카드뿐이어야 한다.
+            // 예전에는 편집 모드에서 옛 카드가 지워지지 않고 겹쳐 남았다(2026년 10월 22일 코덱스 검토).
+            RectTransform cardLayer = GetField<RectTransform>(view, "_cardLayer");
+            int placed = 0;
+            if (cardLayer != null)
+            {
+                RewardCardView[] children = cardLayer.GetComponentsInChildren<RewardCardView>(false);
+                placed = children.Length;
+            }
+
+            Report(title + " 놓인 카드 수가 이번 보상 카드 수와 같다", placed == view.Cards.Count,
+                placed + " / " + view.Cards.Count);
+
+            CheckRewardSymbolFrames(title, view);
             CheckItemDetailHover(title + " 보상 카드", view.Cards[0], true);
 
             Report(title + " 처음에는 고른 것이 없다", reward.SelectedCard == null);
@@ -2688,6 +3251,63 @@ namespace SlotHero.ToolsEditor
         }
 
         /// <summary>보상 카드의 진짜 버튼을 누른다.</summary>
+        /// <summary>
+        /// 보상의 문양 카드마다 흑요석 판이 깔리고 테두리와 문양 그림이 판 안쪽에 들어가는지(2026년 10월 20일 원재).
+        /// 코인과 유물 카드에는 판이 없어야 한다.
+        /// </summary>
+        private static void CheckRewardSymbolFrames(string title, RewardScreenView view)
+        {
+            CurrentBuildVisualConfig tagVisual = GetField<CurrentBuildVisualConfig>(view, "_buildVisual");
+            if (tagVisual == null)
+            {
+                Report(title + " 보상 화면에 태그 표시 설정이 물려 있다", false);
+                return;
+            }
+
+            int symbols = 0;
+            int wrong = 0;
+            int itemsWithPlate = 0;
+
+            for (int i = 0; i < view.Cards.Count; i++)
+            {
+                RewardCardView card = view.Cards[i];
+                TagCorners corners = GetField<TagCorners>(card, "_tagCorners");
+
+                if (card.Card != null && card.Card.HasTags)
+                {
+                    symbols++;
+                    Sprite topRight;
+                    Sprite bottomLeft;
+                    tagVisual.GetTagCorners(card.Card.FirstTag, card.Card.SecondTag, out topRight, out bottomLeft);
+                    if (corners == null || corners.Plate == null
+                        || corners.Plate != tagVisual.GetSymbolPlate(card.Card.Id)
+                        || topRight == null || bottomLeft == null
+                        || corners.TopRight != topRight || corners.BottomLeft != bottomLeft
+                        || !FramedInside(corners, tagVisual.SymbolFrameInset))
+                    {
+                        wrong++;
+                        Debug.LogWarning("  보상 문양 판  " + card.Card.Id + " 의 판이나 테두리 자리가 맞지 않다");
+                    }
+                }
+                else if (corners != null && corners.Plate != null)
+                {
+                    itemsWithPlate++;
+                }
+            }
+
+            // 보상은 무작위라 문양 카드가 없을 수 있다. 없으면 건너뛰었다고 남겨 통과로 보이지 않게 한다.
+            if (symbols > 0)
+            {
+                Report(title + " 보상 문양 카드마다 판이 깔리고 두 태그 테두리와 그림이 판 안쪽에 들어간다", wrong, 0);
+            }
+            else
+            {
+                Debug.Log("  보상 문양 판  " + title + " 보상에 문양 카드가 없어 판 검사를 건너뛰었다");
+            }
+
+            Report(title + " 보상의 코인과 유물 카드에는 흑요석 판이 없다", itemsWithPlate, 0);
+        }
+
         private static void PressCard(RewardCardView card)
         {
             Button button = GetField<Button>(card, "_button");
@@ -2869,6 +3489,16 @@ namespace SlotHero.ToolsEditor
             config.Events.Clear();
             config.Events.Add(challenger);
 
+            // 같은 런에서 만난 이벤트는 다시 나오지 않는다(`SeenEventIds`). 검사 런의 시드는 시계에서 뽑아
+            // 앞선 이벤트 방에서 도전자를 먼저 만나면 이 방이 이벤트 없이 끝났다. 검사 동안만 만난 목록에서 뺀다.
+            // 2026년 10월 18일 검토에서 실행마다 결과가 갈려 찾았다.
+            if (save.Run.SeenEventIds == null)
+            {
+                save.Run.SeenEventIds = new List<string>();
+            }
+
+            bool challengerSeen = save.Run.SeenEventIds.Remove("challenger");
+
             try
             {
                 Invoke(flow, "EnterRoom", node);
@@ -2962,6 +3592,12 @@ namespace SlotHero.ToolsEditor
             {
                 config.Events.Clear();
                 config.Events.AddRange(kept);
+
+                if (challengerSeen && save.Run != null && save.Run.SeenEventIds != null
+                    && !save.Run.SeenEventIds.Contains("challenger"))
+                {
+                    save.Run.SeenEventIds.Add("challenger");
+                }
             }
         }
 
@@ -3295,6 +3931,14 @@ namespace SlotHero.ToolsEditor
             CurrentBuildScreenController build = Object.FindAnyObjectByType<CurrentBuildScreenController>();
             Report("맵에서 현재 빌드를 열면 지도 버튼이 켜진다", MapButtonUsable(flow, mapButton));
 
+            // 켜진 것만 보면 안 된다. 실제 커서가 버튼에 닿아야 한다. 현재 빌드의 어둠 막이 표시줄을 덮어
+            // 지도 버튼이 눌리지 않았다(2026년 10월 25일 코덱스 검토). 상단 표시줄 위에는 설정과 팝업만 둔다.
+            GameObject mapHit = TopHitAt((RectTransform)mapButton.transform);
+            GameObject mapHandler = mapHit != null ? ExecuteEvents.GetEventHandler<IPointerClickHandler>(mapHit) : null;
+            Report("현재 빌드 위에서도 지도 버튼에 커서가 닿는다",
+                mapHandler != null && mapHandler.transform.IsChildOf(mapButton.transform),
+                mapHit != null ? mapHit.name : "없음");
+
             BuildSlotView filled = null;
             BuildSlotView[] buildSlots = Object.FindObjectsByType<BuildSlotView>();
             for (int i = 0; i < buildSlots.Length; i++)
@@ -3313,12 +3957,503 @@ namespace SlotHero.ToolsEditor
             }
 
             CheckBuildScroll(buildSlots);
+            CheckBuildSortButton(build);
+            CheckTagCorners(buildSlots, GetField<CurrentBuildVisualConfig>(flow, "_buildVisual"));
+            CheckStageIcons();
+            CheckTopBarTrim();
 
             PressMapButton(mapButton);
             Report("맵에서 지도를 누르면 현재 빌드만 닫힌다",
                 (build == null || !build.IsOpen) && map.IsOpen && !flow.IsMapPeeking
                 && flow.Screen == GameScreen.Map);
             Report("현재 빌드를 닫으면 지도 버튼이 다시 꺼진다", !MapButtonUsable(flow, mapButton));
+        }
+
+        // ---- 실제 마우스 길 ----
+        //
+        // 다른 검사는 버튼의 `onClick` 이나 칸의 사건 함수를 직접 불러, 커서가 그 칸에 닿는지는 보지 못한다.
+        // 여기서는 화면을 1920 × 1080 그림판에 한 번 그려 그림의 앞뒤 차례를 정한 뒤
+        // 그 칸 가운데에 레이캐스트를 쏴 맨 위에서 맞은 그림을 받는다. 플레이 모드의 마우스와 같은 길이다.
+        // 그 칸이 속한 캔버스만 본다. 다른 캔버스가 위를 덮는지는 따로 보지 않는다. 2026년 10월 18일 검토에서 더했다.
+
+        /// <summary>타이틀 메뉴 항목마다 가운데를 누르면 그 항목이 받는지.</summary>
+        private static void ProbeTitleMenu()
+        {
+            TitleMenuItemView[] items = Object.FindObjectsByType<TitleMenuItemView>(FindObjectsInactive.Exclude);
+            Report("타이틀 메뉴 항목이 보인다", items.Length > 0, items.Length);
+
+            int missed = 0;
+            for (int i = 0; i < items.Length; i++)
+            {
+                GameObject hit = TopHitAt((RectTransform)items[i].transform);
+                GameObject handler = hit != null ? ExecuteEvents.GetEventHandler<IPointerClickHandler>(hit) : null;
+
+                if (handler != items[i].gameObject)
+                {
+                    missed++;
+                    Debug.LogWarning("  마우스  " + PathOf(items[i].gameObject) + " 를 누르면 "
+                        + (hit != null ? PathOf(hit) : "빈 곳") + " 이 받는다");
+                }
+            }
+
+            Report("타이틀 메뉴는 항목 가운데를 누르면 그 항목이 받는다", missed, 0);
+        }
+
+        /// <summary>프로필 카드에 실제로 커서를 올리면 5퍼센트만 커지는지. 예전에는 두 겹으로 10퍼센트 가까이 커졌다.</summary>
+        private static void ProbeProfileCardHover()
+        {
+            ProfileCardView[] cards = Object.FindObjectsByType<ProfileCardView>(FindObjectsInactive.Exclude);
+            Image background = cards.Length > 0 ? GetField<Image>(cards[0], "_background") : null;
+
+            if (background == null)
+            {
+                Report("커서를 올려 볼 프로필 카드가 있다", false);
+                return;
+            }
+
+            float grown = HoverGrowth(background.rectTransform, background.rectTransform);
+            Report("프로필 카드에 실제로 커서를 올리면 5퍼센트만 커진다",
+                grown > 1.045f && grown < 1.055f, grown.ToString("0.000"));
+        }
+
+        /// <summary>경로에 그 이름이 든 켜진 스크롤 창마다 휠을 본다. 적어도 count 개는 있어야 한다.</summary>
+        private static void ProbeWheelsUnder(string where, string pathPart, int count)
+        {
+            ScrollRect[] scrolls = Object.FindObjectsByType<ScrollRect>(FindObjectsInactive.Exclude);
+            int found = 0;
+
+            for (int i = 0; i < scrolls.Length; i++)
+            {
+                if (PathOf(scrolls[i].gameObject).Contains(pathPart))
+                {
+                    found++;
+                    ProbeWheel(where + " " + found, scrolls[i]);
+                    CheckScrollBarByContent(where + " " + found, scrolls[i]);
+                }
+            }
+
+            Report(where + " 스크롤 창이 " + count + "개 이상 보인다", found >= count, found);
+        }
+
+        /// <summary>
+        /// 본문이 최대 높이를 넘는 팝업이 본문 칸 안에서만 스크롤되는지.
+        /// 예전에는 스크롤 창을 글 높이만큼 늘려 글이 칸 아래 버튼 위로 넘쳤다(2026년 10월 22일).
+        /// </summary>
+        private static void CheckLongPopupScrolls(PopupPresenter popup)
+        {
+            System.Text.StringBuilder body = new System.Text.StringBuilder();
+            for (int i = 1; i <= 30; i++)
+            {
+                body.Append(i).Append("번째 줄. 본문이 길면 칸 안에서만 굴러가야 한다.\n");
+            }
+
+            popup.Show(PopupSpec.Notice("검사용 긴 본문", body.ToString(), "확인"));
+            AwakenNew();
+            Canvas.ForceUpdateCanvases();
+
+            PopupView view = GetField<PopupView>(popup, "_view");
+            Image bodyPanel = view != null ? GetField<Image>(view, "_bodyPanel") : null;
+            ScrollRect scroll = view != null ? GetField<ScrollRect>(view, "_bodyScroll") : null;
+
+            if (bodyPanel == null || scroll == null)
+            {
+                Report("긴 팝업의 본문 칸과 스크롤이 있다", false);
+                popup.Dismiss();
+                return;
+            }
+
+            Rect panel = WorldRect(bodyPanel.rectTransform);
+            Rect window = WorldRect(scroll.viewport);
+            Report("긴 팝업은 스크롤 창이 본문 칸 안에 있다",
+                window.yMin >= panel.yMin - 0.01f && window.yMax <= panel.yMax + 0.01f,
+                Mathf.RoundToInt(window.height / UiScale.Factor) + " / " + Mathf.RoundToInt(panel.height / UiScale.Factor));
+            Report("긴 팝업은 본문 글이 창보다 길어 스크롤된다",
+                scroll.content.rect.height > scroll.viewport.rect.height + 1f,
+                Mathf.RoundToInt(scroll.content.rect.height / UiScale.Factor));
+
+            CheckScrollBar("긴 팝업 본문", scroll, true);
+
+            // 겹침 검사가 본문 글을 실제로 보는지. 글 폭을 창 전체로 늘리면 바와 겹쳐 걸려야 한다.
+            Vector2 labelSize = scroll.content.sizeDelta;
+            scroll.content.sizeDelta = new Vector2(0f, labelSize.y);
+            Canvas.ForceUpdateCanvases();
+            int widened = CountBarOverlaps("검사용으로 넓힌 팝업 본문", scroll);
+            scroll.content.sizeDelta = labelSize;
+            Canvas.ForceUpdateCanvases();
+            Report("본문 글을 바까지 넓히면 겹침 검사가 잡는다", widened > 0, widened);
+
+            float before = scroll.content.anchoredPosition.y;
+            PointerEventData wheel = new PointerEventData(EventSystem.current);
+            wheel.scrollDelta = new Vector2(0f, -1f);
+            ExecuteEvents.ExecuteHierarchy(scroll.viewport.gameObject, wheel, ExecuteEvents.scrollHandler);
+            Report("긴 팝업 본문은 휠로 내려간다", scroll.content.anchoredPosition.y > before + 1f,
+                Mathf.RoundToInt((scroll.content.anchoredPosition.y - before) / UiScale.Factor));
+
+            scroll.content.anchoredPosition = new Vector2(scroll.content.anchoredPosition.x, before);
+            CapturePreviewScenes.CaptureOpenScene("게임 긴 팝업");
+            popup.Dismiss();
+        }
+
+        /// <summary>
+        /// 스크롤 창의 오른쪽 스크롤 바를 본다. 스크롤할 분량이 있으면 바가 있어야 한다(2026년 10월 22일 원재).
+        /// 내용이 창보다 길 때만 보이는지, 창 오른쪽 안쪽에 서는지, 내용 칸과 겹치지 않는지 본다.
+        /// </summary>
+        private static void CheckScrollBar(string where, ScrollRect scroll, bool expectShown)
+        {
+            if (scroll == null || scroll.verticalScrollbar == null)
+            {
+                Report(where + " 스크롤에 바가 달려 있다", false);
+                return;
+            }
+
+            Canvas.ForceUpdateCanvases();
+            ScrollBarVisibility visibility = scroll.GetComponentInChildren<ScrollBarVisibility>(true);
+            if (visibility == null)
+            {
+                visibility = scroll.GetComponent<ScrollBarVisibility>();
+            }
+
+            Report(where + " 스크롤 바를 켜고 끄는 것이 붙어 있다", visibility != null);
+            if (visibility == null)
+            {
+                return;
+            }
+
+            visibility.Refresh();
+            Report(where + (expectShown ? " 은 스크롤 바가 보인다" : " 은 스크롤할 것이 없어 스크롤 바가 숨는다"),
+                visibility.IsShowing == expectShown, visibility.IsShowing ? "보임" : "숨음");
+
+            if (!visibility.IsShowing)
+            {
+                return;
+            }
+
+            RectTransform viewport = scroll.viewport != null ? scroll.viewport : (RectTransform)scroll.transform;
+            Rect bar = WorldRect((RectTransform)scroll.verticalScrollbar.transform);
+            Rect window = WorldRect(viewport);
+            Report(where + " 스크롤 바가 창 오른쪽 안쪽에 선다",
+                bar.xMax <= window.xMax + 0.01f && bar.xMin > window.center.x,
+                Mathf.RoundToInt((window.xMax - bar.xMax) / UiScale.Factor));
+
+            Report(where + " 스크롤 바가 내용과 겹치지 않는다", CountBarOverlaps(where, scroll), 0);
+        }
+
+        /// <summary>
+        /// 내용 칸 가운데 보이는 그림과 글이 바와 가로로 겹치는 수. 스크롤하면 세로는 어디서든 만나므로 가로만 본다.
+        ///
+        /// **내용 자체가 글이면 그 글도 본다.** 팝업과 런 결과는 굴러가는 내용이 본문 글 하나다.
+        /// 예전에는 내용 자체를 늘 빼 그 글이 바와 겹쳐도 0 이 나왔다(2026년 10월 25일 코덱스 검토).
+        /// 내용 자체가 그림이면 칸 전체를 받치는 바탕이라 뺀다.
+        /// </summary>
+        private static int CountBarOverlaps(string where, ScrollRect scroll)
+        {
+            if (scroll == null || scroll.content == null || scroll.verticalScrollbar == null)
+            {
+                return 0;
+            }
+
+            Rect bar = WorldRect((RectTransform)scroll.verticalScrollbar.transform);
+            Graphic[] graphics = scroll.content.GetComponentsInChildren<Graphic>(false);
+            int overlapping = 0;
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                Graphic graphic = graphics[i];
+                if (!graphic.enabled || graphic.color.a <= 0.001f)
+                {
+                    continue;
+                }
+
+                if (graphic.rectTransform == scroll.content && !(graphic is TMP_Text))
+                {
+                    continue;
+                }
+
+                Rect rect = WorldRect(graphic.rectTransform);
+                if (rect.xMax > bar.xMin + 0.01f && rect.xMin < bar.xMax - 0.01f)
+                {
+                    overlapping++;
+                    Debug.LogWarning("  스크롤 바  " + where + " 의 " + PathOf(graphic.gameObject) + " 가 바와 겹친다");
+                }
+            }
+
+            return overlapping;
+        }
+
+        /// <summary>
+        /// 칸을 감췄다 다시 켜면 그림자도 돌아오는지.
+        /// 예전에는 그림자가 자기 오브젝트를 꺼 버려 다시 켜지지 않았다. 코인 고르기에서 정렬 칸을 감춘 뒤
+        /// 문양 고르기를 열면 정렬 칸 그림자가 없었다(2026년 10월 22일 코덱스 검토).
+        /// </summary>
+        private static void CheckShadowComesBack(Image panel)
+        {
+            ShadowFollower shadow = null;
+            ShadowFollower[] all = Object.FindObjectsByType<ShadowFollower>(FindObjectsInactive.Include);
+            for (int i = 0; panel != null && i < all.Length; i++)
+            {
+                if (all[i].Target == panel.rectTransform)
+                {
+                    shadow = all[i];
+                    break;
+                }
+            }
+
+            Report("정렬 칸에 그림자가 붙어 있다", shadow != null);
+            if (shadow == null)
+            {
+                return;
+            }
+
+            Graphic graphic = shadow.GetComponent<Graphic>();
+            panel.gameObject.SetActive(false);
+            shadow.Follow();
+            bool hidden = graphic != null && !graphic.enabled;
+            panel.gameObject.SetActive(true);
+            shadow.Follow();
+
+            Report("칸을 감추면 그림자도 감춰진다", hidden);
+            Report("칸을 다시 켜면 그림자도 돌아온다",
+                shadow.gameObject.activeSelf && graphic != null && graphic.enabled);
+        }
+
+        /// <summary>내용이 창보다 길면 바가 보이고 아니면 숨는지. 분량이 화면마다 달라 내용 높이로 기대값을 정한다.</summary>
+        private static void CheckScrollBarByContent(string where, ScrollRect scroll)
+        {
+            if (scroll == null)
+            {
+                return;
+            }
+
+            Canvas.ForceUpdateCanvases();
+            RectTransform viewport = scroll.viewport != null ? scroll.viewport : (RectTransform)scroll.transform;
+            bool overflows = scroll.vertical && scroll.content != null
+                && scroll.content.rect.height > viewport.rect.height + 0.5f;
+            CheckScrollBar(where, scroll, overflows);
+        }
+
+        /// <summary>그 칸이 화면에서 차지하는 사각형. 회전이 없는 UI 라 네 모서리 중 둘로 충분하다.</summary>
+        private static Rect WorldRect(RectTransform rect)
+        {
+            Vector3[] corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            return Rect.MinMaxRect(corners[0].x, corners[0].y, corners[2].x, corners[2].y);
+        }
+
+        /// <summary>스크롤 창 가운데에서 휠을 굴리면 그 창이 받는지. 글자 위가 아니어도 받아야 한다.</summary>
+        private static void ProbeWheel(string where, ScrollRect scroll)
+        {
+            if (scroll == null || !scroll.gameObject.activeInHierarchy)
+            {
+                Report(where + " 스크롤 창이 켜져 있다", false);
+                return;
+            }
+
+            RectTransform area = scroll.viewport != null ? scroll.viewport : (RectTransform)scroll.transform;
+            GameObject hit = TopHitAt(area);
+            GameObject handler = hit != null ? ExecuteEvents.GetEventHandler<IScrollHandler>(hit) : null;
+
+            Report(where + " 가운데에서 굴린 휠을 스크롤 창이 받는다",
+                handler == scroll.gameObject, hit != null ? PathOf(hit) : "빈 곳");
+        }
+
+        /// <summary>
+        /// 커서가 probe 가운데에 올라갔을 때 measure 의 폭이 몇 배가 되는지. 맞은 것이 없으면 -1 이다.
+        /// 플레이 모드처럼 맞은 그림과 그 위의 부모 모두에 들어옴과 나감을 보낸다.
+        /// </summary>
+        private static float HoverGrowth(RectTransform probe, RectTransform measure)
+        {
+            GameObject hit = TopHitAt(probe);
+            if (hit == null)
+            {
+                return -1f;
+            }
+
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            float before = WorldWidth(measure);
+
+            for (Transform t = hit.transform; t != null; t = t.parent)
+            {
+                ExecuteEvents.Execute(t.gameObject, pointer, ExecuteEvents.pointerEnterHandler);
+            }
+
+            float after = WorldWidth(measure);
+
+            for (Transform t = hit.transform; t != null; t = t.parent)
+            {
+                ExecuteEvents.Execute(t.gameObject, pointer, ExecuteEvents.pointerExitHandler);
+            }
+
+            return before > 0f ? after / before : -1f;
+        }
+
+        private static float WorldWidth(RectTransform rect)
+        {
+            Vector3[] corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            return (corners[3] - corners[0]).magnitude;
+        }
+
+        /// <summary>그 칸 가운데에서 맨 위에 맞는 그림. 화면을 한 번 그려 앞뒤 차례를 정한 뒤 쏜다. 맞은 것이 없으면 null 이다.</summary>
+        private static GameObject TopHitAt(RectTransform target)
+        {
+            Canvas canvas = target.GetComponentInParent<Canvas>();
+            canvas = canvas != null ? canvas.rootCanvas : null;
+            GraphicRaycaster raycaster = canvas != null ? canvas.GetComponent<GraphicRaycaster>() : null;
+            Camera camera = FindDrawingCamera();
+
+            if (raycaster == null || camera == null)
+            {
+                return null;
+            }
+
+            // 화면을 덮는 캔버스는 카메라에 잡히지 않으므로 그림 뽑기처럼 잠깐 카메라에 물린다.
+            RenderMode mode = canvas.renderMode;
+            Camera previousCamera = canvas.worldCamera;
+            if (mode == RenderMode.ScreenSpaceOverlay)
+            {
+                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                canvas.worldCamera = camera;
+            }
+
+            Camera eventCamera = canvas.worldCamera != null ? canvas.worldCamera : camera;
+            RenderTexture texture = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
+            eventCamera.targetTexture = texture;
+
+            CameraFrame frame = eventCamera.GetComponent<CameraFrame>();
+            if (frame != null)
+            {
+                frame.Apply();
+            }
+
+            Canvas.ForceUpdateCanvases();
+            eventCamera.Render();
+
+            Vector3 world = target.TransformPoint(target.rect.center);
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            pointer.position = RectTransformUtility.WorldToScreenPoint(eventCamera, world);
+
+            List<RaycastResult> hits = new List<RaycastResult>();
+            raycaster.Raycast(pointer, hits);
+
+            eventCamera.targetTexture = null;
+            canvas.renderMode = mode;
+            canvas.worldCamera = previousCamera;
+            texture.Release();
+            Object.DestroyImmediate(texture);
+
+            return hits.Count > 0 ? hits[0].gameObject : null;
+        }
+
+        /// <summary>씬에서 그리는 카메라. 띠를 지우기만 하는 뒤 카메라는 건너뛴다. 그림 뽑기와 같은 기준이다.</summary>
+        private static Camera FindDrawingCamera()
+        {
+            Camera[] cameras = Object.FindObjectsByType<Camera>();
+            Camera best = null;
+
+            for (int i = 0; i < cameras.Length; i++)
+            {
+                if (cameras[i].cullingMask != 0 && (best == null || cameras[i].depth > best.depth))
+                {
+                    best = cameras[i];
+                }
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// 누르거나 올려 보는 칸마다 글자가 아닌 그림이 커서를 받는지, 글자는 커서를 받지 않는지.
+        ///
+        /// 2026년 10월 18일에 글자의 `raycastTarget` 기본을 껐다(uGUI 규칙).
+        /// 글자로만 눌리던 칸은 그대로 두면 더 눌리지 않는다. 타이틀 메뉴 항목이 그래서 투명한 누름 칸을 붙였다.
+        /// 커서 사건은 부모로 올라가므로 칸 자신이나 그 아래에 커서를 받는 그림이 하나 있으면 된다.
+        /// 씬의 칸과 프리팹을 함께 본다. 열 때 찍어 내는 칸은 씬에 아직 없기 때문이다.
+        /// </summary>
+        private static void CheckHitAreas()
+        {
+            List<GameObject> roots = new List<GameObject>(SceneManager.GetActiveScene().GetRootGameObjects());
+
+            string[] prefabIds = AssetDatabase.FindAssets("t:Prefab", new[] { UiSceneBuilder.PrefabFolder });
+            for (int i = 0; i < prefabIds.Length; i++)
+            {
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(prefabIds[i]));
+                if (prefab != null)
+                {
+                    roots.Add(prefab);
+                }
+            }
+
+            int handlers = 0;
+            int blind = 0;
+            int textHits = 0;
+
+            for (int r = 0; r < roots.Count; r++)
+            {
+                MonoBehaviour[] behaviours = roots[r].GetComponentsInChildren<MonoBehaviour>(true);
+                for (int i = 0; i < behaviours.Length; i++)
+                {
+                    MonoBehaviour behaviour = behaviours[i];
+                    if (behaviour == null || behaviour is Graphic || !TakesPointer(behaviour))
+                    {
+                        continue;
+                    }
+
+                    // 고를 수 없는 지도 노드는 일부러 커서를 받지 않는다. 커진 이웃 노드의 가장자리를 가로채지 않게 했다
+                    // (2026년 10월 22일 코덱스 검토). 고를 수 있는 노드는 그대로 본다.
+                    MapNodeView mapNode = behaviour.GetComponent<MapNodeView>();
+                    if (mapNode != null && mapNode.Node != null && mapNode.State != MapNodeDisplayState.Selectable)
+                    {
+                        continue;
+                    }
+
+                    handlers++;
+
+                    if (!HasHitGraphic(behaviour.gameObject))
+                    {
+                        blind++;
+                        Debug.LogWarning("  누름 칸  " + PathOf(behaviour.gameObject) + " (" + behaviour.GetType().Name
+                            + ") 에 커서를 받는 그림이 빠졌다");
+                    }
+                }
+
+                TMP_Text[] texts = roots[r].GetComponentsInChildren<TMP_Text>(true);
+                for (int i = 0; i < texts.Length; i++)
+                {
+                    if (texts[i].raycastTarget)
+                    {
+                        textHits++;
+                        Debug.LogWarning("  글자  " + PathOf(texts[i].gameObject) + " 가 커서를 받는다");
+                    }
+                }
+            }
+
+            Report("누르거나 올려 보는 칸을 찾았다", handlers > 0, handlers);
+            Report("누르는 칸마다 글자가 아닌 그림이 커서를 받는다", blind, 0);
+            Report("글자는 커서를 받지 않는다", textHits, 0);
+        }
+
+        /// <summary>커서를 받아 무언가 하는 칸인지. 누르기, 올리기, 휠이다.</summary>
+        private static bool TakesPointer(MonoBehaviour behaviour)
+        {
+            return behaviour is Selectable
+                || behaviour is IPointerEnterHandler
+                || behaviour is IPointerClickHandler
+                || behaviour is IPointerDownHandler
+                || behaviour is IScrollHandler;
+        }
+
+        /// <summary>그 칸이나 그 아래에 커서를 받는 그림이 있는지. 글자는 세지 않는다.</summary>
+        private static bool HasHitGraphic(GameObject go)
+        {
+            Graphic[] graphics = go.GetComponentsInChildren<Graphic>(true);
+            for (int i = 0; i < graphics.Length; i++)
+            {
+                if (graphics[i].raycastTarget && !(graphics[i] is TMP_Text))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -3371,8 +4506,9 @@ namespace SlotHero.ToolsEditor
             Report("호버 확대가 1보다 큰 값으로 들어 있다", flat, 0);
             Report("호버 확대가 버튼마다 붙어 있다", scales.Length > 0, scales.Length);
 
-            // 누를 때 그림을 바꾸는 버튼은 스킨 칸이어야 한다.
+            // 누를 때 그림을 바꾸는 버튼은 베이지 버튼 스킨이어야 한다.
             // 그림 자체가 버튼인 칸이 눌림 그림으로 바뀌면 누르는 동안 상자가 나온다. 성소의 모닥불과 행상인이 그랬다.
+            // 어두운 칸 그림이 베이지 눌림 그림으로 바뀌면 크림색 글자가 읽히지 않는다(2026년 10월 21일).
             int boxed = 0;
             for (int i = 0; i < buttons.Length; i++)
             {
@@ -3383,7 +4519,7 @@ namespace SlotHero.ToolsEditor
                 }
 
                 Image target = button.targetGraphic as Image;
-                if (target != null && UiSceneBuilder.IsSkinSprite(target.sprite))
+                if (target != null && UiSceneBuilder.IsButtonSkinSprite(target.sprite))
                 {
                     continue;
                 }
@@ -3545,6 +4681,112 @@ namespace SlotHero.ToolsEditor
 
             tooltip.Hide();
             Report("풍선이 사라진다", !root.gameObject.activeInHierarchy);
+        }
+
+        /// <summary>
+        /// 상단 표시줄의 장식 띠가 64 영역 바깥 아래에 붙어 있고, 아이콘이 64 안에 들어가는지.
+        /// 띠가 64 안에 있어 아이콘과 숫자가 띠를 넘고 가운데에서 어긋나 보인다고 2026년 10월 20일 원재가 짚었다.
+        /// </summary>
+        private static void CheckTopBarTrim()
+        {
+            TopBarView view = Object.FindAnyObjectByType<TopBarView>(FindObjectsInactive.Include);
+            if (view == null)
+            {
+                Report("상단 표시줄이 있다", false);
+                return;
+            }
+
+            RectTransform bar = (RectTransform)view.transform;
+            Image trim = GetField<Image>(view, "_bottomTrim");
+            Report("표시줄 장식 띠 그림이 물려 있다", trim != null && trim.sprite != null && trim.enabled);
+            if (trim == null)
+            {
+                return;
+            }
+
+            Vector3[] barCorners = new Vector3[4];
+            Vector3[] trimCorners = new Vector3[4];
+            bar.GetWorldCorners(barCorners);
+            trim.rectTransform.GetWorldCorners(trimCorners);
+
+            // 띠의 윗변이 표시줄의 아랫변과 같은 높이다. 띠는 그 아래로만 내려간다.
+            Report("장식 띠가 표시줄 64 바깥 아래에 붙는다",
+                Mathf.Abs(trimCorners[1].y - barCorners[0].y) < 0.01f && trimCorners[0].y < barCorners[0].y);
+
+            // 표시줄 안의 보이는 그림이 모두 64 안에 드는지 본다. 바탕과 장식 띠만 뺀다(2026년 10월 21일 코덱스 검토).
+            int icons = 0;
+            int outside = 0;
+            Image background = GetField<Image>(view, "_background");
+            Image[] images = view.GetComponentsInChildren<Image>(false);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == trim || image == background || !image.enabled || image.sprite == null)
+                {
+                    continue;
+                }
+
+                // 호버 풍선은 표시줄 아래로 내려오는 것이 맞다.
+                if (image.GetComponentInParent<TopBarTooltip>() != null)
+                {
+                    continue;
+                }
+
+                icons++;
+                Vector3[] c = new Vector3[4];
+                image.rectTransform.GetWorldCorners(c);
+                if (c[0].y < barCorners[0].y - 0.01f || c[1].y > barCorners[1].y + 0.01f)
+                {
+                    outside++;
+                    Debug.LogWarning("  상단 표시줄  " + PathOf(image.gameObject) + " 가 64 밖으로 나간다");
+                }
+            }
+
+            Report("상단 표시줄에 보이는 아이콘이 있다", icons > 0, icons);
+            Report("상단 표시줄의 아이콘이 모두 64 안에 들어간다", outside, 0);
+        }
+
+        /// <summary>
+        /// 스테이지 아이콘 다섯이 물려 있고 스테이지마다 다른 그림인지.
+        /// 1 제국(깃발), 2 신전, 3 바다, 4 사막, 5 유적이다(2026년 10월 20일 원재).
+        /// </summary>
+        private static void CheckStageIcons()
+        {
+            TopBarController controller = Object.FindAnyObjectByType<TopBarController>(FindObjectsInactive.Include);
+            if (controller == null)
+            {
+                Report("상단 표시줄 조종기가 있다", false);
+                return;
+            }
+
+            Sprite flag = GetField<Sprite>(controller, "_stageIcon");
+            Report("1스테이지 아이콘은 제국 깃발이다", controller.GetStageIcon(1) == flag && flag != null);
+
+            HashSet<Sprite> distinct = new HashSet<Sprite>();
+            for (int stage = 1; stage <= 5; stage++)
+            {
+                Sprite icon = controller.GetStageIcon(stage);
+                if (icon != null)
+                {
+                    distinct.Add(icon);
+                }
+            }
+
+            Report("스테이지 다섯이 서로 다른 아이콘을 쓴다", distinct.Count, 5);
+
+            // 순서까지 본다. 2 ~ 5 스테이지는 `아이콘_스테이지_<번호>` 그림이어야 한다(2026년 10월 21일 코덱스 검토).
+            int misplaced = 0;
+            for (int stage = 2; stage <= 5; stage++)
+            {
+                Sprite icon = controller.GetStageIcon(stage);
+                if (icon == null || icon.name != "아이콘_스테이지_" + stage)
+                {
+                    misplaced++;
+                    Debug.LogWarning("  스테이지 아이콘  " + stage + "스테이지에 " + (icon != null ? icon.name : "그림 없음"));
+                }
+            }
+
+            Report("스테이지 2 ~ 5 가 제 번호의 아이콘을 쓴다", misplaced, 0);
         }
 
         /// <summary>
@@ -3788,8 +5030,29 @@ namespace SlotHero.ToolsEditor
             Canvas.ForceUpdateCanvases();
             Report("08 문양 서른여섯은 스크롤로 본다",
                 scroll != null && scroll.content.rect.height > scroll.viewport.rect.height + 1f);
+            CheckScrollBar("08 고르기 화면", scroll, true);
+            CheckShadowComesBack(GetField<Image>(view, "_sortPanel"));
 
             List<BuildSlotView> slots = view.GetShownSlots();
+
+            // 아래로 내려 마지막 칸을 골라도 보던 자리가 그대로여야 한다.
+            // 예전에는 고를 때마다 맨 위로 돌아가 고른 칸이 화면 밖으로 사라졌다(2026년 10월 22일 코덱스 검토).
+            if (scroll != null && slots.Count > 0)
+            {
+                float lowest = scroll.content.rect.height - scroll.viewport.rect.height;
+                scroll.content.anchoredPosition = new Vector2(scroll.content.anchoredPosition.x, lowest);
+                slots[slots.Count - 1].Press();
+                Report("고르기 화면에서 아래 칸을 골라도 스크롤이 그대로다",
+                    Mathf.Abs(scroll.content.anchoredPosition.y - lowest) < 0.5f,
+                    Mathf.RoundToInt(scroll.content.anchoredPosition.y / UiScale.Factor));
+
+                picker.Open(request, null);
+                Report("고르기 화면을 새로 열면 맨 위에서 시작한다",
+                    Mathf.Abs(scroll.content.anchoredPosition.y) < 0.5f,
+                    Mathf.RoundToInt(scroll.content.anchoredPosition.y / UiScale.Factor));
+                slots = view.GetShownSlots();
+            }
+
             if (slots.Count > 0)
             {
                 slots[0].Press();
@@ -3902,7 +5165,8 @@ namespace SlotHero.ToolsEditor
         /// <summary>
         /// 이벤트 삽화가 붙는지.
         ///
-        /// 02 ~ 06 다섯 이벤트에 임시 그림이 있다. 각본이 코드에서 다시 지어져
+        /// 02 ~ 06 다섯 이벤트는 원재가 준 임시 그림, 나머지는 2026년 10월 19일 코덱스로 만든 임시 그림이다.
+        /// 모든 이벤트의 화면마다 삽화가 붙는지 본다. 각본이 코드에서 다시 지어져
         /// 이벤트 목록 에셋에 들어갔는지도 함께 본다. 예전에는 처음 한 번만 만들어 옛 각본이 남았다.
         /// </summary>
         private static void CheckEventIllustrations(
@@ -3916,20 +5180,18 @@ namespace SlotHero.ToolsEditor
                 return;
             }
 
-            Report("이벤트 삽화가 열여섯 장 있다", illustrations.Illustrations.Count, 16);
-
             int missing = 0;
-            string[] withArt = { "carve_power", "pandora", "reflection", "purification", "symbol_trade" };
+            int screens = 0;
 
-            for (int i = 0; i < withArt.Length; i++)
+            for (int i = 0; i < config.Events.Count; i++)
             {
-                EventScript script = config.Find(withArt[i]);
+                EventScript script = config.Events[i];
                 if (script == null)
                 {
-                    missing++;
-                    Debug.LogWarning("  이벤트  목록에 " + withArt[i] + " 이 없다");
                     continue;
                 }
+
+                screens += script.Screens.Count;
 
                 for (int j = 0; j < script.Screens.Count; j++)
                 {
@@ -3941,8 +5203,22 @@ namespace SlotHero.ToolsEditor
                 }
             }
 
-            Report("02 ~ 06 이 이벤트 목록에 다 들어 있다", config.Find("reflection") != null);
-            Report("02 ~ 06 의 화면마다 삽화가 붙는다", missing, 0);
+            // 다섯을 하나씩 본다. 예전에는 04 닮은 모습 하나만 봐 나머지가 빠져도 통과했다(2026년 10월 22일 코덱스 검토).
+            string[] firstFive = { "carve_power", "pandora", "reflection", "purification", "symbol_trade" };
+            List<string> absent = new List<string>();
+            for (int i = 0; i < firstFive.Length; i++)
+            {
+                if (config.Find(firstFive[i]) == null)
+                {
+                    absent.Add(firstFive[i]);
+                }
+            }
+
+            Report("02 ~ 06 이 이벤트 목록에 다 들어 있다", absent.Count == 0,
+                absent.Count == 0 ? "다 있음" : string.Join(", ", absent.ToArray()));
+            Report("이벤트 화면이 여든 개다", screens, 80);
+            Report("이벤트 삽화가 화면 수만큼 있다", illustrations.Illustrations.Count, screens);
+            Report("모든 이벤트의 화면마다 삽화가 붙는다", missing, 0);
 
             // 화면이 그림 없는 이벤트에서 앞 그림을 남기지 않는지.
             EventScreenView view = Object.FindAnyObjectByType<EventScreenView>(FindObjectsInactive.Include);
@@ -4225,7 +5501,7 @@ namespace SlotHero.ToolsEditor
             TMP_Text label = GetField<TMP_Text>(view, "_bodyLabel");
             string shown = label != null ? label.text : string.Empty;
             EventVisualConfig visual = GetField<EventVisualConfig>(view, "_visual");
-            EventChoiceTextFormat format = visual != null ? visual.GetTextFormat() : EventChoiceTextFormat.Default();
+            EventChoiceTextFormat format = visual != null ? visual.GetBodyTextFormat() : EventChoiceTextFormat.Default();
             Report("결과 문장의 잃은 것이 빨강으로 그려진다", shown.Contains("<color=#" + format.CostColorHex + ">체력 10</color>"));
             Report("결과 문장의 얻은 것이 초록으로 그려진다", shown.Contains("<color=#" + format.GainColorHex + ">골드 60</color>"));
             Report("결과 문장에 표시 글자가 남지 않는다", !shown.Contains("<cost>") && !shown.Contains("<gain>"));
@@ -4265,8 +5541,65 @@ namespace SlotHero.ToolsEditor
 
                     Canvas.ForceUpdateCanvases();
                     CapturePreviewScenes.CaptureOpenScene("게임 이벤트 유물 고르기");
+                    CheckEventItemHover(view);
                 }
             }
+        }
+
+        /// <summary>
+        /// 이벤트 선택지 글 속 물건 이름에 커서를 올리면 아이템 상세가 뜨는지(2026년 10월 25일 원재).
+        /// 글자 칸이 고리를 실제로 읽었는지, 그 이름 글자 자리에서 고리를 찾는지, 찾은 물건을 흐름이 오버레이로 띄우는지 차례로 본다.
+        /// </summary>
+        private static void CheckEventItemHover(EventScreenView view)
+        {
+            EventChoiceView[] choices = view.GetComponentsInChildren<EventChoiceView>(false);
+            EventChoiceView linked = null;
+            TMP_Text label = null;
+            for (int i = 0; i < choices.Length && linked == null; i++)
+            {
+                TMP_Text candidate = GetField<TMP_Text>(choices[i], "_label");
+                if (candidate == null)
+                {
+                    continue;
+                }
+
+                candidate.ForceMeshUpdate();
+                if (candidate.textInfo.linkCount > 0)
+                {
+                    linked = choices[i];
+                    label = candidate;
+                }
+            }
+
+            Report("이벤트 선택지 글의 물건 이름에 고리가 달린다", linked != null);
+            if (linked == null)
+            {
+                return;
+            }
+
+            TMP_LinkInfo link = label.textInfo.linkInfo[0];
+            TMP_CharacterInfo character = label.textInfo.characterInfo[link.linkTextfirstCharacterIndex + link.linkTextLength / 2];
+            Vector3 world = label.transform.TransformPoint((character.bottomLeft + character.topRight) * 0.5f);
+            Camera camera = FindDrawingCamera();
+            Vector2 screen = RectTransformUtility.WorldToScreenPoint(camera, world);
+            string found = linked.FindItemAt(screen, camera);
+            Report("물건 이름 글자 자리에서 그 물건의 고리를 찾는다", found == link.GetLinkID(), found ?? "없음");
+
+            // 흐름까지 이어졌는지. 검사용 각본의 물건은 목록에 없으므로 목록의 첫 유물로 띄워 본다.
+            GameFlowController flow = Object.FindAnyObjectByType<GameFlowController>();
+            RunCatalogConfig catalog = flow != null ? GetField<RunCatalogConfig>(flow, "_catalogConfig") : null;
+            ItemDetailView detail = Object.FindAnyObjectByType<ItemDetailView>(FindObjectsInactive.Include);
+            if (catalog == null || catalog.Relics.Count == 0 || detail == null)
+            {
+                Report("이벤트 물건 이름의 상세를 볼 준비가 된다", false);
+                return;
+            }
+
+            linked.SetHoveredItem(catalog.Relics[0].Id);
+            Report("이벤트 물건 이름에 커서를 올리면 아이템 상세가 뜬다",
+                detail.IsShowing && detail.Spec.Name == catalog.Relics[0].DisplayName, detail.Spec.Name ?? "없음");
+            linked.SetHoveredItem(null);
+            Report("이벤트 물건 이름에서 커서가 벗어나면 아이템 상세가 사라진다", !detail.IsShowing);
         }
 
         /// <summary>
@@ -4295,7 +5628,12 @@ namespace SlotHero.ToolsEditor
             popup.Show(three);
             AwakenNew();
             CheckPopupButtonsAreVisible(popup, "처음 띄운 버튼 셋");
+            ProbeWheelsUnder("팝업 본문", "/Popup/", 1);
+            PopupView shortView = GetField<PopupView>(popup, "_view");
+            CheckScrollBar("짧은 팝업 본문", shortView != null ? GetField<ScrollRect>(shortView, "_bodyScroll") : null, false);
             popup.Dismiss();
+
+            CheckLongPopupScrolls(popup);
 
             // 버튼 하나짜리를 끼운다. 여기서 남는 칸 둘이 꺼진다.
             popup.Show(PopupSpec.Notice("검사용 하나", "버튼 하나를 띄운다.", "확인"));
@@ -4488,7 +5826,47 @@ namespace SlotHero.ToolsEditor
 
         private static void Done()
         {
+            if (_realSaveFolder != null)
+            {
+                string after = DescribeFolder(_realSaveFolder);
+                Report("검사가 진짜 저장 폴더를 건드리지 않았다", after == _realSaveBefore, after);
+                _realSaveFolder = null;
+            }
+
             Debug.Log("게임 씬 검사 " + _checked + "건, 실패 " + _failed + "건");
+        }
+
+        // ---- 진짜 저장 폴더 ----
+
+        private static string _realSaveFolder;
+        private static string _realSaveBefore;
+
+        /// <summary>검사 전 진짜 저장 폴더의 파일 이름, 크기, 고친 시각을 적어 둔다.</summary>
+        private static void SnapshotRealSaveFolder(SaveConfig config)
+        {
+            string folder = config != null ? config.FolderName : "SlotHero";
+            _realSaveFolder = System.IO.Path.Combine(Application.persistentDataPath, folder);
+            _realSaveBefore = DescribeFolder(_realSaveFolder);
+        }
+
+        private static string DescribeFolder(string folder)
+        {
+            if (!System.IO.Directory.Exists(folder))
+            {
+                return "폴더 없음";
+            }
+
+            string[] files = System.IO.Directory.GetFiles(folder);
+            System.Array.Sort(files, System.StringComparer.Ordinal);
+            System.Text.StringBuilder text = new System.Text.StringBuilder();
+            for (int i = 0; i < files.Length; i++)
+            {
+                System.IO.FileInfo info = new System.IO.FileInfo(files[i]);
+                text.Append(info.Name).Append(' ').Append(info.Length).Append(' ')
+                    .Append(info.LastWriteTimeUtc.Ticks).Append(" | ");
+            }
+
+            return text.ToString();
         }
     }
 }

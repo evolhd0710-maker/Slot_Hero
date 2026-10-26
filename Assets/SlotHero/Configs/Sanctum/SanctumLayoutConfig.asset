@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7c24673b432e46408c3e8e07917804a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Sanctum.SanctumLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  CampPosition: {x: 30, y: 370}
-  CampSize: {x: 850, y: 560}
-  MerchantPosition: {x: 1060, y: 320}
-  MerchantSize: {x: 780, y: 530}
-  ExitPosition: {x: 1310, y: 900}
-  ExitSize: {x: 340, y: 160}
-  ExitFontSize: 44
-  ExitArrowHeadWidth: 90
+  _referenceResolution: {x: 1920, y: 1080}
+  _campPosition: {x: 30, y: 370}
+  _campSize: {x: 850, y: 560}
+  _merchantPosition: {x: 1060, y: 320}
+  _merchantSize: {x: 780, y: 530}
+  _exitPosition: {x: 1310, y: 900}
+  _exitSize: {x: 340, y: 160}
+  _exitFontSize: 44
+  _exitArrowHeadWidth: 90

@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47d217f47dd30564a83d493c03156005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Title.TitleLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  SafeAreaPadding: 40
-  LogoPosition: {x: 170, y: 220}
-  LogoSize: {x: 470, y: 70}
-  MenuPosition: {x: 170, y: 600}
-  MenuItemSize: {x: 400, y: 50}
-  MenuSpacing: 110
-  MinMenuSpacing: 60
-  VersionPosition: {x: 1540, y: 990}
-  VersionSize: {x: 100, y: 30}
+  _referenceResolution: {x: 1920, y: 1080}
+  _safeAreaPadding: 40
+  _logoPosition: {x: 170, y: 220}
+  _logoSize: {x: 470, y: 70}
+  _menuPosition: {x: 170, y: 600}
+  _menuItemSize: {x: 400, y: 50}
+  _menuSpacing: 110
+  _minMenuSpacing: 60
+  _versionPosition: {x: 1540, y: 990}
+  _versionSize: {x: 100, y: 30}

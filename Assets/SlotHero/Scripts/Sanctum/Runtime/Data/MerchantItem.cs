@@ -9,7 +9,7 @@ namespace SlotHero.Sanctum
     ///
     /// 아이콘 같은 표시 자원은 여기에 넣지 않는다.
     /// 저장 시스템 기획서의 런 데이터에 그대로 실리려면 순수 값만 있어야 하기 때문이다.
-    /// 표시 자원은 <see cref="IMerchantCatalog.GetIcon"/>으로 Id를 주고 받아 온다.
+    /// 표시 자원은 <see cref="UI.IMerchantIconSource.GetIcon"/>으로 Id를 주고 받아 온다.
     /// </summary>
     [Serializable]
     public struct MerchantItem

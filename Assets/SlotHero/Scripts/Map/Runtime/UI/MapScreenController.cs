@@ -27,6 +27,9 @@ namespace SlotHero.Map.UI
         [SerializeField] private int _stageIndex = 1;
 
         private StageMap _map;
+        private string _fingerprint;
+        private int _fingerprintSeed;
+        private int _fingerprintStage;
         private MapProgress _progress = new MapProgress();
 
         /// 잠깐 띄운 지도인지. 이때는 노드를 고를 수 없다.
@@ -79,17 +82,47 @@ namespace SlotHero.Map.UI
             }
         }
 
-        /// <summary>시드로 스테이지 맵을 새로 만들고 진행 상태를 처음으로 되돌린다.</summary>
+        /// <summary>
+        /// 그 시드와 스테이지로 지금 규칙이 만드는 지도의 지문(`MapFingerprint`). 화면에는 그리지 않는다.
+        /// 저장된 런의 지도가 업데이트 뒤에도 같은지 볼 때 쓴다. 같은 시드와 스테이지면 앞서 잰 값을 다시 쓴다.
+        /// </summary>
+        public string GetFingerprint(int runSeed, int stageIndex)
+        {
+            if (_generationConfig == null)
+            {
+                return string.Empty;
+            }
+
+            if (_fingerprintSeed != runSeed || _fingerprintStage != stageIndex || string.IsNullOrEmpty(_fingerprint))
+            {
+                _fingerprint = MapFingerprint.Of(MapGenerator.Generate(runSeed, stageIndex, _generationConfig));
+                _fingerprintSeed = runSeed;
+                _fingerprintStage = stageIndex;
+            }
+
+            return _fingerprint;
+        }
+
+        // 맵을 붙이는 길은 셋이다. 셋 다 맵 만들기, 진행 붙이기, 화면 만들기를 차례로 한 번씩만 한다.
+        // 예전에는 이어하기가 `StartNewStage` 로 화면을 만든 뒤 `Load` 로 같은 맵의 화면을 한 번 더 만들었다(2026년 10월 25일 코덱스 검토).
+
+        /// <summary>시드로 스테이지 맵을 새로 만들고 진행 상태를 처음으로 되돌린다. 런 시작과 스테이지 넘김이 쓴다.</summary>
         public void StartNewStage(int runSeed, int stageIndex)
         {
-            _stageIndex = stageIndex;
-            _map = MapGenerator.Generate(runSeed, stageIndex, _generationConfig);
+            _map = GenerateMap(runSeed, stageIndex);
             _progress.Reset();
+            BuildView(false);
+        }
 
-            if (_view != null)
-            {
-                _view.Build(_map, _progress);
-            }
+        /// <summary>
+        /// 시드로 그 스테이지 맵을 다시 만들고 저장해 둔 진행 상태를 얹는다. 이어하기가 쓴다.
+        /// 맵은 저장하지 않고 시드로 다시 만든다(맵 생성 규칙 기획서 v0.2 / `MapRandom.ForStage`).
+        /// </summary>
+        public void ResumeStage(int runSeed, int stageIndex, MapProgress progress)
+        {
+            _map = GenerateMap(runSeed, stageIndex);
+            _progress = progress ?? new MapProgress();
+            BuildView(true);
         }
 
         /// <summary>저장에서 불러온 맵과 진행 상태를 그대로 붙인다.</summary>
@@ -102,10 +135,27 @@ namespace SlotHero.Map.UI
             }
 
             _progress = progress ?? new MapProgress();
+            BuildView(true);
+        }
 
-            if (_view != null)
+        /// <summary>지금 규칙으로 그 스테이지 맵을 만든다. 화면은 건드리지 않는다.</summary>
+        private StageMap GenerateMap(int runSeed, int stageIndex)
+        {
+            _stageIndex = stageIndex;
+            return MapGenerator.Generate(runSeed, stageIndex, _generationConfig);
+        }
+
+        /// <summary>지금 맵과 진행 상태로 화면을 만든다. focusCurrent 면 지금 노드가 보이게 옮긴다.</summary>
+        private void BuildView(bool focusCurrent)
+        {
+            if (_view == null)
             {
-                _view.Build(_map, _progress);
+                return;
+            }
+
+            _view.Build(_map, _progress);
+            if (focusCurrent)
+            {
                 _view.FocusOnCurrentNode();
             }
         }

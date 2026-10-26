@@ -12,114 +12,114 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 603fddf3e0a1cee418c2b4feff3467a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Settings.SettingsCatalogConfig
-  Tabs:
-  - Id: general
-    DisplayName: "\uC77C\uBC18"
-    Items:
-    - Id: language
-      DisplayName: "\uC5B8\uC5B4"
-      Kind: 2
-      Options:
+  _tabs:
+  - _id: general
+    _displayName: "\uC77C\uBC18"
+    _items:
+    - _id: language
+      _displayName: "\uC5B8\uC5B4"
+      _kind: 2
+      _options:
       - "\uD55C\uAD6D\uC5B4"
       - English
-      DefaultValue: 0
-      Min: 0
-      Max: 1
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: 
-      KeepOnRestore: 1
-    - Id: screenMode
-      DisplayName: "\uCC3D \uBAA8\uB4DC"
-      Kind: 0
-      Options:
+      _defaultValue: 0
+      _min: 0
+      _max: 1
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: 
+      _keepOnRestore: 1
+    - _id: screenMode
+      _displayName: "\uCC3D \uBAA8\uB4DC"
+      _kind: 0
+      _options:
       - "\uCC3D"
       - "\uC804\uCCB4 \uD654\uBA74"
       - "\uD14C\uB450\uB9AC \uC5C6\uB294 \uCC3D"
-      DefaultValue: 1
-      Min: 0
-      Max: 2
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: 
-      KeepOnRestore: 1
-    - Id: autoSaveNotice
-      DisplayName: "\uC790\uB3D9 \uC800\uC7A5"
-      Kind: 0
-      Options:
+      _defaultValue: 1
+      _min: 0
+      _max: 2
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: 
+      _keepOnRestore: 1
+    - _id: autoSaveNotice
+      _displayName: "\uC790\uB3D9 \uC800\uC7A5"
+      _kind: 0
+      _options:
       - "\uAEBC\uC9D0"
       - "\uCF1C\uC9D0"
-      DefaultValue: 1
-      Min: 0
-      Max: 1
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: 
-      KeepOnRestore: 0
-    - Id: presentationSpeed
-      DisplayName: "\uC5F0\uCD9C \uC18D\uB3C4"
-      Kind: 0
-      Options:
+      _defaultValue: 1
+      _min: 0
+      _max: 1
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: 
+      _keepOnRestore: 0
+    - _id: presentationSpeed
+      _displayName: "\uC5F0\uCD9C \uC18D\uB3C4"
+      _kind: 0
+      _options:
       - "\uBCF4\uD1B5"
       - "\uBE60\uB984"
       - "\uC2A4\uD0B5"
-      DefaultValue: 0
-      Min: 0
-      Max: 2
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: 
-      KeepOnRestore: 0
-  - Id: graphics
-    DisplayName: "\uADF8\uB798\uD53D"
-    Items: []
-  - Id: sound
-    DisplayName: "\uC0AC\uC6B4\uB4DC"
-    Items:
-    - Id: masterVolume
-      DisplayName: "\uC804\uCCB4"
-      Kind: 1
-      Options: []
-      DefaultValue: 100
-      Min: 0
-      Max: 100
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: masterVolumeMute
-      KeepOnRestore: 0
-    - Id: bgmVolume
-      DisplayName: "\uBC30\uACBD\uC74C"
-      Kind: 1
-      Options: []
-      DefaultValue: 100
-      Min: 0
-      Max: 100
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: bgmVolumeMute
-      KeepOnRestore: 0
-    - Id: ambienceVolume
-      DisplayName: "\uD658\uACBD\uC74C"
-      Kind: 1
-      Options: []
-      DefaultValue: 100
-      Min: 0
-      Max: 100
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: ambienceVolumeMute
-      KeepOnRestore: 0
-    - Id: sfxVolume
-      DisplayName: "\uD6A8\uACFC\uC74C"
-      Kind: 1
-      Options: []
-      DefaultValue: 100
-      Min: 0
-      Max: 100
-      Step: 1
-      ValueFormat: '{0:0}'
-      MuteId: sfxVolumeMute
-      KeepOnRestore: 0
-  - Id: control
-    DisplayName: "\uC870\uC791"
-    Items: []
+      _defaultValue: 0
+      _min: 0
+      _max: 2
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: 
+      _keepOnRestore: 0
+  - _id: graphics
+    _displayName: "\uADF8\uB798\uD53D"
+    _items: []
+  - _id: sound
+    _displayName: "\uC0AC\uC6B4\uB4DC"
+    _items:
+    - _id: masterVolume
+      _displayName: "\uC804\uCCB4"
+      _kind: 1
+      _options: []
+      _defaultValue: 100
+      _min: 0
+      _max: 100
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: masterVolumeMute
+      _keepOnRestore: 0
+    - _id: bgmVolume
+      _displayName: "\uBC30\uACBD\uC74C"
+      _kind: 1
+      _options: []
+      _defaultValue: 100
+      _min: 0
+      _max: 100
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: bgmVolumeMute
+      _keepOnRestore: 0
+    - _id: ambienceVolume
+      _displayName: "\uD658\uACBD\uC74C"
+      _kind: 1
+      _options: []
+      _defaultValue: 100
+      _min: 0
+      _max: 100
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: ambienceVolumeMute
+      _keepOnRestore: 0
+    - _id: sfxVolume
+      _displayName: "\uD6A8\uACFC\uC74C"
+      _kind: 1
+      _options: []
+      _defaultValue: 100
+      _min: 0
+      _max: 100
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: sfxVolumeMute
+      _keepOnRestore: 0
+  - _id: control
+    _displayName: "\uC870\uC791"
+    _items: []

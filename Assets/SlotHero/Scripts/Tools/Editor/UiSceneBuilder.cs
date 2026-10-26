@@ -138,14 +138,82 @@ namespace SlotHero.ToolsEditor
             new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
         }
 
+        private static ScrollVisualConfig _scrollConfig;
+
         /// <summary>
-        /// 마우스 휠 한 칸에 스크롤이 움직이는 거리. 1920 × 1080 기준 60 픽셀이다.
+        /// 휠 거리와 스크롤 바 생김새를 담은 설정 에셋(`Configs/Ui/ScrollVisualConfig`).
+        /// 예전에는 여기 상수였다(2026년 10월 25일 원재가 설정 에셋으로 옮기라고 했다). 에셋이 없으면 기본값으로 만든다.
         ///
-        /// **스크롤을 만들면 반드시 이것을 넣는다.** 유니티 기본값은 1 이라 휠 한 칸에 1 픽셀만 움직인다.
-        /// 좌표 배율이 12 였을 때는 1/12 픽셀이라 스크롤이 안 되는 것처럼 보였다.
+        /// **스크롤을 만들면 반드시 휠 거리를 넣는다.** 유니티 기본값은 1 이라 휠 한 칸에 1 픽셀만 움직인다.
         /// 현재 빌드 화면에서 문양이 세 줄을 넘으면 아래를 볼 수 없었던 것이 이것이었다.
         /// </summary>
-        public static readonly float ScrollPerWheelNotch = UiScale.Px(60f);
+        public static ScrollVisualConfig ScrollConfig
+        {
+            get
+            {
+                if (_scrollConfig == null)
+                {
+                    _scrollConfig = LoadConfig<ScrollVisualConfig>("Ui", "ScrollVisualConfig");
+                }
+
+                return _scrollConfig != null ? _scrollConfig : ScriptableObject.CreateInstance<ScrollVisualConfig>();
+            }
+        }
+
+        /// <summary>
+        /// 문양 칸에 태그 테두리 둘을 얹을 자리를 만든다. 부모 칸을 꽉 채운다.
+        /// 그림은 화면이 문양의 태그를 보고 넣는다. 처음에는 감춰 둔다. 꾸밈이라 커서를 받지 않는다(2026년 10월 19일 원재).
+        /// symbol 은 같은 부모 아래의 문양 그림이다. 문양을 보일 때 테두리와 같은 넓이로 맞춘다(2026년 10월 20일 원재).
+        /// </summary>
+        public static TagCorners NewTagCorners(Transform parent, RectTransform symbol)
+        {
+            RectTransform root = NewRect("TagCorners", parent);
+            Stretch(root);
+
+            Image topRight = NewFlatImage("TopRight", root, Color.white);
+            Stretch(topRight.rectTransform);
+            topRight.raycastTarget = false;
+            topRight.enabled = false;
+
+            Image bottomLeft = NewFlatImage("BottomLeft", root, Color.white);
+            Stretch(bottomLeft.rectTransform);
+            bottomLeft.raycastTarget = false;
+            bottomLeft.enabled = false;
+
+            // 장식 모서리 끝의 태그 기호. 자리와 크기는 화면이 그릴 때 비율로 잡는다(2026년 10월 26일 원재).
+            Image topRightGlyph = NewFlatImage("TopRightGlyph", root, Color.white);
+            Stretch(topRightGlyph.rectTransform);
+            topRightGlyph.raycastTarget = false;
+            topRightGlyph.enabled = false;
+
+            Image bottomLeftGlyph = NewFlatImage("BottomLeftGlyph", root, Color.white);
+            Stretch(bottomLeftGlyph.rectTransform);
+            bottomLeftGlyph.raycastTarget = false;
+            bottomLeftGlyph.enabled = false;
+
+            TagCorners corners = root.gameObject.AddComponent<TagCorners>();
+            SetField(corners, "_topRight", topRight);
+            SetField(corners, "_bottomLeft", bottomLeft);
+            SetField(corners, "_topRightGlyph", topRightGlyph);
+            SetField(corners, "_bottomLeftGlyph", bottomLeftGlyph);
+            SetField(corners, "_symbol", symbol);
+            return corners;
+        }
+
+        /// <summary>
+        /// 문양 뒤에 까는 흑요석 판 자리를 만들어 테두리에 물린다(2026년 10월 20일 원재).
+        /// 판은 부모를 꽉 채운다. 문양 그림보다 먼저 그려져야 하므로 부르는 쪽이 문양 그림 앞에 오게 자리를 잡는다.
+        /// 그림은 화면이 문양을 보고 넣는다. 처음에는 감춰 둔다. 꾸밈이라 커서를 받지 않는다.
+        /// </summary>
+        public static Image NewSymbolPlate(Transform parent, TagCorners corners)
+        {
+            Image plate = NewFlatImage("SymbolPlate", parent, Color.white);
+            Stretch(plate.rectTransform);
+            plate.raycastTarget = false;
+            plate.enabled = false;
+            SetField(corners, "_plate", plate);
+            return plate;
+        }
 
         /// <summary>스크롤을 붙이고 휠 거리를 맞춘다.</summary>
         public static ScrollRect AddScroll(RectTransform viewport, RectTransform content)
@@ -155,8 +223,88 @@ namespace SlotHero.ToolsEditor
             scroll.content = content;
             scroll.horizontal = false;
             scroll.vertical = true;
-            scroll.scrollSensitivity = ScrollPerWheelNotch;
+            scroll.scrollSensitivity = ScrollConfig.WheelStep;
+
+            // 휠은 창 어디서나 받아야 한다. 글자는 커서를 받지 않으므로 그림이 없는 창에는 투명한 바탕을 깐다.
+            // 예전에는 글자 위에서만 휠이 들던 창이 다섯 있었다. 런 결과 칸 셋, 설정 목록, 팝업 본문이다. 2026년 10월 18일 검토.
+            if (viewport.GetComponent<Graphic>() == null)
+            {
+                Image catcher = viewport.gameObject.AddComponent<Image>();
+                catcher.color = new Color(0f, 0f, 0f, 0f);
+            }
+
+            AddScrollBar(scroll, viewport);
             return scroll;
+        }
+
+        /// <summary>
+        /// 스크롤 창의 오른쪽 끝에 세로 스크롤 바를 단다. 스크롤할 만큼 분량이 있을 때만 보인다(`ScrollBarVisibility`).
+        /// 스크롤할 분량이 있으면 오른쪽에 바가 있어야 한다(2026년 10월 22일 원재).
+        ///
+        /// 바는 창의 자식이라 창 크기를 화면이 나중에 바꿔도 따라간다. 창 안쪽에 두므로 가림막에 잘리지 않는다.
+        /// 내용 쪽은 바 자리(`ScrollBarSpace`)만큼 오른쪽을 비워 두어야 한다. 씬 검사가 겹치는지 본다.
+        /// </summary>
+        private static void AddScrollBar(ScrollRect scroll, RectTransform viewport)
+        {
+            // 칸 그림(쇠 테)은 폭 10 에 맞지 않아 둥근 막대를 쓴다. 현재 빌드의 태그 막대와 같다.
+            ScrollVisualConfig config = ScrollConfig;
+            Image track = NewScrollBarImage("ScrollBar", viewport, config.TrackColor);
+            RectTransform barRect = track.rectTransform;
+            barRect.anchorMin = new Vector2(1f, 0f);
+            barRect.anchorMax = new Vector2(1f, 1f);
+            barRect.pivot = new Vector2(1f, 0.5f);
+            barRect.sizeDelta = new Vector2(config.BarWidth, -config.BarInset * 2f);
+            barRect.anchoredPosition = new Vector2(-config.BarInset, 0f);
+
+            RectTransform slidingArea = NewRect("SlidingArea", barRect);
+            Stretch(slidingArea);
+
+            Image handle = NewScrollBarImage("Handle", slidingArea, config.HandleColor);
+            Stretch(handle.rectTransform);
+
+            Scrollbar bar = track.gameObject.AddComponent<Scrollbar>();
+            bar.direction = Scrollbar.Direction.BottomToTop;
+            bar.handleRect = handle.rectTransform;
+            bar.targetGraphic = handle;
+
+            scroll.verticalScrollbar = bar;
+            scroll.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
+
+            ScrollBarVisibility visibility = viewport.gameObject.AddComponent<ScrollBarVisibility>();
+            SetField(visibility, "_scroll", scroll);
+            visibility.Refresh();
+        }
+
+        /// <summary>
+        /// 스크롤 바의 윗끝을 창 위에서 top 만큼 내린다. 화면을 꽉 채우는 창은 맨 위가 상단 표시줄 밑이라
+        /// 그대로 두면 바가 표시줄을 가로지른다. 현재 빌드와 고르기 화면이 쓴다.
+        /// </summary>
+        public static void SetScrollBarTop(ScrollRect scroll, float top)
+        {
+            if (scroll == null || scroll.verticalScrollbar == null)
+            {
+                return;
+            }
+
+            RectTransform bar = (RectTransform)scroll.verticalScrollbar.transform;
+            bar.offsetMin = new Vector2(bar.offsetMin.x, ScrollConfig.BarInset);
+            bar.offsetMax = new Vector2(bar.offsetMax.x, -top);
+        }
+
+        /// <summary>스크롤 바의 둥근 막대 그림. 손잡이를 끌 수 있게 커서를 받는다.</summary>
+        private static Image NewScrollBarImage(string name, Transform parent, Color color)
+        {
+            Image image = NewFlatImage(name, parent, color);
+            image.sprite = RoundedSprite;
+            image.type = Image.Type.Sliced;
+            image.pixelsPerUnitMultiplier = 0.1f;
+            return image;
+        }
+
+        /// <summary>내용이 오른쪽에 비워 둘 폭. 바와 바 오른쪽 여백, 바 왼쪽 여백 하나를 더한 것이다.</summary>
+        public static float ScrollBarSpace
+        {
+            get { return ScrollConfig.BarSpace; }
         }
 
         /// <summary>빈 RectTransform 하나를 만든다.</summary>
@@ -307,6 +455,10 @@ namespace SlotHero.ToolsEditor
             SizeDefault((RectTransform)go.transform);
 
             TextMeshProUGUI label = go.AddComponent<TextMeshProUGUI>();
+
+            // 글자는 커서를 받지 않는다. 누르는 칸은 글자가 아닌 그림이 받는다(uGUI 규칙, 2026년 10월 18일 검토).
+            // 커서를 받는 그림이 적을수록 매 프레임 훑는 수가 준다.
+            label.raycastTarget = false;
             label.text = text;
             label.fontSize = fontSize;
             label.color = color;
@@ -413,10 +565,12 @@ namespace SlotHero.ToolsEditor
             Sprite pressed = LoadSkin("버튼_눌림");
             Sprite normal = target.sprite;
 
-            // **스킨 칸일 때만 눌림 그림으로 바꾼다.**
+            // **버튼 스킨일 때만 눌림 그림으로 바꾼다.**
             // 그림 자체가 버튼인 칸에 눌림 그림을 넣으면 누르는 동안 그림 대신 상자가 나온다.
             // 성소의 모닥불과 행상인을 누를 때 흰 상자가 잠깐 보였다 사라진 것이 이것이었다.
-            if (pressed == null || pressed == normal || !IsSkinSprite(normal))
+            // 어두운 칸 그림을 버튼으로 쓰는 곳(현재 빌드와 고르기 화면)도 바꾸지 않는다.
+            // 눌림 그림은 베이지라 누르는 동안 크림색 글자가 읽히지 않았다(2026년 10월 21일 코덱스 검토).
+            if (pressed == null || pressed == normal || !IsButtonSkinSprite(normal))
             {
                 button.transition = Selectable.Transition.None;
                 return button;
@@ -438,21 +592,53 @@ namespace SlotHero.ToolsEditor
         }
 
         /// <summary>
-        /// 버튼이나 칸 스킨 그림인지. 눌림 그림은 이 둘과 모양이 같아 바꿔 끼워도 어색하지 않다.
-        /// 모닥불, 행상인, 아이콘 같은 그림은 아니다.
+        /// 베이지 버튼 스킨 그림인지. 눌림 그림은 이것과 모양과 색이 같아 바꿔 끼워도 어색하지 않다.
+        /// 어두운 칸 그림, 모닥불, 행상인, 아이콘 같은 그림은 아니다.
         /// </summary>
-        public static bool IsSkinSprite(Sprite sprite)
+        public static bool IsButtonSkinSprite(Sprite sprite)
         {
             if (sprite == null)
             {
                 return false;
             }
 
-            return sprite == LoadSkin("버튼") || sprite == LoadSkin("패널");
+            return sprite == LoadSkin("버튼");
         }
 
         /// <summary>돌벽 위에 얹는 어둡게 하기. 와이어프레임의 `배경 · 검정 50%` 다.</summary>
         public const float StoneBackdropShade = 0.5f;
+
+        /// <summary>
+        /// 전투 배경 위에 얹는 어둡게 하기. 그림이 이미 어두워 돌벽보다 옅게 둔다.
+        /// 가운데 슬롯 칸과 주인공, 몬스터가 배경보다 앞으로 나와 보이게 하는 정도다(2026년 10월 25일).
+        /// </summary>
+        public const float BattleBackdropShade = 0.25f;
+
+        /// <summary>
+        /// 전투 방의 배경. 무너진 제국의 폐허 그림(`배경_전투`)이다(2026년 10월 25일 원재가 코덱스로 그리게 했다).
+        /// 공용 배경 바로 위에 깔고 흐름이 전투 방에서만 켠다. 그림이 없으면 만들지 않고 null 을 돌려준다.
+        /// </summary>
+        public static Image NewBattleBackdrop(string name, Transform parent)
+        {
+            Sprite battle = ImportArt.LoadItemArt("배경_전투");
+            if (battle == null)
+            {
+                return null;
+            }
+
+            Image image = NewFlatImage(name, parent, Color.white);
+            Stretch(image.rectTransform);
+            image.raycastTarget = false;
+            image.sprite = battle;
+            image.type = Image.Type.Simple;
+            image.preserveAspect = false;
+
+            Image shade = NewFlatImage("Shade", image.transform, new Color(0f, 0f, 0f, BattleBackdropShade));
+            Stretch(shade.rectTransform);
+            shade.raycastTarget = false;
+
+            return image;
+        }
 
         /// <summary>
         /// 런 중 화면 뒤에 까는 돌벽.

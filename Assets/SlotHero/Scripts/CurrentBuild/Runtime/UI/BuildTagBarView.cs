@@ -2,6 +2,7 @@ using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using SlotHero.Ui;
 using SlotHero.Combat;
 
 namespace SlotHero.CurrentBuild.UI
@@ -79,8 +80,9 @@ namespace SlotHero.CurrentBuild.UI
 
                 if (hasIcon)
                 {
+                    // 기호 그림은 태그 색을 직접 가진다. 글자 색을 곱하면 색이 죽어 그림 색 그대로 둔다(2026년 10월 22일 원재).
                     _symbolIcon.sprite = tagVisual.Icon;
-                    _symbolIcon.color = textColor;
+                    _symbolIcon.color = empty ? visual.EmptyTagIconColor : visual.TagIconColor;
                 }
             }
 
@@ -92,11 +94,15 @@ namespace SlotHero.CurrentBuild.UI
                 _symbolLabel.color = textColor;
             }
 
+            // 가진 태그의 이름은 그 태그 색으로 적는다(2026년 10월 25일 원재). 0장인 태그는 다른 줄처럼 흐리게 둔다.
             if (_nameLabel != null)
             {
                 _nameLabel.text = tagVisual.DisplayName;
-                _nameLabel.fontSize = visual.TagFontSize;
-                _nameLabel.color = textColor;
+                _nameLabel.fontSize = visual.TagNameFontSize;
+                _nameLabel.color = empty ? visual.EmptyTagTextColor : tagVisual.TextColor;
+
+                // 태그 이름에 흰 테두리를 두른다(2026년 10월 25일 원재). 0장인 흐린 이름은 두르지 않는다.
+                TextOutline.Apply(_nameLabel, visual.TagOutlineColor, empty ? 0f : visual.TagOutlineWidth);
             }
 
             if (_countLabel != null)

@@ -12,34 +12,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a1cc137da9b44e48bf0a0806b7217db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Sanctum.MerchantLayoutConfig
-  ReferenceResolution: {x: 1920, y: 1080}
-  LeftMatPosition: {x: 200, y: 110}
-  LeftMatSize: {x: 710, y: 790}
-  RightMatPosition: {x: 1020, y: 120}
-  RightMatSize: {x: 690, y: 770}
-  SymbolFirstPosition: {x: 350, y: 210}
-  SymbolSlotSize: {x: 170, y: 180}
-  SymbolSpacing: {x: 210, y: 210}
-  SymbolColumns: 2
-  CoinFirstPosition: {x: 360, y: 630}
-  CoinSlotSize: {x: 150, y: 150}
-  CoinSpacing: 200
-  RelicFirstPosition: {x: 1170, y: 580}
-  RelicSlotSize: {x: 100, y: 120}
-  RelicSpacing: 135
-  SymbolChangePosition: {x: 1240, y: 150}
-  SymbolChangeSize: {x: 240, y: 250}
-  RefreshPosition: {x: 1330, y: 450}
-  RefreshSize: {x: 50, y: 50}
-  PriceSize: {x: 150, y: 30}
-  PriceIconSize: {x: 30, y: 30}
-  PriceIconGap: 10
-  PriceFontSize: 28
-  SymbolPriceOffsetY: -10
-  CoinPriceOffsetY: 10
-  RelicPriceOffsetY: 10
-  RefreshPriceOffsetY: 30
-  BackPosition: {x: 760, y: 920}
-  BackSize: {x: 370, y: 130}
-  BackFontSize: 44
-  BackArrowHeadHeight: 50
+  _referenceResolution: {x: 1920, y: 1080}
+  _leftMatPosition: {x: 200, y: 110}
+  _leftMatSize: {x: 710, y: 790}
+  _rightMatPosition: {x: 1020, y: 120}
+  _rightMatSize: {x: 690, y: 770}
+  _symbolFirstPosition: {x: 350, y: 210}
+  _symbolSlotSize: {x: 170, y: 170}
+  _symbolSpacing: {x: 210, y: 230}
+  _symbolColumns: 2
+  _coinFirstPosition: {x: 360, y: 670}
+  _coinSlotSize: {x: 150, y: 150}
+  _coinSpacing: 200
+  _relicFirstPosition: {x: 1210, y: 560}
+  _relicSlotSize: {x: 90, y: 108}
+  _relicSpacing: 110
+  _relicBoardPosition: {x: 1170, y: 380}
+  _relicBoardSize: {x: 390, y: 480}
+  _symbolChangePosition: {x: 1250, y: 135}
+  _symbolChangeSize: {x: 230, y: 240}
+  _refreshPosition: {x: 1320, y: 345}
+  _refreshSize: {x: 90, y: 117}
+  _priceSize: {x: 150, y: 30}
+  _priceIconSize: {x: 30, y: 30}
+  _priceIconGap: 10
+  _priceFontSize: 28
+  _symbolPriceOffsetY: 4
+  _coinPriceOffsetY: 10
+  _relicPriceOffsetY: 10
+  _refreshPriceOffsetY: 0
+  _backPosition: {x: 760, y: 920}
+  _backSize: {x: 370, y: 130}
+  _backFontSize: 44
+  _backArrowHeadHeight: 50

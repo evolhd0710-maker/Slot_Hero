@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Sanctum
 {
@@ -28,13 +29,19 @@ namespace SlotHero.Sanctum
     public class StageRarityWeights
     {
         [Tooltip("이 분포를 쓰기 시작하는 스테이지. 0 이하면 첫 스테이지부터.")]
-        public int MinStage;
+        [FormerlySerializedAs("MinStage")]
+        [SerializeField] private int _minStage;
+        public int MinStage { get { return _minStage; } set { _minStage = value; } }
 
         [Tooltip("이 분포를 마지막으로 쓰는 스테이지. 0 이하면 끝까지.")]
-        public int MaxStage;
+        [FormerlySerializedAs("MaxStage")]
+        [SerializeField] private int _maxStage;
+        public int MaxStage { get { return _maxStage; } set { _maxStage = value; } }
 
         [Tooltip("일반, 고급, 희귀, 특급, 전설 차례의 비중. 모자란 칸과 0 이하는 그 등급이 나오지 않는다.")]
-        public List<int> Weights = new List<int>();
+        [FormerlySerializedAs("Weights")]
+        [SerializeField] private List<int> _weights = new List<int>();
+        public List<int> Weights { get { return _weights; } set { _weights = value; } }
 
         /// <summary>그 스테이지에 쓰는 분포인지.</summary>
         public bool Covers(int stage)

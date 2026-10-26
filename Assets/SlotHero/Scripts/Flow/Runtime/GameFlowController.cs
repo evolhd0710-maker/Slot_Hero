@@ -91,6 +91,9 @@ namespace SlotHero.Flow
         [Tooltip("전투 창구. 전투 코드가 오기 전에는 대역을 붙인다.")]
         [SerializeField] private MonoBehaviour _combatEntryBehaviour;
 
+        [Tooltip("전투 방에서만 켜는 배경. 무너진 제국의 폐허 그림이다. 공용 배경 바로 위에 깔린다(2026년 10월 25일 원재).")]
+        [SerializeField] private GameObject _battleBackground;
+
         [Header("수치")]
         [Tooltip("타이틀 화면에 적는 빌드 번호.")]
         [SerializeField] private string _buildNumber = "0.1.0";
@@ -165,6 +168,7 @@ namespace SlotHero.Flow
             }
 
             _catalog = new RunCatalog(_catalogConfig);
+            _catalog.TagVisuals = _buildVisual;
             _session = new RunSession(_save, _catalog, RefreshTopBar);
             _rewards = new RoomRewardFlow(_rewardRules, _catalogConfig, _save);
             _events = new EventRoomFlow(_eventConfig, _catalogConfig, _buildVisual);
@@ -588,6 +592,7 @@ namespace SlotHero.Flow
             _sanctumNodeId = -1;
 
             CloseAll();
+            ResetRunScreens();
             _screen = GameScreen.Map;
 
             if (_map != null)
@@ -629,13 +634,13 @@ namespace SlotHero.Flow
             _sanctumNodeId = -1;
 
             CloseAll();
+            ResetRunScreens();
             _screen = GameScreen.Map;
 
             if (_map != null)
             {
-                // 맵은 시드에서 다시 만든다. 지나온 길만 저장된 값으로 되돌린다.
-                _map.StartNewStage(run.Seed, run.StageIndex);
-                RestoreProgress(run);
+                // 맵은 시드에서 다시 만든다. 지나온 길만 저장된 값으로 되돌린다. 화면은 한 번만 만든다.
+                _map.ResumeStage(run.Seed, run.StageIndex, SavedProgress(run));
                 _map.Open();
             }
 
@@ -863,11 +868,23 @@ namespace SlotHero.Flow
                 return;
             }
 
+            ShowBattleBackground(true);
             _combat.Enter(Context, node, options, HandleCombatFinished);
+        }
+
+        /// <summary>전투 배경을 켜고 끈다. 전투를 열 때 켜고, 전투가 끝나거나 전투 창구를 닫을 때 끈다.</summary>
+        private void ShowBattleBackground(bool show)
+        {
+            if (_battleBackground != null && _battleBackground.activeSelf != show)
+            {
+                _battleBackground.SetActive(show);
+            }
         }
 
         private void HandleCombatFinished(CombatResult result)
         {
+            ShowBattleBackground(false);
+
             if (Context == null)
             {
                 return;
@@ -949,6 +966,8 @@ namespace SlotHero.Flow
             {
                 _combat.Leave();
             }
+
+            ShowBattleBackground(false);
 
             if (_map != null)
             {
@@ -1252,6 +1271,9 @@ namespace SlotHero.Flow
             {
                 _event.Finished += HandleEventFinished;
                 _event.ChoiceSelected += HandleEventChoice;
+
+                // 선택지 글 속 물건 이름에 커서를 올리면 그 물건의 아이템 상세를 띄운다(2026년 10월 25일 원재).
+                _event.ItemHoverChanged += SetItemDetail;
             }
 
             if (_reward != null)
@@ -1305,7 +1327,38 @@ namespace SlotHero.Flow
                 _save.NoticeRequested += HandleSaveNotice;
                 // 런 데이터를 쓰기 직전에 유물 순서를 옮겨 담는다. `RunSession.StoreRelicPool` 참고.
                 _save.RunSaving += _session.StoreRelicPool;
+
+                // 지금 스테이지 지도의 지문도 함께 적고, 불러온 런의 지도가 지금 규칙과 같은지 본다(2026년 10월 22일 원재).
+                _save.RunSaving += StoreMapFingerprint;
+                _save.RunStillPlayable = IsRunMapUnchanged;
             }
+        }
+
+        /// <summary>
+        /// 런을 쓰기 직전에 지금 스테이지 지도의 지문을 적는다. 쓰는 자리가 여럿이라 여기 한 곳에서 한다.
+        /// 지금 게임의 규칙으로 만든 지도라 이어 할 때 다시 만든 지도와 견줄 기준이 된다.
+        /// </summary>
+        private void StoreMapFingerprint(RunSaveData run)
+        {
+            if (run != null && _map != null)
+            {
+                run.MapFingerprint = _map.GetFingerprint(run.Seed, run.StageIndex);
+            }
+        }
+
+        /// <summary>
+        /// 불러온 런의 지도가 지금 규칙으로 다시 만든 지도와 같은지.
+        /// 업데이트로 지도 생성 규칙이 바뀌면 같은 시드에서 다른 지도가 나와 저장된 방 번호가 어긋난다.
+        /// 다르면 저장 창구가 그 런을 지운다(2026년 10월 22일 원재). 지문이 비어 있으면 그 전의 런이라 보지 않는다.
+        /// </summary>
+        private bool IsRunMapUnchanged(RunSaveData run)
+        {
+            if (run == null || string.IsNullOrEmpty(run.MapFingerprint) || _map == null)
+            {
+                return true;
+            }
+
+            return run.MapFingerprint == _map.GetFingerprint(run.Seed, run.StageIndex);
         }
 
         private void Unsubscribe()
@@ -1354,6 +1407,7 @@ namespace SlotHero.Flow
             {
                 _event.Finished -= HandleEventFinished;
                 _event.ChoiceSelected -= HandleEventChoice;
+                _event.ItemHoverChanged -= SetItemDetail;
             }
 
             if (_reward != null)
@@ -1406,6 +1460,8 @@ namespace SlotHero.Flow
                 _save.Saved -= HandleAutoSaved;
                 _save.NoticeRequested -= HandleSaveNotice;
                 _save.RunSaving -= _session.StoreRelicPool;
+                _save.RunSaving -= StoreMapFingerprint;
+                _save.RunStillPlayable = null;
             }
         }
 
@@ -1528,8 +1584,6 @@ namespace SlotHero.Flow
 
             _popups.NotifyProfileBroken();
         }
-
-        // ---- 행상의 문양 변경 ----
 
         // ---- 고르기 화면 ----
 
@@ -1752,6 +1806,8 @@ namespace SlotHero.Flow
                 () => _sanctum.CancelPendingPurchase());
         }
 
+        // ---- 행상의 문양 변경 ----
+
         /// <summary>가진 문양을 고르기 화면 후보로 만든다. 현재 빌드 화면과 같은 칸이다.</summary>
         private List<BuildEntry> OwnedSymbolEntries(CurrentBuildSnapshot build)
         {
@@ -1877,6 +1933,8 @@ namespace SlotHero.Flow
             return list;
         }
 
+        // ---- 이벤트 진행 ----
+
         /// <summary>
         /// 이벤트 선택지를 골랐다. 각본을 굴리는 일은 `EventRoomFlow` 가 한다.
         ///
@@ -1989,6 +2047,8 @@ namespace SlotHero.Flow
         {
             LeaveRoom();
         }
+
+        // ---- 상단 표시줄 ----
 
         private void HandleTopBarButton(TopBarButtonKind kind)
         {
@@ -2201,6 +2261,7 @@ namespace SlotHero.Flow
         {
             _popups.NotifyRunBroken();
         }
+
         // ---- 안쪽 ----
 
         private void CloseAll()
@@ -2250,6 +2311,15 @@ namespace SlotHero.Flow
                 _runResult.Close();
             }
 
+            // 전투 중에 런을 포기하면 전투 화면과 전투 배경이 남아 새 게임 뒤에도 보였다(2026년 10월 26일 원재).
+            // `Leave` 는 끝났다고 알리지 않고 닫기만 한다.
+            if (_combat != null)
+            {
+                _combat.Leave();
+            }
+
+            ShowBattleBackground(false);
+
             if (_currentBuild != null)
             {
                 _currentBuild.Close();
@@ -2269,6 +2339,18 @@ namespace SlotHero.Flow
             _events.Forget();
             ShowRunChrome(false);
             _screen = GameScreen.None;
+        }
+
+        /// <summary>
+        /// 새 런을 시작하거나 저장된 런을 이어 할 때 앞 런이 화면에 남긴 것을 비운다(2026년 10월 26일 원재).
+        /// 전투 화면은 열 때 그 전투로 다시 채우지만 그 사이에 앞 런의 릴과 코인이 잠깐 보였다. 런이 바뀌는 순간 지운다.
+        /// </summary>
+        private void ResetRunScreens()
+        {
+            if (_combat != null)
+            {
+                _combat.ResetForNewRun();
+            }
         }
 
         /// <summary>
@@ -2292,6 +2374,8 @@ namespace SlotHero.Flow
             {
                 _combat.Leave();
             }
+
+            ShowBattleBackground(false);
         }
 
         /// <summary>런 중에만 보이는 상단 표시줄과 현재 빌드 버튼을 켜고 끈다.</summary>
@@ -2332,11 +2416,13 @@ namespace SlotHero.Flow
 
             MapNode node = GetCurrentNode();
             Sprite roomIcon = null;
+            Sprite roomDetail = null;
             string roomName = string.Empty;
 
             if (node != null && _mapVisual != null)
             {
                 roomIcon = _mapVisual.GetVisual(node.RoomType).Icon;
+                roomDetail = _mapVisual.GetVisual(node.RoomType).DetailIcon;
                 roomName = RoomTypes.GetDisplayName(node.RoomType);
             }
 
@@ -2345,7 +2431,9 @@ namespace SlotHero.Flow
             // 05 정보 갱신 시점 이 "새로운 방 진입 시" 바뀌라고 정했다.
             // 스테이지 번호를 적으면 스테이지가 아직 하나뿐이라 방을 옮겨도 늘 1 로 멈춰 있다.
             int step = node != null ? node.Stage : 0;
-            _topBar.SetLocation(null, step, roomIcon, roomName);
+
+            // 아이콘은 스테이지마다 다르다. 제국, 신전, 바다, 사막, 유적이다(2026년 10월 20일 원재).
+            _topBar.SetLocation(_topBar.GetStageIcon(run.StageIndex), step, roomIcon, roomDetail, roomName);
         }
 
         /// <summary>
@@ -2371,21 +2459,15 @@ namespace SlotHero.Flow
             return _map.Map.GetNode(Context.Run.CurrentNodeId);
         }
 
-        /// <summary>저장된 지나온 길을 맵에 되돌린다.</summary>
-        private void RestoreProgress(RunSaveData run)
+        /// <summary>저장된 지나온 길을 맵 진행 상태로 옮긴다.</summary>
+        private static MapProgress SavedProgress(RunSaveData run)
         {
-            if (_map == null || _map.Map == null)
-            {
-                return;
-            }
-
             MapProgress progress = new MapProgress();
             progress.CurrentNodeId = run.CurrentNodeId;
             progress.CurrentRoomCleared = run.CurrentRoomCleared;
             progress.VisitedNodeIds.Clear();
             progress.VisitedNodeIds.AddRange(run.VisitedNodeIds);
-
-            _map.Load(_map.Map, progress);
+            return progress;
         }
 
         private void StartRunTimer(int fromSeconds)

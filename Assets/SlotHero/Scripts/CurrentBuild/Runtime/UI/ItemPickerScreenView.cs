@@ -353,7 +353,18 @@ namespace SlotHero.CurrentBuild.UI
             _scrollContent.anchorMax = new Vector2(0f, 1f);
             _scrollContent.pivot = new Vector2(0f, 1f);
             _scrollContent.sizeDelta = new Vector2(_layout.TagPanelPosition.x, height);
-            _scrollContent.anchoredPosition = Vector2.zero;
+
+            // 자리는 건드리지 않는다. 예전에는 여기서 맨 위로 돌려, 아래 줄 칸을 고르면
+            // 고른 칸이 화면 밖으로 사라졌다(2026년 10월 22일 코덱스 검토). 맨 위로는 열 때만 간다(`ScrollToTop`).
+        }
+
+        /// <summary>스크롤을 맨 위로 돌린다. 고르기 화면을 새로 열 때 부른다.</summary>
+        public void ScrollToTop()
+        {
+            if (_scrollContent != null)
+            {
+                _scrollContent.anchoredPosition = Vector2.zero;
+            }
 
             if (_scroll != null)
             {

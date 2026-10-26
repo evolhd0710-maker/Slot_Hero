@@ -130,7 +130,7 @@ namespace SlotHero.Save
             return true;
         }
 
-        /// <summary>유물을 뺀다. 가지고 있지 않으면 아무 일도 하지 않는다.</summary>
+        /// <summary>유물을 뺀다. 가지고 있을 때만 뺀다.</summary>
         public bool RemoveRelic(string relicId)
         {
             if (string.IsNullOrEmpty(relicId))

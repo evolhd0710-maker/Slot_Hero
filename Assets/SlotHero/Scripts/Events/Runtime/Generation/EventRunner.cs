@@ -420,13 +420,16 @@ namespace SlotHero.Events
 
             List<EventItem> decided = Decide(spec, id, targetId);
 
-            EventChoice choice = new EventChoice(id, FillAmounts(label, spec.Action, targetName, decided));
+            // 물건(문양, 코인, 유물) 이름에는 그 식별자를 거는 고리를 단다. 이름 위에 커서를 올리면 아이템 상세가 뜬다(2026년 10월 25일 원재).
+            // 태그와 부정 효과는 아이템 상세가 없어 고리를 달지 않는다.
+            string linkId = IsItemFill(spec.Fill) ? targetId : string.Empty;
+            EventChoice choice = new EventChoice(id, FillAmounts(label, spec.Action, linkId, targetName, decided));
             choice.ResultHidden = spec.ResultHidden;
 
             for (int i = 0; i < spec.Lines.Count; i++)
             {
                 EventEffectLine line = spec.Lines[i];
-                choice.Lines.Add(new EventEffectLine(line.Kind, FillAmounts(line.Text, spec.Action, targetName, decided), line.Met));
+                choice.Lines.Add(new EventEffectLine(line.Kind, FillAmounts(line.Text, spec.Action, linkId, targetName, decided), line.Met));
             }
 
             // 4장 공통 규칙 · 종료 선택지는 항상 비용 없이 고를 수 있다.
@@ -608,7 +611,47 @@ namespace SlotHero.Events
             return decided;
         }
 
-        /// <summary>미리 정한 결과 자리를 이름으로 바꾼다.</summary>
+        /// <summary>
+        /// 이름에 그 물건의 식별자를 거는 고리(글자 칸의 link 서식)를 단다. 선택지 칸이 커서 아래의 고리를 찾아 아이템 상세를 띄운다.
+        /// 식별자가 없으면 이름만 돌려준다.
+        /// </summary>
+        public static string LinkItem(string id, string text)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            return "<link=\"" + id + "\">" + text + "</link>";
+        }
+
+        /// <summary>고리 서식을 지운 맨글. 검사와 글 길이 재기에 쓴다.</summary>
+        public static string StripLinks(string text)
+        {
+            if (string.IsNullOrEmpty(text) || text.IndexOf("link", System.StringComparison.Ordinal) < 0)
+            {
+                return text;
+            }
+
+            return System.Text.RegularExpressions.Regex.Replace(text, "<link=\"[^\"]*\">|</link>", string.Empty);
+        }
+
+        /// <summary>물건(문양, 코인, 유물)으로 채우는 선택지인지. 이런 선택지의 대상 이름에만 아이템 상세 고리를 단다.</summary>
+        private static bool IsItemFill(EventChoiceFill fill)
+        {
+            return fill == EventChoiceFill.RandomSymbols || fill == EventChoiceFill.OwnedSymbols
+                || fill == EventChoiceFill.MostCommonTagSymbols || fill == EventChoiceFill.RandomCoins
+                || fill == EventChoiceFill.OwnedCoins || fill == EventChoiceFill.RandomRelics;
+        }
+
+        /// <summary>자리 표시를 이름으로 바꾸며 고리를 단다. "[자리]" 꼴이면 괄호까지 함께 감싼다.</summary>
+        private static string ReplaceLinked(string text, string token, string id, string name)
+        {
+            text = text.Replace("[" + token + "]", LinkItem(id, "[" + name + "]"));
+            return text.Replace(token, LinkItem(id, name));
+        }
+
+        /// <summary>미리 정한 결과 자리를 이름으로 바꾼다. 이름마다 아이템 상세 고리를 단다.</summary>
         private static string FillResults(string text, List<EventItem> decided)
         {
             if (text.IndexOf("{result", System.StringComparison.Ordinal) < 0)
@@ -621,8 +664,8 @@ namespace SlotHero.Events
 
             for (int i = 0; i < count; i++)
             {
-                all += (i > 0 ? ", " : string.Empty) + "[" + decided[i].Label + "]";
-                text = text.Replace(ResultToken(i), decided[i].Label);
+                all += (i > 0 ? ", " : string.Empty) + LinkItem(decided[i].Id, "[" + decided[i].Label + "]");
+                text = ReplaceLinked(text, ResultToken(i), decided[i].Id, decided[i].Label);
             }
 
             text = text.Replace(ResultsToken, count > 0 ? all : NoResultText);
@@ -642,14 +685,14 @@ namespace SlotHero.Events
         /// 최대 체력이 100 이고 10% 면 10 이다. 실제로 깎이는 수와 같은 규칙(`EventAction.HealthAmount`)을 쓴다.
         /// 같은 날 받는 물건은 "유물 — [곡괭이]" 처럼 종류를 앞에, 이름을 괄호에 넣어 얻고 잃는 줄에 적기로 했다.
         /// </summary>
-        private string FillAmounts(string text, EventAction action, string targetName, List<EventItem> decided)
+        private string FillAmounts(string text, EventAction action, string targetId, string targetName, List<EventItem> decided)
         {
             if (string.IsNullOrEmpty(text) || text.IndexOf('{') < 0)
             {
                 return text;
             }
 
-            text = text.Replace(NameToken, targetName ?? string.Empty);
+            text = ReplaceLinked(text, NameToken, targetId, targetName ?? string.Empty);
             text = FillResults(text, decided);
 
             if (action == null)

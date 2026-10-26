@@ -1,5 +1,4 @@
 using System.Globalization;
-using SlotHero.Combat;
 using SlotHero.CurrentBuild;
 
 namespace SlotHero.Reward
@@ -19,7 +18,7 @@ namespace SlotHero.Reward
         }
 
         /// <summary>
-        /// 카드 아래에 적는 태그 줄.
+        /// 카드 아래에 적는 태그 줄. 태그마다 제 색으로 적는다(2026년 10월 25일 원재).
         /// 문양이 아니면 빈 글이다.
         /// </summary>
         public static string Tags(RewardCard card, CurrentBuildVisualConfig visual)
@@ -29,22 +28,10 @@ namespace SlotHero.Reward
                 return string.Empty;
             }
 
-            string first = GetTagName(card.FirstTag, visual);
-            string second = GetTagName(card.SecondTag, visual);
+            string first = SymbolTags.GetColoredName(card.FirstTag, visual);
+            string second = SymbolTags.GetColoredName(card.SecondTag, visual);
 
             return first + " " + second;
-        }
-
-        private static string GetTagName(
-            SymbolTagType tag, CurrentBuildVisualConfig visual)
-        {
-            if (visual == null)
-            {
-                return tag.ToString();
-            }
-
-            BuildTagVisual found = visual.GetTagVisual(tag);
-            return string.IsNullOrEmpty(found.DisplayName) ? tag.ToString() : found.DisplayName;
         }
     }
 }

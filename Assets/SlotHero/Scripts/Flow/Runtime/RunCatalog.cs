@@ -108,6 +108,66 @@ namespace SlotHero.Flow
             return _config != null ? _config.GetIcon(item.Id) : null;
         }
 
+        /// <summary>
+        /// 태그 테두리 그림을 찾는 곳. 현재 빌드 화면과 같은 설정이다. 흐름이 만들 때 넣는다.
+        /// 성소는 태그를 모르므로 행상 진열의 테두리는 여기서 찾아 넘긴다(2026년 10월 19일 원재).
+        /// </summary>
+        public CurrentBuildVisualConfig TagVisuals { get; set; }
+
+        /// <summary>행상이 진열한 문양의 태그 테두리 둘. 문양이 아니거나 목록에 없으면 false 다.</summary>
+        public bool TryGetTagCorners(MerchantItem item, out Sprite topRight, out Sprite bottomLeft)
+        {
+            topRight = null;
+            bottomLeft = null;
+
+            SymbolTagType first;
+            SymbolTagType second;
+            if (TagVisuals == null || _config == null || item.Kind != SanctumItemKind.Symbol
+                || !_config.TryGetSymbolTags(item.Id, out first, out second))
+            {
+                return false;
+            }
+
+            TagVisuals.GetTagCorners(first, second, out topRight, out bottomLeft);
+            return true;
+        }
+
+        /// <summary>행상이 진열한 문양의 태그 기호 둘. 문양이 아니거나 목록에 없으면 false 다.</summary>
+        public bool TryGetTagGlyphs(MerchantItem item, out Sprite topRight, out Sprite bottomLeft)
+        {
+            topRight = null;
+            bottomLeft = null;
+
+            SymbolTagType first;
+            SymbolTagType second;
+            if (TagVisuals == null || _config == null || item.Kind != SanctumItemKind.Symbol
+                || !_config.TryGetSymbolTags(item.Id, out first, out second))
+            {
+                return false;
+            }
+
+            TagVisuals.GetTagGlyphs(first, second, out topRight, out bottomLeft);
+            return true;
+        }
+
+        /// <summary>행상 진열의 태그 기호 크기. 현재 빌드 화면과 같은 값이다.</summary>
+        public float CornerGlyphSizeRatio
+        {
+            get { return TagVisuals != null ? TagVisuals.CornerGlyphSizeRatio : 0f; }
+        }
+
+        /// <summary>행상 진열의 태그 기호 자리. 현재 빌드 화면과 같은 값이다.</summary>
+        public float CornerGlyphFromCorner
+        {
+            get { return TagVisuals != null ? TagVisuals.CornerGlyphFromCorner : 0f; }
+        }
+
+        /// <summary>행상 진열의 태그 테두리와 문양 그림이 칸에서 들어가는 비율. 현재 빌드 화면과 같은 값이다.</summary>
+        public float SymbolFrameInset
+        {
+            get { return TagVisuals != null ? TagVisuals.SymbolFrameInset : 0f; }
+        }
+
         /// <summary>보상 카드에 놓을 그림을 내준다.</summary>
         public Sprite GetIcon(RewardCard card)
         {

@@ -54,6 +54,8 @@ namespace SlotHero.Combat.UI
         [SerializeField] private TMP_Text _relicPopupFlavor;
 
         [Header("플레이어")]
+        [Tooltip("주인공 깃발과 초상. 피그마 그림 그대로다.")]
+        [SerializeField] private Image _playerPortrait;
         [SerializeField] private Image _playerHealthPanel;
         [SerializeField] private Image _playerHealthBar;
         [SerializeField] private TMP_Text _playerHealthLabel;
@@ -69,6 +71,9 @@ namespace SlotHero.Combat.UI
         [SerializeField] private TMP_Text _enemyNameLabel;
         [SerializeField] private TMP_Text _enemyInfoLabel;
         [SerializeField] private TMP_Text _enemyDamageLabel;
+
+        [Tooltip("숫자 그림으로 적는 피해 숫자. 있으면 위의 글자 대신 이것을 띄운다.")]
+        [SerializeField] private DamageNumberView _enemyDamageNumber;
 
         [Header("소환수")]
         [Tooltip("소환수 칸. 자리 0 이 가장 왼쪽이다. 장군의 방패병이 장군 바로 왼쪽(마지막 칸)부터 들어선다.")]
@@ -198,7 +203,76 @@ namespace SlotHero.Combat.UI
                 return;
             }
 
-            _reels[index].Show(symbol, icon, GetTagVisual(symbol.FirstTag), GetTagVisual(symbol.SecondTag));
+            _reels[index].Show(symbol, icon, GetTagVisual(symbol.FirstTag), GetTagVisual(symbol.SecondTag), _tagVisuals);
+        }
+
+        /// <summary>
+        /// 앞 런의 전투 표시를 모두 지운다. 새 런을 시작하거나 다른 런을 이어 할 때 조종기가 부른다(2026년 10월 26일 원재).
+        /// 릴, 코인 원판, 태그 원판 가운데 코인과 공격 예정 칸, 유물 칸, 체력, 적 이름과 정보, 소환수, 안내 글, 피해 숫자를 비운다.
+        /// </summary>
+        public void ClearRunData()
+        {
+            for (int i = 0; i < _reels.Length; i++)
+            {
+                if (_reels[i] != null)
+                {
+                    _reels[i].ShowSpinning(null, string.Empty);
+                    _reels[i].SetHighlight(false, Color.clear);
+                }
+            }
+
+            if (_coinDial != null)
+            {
+                for (int i = 0; i < _coinDial.SlotCount; i++)
+                {
+                    _coinDial.SetEmpty(i);
+                }
+
+                _coinDial.HidePopup();
+            }
+
+            if (_tagDial != null)
+            {
+                _tagDial.SetCenterCoin(null, string.Empty);
+                _tagDial.SetCharge(false, Color.clear);
+            }
+
+            ShowRelics(null, null, _relicSlots.Length);
+
+            SetText(_playerHealthLabel, string.Empty);
+            SetText(_enemyHealthLabel, string.Empty);
+            SetBar(_playerHealthBar, 0, 0);
+            SetBar(_enemyHealthBar, 0, 0);
+            SetText(_enemyArtLabel, string.Empty);
+            SetText(_enemyNameLabel, string.Empty);
+            SetText(_enemyInfoLabel, string.Empty);
+
+            for (int i = 0; i < _summonPanels.Length; i++)
+            {
+                if (_summonPanels[i] != null)
+                {
+                    _summonPanels[i].gameObject.SetActive(false);
+                }
+            }
+
+            SetHint(string.Empty);
+            ShowResult(null);
+            SetDial(true);
+
+            if (_enemyDamageLabel != null)
+            {
+                _enemyDamageLabel.gameObject.SetActive(false);
+            }
+
+            if (_enemyDamageNumber != null)
+            {
+                _enemyDamageNumber.gameObject.SetActive(false);
+            }
+
+            if (_playerDamageLabel != null)
+            {
+                _playerDamageLabel.gameObject.SetActive(false);
+            }
         }
 
         /// <summary>릴 강조를 모두 걷는다.</summary>
@@ -331,12 +405,15 @@ namespace SlotHero.Combat.UI
                 bool open = i < capacity;
                 CombatRelic relic = open && i < _shownRelics.Count ? _shownRelics[i] : null;
 
+                // 칸은 흰 유물 칸 틀 그림이고 색은 그 유물 등급을 따른다. 유물이 없으면 회색이다.
                 if (_relicSlots[i] != null)
                 {
                     _relicSlots[i].gameObject.SetActive(open);
                     if (_visual != null)
                     {
-                        _relicSlots[i].color = relic != null ? _visual.PanelColor : _visual.EmptyColor;
+                        _relicSlots[i].color = relic != null
+                            ? _visual.GetRelicGradeColor(relic.Grade)
+                            : _visual.RelicEmptyFrameColor;
                     }
                 }
 
@@ -434,21 +511,20 @@ namespace SlotHero.Combat.UI
 
         /// <summary>
         /// 플레이어 체력을 적는다. 소모값을 넘기면 "100-10/100" 꼴로 깎일 몫을 빨갛게 적는다.
-        /// 1.0.b 초안 05 의 표시를 그대로 옮겼다.
+        /// 1.0.b 초안 05 의 표시를 옮겼다. "체력" 글자는 피그마 디자인의 하트 그림이 대신한다.
         /// </summary>
         public void ShowPlayerHealth(int health, int maxHealth, int pendingCost)
         {
             if (_playerHealthLabel != null)
             {
-                string label = _visual != null ? _visual.PlayerHealthLabel + "  " : string.Empty;
                 string cost = string.Empty;
 
                 if (pendingCost > 0 && _visual != null)
                 {
-                    cost = "<color=#" + ColorUtility.ToHtmlStringRGB(_visual.CostColor) + ">-" + pendingCost + "</color>";
+                    cost = Colored("-" + pendingCost, _visual.CostColor);
                 }
 
-                _playerHealthLabel.text = label + health + cost + " / " + maxHealth;
+                _playerHealthLabel.text = health + cost + MaxPart(maxHealth);
             }
 
             SetBar(_playerHealthBar, health - Mathf.Max(0, pendingCost), maxHealth);
@@ -459,10 +535,16 @@ namespace SlotHero.Combat.UI
         {
             if (_enemyHealthLabel != null)
             {
-                _enemyHealthLabel.text = health + " / " + maxHealth;
+                _enemyHealthLabel.text = health + MaxPart(maxHealth);
             }
 
             SetBar(_enemyHealthBar, health, maxHealth);
+        }
+
+        /// <summary>체력 숫자의 "/최대" 부분. 피그마처럼 회색으로 적는다.</summary>
+        private string MaxPart(int maxHealth)
+        {
+            return _visual != null ? Colored("/" + maxHealth, _visual.HealthMaxColor) : "/" + maxHealth;
         }
 
         /// <summary>몬스터 정보와 일러스트 자리를 채운다.</summary>
@@ -771,11 +853,36 @@ namespace SlotHero.Combat.UI
                 ? StartCoroutine(Shake(body, shake, 0.3f))
                 : null;
 
+            Vector2 center = GetEnemyCenter(target);
+            Vector2 at = TopLeftToAnchored(new Vector2(center.x, center.y - UiScale.Px(40f)));
+
+            // 숫자 그림으로 적을 수 있으면 그것으로 띄운다. 막은 몫은 숫자 아래 작은 글이다.
+            // 그림이 빠졌거나 자리 수를 넘으면 아래 글자 피해 숫자로 적는다.
+            if (_enemyDamageNumber != null && _enemyDamageNumber.CanShow(damage - blocked))
+            {
+                string note = string.Empty;
+                if (blocked > 0)
+                {
+                    string blockedLabel = _visual != null ? _visual.BlockedText : "막음";
+                    Color blockedColor = _visual != null ? _visual.BlockColor : Color.white;
+                    note = Colored(blockedLabel + " " + blocked, blockedColor);
+                }
+
+                _enemyDamageNumber.RectTransform.anchoredPosition = at;
+                _enemyDamageNumber.Show(damage - blocked, note);
+                yield return PopNumber(_enemyDamageNumber, scale);
+
+                if (shaking != null)
+                {
+                    yield return shaking;
+                }
+
+                yield break;
+            }
+
             if (_enemyDamageLabel != null && _layout != null)
             {
-                Vector2 center = GetEnemyCenter(target);
-                _enemyDamageLabel.rectTransform.anchoredPosition =
-                    TopLeftToAnchored(new Vector2(center.x, center.y - UiScale.Px(40f)));
+                _enemyDamageLabel.rectTransform.anchoredPosition = at;
             }
 
             string text = (damage - blocked).ToString();
@@ -905,6 +1012,39 @@ namespace SlotHero.Combat.UI
             label.gameObject.SetActive(false);
         }
 
+        /// <summary>숫자 그림 피해 숫자를 글자 피해 숫자(`Pop`)와 같은 움직임으로 띄운다.</summary>
+        private IEnumerator PopNumber(DamageNumberView number, float scale)
+        {
+            RectTransform rect = number.RectTransform;
+            CanvasGroup group = number.Group;
+            Vector2 home = rect.anchoredPosition;
+            float rise = _layout != null ? _layout.DamageRise : 90f;
+            float duration = _visual != null ? _visual.DamageShowDuration : 0.8f;
+
+            number.gameObject.SetActive(true);
+            number.transform.SetAsLastSibling();
+
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                float t = elapsed / duration;
+                float grow = t < 0.2f ? Mathf.Lerp(0.6f, 1f, t / 0.2f) : 1f;
+                rect.localScale = Vector3.one * scale * grow;
+                rect.anchoredPosition = home + new Vector2(0f, rise * t);
+                if (group != null)
+                {
+                    group.alpha = t < 0.7f ? 1f : Mathf.Lerp(1f, 0f, (t - 0.7f) / 0.3f);
+                }
+
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+
+            rect.anchoredPosition = home;
+            rect.localScale = Vector3.one;
+            number.gameObject.SetActive(false);
+        }
+
         private static IEnumerator Shake(RectTransform rect, float magnitude, float duration)
         {
             Vector2 home = rect.anchoredPosition;
@@ -952,6 +1092,7 @@ namespace SlotHero.Combat.UI
                     new Vector2(_layout.RelicSlotSize, _layout.RelicSlotSize));
             }
 
+            PlaceTopLeft(_playerPortrait, _layout.PlayerPortraitPosition, _layout.PlayerPortraitSize);
             PlaceTopLeft(_playerHealthPanel, _layout.PlayerHealthPosition, _layout.PlayerHealthSize);
             PlaceTopLeft(_enemyHealthPanel, _layout.EnemyHealthPosition, _layout.EnemyHealthSize);
             PlaceTopLeft(_enemyArt, _layout.EnemyArtPosition, _layout.EnemyArtSize);
@@ -987,6 +1128,16 @@ namespace SlotHero.Combat.UI
                 _layout.PlayerHealthPosition.x + _layout.PlayerHealthSize.x * 0.5f,
                 _layout.PlayerHealthPosition.y - UiScale.Px(50f)), new Vector2(_layout.PlayerHealthSize.x, UiScale.Px(100f)));
 
+            if (_enemyDamageNumber != null)
+            {
+                RectTransform rect = _enemyDamageNumber.RectTransform;
+                rect.anchorMin = new Vector2(0f, 1f);
+                rect.anchorMax = new Vector2(0f, 1f);
+                rect.pivot = new Vector2(0.5f, 0.5f);
+                _enemyDamageNumber.Configure(_layout, _visual);
+                _enemyDamageNumber.gameObject.SetActive(false);
+            }
+
             if (_coinDial != null)
             {
                 _coinDial.Configure(_layout, _visual);
@@ -1010,14 +1161,13 @@ namespace SlotHero.Combat.UI
             {
                 if (_reels[i] != null)
                 {
-                    _reels[i].SetBackground(_visual.PanelColor);
+                    _reels[i].SetBackground(_visual.ReelBackColor);
                 }
             }
 
-            Paint(_relicPanel, _visual.PanelColor);
+            // 체력 칸은 피그마 체력 틀 그림이라 색을 입히지 않는다.
+            Paint(_relicPanel, _visual.RelicPanelColor);
             Paint(_relicPopup, _visual.PopupColor);
-            Paint(_playerHealthPanel, _visual.PanelColor);
-            Paint(_enemyHealthPanel, _visual.PanelColor);
             Paint(_enemyInfo, _visual.PanelColor);
             Paint(_enemyArt, _visual.EnemyArtStandIn);
             Paint(_dial, _visual.DialColor);

@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using SlotHero.Ui;
 
 namespace SlotHero.Popup.UI
 {
@@ -150,6 +151,7 @@ namespace SlotHero.Popup.UI
             if (_bodyLabel != null)
             {
                 _bodyLabel.text = spec.Body;
+                TextOutline.Apply(_bodyLabel, spec.BodyOutlineColor, spec.BodyOutlineWidth);
             }
 
             if (_flavorLabel != null)

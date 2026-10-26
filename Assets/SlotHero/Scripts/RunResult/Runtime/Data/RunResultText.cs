@@ -183,7 +183,8 @@ namespace SlotHero.RunResult
                     continue;
                 }
 
-                string name = GetTagName(build, all[i]);
+                // 태그 이름은 그 태그 색으로 적는다(2026년 10월 25일 원재).
+                string name = SymbolTags.GetColoredName(all[i], build);
                 tags.Add(string.Format(CultureInfo.InvariantCulture, visual.TagEntryFormat, name, count));
             }
 
@@ -230,18 +231,6 @@ namespace SlotHero.RunResult
 
             lines.Add(ResultLine.Heading(heading));
             lines.Add(ResultLine.Body(Join(names, separator)));
-        }
-
-        /// <summary>태그 이름. 표시 설정이 없으면 열거형 이름을 그대로 쓴다.</summary>
-        private static string GetTagName(CurrentBuildVisualConfig build, SymbolTagType tag)
-        {
-            if (build == null)
-            {
-                return tag.ToString();
-            }
-
-            BuildTagVisual visual = build.GetTagVisual(tag);
-            return string.IsNullOrEmpty(visual.DisplayName) ? tag.ToString() : visual.DisplayName;
         }
     }
 }
