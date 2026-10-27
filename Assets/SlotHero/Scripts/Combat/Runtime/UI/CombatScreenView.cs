@@ -101,6 +101,9 @@ namespace SlotHero.Combat.UI
         [SerializeField] private Image _projectile;
         [SerializeField] private TMP_Text _resultLabel;
 
+        [Tooltip("회전할 때 가운데에 크게 뜨는 6열 × 5행 슬롯. 없으면 원래 칸에서 돈다.")]
+        [SerializeField] private SlotSpinOverlay _spinOverlay;
+
         private readonly List<CombatRelic> _shownRelics = new List<CombatRelic>();
         private System.Action<bool>[] _relicHoverHandlers = new System.Action<bool>[0];
 
@@ -198,6 +201,12 @@ namespace SlotHero.Combat.UI
             get { return _tagVisuals; }
         }
 
+        /// <summary>큰 슬롯. 없으면 null 이다.</summary>
+        public SlotSpinOverlay SpinOverlay
+        {
+            get { return _spinOverlay; }
+        }
+
         public CoinDialView CoinDial
         {
             get { return _coinDial; }
@@ -231,6 +240,12 @@ namespace SlotHero.Combat.UI
             gameObject.SetActive(true);
             ApplyLayout();
             ApplyStyle();
+
+            // 지난 전투가 도는 중에 닫혔으면 큰 슬롯이 남아 있다. 새로 열 때 걷는다.
+            if (_spinOverlay != null)
+            {
+                _spinOverlay.Hide();
+            }
         }
 
         /// <summary>화면을 끈다.</summary>

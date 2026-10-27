@@ -215,6 +215,29 @@ namespace SlotHero.Combat
         [Tooltip("칸 사이를 띄우는 각도. 칸을 이만큼 좁혀 경계가 보이게 한다.")]
         public float TagSectorGapDegrees = 1.2f;
 
+        [Header("큰 슬롯 회전")]
+        [Tooltip("큰 슬롯 칸 하나. 6열 × 5행이 화면 가운데에 뜬다.")]
+        public float SpinCellSize = UiScale.Px(150f);
+
+        [Tooltip("열 사이.")]
+        public float SpinColumnGap = UiScale.Px(16f);
+
+        [Tooltip("슬롯 몸통의 안쪽 여백.")]
+        public float SpinMachinePadding = UiScale.Px(34f);
+
+        [Tooltip("칸 안 문양 그림의 크기. 칸 크기에 대한 비율이다.")]
+        [Range(0.4f, 1f)]
+        public float SpinIconRatio = 0.86f;
+
+        [Tooltip("결과 줄 금테 두께.")]
+        public float SpinLineThickness = UiScale.Px(6f);
+
+        [Tooltip("결과 줄 테두리가 열 바깥으로 삐져나오는 길이.")]
+        public float SpinLineOverhang = UiScale.Px(22f);
+
+        [Tooltip("결과 줄 양옆 화살표.")]
+        public float SpinMarkerSize = UiScale.Px(44f);
+
         [Header("연출")]
         [Tooltip("피해 숫자가 떠오르는 거리.")]
         public float DamageRise = UiScale.Px(90f);

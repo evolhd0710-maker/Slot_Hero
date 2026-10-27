@@ -215,6 +215,9 @@ namespace SlotHero.ToolsEditor
             TMP_Text result = NewLabel("ResultLabel", root, visual.DamageFontSize * 1.4f, visual.TextColor, true);
             UiSceneBuilder.Stretch(result.rectTransform);
 
+            // 회전할 때 가운데에 크게 뜨는 슬롯. 맨 위에 둔다.
+            SlotSpinOverlay spinOverlay = BuildSpinOverlay(root, layout, visual, rules.ReelCount);
+
             // ---- 붙이기 ----
             CombatScreenView view = root.gameObject.AddComponent<CombatScreenView>();
             UiSceneBuilder.SetField(view, "_layout", layout);
@@ -260,6 +263,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_hintLabel", hint);
             UiSceneBuilder.SetField(view, "_projectile", projectile);
             UiSceneBuilder.SetField(view, "_resultLabel", result);
+            UiSceneBuilder.SetField(view, "_spinOverlay", spinOverlay);
 
             CombatScreenController controller = root.gameObject.AddComponent<CombatScreenController>();
             UiSceneBuilder.SetField(controller, "_view", view);
@@ -271,6 +275,122 @@ namespace SlotHero.ToolsEditor
 
             AddDriver();
             SaveScene(scene, CombatSceneName);
+        }
+
+        /// <summary>
+        /// 회전 연출용 큰 슬롯. 6열 × 5행, 가운데 행이 결과 줄이다(2026년 10월 27일 원재).
+        ///
+        /// 결과 줄 테두리는 넷을 겹친다.
+        ///   - 뒤에서 번지는 금빛(그림자 스킨을 금색으로). 열 사이와 바깥으로 새어 나온다
+        ///   - 금테(패널 스킨의 테두리만 9조각으로). 스킨의 위가 밝고 아래가 어두운 결이 금속처럼 보인다
+        ///   - 금테 안쪽의 어두운 선. 금테와 문양 사이를 갈라 테두리가 또렷해진다
+        ///   - 양옆의 화살표
+        /// 꺼 둔 채로 두고 회전할 때만 켠다.
+        /// </summary>
+        private static SlotSpinOverlay BuildSpinOverlay(
+            Transform parent, CombatLayoutConfig layout, CombatVisualConfig visual, int columnCount)
+        {
+            RectTransform root = UiSceneBuilder.NewRect("SpinOverlay", parent);
+            UiSceneBuilder.Stretch(root);
+            CanvasGroup group = root.gameObject.AddComponent<CanvasGroup>();
+
+            // 도는 동안 뒤를 누르지 못하게 막는다. 누르면 건너뛰기다.
+            Image dim = UiSceneBuilder.NewFlatImage("Dim", root, visual.SpinOverlayDim);
+
+            Image rim = UiSceneBuilder.NewImage("MachineRim", root, visual.SpinLineInnerColor);
+            rim.raycastTarget = false;
+            Image machine = UiSceneBuilder.NewImage("Machine", root, visual.SpinMachineColor);
+            machine.raycastTarget = false;
+            UiSceneBuilder.AddShadowPx(machine, 24f, 14f);
+
+            Image glow = UiSceneBuilder.NewFlatImage("LineGlow", root, visual.SpinLineGlowColor);
+            glow.sprite = UiSceneBuilder.LoadSkin("그림자");
+            glow.type = Image.Type.Sliced;
+            glow.raycastTarget = false;
+
+            Image[] backs = new Image[columnCount];
+            RectTransform[] columns = new RectTransform[columnCount];
+            Image[] cells = new Image[columnCount * SlotSpinOverlay.CellsPerColumn];
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                backs[i] = UiSceneBuilder.NewImage("ColumnBack" + i, root, visual.SpinColumnColor);
+                backs[i].raycastTarget = false;
+            }
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                columns[i] = UiSceneBuilder.NewRect("Column" + i, root);
+                columns[i].gameObject.AddComponent<RectMask2D>();
+
+                for (int j = 0; j < SlotSpinOverlay.CellsPerColumn; j++)
+                {
+                    Image cell = UiSceneBuilder.NewFlatImage("Cell" + j, columns[i], Color.white);
+                    cell.raycastTarget = false;
+                    cell.preserveAspect = true;
+                    cells[i * SlotSpinOverlay.CellsPerColumn + j] = cell;
+                }
+            }
+
+            Image topShade = UiSceneBuilder.NewFlatImage("TopShade", root, visual.SpinShadeColor);
+            topShade.raycastTarget = false;
+            Image bottomShade = UiSceneBuilder.NewFlatImage("BottomShade", root, visual.SpinShadeColor);
+            bottomShade.raycastTarget = false;
+
+            Image frame = NewHollowFrame("LineFrame", root, visual.SpinLineColor, layout.SpinLineThickness);
+            Image inner = NewHollowFrame("LineInner", root, visual.SpinLineInnerColor, layout.SpinLineThickness * 0.5f);
+
+            TMP_Text left = NewLabel("LeftMarker", root, layout.SpinMarkerSize * 0.8f, visual.SpinLineColor, true);
+            TMP_Text right = NewLabel("RightMarker", root, layout.SpinMarkerSize * 0.8f, visual.SpinLineColor, true);
+            TMP_Text skipHint = NewLabel("SkipHint", root, visual.HintFontSize, visual.SubTextColor, false);
+
+            SlotSpinOverlay overlay = root.gameObject.AddComponent<SlotSpinOverlay>();
+            UiSceneBuilder.SetField(overlay, "_layout", layout);
+            UiSceneBuilder.SetField(overlay, "_visual", visual);
+            UiSceneBuilder.SetField(overlay, "_group", group);
+            UiSceneBuilder.SetField(overlay, "_dim", dim);
+            UiSceneBuilder.SetField(overlay, "_machine", machine);
+            UiSceneBuilder.SetArrayField(overlay, "_columns", columns);
+            UiSceneBuilder.SetArrayField(overlay, "_columnBacks", backs);
+            UiSceneBuilder.SetArrayField(overlay, "_cells", cells);
+            UiSceneBuilder.SetField(overlay, "_topShade", topShade);
+            UiSceneBuilder.SetField(overlay, "_bottomShade", bottomShade);
+            UiSceneBuilder.SetField(overlay, "_lineGlow", glow);
+            UiSceneBuilder.SetField(overlay, "_lineFrame", frame);
+            UiSceneBuilder.SetField(overlay, "_lineInner", inner);
+            UiSceneBuilder.SetField(overlay, "_leftMarker", left);
+            UiSceneBuilder.SetField(overlay, "_rightMarker", right);
+            UiSceneBuilder.SetField(overlay, "_skipHint", skipHint);
+
+            overlay.ApplyLayout();
+            overlay.ApplyStyle();
+
+            // 몸통 바깥 테두리는 몸통보다 조금 크게. 자리는 몸통을 따른다.
+            RectTransform machineRect = machine.rectTransform;
+            RectTransform rimRect = rim.rectTransform;
+            rimRect.anchorMin = machineRect.anchorMin;
+            rimRect.anchorMax = machineRect.anchorMax;
+            rimRect.pivot = machineRect.pivot;
+            rimRect.anchoredPosition = machineRect.anchoredPosition;
+            rimRect.sizeDelta = machineRect.sizeDelta + new Vector2(UiScale.Px(14f), UiScale.Px(14f));
+
+            root.gameObject.SetActive(false);
+            return overlay;
+        }
+
+        /// <summary>
+        /// 속이 빈 둥근 테두리. 패널 스킨을 9조각으로 그리되 가운데를 비운다.
+        /// 스킨 가장자리가 16 픽셀이라 그것을 원하는 두께로 줄이도록 픽셀 배율을 맞춘다.
+        /// </summary>
+        private static Image NewHollowFrame(string name, Transform parent, Color color, float thickness)
+        {
+            Image frame = UiSceneBuilder.NewFlatImage(name, parent, color);
+            frame.sprite = UiSceneBuilder.LoadSkin("패널");
+            frame.type = Image.Type.Sliced;
+            frame.fillCenter = false;
+            frame.pixelsPerUnitMultiplier = thickness > 0f ? 16f / thickness : 1f;
+            frame.raycastTarget = false;
+            return frame;
         }
 
         /// 피그마 릴 틀 그림 수. 릴이 더 많으면 처음 색부터 다시 쓴다.

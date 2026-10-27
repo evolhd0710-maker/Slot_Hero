@@ -72,6 +72,7 @@ MonoBehaviour:
   JavelinOrderLabel: "\uD22C\uCC3D \uBA85\uB839"
   LastActionLabel: "\uC9C0\uB09C \uD589\uB3D9"
   BlockedText: "\uB9C9\uC74C"
+  ChooseTargetHint: "\uACF5\uACA9\uD560 \uC801\uC744 \uB204\uB974\uC138\uC694"
   VortexHint: "\uC544\uC9C1 \uD6A8\uACFC\uAC00 \uC5C6\uB294 \uCE78\uC785\uB2C8\uB2E4"
   VortexRelicHint: "\uC0AC\uAC74\uC758 \uC9C0\uD3C9\uC120 \xB7 \uAC00\uC7A5 \uB9CE\uC740 \uD0DC\uADF8\uB85C \uACF5\uACA9\uD569\uB2C8\uB2E4"
   VictoryText: "\uC2B9\uB9AC"

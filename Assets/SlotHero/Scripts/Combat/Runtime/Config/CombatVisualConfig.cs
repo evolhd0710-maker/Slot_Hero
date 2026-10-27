@@ -164,7 +164,7 @@ namespace SlotHero.Combat
         public string DefeatText = "패배";
 
         [Header("연출 시간(초)")]
-        [Tooltip("릴이 도는 시간. 왼쪽부터 차례로 멈춘다. 1.0.b 의 3초 + 1초 감속은 테스트에 길어 줄였다.")]
+        [Tooltip("큰 슬롯(SlotSpinOverlay)이 없을 때 원래 칸에서 도는 시간. 왼쪽부터 차례로 멈춘다.")]
         public float SpinDuration = 0.9f;
 
         [Tooltip("릴 사이 멈추는 간격.")]
@@ -172,6 +172,54 @@ namespace SlotHero.Combat
 
         [Tooltip("돌 때 그림을 바꾸는 간격.")]
         public float SpinFrame = 0.05f;
+
+        [Header("큰 슬롯 회전")]
+        [Tooltip("첫 열이 도는 시간. 처음에 빠르다가 점점 느려져 멈춘다(2026년 10월 27일 원재).")]
+        public float SpinRollDuration = 1.6f;
+
+        [Tooltip("다음 열이 멈추기까지 더 도는 시간. 왼쪽 열부터 차례로 멈춘다.")]
+        public float SpinStopStagger = 0.28f;
+
+        [Tooltip("느려지는 정도. 1 - (1 - t)^n 의 n 이다. 클수록 처음이 빠르고 끝에서 오래 천천히 돈다.")]
+        [Range(1.5f, 6f)]
+        public float SpinEasePower = 3.2f;
+
+        [Tooltip("첫 열이 굴러가는 칸 수.")]
+        [Min(4)]
+        public int SpinTravelCells = 20;
+
+        [Tooltip("다음 열마다 더 굴러가는 칸 수. 늦게 멈추는 열도 끝까지 빠르게 돌게 한다.")]
+        [Min(0)]
+        public int SpinTravelPerColumn = 4;
+
+        [Tooltip("다 멈춘 뒤 결과 줄을 보여 주는 시간.")]
+        public float SpinResultHold = 0.5f;
+
+        [Tooltip("큰 슬롯이 나타나고 사라지는 시간. 사라지면서 결과가 원래 칸에 나타난다.")]
+        public float SpinOverlayFade = 0.2f;
+
+        [Tooltip("큰 슬롯 뒤를 덮는 막.")]
+        public Color SpinOverlayDim = new Color(0f, 0f, 0f, 0.72f);
+
+        [Tooltip("슬롯 몸통.")]
+        public Color SpinMachineColor = new Color(0.11f, 0.09f, 0.08f, 0.97f);
+
+        [Tooltip("열 바탕.")]
+        public Color SpinColumnColor = new Color(0.05f, 0.05f, 0.06f, 1f);
+
+        [Tooltip("위 두 행, 아래 두 행을 덮는 막. 결과 줄만 밝게 남긴다.")]
+        public Color SpinShadeColor = new Color(0f, 0f, 0f, 0.5f);
+
+        [Tooltip("결과 줄 금테.")]
+        public Color SpinLineColor = new Color(0.92f, 0.74f, 0.36f, 1f);
+
+        [Tooltip("결과 줄 금테 안쪽 선.")]
+        public Color SpinLineInnerColor = new Color(0.36f, 0.24f, 0.08f, 1f);
+
+        [Tooltip("결과 줄 바깥 빛. 멈춘 뒤 한 번 부푼다.")]
+        public Color SpinLineGlowColor = new Color(1f, 0.78f, 0.32f, 0.3f);
+
+        public string SpinSkipHint = "클릭 또는 스페이스바로 건너뛰기";
 
         [Tooltip("두 UI 가 바뀔 때 사라지고 나타나는 시간. 초안 05 의 전환이다.")]
         public float DialSwapDuration = 0.2f;

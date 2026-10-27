@@ -420,6 +420,20 @@ namespace SlotHero.Combat.UI
                 yield break;
             }
 
+            // 큰 슬롯이 있으면 가운데에 크게 띄워 돌린다. 다 멈추면 사라지면서 원래 칸에 결과가 놓인다.
+            SlotSpinOverlay overlay = _view.SpinOverlay;
+            if (overlay != null)
+            {
+                yield return overlay.Play(_battle.Reels, targets, _battle.Deck, _icons, () =>
+                {
+                    for (int i = 0; i < targets.Count; i++)
+                    {
+                        _view.Land(targets[i], _battle.Reels, _icons);
+                    }
+                });
+                yield break;
+            }
+
             yield return _view.Spin(targets, _battle.Reels, _battle.Deck, _icons);
         }
 

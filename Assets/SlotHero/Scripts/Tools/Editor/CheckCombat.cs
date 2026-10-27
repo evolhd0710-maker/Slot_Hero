@@ -906,6 +906,7 @@ namespace SlotHero.ToolsEditor
             Report("릴이 여섯이다", view != null ? view.Reels.Count : -1, 6);
             Report("태그 칸이 열이다", view != null && view.TagDial != null ? view.TagDial.Sectors.Count : -1, TagDialView.SectorCount);
             Report("코인 자리가 셋이다", view != null && view.CoinDial != null ? view.CoinDial.SlotCount : -1, 3);
+            CheckSpinOverlay(view);
 
             UnityEngine.UI.Button artButton = view != null ? GetField<UnityEngine.UI.Button>(view, "_enemyArtButton") : null;
             UnityEngine.UI.Button[] summonButtons = view != null ? GetField<UnityEngine.UI.Button[]>(view, "_summonButtons") : null;
@@ -1112,6 +1113,49 @@ namespace SlotHero.ToolsEditor
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// 회전 연출용 큰 슬롯(2026년 10월 27일). 꺼진 채로 있고, 6열 × 5행이며,
+        /// 멈추면 가운데 행에 결과가 온다. 재굴림처럼 몇 열만 돌 때 서 있는 열도 가운데가 결과다.
+        /// </summary>
+        private static void CheckSpinOverlay(CombatScreenView view)
+        {
+            SlotSpinOverlay overlay = view != null ? view.SpinOverlay : null;
+            Report("큰 슬롯이 있다", overlay != null);
+            if (overlay == null)
+            {
+                return;
+            }
+
+            Report("큰 슬롯은 꺼진 채로 시작한다", !overlay.gameObject.activeSelf);
+            Report("큰 슬롯은 릴 수만큼 열이 있다", overlay.ColumnCount, 6);
+
+            CombatSetup setup = ExampleSetup(99, 500);
+            List<ReelSymbol> result = new List<ReelSymbol>(setup.Deck);
+
+            overlay.Prepare(result, new List<int> { 0, 1, 2, 3, 4, 5 }, setup.Deck, null);
+            overlay.SnapToEnd();
+
+            bool middle = true;
+            for (int i = 0; i < result.Count; i++)
+            {
+                middle &= overlay.GetShown(i, SlotSpinOverlay.ResultRow).Id == result[i].Id;
+            }
+
+            Report("큰 슬롯이 멈추면 가운데 행이 결과다", middle);
+
+            overlay.Prepare(result, new List<int> { 1, 4 }, setup.Deck, null);
+            Report("재굴림 때 서 있는 열은 처음부터 가운데가 결과다",
+                overlay.GetShown(0, SlotSpinOverlay.ResultRow).Id == result[0].Id
+                && overlay.GetShown(5, SlotSpinOverlay.ResultRow).Id == result[5].Id);
+            overlay.SnapToEnd();
+            Report("재굴림 때 도는 열도 멈추면 가운데가 결과다",
+                overlay.GetShown(1, SlotSpinOverlay.ResultRow).Id == result[1].Id
+                && overlay.GetShown(4, SlotSpinOverlay.ResultRow).Id == result[4].Id);
+
+            overlay.Hide();
+            Report("걷으면 꺼진다", !overlay.gameObject.activeSelf);
         }
 
         // ---- 도우미 ----
