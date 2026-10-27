@@ -128,9 +128,14 @@ namespace SlotHero.Combat.UI
                 travels[column] = _columnStrips[column].Count - CellsPerColumn;
             }
 
+            // 결과 칸을 이만큼 지나쳤다가 되돌아와 멈춘다(2026년 10월 27일 원재). 칸 높이에 대한 비율이다.
+            float overshoot = _visual != null ? Mathf.Max(0f, _visual.SpinOvershoot) : 0.35f;
+            float settle = _visual != null ? Mathf.Max(0.01f, _visual.SpinSettleDuration) : 0.18f;
+
             float elapsed = 0f;
             bool skipped = false;
             bool allStopped = order.Count == 0;
+            bool[] stopped = new bool[_columns.Length];
 
             while (!allStopped)
             {
@@ -148,14 +153,23 @@ namespace SlotHero.Combat.UI
                         continue;
                     }
 
-                    float t = skipped || times[column] <= 0f ? 1f : Mathf.Clamp01(elapsed / times[column]);
-
-                    // 처음에 빠르고 점점 느려진다. 1 - (1 - t)^n 은 시작 속도가 가장 크고 끝에서 0 이 된다.
-                    float eased = 1f - Mathf.Pow(1f - t, power);
-                    _positions[column] = travels[column] * eased;
+                    // 건너뛰면 넘어가는 동작 없이 바로 결과 자리다.
+                    bool done = skipped || times[column] <= 0f || elapsed >= times[column] + settle;
+                    _positions[column] = done
+                        ? travels[column]
+                        : PositionAt(elapsed, times[column], settle, travels[column], overshoot, power);
                     DrawColumn(column);
 
-                    if (t < 1f)
+                    if (done && !stopped[column])
+                    {
+                        stopped[column] = true;
+                        if (!skipped)
+                        {
+                            StartCoroutine(FlashColumn(column));
+                        }
+                    }
+
+                    if (!done)
                     {
                         allStopped = false;
                     }
@@ -179,6 +193,51 @@ namespace SlotHero.Combat.UI
 
             yield return Fade(1f, 0f, fade);
             Hide();
+        }
+
+        /// <summary>
+        /// 열 하나의 위치. 두 구간이다.
+        ///   1. 굴러가기. 처음에 빠르고 점점 느려져 결과 칸을 `overshoot` 만큼 지나친 자리에서 선다.
+        ///      1 - (1 - t)^n 은 시작 속도가 가장 크고 끝에서 0 이 된다
+        ///   2. 되돌아오기. 지나친 만큼을 `settle` 초 동안 되감아 결과 칸에 걸린다. 끝으로 갈수록 느려진다
+        /// 굴러가기 끝에서 속도가 0 이라 "넘어가려다 멈칫하고 돌아오는" 모양이 된다. 검사도 쓴다.
+        /// </summary>
+        public static float PositionAt(float elapsed, float rollTime, float settle, float travel, float overshoot, float power)
+        {
+            if (elapsed < rollTime)
+            {
+                float t = Mathf.Clamp01(elapsed / rollTime);
+                float eased = 1f - Mathf.Pow(1f - t, power);
+                return (travel + overshoot) * eased;
+            }
+
+            float u = Mathf.Clamp01((elapsed - rollTime) / settle);
+            float back = 1f - (1f - u) * (1f - u);
+            return travel + overshoot * (1f - back);
+        }
+
+        /// <summary>그 열이 멈추는 순간 바탕을 한 번 밝혔다가 되돌린다. 왼쪽부터 "툭, 툭" 걸리는 느낌을 준다.</summary>
+        private IEnumerator FlashColumn(int column)
+        {
+            if (column >= _columnBacks.Length || _columnBacks[column] == null || _visual == null)
+            {
+                yield break;
+            }
+
+            Image back = _columnBacks[column];
+            Color rest = _visual.SpinColumnColor;
+            Color flash = _visual.SpinStopFlashColor;
+            float duration = Mathf.Max(0.01f, _visual.SpinStopFlashDuration);
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                back.color = Color.Lerp(flash, rest, elapsed / duration);
+                yield return null;
+                elapsed += Time.deltaTime;
+            }
+
+            back.color = rest;
         }
 
         /// <summary>모든 열을 멈춘 자리로 바로 보낸다. 건너뛰기와 같은 끝 모습이다. 검사도 쓴다.</summary>

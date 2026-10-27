@@ -1157,6 +1157,15 @@ namespace SlotHero.ToolsEditor
 
             overlay.Hide();
             Report("걷으면 꺼진다", !overlay.gameObject.activeSelf);
+
+            // 넘어갔다 돌아오기(2026년 10월 27일). 20 칸을 1.6 초 돌고 0.35 칸 지나쳤다가 0.18 초에 되돌아온다.
+            float peak = SlotSpinOverlay.PositionAt(1.6f, 1.6f, 0.18f, 20f, 0.35f, 3.2f);
+            float end = SlotSpinOverlay.PositionAt(1.78f, 1.6f, 0.18f, 20f, 0.35f, 3.2f);
+            float mid = SlotSpinOverlay.PositionAt(1.69f, 1.6f, 0.18f, 20f, 0.35f, 3.2f);
+            Report("굴러가기 끝에서 결과 칸을 지나친다", Mathf.Abs(peak - 20.35f) < 0.001f);
+            Report("되돌아오는 중에는 지나친 자리와 결과 칸 사이다", mid < peak && mid > 20f);
+            Report("되돌아와 결과 칸에 선다", Mathf.Abs(end - 20f) < 0.001f);
+            Report("처음에는 빠르다(첫 10% 시간에 4분의 1 넘게 간다)", SlotSpinOverlay.PositionAt(0.16f, 1.6f, 0.18f, 20f, 0.35f, 3.2f) > 5f);
         }
 
         /// <summary>

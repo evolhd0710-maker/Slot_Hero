@@ -58,21 +58,22 @@ namespace SlotHero.ToolsEditor
         public static void Make()
         {
             UiSceneBuilder.EnsureFolder(SkinFolder);
+            _kept.Clear();
 
             // 칸. 그린 그림이 있으면 그것을, 없으면 아래쪽만 살짝 어두운 칸을 만든다.
-            if (!CopyDrawn("패널"))
+            if (!CopyDrawn("패널") && !KeepExisting("패널"))
             {
                 Write("패널", MakePanel(0.94f, 0.76f, 3, 0.55f));
             }
 
             // 버튼. 칸보다 세게 들어가 도드라져 보인다.
-            if (!CopyDrawn("버튼"))
+            if (!CopyDrawn("버튼") && !KeepExisting("버튼"))
             {
                 Write("버튼", MakePanel(0.88f, 0.58f, 4, 0.42f));
             }
 
             // 눌린 버튼. 위아래를 뒤집어 움푹 들어가 보인다.
-            if (!CopyDrawn("버튼_눌림"))
+            if (!CopyDrawn("버튼_눌림") && !KeepExisting("버튼_눌림"))
             {
                 Write("버튼_눌림", MakeSunken());
             }
@@ -354,6 +355,27 @@ namespace SlotHero.ToolsEditor
             Object.DestroyImmediate(texture);
         }
 
+        /// 원본 폴더가 없어 손대지 않고 둔 그림. 가져오기 설정도 건드리지 않는다.
+        private static readonly System.Collections.Generic.HashSet<string> _kept = new System.Collections.Generic.HashSet<string>();
+
+        /// <summary>
+        /// 그린 원본이 없을 때 이미 있는 스킨 그림을 그대로 둘지. 있으면 두고 true 다.
+        ///
+        /// 원본 폴더(`DrawnFolder`)는 원작자 컴퓨터에만 있다. 예전에는 원본이 없으면 코드로 만든 흰 칸으로 덮어써
+        /// 저장소에 올라온 그린 칸 그림(어두운 갈회색, 쇠 모서리)이 지워졌다. 그 위의 크림색 글자가 흰 바탕에 떠서 안 보였다(2026년 10월 27일).
+        /// 그래서 원본이 없으면 저장소의 그림을 그대로 쓴다. 그림이 아예 없을 때만 코드로 만든다.
+        /// </summary>
+        private static bool KeepExisting(string name)
+        {
+            if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), SkinFolder, name + ".png")))
+            {
+                return false;
+            }
+
+            _kept.Add(name);
+            return true;
+        }
+
         /// <summary>9조각으로 늘어나게 하고 압축을 끈다.</summary>
         private static void ApplyImportSettings()
         {
@@ -361,6 +383,12 @@ namespace SlotHero.ToolsEditor
 
             for (int i = 0; i < names.Length; i++)
             {
+                // 그대로 둔 그린 그림은 저장소의 가져오기 설정(가장자리, 픽셀 배율)도 그대로 둔다.
+                if (_kept.Contains(names[i]))
+                {
+                    continue;
+                }
+
                 string path = SkinFolder + "/" + names[i] + ".png";
                 TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
 

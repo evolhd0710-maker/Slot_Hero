@@ -192,6 +192,19 @@ namespace SlotHero.Combat
         [Min(0)]
         public int SpinTravelPerColumn = 4;
 
+        [Tooltip("결과 칸을 지나치는 정도. 칸 높이에 대한 비율이다. 0 이면 지나치지 않고 바로 선다(2026년 10월 27일 원재).")]
+        [Range(0f, 0.9f)]
+        public float SpinOvershoot = 0.35f;
+
+        [Tooltip("지나쳤다가 결과 칸으로 되돌아오는 시간.")]
+        public float SpinSettleDuration = 0.18f;
+
+        [Tooltip("열이 멈추는 순간 열 바탕이 밝아지는 색. 이 색에서 원래 열 바탕색으로 돌아간다.")]
+        public Color SpinStopFlashColor = new Color(0.55f, 0.42f, 0.18f, 1f);
+
+        [Tooltip("멈출 때 밝아졌다 돌아오는 시간.")]
+        public float SpinStopFlashDuration = 0.28f;
+
         [Tooltip("다 멈춘 뒤 결과 줄을 보여 주는 시간.")]
         public float SpinResultHold = 0.5f;
 
