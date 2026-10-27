@@ -40,6 +40,14 @@ namespace SlotHero.Ui
                 return;
             }
 
+            // 사본은 씬에 함께 저장되어 만든 컴퓨터의 아틀라스를 가리킨 채 남는다.
+            // 글꼴 에셋을 컴퓨터마다 만들어 그 아틀라스가 없으면 첫 아틀라스의 글자가 흰 네모로 나왔다(2026년 10월 27일).
+            // 지금 글꼴의 첫 아틀라스로 다시 잇는다.
+            if (label.font != null && label.font.atlasTexture != null)
+            {
+                material.SetTexture(ShaderUtilities.ID_MainTex, label.font.atlasTexture);
+            }
+
             if (width > 0f)
             {
                 material.EnableKeyword(Keyword);

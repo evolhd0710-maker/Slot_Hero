@@ -40,6 +40,15 @@ namespace SlotHero.ToolsEditor
         /// </summary>
         public const long FontMaterialFileId = -2575924145907383745;
 
+        /// <summary>
+        /// 글꼴 에셋의 첫 아틀라스 텍스처 fileID. 위와 같은 까닭으로 맞춘다.
+        ///
+        /// 테두리를 두른 글자(`TextOutline`)는 머티리얼 사본이 씬에 함께 저장되고, 그 사본이 첫 아틀라스를 가리킨다.
+        /// 이 값이 어긋나 첫 아틀라스에 든 글자(플레이 시간의 0 ~ 4, 9)가 흰 네모로 나왔다(2026년 10월 27일).
+        /// 둘째 아틀라스부터는 TMP 가 실행 중에 글꼴에서 머티리얼을 새로 만들어 괜찮았다.
+        /// </summary>
+        public const long FontAtlasFileId = 5156188376248204739;
+
         /// 윈도우에 딸려 오는 맑은 고딕
         private const string WindowsFont = @"C:\Windows\Fonts\malgun.ttf";
 
@@ -216,14 +225,14 @@ namespace SlotHero.ToolsEditor
                 changed = true;
             }
 
-            // 머티리얼은 에셋 안의 하위 오브젝트다. 그 fileID 가 쓰인 곳(오브젝트 머리와 글꼴의 m_Material)을 모두 바꾼다.
+            // 머티리얼과 첫 아틀라스는 에셋 안의 하위 오브젝트다.
+            // 그 fileID 가 쓰인 곳(오브젝트 머리, 글꼴의 m_Material 과 m_AtlasTextures, 머티리얼의 _MainTex)을 모두 바꾼다.
             string text = File.ReadAllText(FontAssetPath);
-            Match material = Regex.Match(text, @"m_Material: \{fileID: (-?\d+)\}");
-            string pinned = FontMaterialFileId.ToString();
-            if (material.Success && material.Groups[1].Value != pinned)
+            bool textChanged = false;
+            textChanged |= PinFileId(ref text, @"m_Material: \{fileID: (-?\d+)\}", FontMaterialFileId);
+            textChanged |= PinFileId(ref text, @"m_AtlasTextures:\s*\r?\n\s*- \{fileID: (-?\d+)\}", FontAtlasFileId);
+            if (textChanged)
             {
-                string old = material.Groups[1].Value;
-                text = Regex.Replace(text, @"(?<![\d-])" + Regex.Escape(old) + @"(?!\d)", pinned);
                 File.WriteAllText(FontAssetPath, text);
                 changed = true;
             }
@@ -239,20 +248,41 @@ namespace SlotHero.ToolsEditor
             string guid = AssetDatabase.AssetPathToGUID(FontAssetPath);
             TMP_FontAsset font = LoadKoreanFont();
             long materialId = 0;
+            long atlasId = 0;
             string ignored;
             bool materialPinned = font != null && font.material != null
                 && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(font.material, out ignored, out materialId)
                 && materialId == FontMaterialFileId;
+            bool atlasPinned = font != null && font.atlasTexture != null
+                && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(font.atlasTexture, out ignored, out atlasId)
+                && atlasId == FontAtlasFileId;
 
-            if (guid == FontGuid && materialPinned)
+            if (guid == FontGuid && materialPinned && atlasPinned)
             {
-                Debug.Log("한글 글꼴 에셋의 GUID 와 머티리얼 fileID 를 맞췄다: " + FontGuid + " / " + FontMaterialFileId);
+                Debug.Log("한글 글꼴 에셋의 GUID 와 머티리얼 · 첫 아틀라스 fileID 를 맞췄다: " + FontGuid);
             }
             else
             {
                 Debug.LogWarning("한글 글꼴 에셋을 맞추지 못했다. 지금 GUID " + guid + ", 머티리얼 " + materialId +
-                                 ". 에디터를 다시 열고 한 번 더 한다.");
+                                 ", 첫 아틀라스 " + atlasId + ". 에디터를 다시 열고 한 번 더 한다.");
             }
+        }
+
+        /// <summary>
+        /// 패턴이 처음 찾은 fileID 를 pinned 로 바꾼다. 그 fileID 가 쓰인 곳을 모두 바꾼다. 바꿨으면 true 다.
+        /// </summary>
+        private static bool PinFileId(ref string text, string pattern, long pinned)
+        {
+            Match found = Regex.Match(text, pattern);
+            string value = pinned.ToString();
+            if (!found.Success || found.Groups[1].Value == value)
+            {
+                return false;
+            }
+
+            string old = found.Groups[1].Value;
+            text = Regex.Replace(text, @"(?<![\d-])" + Regex.Escape(old) + @"(?!\d)", value);
+            return true;
         }
 
         /// <summary>만들어 둔 한글 글꼴 에셋. 없으면 null.</summary>
