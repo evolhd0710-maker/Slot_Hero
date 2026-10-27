@@ -21,6 +21,9 @@ namespace SlotHero.ToolsEditor
         [MenuItem("Slot Hero/한 바퀴 다 돌리기", priority = 100)]
         public static void All()
         {
+            // 글꼴부터 맞춘다. 글꼴 폴더는 저장소에 없어 새로 받은 컴퓨터에는 글꼴이 없다.
+            // 이것 없이 씬을 지으면 글자가 네모로 나오고, 맞추지 않은 GUID 로 지은 씬을 올리면 남의 컴퓨터에서 깨진다(2026년 10월 27일).
+            Step("글자 준비하기", PrepareTextResources.Prepare);
             Step("설정 에셋 만들기", CreateDefaultConfigs.Create);
             Step("설정 에셋 기본값으로 되돌리기", CreateDefaultConfigs.ResetLayoutAndVisual);
 

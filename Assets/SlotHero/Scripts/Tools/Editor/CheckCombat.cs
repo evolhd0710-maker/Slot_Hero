@@ -55,6 +55,7 @@ namespace SlotHero.ToolsEditor
 
             CheckRelicCatalog();
 
+            CheckFontPinned();
             CheckGameScene();
 
             Debug.Log("전투 검사 " + _checked + "건, 실패 " + _failed + "건");
@@ -1156,6 +1157,25 @@ namespace SlotHero.ToolsEditor
 
             overlay.Hide();
             Report("걷으면 꺼진다", !overlay.gameObject.activeSelf);
+        }
+
+        /// <summary>
+        /// 한글 글꼴 에셋의 GUID 가 저장소 값(`PrepareTextResources.FontGuid`)과 같은지.
+        /// 다르면 이 컴퓨터에서 지은 씬이 다른 컴퓨터에서 없는 글꼴을 가리킨다.
+        /// 2026년 10월 27일 맞추기 전에 만든 글꼴로 씬을 지어 올려 팀원 컴퓨터에서 글자가 깨졌다.
+        /// </summary>
+        private static void CheckFontPinned()
+        {
+            TMPro.TMP_FontAsset font = PrepareTextResources.LoadKoreanFont();
+            Report("한글 글꼴 에셋이 있다", font != null);
+            if (font == null)
+            {
+                return;
+            }
+
+            string guid = AssetDatabase.GetAssetPath(font);
+            guid = AssetDatabase.AssetPathToGUID(guid);
+            Report("한글 글꼴 GUID 가 저장소 값과 같다(다르면 글자 준비하기를 다시 한다)", guid == PrepareTextResources.FontGuid);
         }
 
         // ---- 도우미 ----
