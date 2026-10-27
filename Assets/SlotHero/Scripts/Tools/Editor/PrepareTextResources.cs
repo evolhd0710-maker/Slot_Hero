@@ -1,4 +1,5 @@
 using System.IO;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -20,6 +21,15 @@ namespace SlotHero.ToolsEditor
         private const string FontFolder = "Assets/SlotHero/Fonts";
         private const string SourceFontPath = FontFolder + "/malgun.ttf";
         private const string FontAssetPath = FontFolder + "/MalgunGothic SDF.asset";
+
+        /// <summary>
+        /// 글꼴 에셋의 GUID. 모든 컴퓨터에서 이 값으로 맞춘다.
+        ///
+        /// 글꼴 폴더는 올리지 않아 에셋을 컴퓨터마다 만든다. 그대로 두면 유니티가 매번 새 GUID 를 붙여
+        /// 남이 지어 올린 씬과 프리팹이 내 컴퓨터에서는 없는 글꼴을 가리킨다(2026년 10월 27일).
+        /// 값은 그때 저장소의 씬들이 가리키던 GUID 다.
+        /// </summary>
+        public const string FontGuid = "8d4fd947dd69ff748aeb4b5961191166";
 
         /// 윈도우에 딸려 오는 맑은 고딕
         private const string WindowsFont = @"C:\Windows\Fonts\malgun.ttf";
@@ -45,6 +55,7 @@ namespace SlotHero.ToolsEditor
             {
                 CreateKoreanFontAsset();
                 AssetDatabase.SaveAssets();
+                PinFontGuid();
                 AssetDatabase.Refresh();
             }
             catch (System.Exception e)
@@ -172,6 +183,38 @@ namespace SlotHero.ToolsEditor
 
             AssetDatabase.SaveAssets();
             Debug.Log("한글 글꼴 에셋을 만들었다: " + FontAssetPath);
+        }
+
+        /// <summary>
+        /// 글꼴 에셋의 GUID 를 `FontGuid` 로 바꾼다. 이미 같으면 아무것도 하지 않는다.
+        /// .meta 의 guid 줄을 고치고 다시 가져오게 하면 유니티가 새 GUID 로 읽는다.
+        /// </summary>
+        private static void PinFontGuid()
+        {
+            string metaPath = FontAssetPath + ".meta";
+            if (!File.Exists(FontAssetPath) || !File.Exists(metaPath))
+            {
+                return;
+            }
+
+            if (AssetDatabase.AssetPathToGUID(FontAssetPath) == FontGuid)
+            {
+                return;
+            }
+
+            string meta = File.ReadAllText(metaPath);
+            File.WriteAllText(metaPath, Regex.Replace(meta, @"guid: [0-9a-f]{32}", "guid: " + FontGuid));
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+
+            string now = AssetDatabase.AssetPathToGUID(FontAssetPath);
+            if (now == FontGuid)
+            {
+                Debug.Log("한글 글꼴 에셋의 GUID 를 맞췄다: " + FontGuid);
+            }
+            else
+            {
+                Debug.LogWarning("한글 글꼴 에셋의 GUID 를 맞추지 못했다. 지금 " + now + ". 에디터를 다시 열고 한 번 더 한다.");
+            }
         }
 
         /// <summary>만들어 둔 한글 글꼴 에셋. 없으면 null.</summary>
