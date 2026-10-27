@@ -138,8 +138,9 @@ namespace SlotHero.ToolsEditor
                 out enemyPanel, out enemyBar, out enemyLabel);
 
             // 몬스터 그림이 아직 없어 이름을 적은 칸으로 둔다.
+            // 태그를 건 뒤 누르면 본체를 때린다.
             Image enemyArt = UiSceneBuilder.NewImage("EnemyArt", root, visual.EnemyArtStandIn);
-            enemyArt.raycastTarget = false;
+            Button enemyArtButton = UiSceneBuilder.AddButton(enemyArt.gameObject, enemyArt);
             TMP_Text enemyArtLabel = NewLabel("NameLabel", enemyArt.transform, visual.NameFontSize, visual.TextColor, true);
             UiSceneBuilder.Stretch(enemyArtLabel.rectTransform);
 
@@ -157,10 +158,12 @@ namespace SlotHero.ToolsEditor
             Image[] summonBars = new Image[summonCount];
             TMP_Text[] summonNames = new TMP_Text[summonCount];
             TMP_Text[] summonInfos = new TMP_Text[summonCount];
+            Button[] summonButtons = new Button[summonCount];
             for (int i = 0; i < summonCount; i++)
             {
+                // 태그를 건 뒤 누르면 그 소환수를 때린다.
                 summonPanels[i] = UiSceneBuilder.NewImage("Summon" + i, root, visual.PanelColor);
-                summonPanels[i].raycastTarget = false;
+                summonButtons[i] = UiSceneBuilder.AddButton(summonPanels[i].gameObject, summonPanels[i]);
                 UiSceneBuilder.AddShadowPx(summonPanels[i], 6f, 4f);
 
                 summonNames[i] = NewLabel("NameLabel", summonPanels[i].transform, visual.BodyFontSize, visual.TextColor, true);
@@ -247,6 +250,8 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetArrayField(view, "_summonBars", summonBars);
             UiSceneBuilder.SetArrayField(view, "_summonNames", summonNames);
             UiSceneBuilder.SetArrayField(view, "_summonInfos", summonInfos);
+            UiSceneBuilder.SetField(view, "_enemyArtButton", enemyArtButton);
+            UiSceneBuilder.SetArrayField(view, "_summonButtons", summonButtons);
             UiSceneBuilder.SetField(view, "_dial", dial);
             UiSceneBuilder.SetField(view, "_coinGroup", coinGroup);
             UiSceneBuilder.SetField(view, "_coinDial", coinDial);

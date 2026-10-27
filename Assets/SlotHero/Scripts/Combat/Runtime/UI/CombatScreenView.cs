@@ -82,6 +82,13 @@ namespace SlotHero.Combat.UI
         [SerializeField] private TMP_Text[] _summonNames = new TMP_Text[0];
         [SerializeField] private TMP_Text[] _summonInfos = new TMP_Text[0];
 
+        [Header("공격 대상")]
+        [Tooltip("태그를 건 뒤 누르면 본체를 때린다.")]
+        [SerializeField] private Button _enemyArtButton;
+
+        [Tooltip("태그를 건 뒤 누르면 그 자리 소환수를 때린다. 자리 0 이 가장 왼쪽이다.")]
+        [SerializeField] private Button[] _summonButtons = new Button[0];
+
         [Header("원판")]
         [SerializeField] private Image _dial;
         [SerializeField] private CanvasGroup _coinGroup;
@@ -97,6 +104,18 @@ namespace SlotHero.Combat.UI
         private readonly List<CombatRelic> _shownRelics = new List<CombatRelic>();
         private System.Action<bool>[] _relicHoverHandlers = new System.Action<bool>[0];
 
+        /// 그 자리를 누르는 함수. 소환수 버튼마다 하나다.
+        private UnityEngine.Events.UnityAction[] _summonClickHandlers = new UnityEngine.Events.UnityAction[0];
+
+        /// <summary>
+        /// 적을 눌렀다. 소환수면 그 자리(0 이 가장 왼쪽), 본체면 -1 이다.
+        /// 조종기가 듣고, 태그를 건 뒤라면 그 적을 때린다.
+        /// </summary>
+        public event System.Action<int> EnemyClicked;
+
+        /// <summary>본체를 누른 자리 값.</summary>
+        public const int MainEnemySlot = -1;
+
         private void Awake()
         {
             _relicHoverHandlers = new System.Action<bool>[_relicHovers.Length];
@@ -109,6 +128,22 @@ namespace SlotHero.Combat.UI
                     _relicHovers[i].HoverChanged += _relicHoverHandlers[i];
                 }
             }
+
+            if (_enemyArtButton != null)
+            {
+                _enemyArtButton.onClick.AddListener(HandleMainEnemyClicked);
+            }
+
+            _summonClickHandlers = new UnityEngine.Events.UnityAction[_summonButtons.Length];
+            for (int i = 0; i < _summonButtons.Length; i++)
+            {
+                int slot = i;
+                _summonClickHandlers[i] = () => RaiseEnemyClicked(slot);
+                if (_summonButtons[i] != null)
+                {
+                    _summonButtons[i].onClick.AddListener(_summonClickHandlers[i]);
+                }
+            }
         }
 
         private void OnDestroy()
@@ -119,6 +154,32 @@ namespace SlotHero.Combat.UI
                 {
                     _relicHovers[i].HoverChanged -= _relicHoverHandlers[i];
                 }
+            }
+
+            if (_enemyArtButton != null)
+            {
+                _enemyArtButton.onClick.RemoveListener(HandleMainEnemyClicked);
+            }
+
+            for (int i = 0; i < _summonButtons.Length && i < _summonClickHandlers.Length; i++)
+            {
+                if (_summonButtons[i] != null)
+                {
+                    _summonButtons[i].onClick.RemoveListener(_summonClickHandlers[i]);
+                }
+            }
+        }
+
+        private void HandleMainEnemyClicked()
+        {
+            RaiseEnemyClicked(MainEnemySlot);
+        }
+
+        private void RaiseEnemyClicked(int slot)
+        {
+            if (EnemyClicked != null)
+            {
+                EnemyClicked(slot);
             }
         }
 
@@ -563,7 +624,7 @@ namespace SlotHero.Combat.UI
         }
 
         /// <summary>
-        /// 본체와 소환수를 모두 그린다. 영웅의 공격을 받을 소환수 칸은 색을 바꾼다.
+        /// 본체와 소환수를 모두 그린다. target 소환수 칸은 색을 바꾼다. null 이면 칠하지 않는다.
         /// 소환수가 없는 자리의 칸은 끈다.
         /// </summary>
         public void ShowEnemies(CombatEnemy main, IReadOnlyList<CombatEnemy> field, CombatEnemy target)

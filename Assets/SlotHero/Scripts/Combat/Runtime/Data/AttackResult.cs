@@ -52,8 +52,7 @@ namespace SlotHero.Combat
         public int Damage;
 
         /// <summary>
-        /// 맞은 적. 가장 왼쪽에 살아 있는 적이다.
-        /// 방패병이 있으면 방패병이 장군 대신 받는다(몬스터 기획서 06-1 의 "장군에게 가는 피해를 대신 받아낸다").
+        /// 맞은 적. 플레이어가 고른 대상이고, 고르지 않았으면 가장 왼쪽에 살아 있는 적이다(`CombatBattle.Target`).
         /// </summary>
         public CombatEnemy Target;
 

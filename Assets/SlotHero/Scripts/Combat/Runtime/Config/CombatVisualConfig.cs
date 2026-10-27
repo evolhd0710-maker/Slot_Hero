@@ -66,7 +66,7 @@ namespace SlotHero.Combat
         [SerializeField] private float _tagChargeAlpha = 0.45f;
         public float TagChargeAlpha { get { return _tagChargeAlpha; } set { _tagChargeAlpha = value; } }
 
-        [Tooltip("영웅의 공격을 받을 소환수 칸. 방패병이 장군 대신 맞는다는 것을 보인다.")]
+        [Tooltip("영웅의 공격을 받을 소환수 칸.")]
         public Color TargetColor = new Color(0.42f, 0.24f, 0.18f, 0.95f);
 
         [Tooltip("방어도 숫자. 몬스터 기획서의 [방어] 분류 색 쪽이다.")]
@@ -155,6 +155,9 @@ namespace SlotHero.Combat
         public string JavelinOrderLabel = "투창 명령";
         public string LastActionLabel = "지난 행동";
         public string BlockedText = "막음";
+
+        [Tooltip("적이 둘 이상일 때 태그를 건 뒤 안내 글. 적을 누르면 그 적을 때린다.")]
+        public string ChooseTargetHint = "공격할 적을 누르세요";
         public string VortexHint = "아직 효과가 없는 칸입니다";
         public string VortexRelicHint = "사건의 지평선 · 가장 많은 태그로 공격합니다";
         public string VictoryText = "승리";

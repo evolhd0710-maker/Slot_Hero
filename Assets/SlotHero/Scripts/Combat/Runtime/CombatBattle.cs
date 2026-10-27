@@ -10,7 +10,8 @@ namespace SlotHero.Combat
     ///   1. 처음에 릴을 모두 돌린다
     ///   2. 가진 코인 중 셋을 꺼내 보인다. 매 턴 따로 뽑고, 한 턴 안에서는 겹치지 않는다
     ///   3. 코인 하나를 골라 태그 하나에 건다. 코인 소모값만큼 체력을 낸다
-    ///   4. 그 태그가 붙은 문양만으로 공격력을 내고 한 번 때린다
+    ///   4. 그 태그가 붙은 문양만으로 공격력을 내고 한 번 때린다.
+    ///      적이 둘 이상이면 태그를 건 뒤(`BetTag`) 때릴 적을 고른다(`AttackTarget`)
     ///   5. 적이 살아 있으면 적이 때린다
     ///   6. 계산에 쓴 문양만 다시 돌린다. 나머지는 그대로 남는다. 2로 돌아간다
     ///
@@ -50,6 +51,13 @@ namespace SlotHero.Combat
 
         private int _selectedOffer = -1;
         private bool _withoutCoin;
+
+        /// 대상 선택에서 고른 적. 그 공격 하나에만 쓰고 비운다.
+        private CombatEnemy _selectedTarget;
+
+        /// 대상 선택으로 넘어갈 때 건 태그. 소용돌이로 걸었으면 _betVortex 다.
+        private SymbolTagType _betTag;
+        private bool _betVortex;
 
         /// <summary>규칙과 전투 하나의 준비물로 만든다. 아직 릴을 돌리지 않는다. `Begin` 을 부른다.</summary>
         public CombatBattle(CombatSetup setup, CombatRuleConfig rules)
@@ -107,11 +115,19 @@ namespace SlotHero.Combat
             get { return _enemies; }
         }
 
-        /// <summary>영웅의 공격을 받을 적. 가장 왼쪽에 살아 있는 적이다. 방패병이 있으면 방패병이다.</summary>
+        /// <summary>
+        /// 영웅의 공격을 받을 적. 대상 선택에서 고른 적이 있으면 그 적이다(`AttackTarget`).
+        /// 없으면 가장 왼쪽에 살아 있는 적이다. 적이 하나뿐일 때는 대상 선택 없이 이 적을 때린다.
+        /// </summary>
         public CombatEnemy Target
         {
             get
             {
+                if (_selectedTarget != null && !_selectedTarget.IsDead && _enemies.Contains(_selectedTarget))
+                {
+                    return _selectedTarget;
+                }
+
                 for (int i = 0; i < _enemies.Count; i++)
                 {
                     if (!_enemies[i].IsDead)
@@ -302,6 +318,101 @@ namespace SlotHero.Combat
             return true;
         }
 
+        /// <summary>
+        /// 태그를 걸고 나서 때릴 적을 골라야 하는지. 살아 있는 적이 둘 이상일 때다.
+        /// 하나뿐이면 태그를 고르는 순간 그 적을 때린다.
+        /// </summary>
+        public bool NeedsTargetChoice
+        {
+            get
+            {
+                int alive = 0;
+                for (int i = 0; i < _enemies.Count; i++)
+                {
+                    if (!_enemies[i].IsDead)
+                    {
+                        alive++;
+                    }
+                }
+
+                return alive > 1;
+            }
+        }
+
+        /// <summary>
+        /// 그 태그에 걸고 대상 선택으로 넘어간다. 아직 때리지 않는다. 걸 수 없으면 false 다.
+        /// 적을 고르면(`AttackTarget`) 이 태그로 때린다.
+        /// </summary>
+        public bool BetTag(SymbolTagType tag)
+        {
+            if (!CanAttackWith(tag))
+            {
+                return false;
+            }
+
+            _betTag = tag;
+            _betVortex = false;
+            Phase = CombatPhase.ChoosingTarget;
+            return true;
+        }
+
+        /// <summary>소용돌이 칸에 걸고 대상 선택으로 넘어간다(사건의 지평선). 걸 수 없으면 false 다.</summary>
+        public bool BetVortex()
+        {
+            if (!CanUseVortex())
+            {
+                return false;
+            }
+
+            _betVortex = true;
+            Phase = CombatPhase.ChoosingTarget;
+            return true;
+        }
+
+        /// <summary>대상 선택에서 태그 선택으로 돌아간다. 건 태그는 풀린다. 코인은 그대로다.</summary>
+        public bool CancelTarget()
+        {
+            if (Phase != CombatPhase.ChoosingTarget)
+            {
+                return false;
+            }
+
+            _betVortex = false;
+            Phase = CombatPhase.ChoosingTag;
+            return true;
+        }
+
+        /// <summary>건 태그로 때릴 수 있는 적인지. 대상 선택 중이고 살아 있어야 한다.</summary>
+        public bool CanTarget(CombatEnemy enemy)
+        {
+            return Phase == CombatPhase.ChoosingTarget
+                && enemy != null && !enemy.IsDead && _enemies.Contains(enemy);
+        }
+
+        /// <summary>
+        /// 고른 적을 건 태그로 때린다. 대상 선택 중이 아니거나 때릴 수 없는 적이면 null 이고 아무것도 바뀌지 않는다.
+        /// </summary>
+        public AttackResult AttackTarget(CombatEnemy enemy)
+        {
+            if (!CanTarget(enemy))
+            {
+                return null;
+            }
+
+            _selectedTarget = enemy;
+            Phase = CombatPhase.ChoosingTag;
+
+            AttackResult result = _betVortex ? AttackWithVortex() : Attack(_betTag);
+            if (result == null)
+            {
+                // 걸 때는 됐는데 때릴 수 없게 된 경우다. 대상 선택으로 되돌려 둔다.
+                _selectedTarget = null;
+                Phase = CombatPhase.ChoosingTarget;
+            }
+
+            return result;
+        }
+
         /// <summary>코인을 다시 고르러 돌아간다. 태그 UI 의 가운데를 눌렀을 때다.</summary>
         public bool BackToCoins()
         {
@@ -464,6 +575,9 @@ namespace SlotHero.Combat
             result.Target.Block -= result.Blocked;
             result.Target.Health = result.EnemyHealthAfter;
             RemoveDefeated();
+
+            // 대상은 공격마다 새로 고른다.
+            _selectedTarget = null;
 
             Turns++;
             if (result.Damage > BiggestHit)

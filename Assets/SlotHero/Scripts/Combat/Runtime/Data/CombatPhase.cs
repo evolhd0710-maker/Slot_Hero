@@ -3,7 +3,7 @@ namespace SlotHero.Combat
     /// <summary>
     /// 전투가 지금 어디까지 왔는지. 전투 UI 및 연출 초안 / 02 전투 UI 연출 흐름 의 칸들이다.
     ///
-    /// 문양 회전 → 코인 선택 ⇄ 태그 선택 → 공격 → 적 공격 → 재굴림 → 코인 선택 …
+    /// 문양 회전 → 코인 선택 ⇄ 태그 선택 → (적이 둘 이상이면) 대상 선택 → 공격 → 적 공격 → 재굴림 → 코인 선택 …
     /// </summary>
     public enum CombatPhase
     {
@@ -15,6 +15,12 @@ namespace SlotHero.Combat
 
         /// <summary>코인을 걸 태그를 고른다. 가운데 코인을 누르면 코인 선택으로 돌아간다.</summary>
         ChoosingTag,
+
+        /// <summary>
+        /// 코인과 태그를 걸었고 때릴 적을 고른다. 적이 둘 이상일 때만 온다.
+        /// 적을 누르면 그 적을 때린다. 태그 UI 가운데를 누르면 태그 선택으로 돌아간다.
+        /// </summary>
+        ChoosingTarget,
 
         /// <summary>공격을 마쳤고 적이 살아 있다. 적이 때릴 차례다.</summary>
         EnemyTurn,

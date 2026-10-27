@@ -48,6 +48,7 @@ namespace SlotHero.ToolsEditor
             CheckRelics(rules);
             CheckGladiator(rules);
             CheckGeneral(rules);
+            CheckTargetSelection(rules);
             CheckMonsterRules(rules);
 
             Object.DestroyImmediate(rules);
@@ -706,6 +707,68 @@ namespace SlotHero.ToolsEditor
             Report("장군 · 본체가 쓰러지면 이긴다", last.Phase == CombatPhase.Won, (int)last.Phase);
         }
 
+        /// <summary>
+        /// 공격 대상 고르기. 적이 둘 이상이면 태그를 건 뒤 때릴 적을 고른다.
+        /// 방패병이 있어도 장군을 골라 때릴 수 있고, 하나뿐이면 태그를 고르는 순간 때린다.
+        /// </summary>
+        private static void CheckTargetSelection(CombatRuleConfig rules)
+        {
+            CombatSetup setup = ExampleSetup(5000, 5000);
+            setup.PlayerMaxHealth = 5000;
+            setup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+
+            CombatBattle battle = Begin(setup, rules);
+            Report("대상 · 적이 하나면 고르지 않는다", !battle.NeedsTargetChoice);
+            Report("대상 · 걸기 전에는 적을 때릴 수 없다", battle.AttackTarget(battle.Enemy) == null);
+            battle.SelectWithoutCoin();
+            battle.Attack(FirstUsableTag(battle));
+            battle.EnemyAttack();
+            battle.Reroll();
+
+            CombatEnemy shieldman = battle.Enemies.Count > 1 ? battle.Enemies[0] : null;
+            Report("대상 · 방패병이 섰다", shieldman != null && shieldman.IsSummon);
+            Report("대상 · 적이 둘이면 골라야 한다", battle.NeedsTargetChoice);
+
+            SymbolTagType tag = FirstUsableTag(battle);
+            battle.SelectWithoutCoin();
+            Report("대상 · 태그를 걸면 대상 선택으로 간다", battle.BetTag(tag) && battle.Phase == CombatPhase.ChoosingTarget);
+            Report("대상 · 걸기만 해서는 때리지 않는다", battle.Turns, 1);
+
+            Report("대상 · 가운데를 누르면 태그 선택으로 돌아간다", battle.CancelTarget() && battle.Phase == CombatPhase.ChoosingTag);
+            battle.BetTag(tag);
+
+            int generalBefore = battle.Enemy.Health;
+            int shieldBefore = shieldman != null ? shieldman.Health : 0;
+            AttackResult hit = battle.AttackTarget(battle.Enemy);
+            Report("대상 · 방패병이 있어도 고른 장군이 맞는다", hit != null && hit.Target == battle.Enemy && hit.Tag == tag);
+            Report("대상 · 장군 체력이 깎인다", battle.Enemy.Health < generalBefore);
+            Report("대상 · 방패병은 그대로", shieldman != null ? shieldman.Health : -1, shieldBefore);
+            Report("대상 · 때리면 적 차례다", battle.Phase == CombatPhase.EnemyTurn, (int)battle.Phase);
+
+            battle.EnemyAttack();
+            battle.Reroll();
+
+            // 방패병을 골라 쓰러뜨린다.
+            CombatEnemy front = null;
+            for (int i = 0; i < battle.Enemies.Count; i++)
+            {
+                if (battle.Enemies[i].IsSummon)
+                {
+                    front = battle.Enemies[i];
+                    break;
+                }
+            }
+
+            battle.SelectCoin(0);
+            Report("대상 · 코인을 건 태그도 대상 선택으로 간다", battle.BetTag(SymbolTagType.Mars));
+            Report("대상 · 대상 선택 중에는 다른 적 차례로 넘어가지 않는다", battle.EnemyAttack(), 0);
+            AttackResult kill = battle.AttackTarget(front);
+            Report("대상 · 고른 방패병이 맞고 쓰러진다", kill != null && kill.Target == front && front.IsDead);
+            Report("대상 · 코인 소모값을 냈다", kill != null ? kill.HealthPaid : -1, 10);
+            Report("대상 · 쓰러진 적은 고를 수 없다", !battle.CanTarget(front));
+            Report("대상 · 대상은 공격마다 새로 고른다", battle.Target == battle.Enemies[0]);
+        }
+
         /// <summary>규칙 설정의 적이 몬스터 기획서와 맞는지.</summary>
         private static void CheckMonsterRules(CombatRuleConfig rules)
         {
@@ -844,7 +907,74 @@ namespace SlotHero.ToolsEditor
             Report("태그 칸이 열이다", view != null && view.TagDial != null ? view.TagDial.Sectors.Count : -1, TagDialView.SectorCount);
             Report("코인 자리가 셋이다", view != null && view.CoinDial != null ? view.CoinDial.SlotCount : -1, 3);
 
+            UnityEngine.UI.Button artButton = view != null ? GetField<UnityEngine.UI.Button>(view, "_enemyArtButton") : null;
+            UnityEngine.UI.Button[] summonButtons = view != null ? GetField<UnityEngine.UI.Button[]>(view, "_summonButtons") : null;
+            Report("대상 · 몬스터 일러스트를 누를 수 있다",
+                artButton != null && artButton.GetComponent<UnityEngine.UI.Image>() != null
+                && artButton.GetComponent<UnityEngine.UI.Image>().raycastTarget);
+            Report("대상 · 소환수 칸마다 버튼이 있다", summonButtons != null ? summonButtons.Length : -1, 3);
+
             PlayRun(entry, screen);
+            PlayEliteRun(entry, screen);
+        }
+
+        /// <summary>
+        /// 엘리트 방(장군)을 화면으로 끝까지 눌러 본다. 방패병이 서면 태그를 건 뒤 장군을 눌러 때린다.
+        /// 태그를 누르면 바로 때리지 않고 대상 선택으로 가는지, 적을 누르면 그 적을 때리는지 본다.
+        /// </summary>
+        private static void PlayEliteRun(CombatEntry entry, CombatScreenController screen)
+        {
+            RunCatalogConfig catalogConfig = GetField<RunCatalogConfig>(entry, "_catalog");
+            RunSaveData run = RunSaveData.StartNew(1, 20261027, 99);
+            RunCatalog catalog = new RunCatalog(catalogConfig);
+            catalog.Attach(run);
+
+            RunContext context = new RunContext(run, catalog);
+            context.GiveStartingItems(
+                catalogConfig.StartingSymbolIds, catalogConfig.StartingCoinIds, catalogConfig.StartingRelicIds, 0);
+
+            MapNode node = new MapNode();
+            node.Id = 7;
+            node.Stage = 1;
+            node.RoomType = RoomType.Elite;
+
+            bool finished = false;
+            entry.Enter(context, node, CombatOptions.None, r => finished = true);
+
+            bool sawTargetPhase = false;
+            bool betDidNotAttack = true;
+            bool clickHitGeneral = true;
+            int turns = 0;
+
+            while (!finished && turns < 100 && screen.Battle != null)
+            {
+                CombatBattle battle = screen.Battle;
+                screen.ChooseWithoutCoin();
+
+                int attacksBefore = battle.Turns;
+                screen.ChooseTag(FirstUsableTag(battle));
+
+                if (battle.Phase == CombatPhase.ChoosingTarget)
+                {
+                    sawTargetPhase = true;
+                    betDidNotAttack &= battle.Turns == attacksBefore;
+
+                    int generalBefore = battle.Enemy.Health;
+                    screen.ChooseTarget(CombatScreenView.MainEnemySlot);
+                    clickHitGeneral &= battle.LastAttack != null && battle.LastAttack.Target == battle.Enemy
+                        && battle.Enemy.Health < generalBefore + 1;
+                }
+
+                turns++;
+            }
+
+            Report("엘리트 · 방패병이 서면 대상 선택으로 간다", sawTargetPhase);
+            Report("엘리트 · 태그를 걸기만 해서는 때리지 않는다", betDidNotAttack);
+            Report("엘리트 · 장군을 누르면 장군이 맞는다", sawTargetPhase && clickHitGeneral);
+            Report("엘리트 · 전투가 끝난다", finished, turns);
+
+            entry.Leave();
+            entry.ResetForNewRun();
         }
 
         /// <summary>
