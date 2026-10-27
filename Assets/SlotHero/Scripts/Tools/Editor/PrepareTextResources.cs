@@ -31,6 +31,15 @@ namespace SlotHero.ToolsEditor
         /// </summary>
         public const string FontGuid = "8d4fd947dd69ff748aeb4b5961191166";
 
+        /// <summary>
+        /// 글꼴 에셋 안 머티리얼의 fileID. GUID 처럼 모든 컴퓨터에서 이 값으로 맞춘다.
+        ///
+        /// 글자마다 머티리얼을 {fileID, GUID} 로 따로 물어 둔다. GUID 만 맞추면 글꼴은 찾아도
+        /// 머티리얼이 비어 런 결과 화면에서 MissingReferenceException 이 났다(2026년 10월 27일).
+        /// 값은 그때 저장소의 씬들이 가리키던 fileID 다.
+        /// </summary>
+        public const long FontMaterialFileId = -2575924145907383745;
+
         /// 윈도우에 딸려 오는 맑은 고딕
         private const string WindowsFont = @"C:\Windows\Fonts\malgun.ttf";
 
@@ -186,8 +195,9 @@ namespace SlotHero.ToolsEditor
         }
 
         /// <summary>
-        /// 글꼴 에셋의 GUID 를 `FontGuid` 로 바꾼다. 이미 같으면 아무것도 하지 않는다.
-        /// .meta 의 guid 줄을 고치고 다시 가져오게 하면 유니티가 새 GUID 로 읽는다.
+        /// 글꼴 에셋의 GUID 를 `FontGuid` 로, 안의 머티리얼 fileID 를 `FontMaterialFileId` 로 바꾼다.
+        /// 이미 같으면 아무것도 하지 않는다.
+        /// .meta 의 guid 줄과 에셋 글의 fileID 를 고치고 다시 가져오게 하면 유니티가 새 값으로 읽는다.
         /// </summary>
         private static void PinFontGuid()
         {
@@ -197,23 +207,51 @@ namespace SlotHero.ToolsEditor
                 return;
             }
 
-            if (AssetDatabase.AssetPathToGUID(FontAssetPath) == FontGuid)
+            bool changed = false;
+
+            if (AssetDatabase.AssetPathToGUID(FontAssetPath) != FontGuid)
+            {
+                string meta = File.ReadAllText(metaPath);
+                File.WriteAllText(metaPath, Regex.Replace(meta, @"guid: [0-9a-f]{32}", "guid: " + FontGuid));
+                changed = true;
+            }
+
+            // 머티리얼은 에셋 안의 하위 오브젝트다. 그 fileID 가 쓰인 곳(오브젝트 머리와 글꼴의 m_Material)을 모두 바꾼다.
+            string text = File.ReadAllText(FontAssetPath);
+            Match material = Regex.Match(text, @"m_Material: \{fileID: (-?\d+)\}");
+            string pinned = FontMaterialFileId.ToString();
+            if (material.Success && material.Groups[1].Value != pinned)
+            {
+                string old = material.Groups[1].Value;
+                text = Regex.Replace(text, @"(?<![\d-])" + Regex.Escape(old) + @"(?!\d)", pinned);
+                File.WriteAllText(FontAssetPath, text);
+                changed = true;
+            }
+
+            if (!changed)
             {
                 return;
             }
 
-            string meta = File.ReadAllText(metaPath);
-            File.WriteAllText(metaPath, Regex.Replace(meta, @"guid: [0-9a-f]{32}", "guid: " + FontGuid));
             AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset(FontAssetPath, ImportAssetOptions.ForceUpdate);
 
-            string now = AssetDatabase.AssetPathToGUID(FontAssetPath);
-            if (now == FontGuid)
+            string guid = AssetDatabase.AssetPathToGUID(FontAssetPath);
+            TMP_FontAsset font = LoadKoreanFont();
+            long materialId = 0;
+            string ignored;
+            bool materialPinned = font != null && font.material != null
+                && AssetDatabase.TryGetGUIDAndLocalFileIdentifier(font.material, out ignored, out materialId)
+                && materialId == FontMaterialFileId;
+
+            if (guid == FontGuid && materialPinned)
             {
-                Debug.Log("한글 글꼴 에셋의 GUID 를 맞췄다: " + FontGuid);
+                Debug.Log("한글 글꼴 에셋의 GUID 와 머티리얼 fileID 를 맞췄다: " + FontGuid + " / " + FontMaterialFileId);
             }
             else
             {
-                Debug.LogWarning("한글 글꼴 에셋의 GUID 를 맞추지 못했다. 지금 " + now + ". 에디터를 다시 열고 한 번 더 한다.");
+                Debug.LogWarning("한글 글꼴 에셋을 맞추지 못했다. 지금 GUID " + guid + ", 머티리얼 " + materialId +
+                                 ". 에디터를 다시 열고 한 번 더 한다.");
             }
         }
 
