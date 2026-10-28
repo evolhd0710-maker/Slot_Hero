@@ -33,11 +33,27 @@ namespace SlotHero.Events
         [SerializeField] private bool _met;
         public bool Met { get { return _met; } set { _met = value; } }
 
+        /// <summary>
+        /// 앞 줄과 쉼표 대신 "혹은"으로 잇는지. 둘 가운데 하나만 일어나는 결과에 쓴다.
+        /// 19 두 개의 상자 의 "유물 혹은 체력 손실"(2026년 10월 28일 원재).
+        /// </summary>
+        [SerializeField] private bool _alternative;
+        public bool Alternative { get { return _alternative; } set { _alternative = value; } }
+
         public EventEffectLine(EventEffectKind kind, string text, bool met)
         {
             _kind = kind;
             _text = text;
             _met = met;
+            _alternative = false;
+        }
+
+        /// <summary>앞 줄과 "혹은"으로 잇는 줄로 바꾼다.</summary>
+        public EventEffectLine OrPrevious()
+        {
+            EventEffectLine line = this;
+            line._alternative = true;
+            return line;
         }
 
         public static EventEffectLine Gain(string text)

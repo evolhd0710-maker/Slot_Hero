@@ -121,6 +121,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uBB38\uC591 [{name}]"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 1
         _fillCount: 3
@@ -251,6 +252,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uC774 \uD0DC\uADF8\uC640 \uB2E4\uC74C \uCE74\uB4DC \uD0DC\uADF8\uB97C \uD568\uAED8 \uAC00\uC9C4 \uBB38\uC591"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 6
         _fillCount: 5
@@ -294,6 +296,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uBB38\uC591 [{result0}]"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 6
         _fillCount: 5
@@ -383,9 +386,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uBCF4\uC720 \uBB38\uC591 \uC804\uBD80"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uAC19\uC740 \uC7A5\uC218\uC758 \uBB34\uC791\uC704 \uBB38\uC591"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -508,6 +513,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "[{name}] \uC758 \uD0DC\uADF8 \uD558\uB098\uAC00 \uBC14\uB010\uB2E4"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 2
         _fillCount: 3
@@ -584,6 +590,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uC774 \uD0DC\uADF8\uB97C \uBC84\uB9B0\uB2E4"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 8
         _fillCount: 2
@@ -628,6 +635,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uBC14\uB010 \uBB38\uC591 [{result0}]"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 6
         _fillCount: 3
@@ -790,9 +798,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uC774 \uD0DC\uADF8 \uBB38\uC591 \uC804\uBD80"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uC774 \uD0DC\uADF8 \uC5C6\uB294 \uBB34\uC791\uC704 \uBB38\uC591"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 7
         _fillCount: 3
@@ -988,9 +998,11 @@ MonoBehaviour:
         - _kind: 1
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: '[{result0}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 2
         _fillCount: 3
@@ -1113,9 +1125,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uC6D0\uD558\uB294 \uBB38\uC591\uC744 \uACE0\uB978\uB2E4"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -1192,6 +1206,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uC6D0\uD558\uB294 \uBB38\uC591"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -1280,6 +1295,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -1317,6 +1333,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uACE8\uB4DC 50"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -1405,6 +1422,7 @@ MonoBehaviour:
         - _kind: 1
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 9
         _fillCount: 3
@@ -1566,6 +1584,7 @@ MonoBehaviour:
         - _kind: 0
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 5
         _fillCount: 2
@@ -1603,9 +1622,11 @@ MonoBehaviour:
         - _kind: 0
           _text: '{results}'
           _met: 1
+          _alternative: 0
         - _kind: 1
           _text: "\uCD5C\uB300 \uCCB4\uB825 {hpCost}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -1806,9 +1827,11 @@ MonoBehaviour:
         - _kind: 1
           _text: '[{result0}]'
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: '[{result1}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -1970,6 +1993,7 @@ MonoBehaviour:
         - _kind: 0
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 5
         _fillCount: 2
@@ -2060,11 +2084,13 @@ MonoBehaviour:
           _rarityStepWeights: 
         _lines:
         - _kind: 0
-          _text: "\uBCF4\uBB3C\uC774\uBA74 \uC720\uBB3C"
+          _text: "\uC720\uBB3C"
           _met: 1
+          _alternative: 0
         - _kind: 1
-          _text: "\uD568\uC815\uC774\uBA74 \uCCB4\uB825 \uC190\uC2E4"
+          _text: "\uCCB4\uB825 \uC190\uC2E4"
           _met: 1
+          _alternative: 1
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -2104,11 +2130,13 @@ MonoBehaviour:
           _rarityStepWeights: 
         _lines:
         - _kind: 0
-          _text: "\uBCF4\uBB3C\uC774\uBA74 \uC720\uBB3C"
+          _text: "\uC720\uBB3C"
           _met: 1
+          _alternative: 0
         - _kind: 1
-          _text: "\uD568\uC815\uC774\uBA74 \uCCB4\uB825 \uC190\uC2E4"
+          _text: "\uCCB4\uB825 \uC190\uC2E4"
           _met: 1
+          _alternative: 1
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -2185,6 +2213,7 @@ MonoBehaviour:
         - _kind: 0
           _text: '[{result0}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -2227,6 +2256,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -2315,9 +2345,11 @@ MonoBehaviour:
         - _kind: 1
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: '[{result0}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 4
         _fillCount: 3
@@ -2394,12 +2426,15 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uACE8\uB4DC 10"
           _met: 1
+          _alternative: 0
         - _kind: 1
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: '[{result0}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 4
         _fillCount: 3
@@ -2595,9 +2630,11 @@ MonoBehaviour:
         - _kind: 1
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: '{result0}'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 4
         _fillCount: 3
@@ -2720,6 +2757,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uACE0\uAE09 \uC774\uC0C1 \uBCF4\uC720 \uCF54\uC778 \uD558\uB098\uAC00 \uD55C \uB4F1\uAE09 \uC544\uB798 \uBB34\uC791\uC704 \uCF54\uC778\uC73C\uB85C \uBC14\uB010\uB2E4"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -2881,6 +2919,7 @@ MonoBehaviour:
         - _kind: 0
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 3
         _fillCount: 3
@@ -2969,9 +3008,11 @@ MonoBehaviour:
         - _kind: 1
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uD55C \uB4F1\uAE09 \uC704 \uBB34\uC791\uC704 \uCF54\uC778"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 4
         _fillCount: 3
@@ -3094,6 +3135,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3204,6 +3246,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uCD5C\uB300 \uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3399,9 +3442,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uACE8\uB4DC 60"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3439,9 +3484,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uACE8\uB4DC 130"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3479,9 +3526,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uACE8\uB4DC 210"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3643,6 +3692,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uACE8\uB4DC 60"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3680,6 +3730,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3807,6 +3858,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -3844,6 +3896,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCD5C\uB300 \uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4005,6 +4058,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uACE8\uB4DC 80"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4170,9 +4224,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uACE8\uB4DC 30"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uC774\uAE30\uBA74 \uACE8\uB4DC 60"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4214,9 +4270,11 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uACE8\uB4DC 60"
           _met: 1
+          _alternative: 0
         - _kind: 0
           _text: "\uC774\uAE30\uBA74 \uACE8\uB4DC 120"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4293,6 +4351,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uACE8\uB4DC 60"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4335,6 +4394,7 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uACE8\uB4DC 120"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4535,6 +4595,7 @@ MonoBehaviour:
         - _kind: 1
           _text: '[{name}]'
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 10
         _fillCount: 2
@@ -4614,9 +4675,11 @@ MonoBehaviour:
         - _kind: 0
           _text: "\uC774\uAE30\uBA74 \uBCF4\uC0C1 \uB450 \uBC30"
           _met: 1
+          _alternative: 0
         - _kind: 1
           _text: "\uC55E\uC5D0\uC11C \uBC1B\uC740 \uBD80\uC815 \uD6A8\uACFC\uB97C \uC548\uACE0 \uC804\uD22C"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4705,6 +4768,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uBD80\uC815 \uD6A8\uACFC \uD558\uB098\uB97C \uC548\uACE0 \uC804\uD22C"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3
@@ -4742,6 +4806,7 @@ MonoBehaviour:
         - _kind: 1
           _text: "\uCCB4\uB825 {hp}"
           _met: 1
+          _alternative: 0
         _resultHidden: 0
         _fill: 0
         _fillCount: 3

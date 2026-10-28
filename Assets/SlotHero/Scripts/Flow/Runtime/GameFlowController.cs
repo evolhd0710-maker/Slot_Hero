@@ -930,7 +930,18 @@ namespace SlotHero.Flow
                 string choiceId;
                 EventStep step = _events.ResumeAfterCombat(out choiceId);
 
+                // 전투 화면을 걷고 닫아 둔 이벤트 화면을 다시 연다.
                 _screen = GameScreen.Event;
+                if (_combat != null)
+                {
+                    _combat.Leave();
+                }
+
+                if (_event != null)
+                {
+                    _event.Reopen();
+                }
+
                 ApplyEventStep(step, choiceId);
                 return;
             }
@@ -2029,6 +2040,10 @@ namespace SlotHero.Flow
             switch (_events.Interpret(step, choiceId))
             {
                 case EventStepAction.StartCombat:
+                    // 이벤트 화면은 전투 화면보다 위에 그려진다. 닫지 않으면 전투가 이벤트 화면에 가려진다(2026년 10월 28일 원재).
+                    // 전투가 끝나 이벤트로 돌아오면 `HandleCombatFinished` 가 다시 연다.
+                    _event.Close();
+
                     // 도전 이벤트가 정한 부정 효과와 보상 두 배를 전투에 넘긴다(3장 도전 이벤트 공통 규칙).
                     OpenCombat(GetCurrentNode(), _events.CombatOptions);
                     break;
