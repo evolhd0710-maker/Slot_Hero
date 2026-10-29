@@ -129,6 +129,11 @@ namespace SlotHero.Combat
         public float CoinLabelFontSize = UiScale.Px(22f);
         public float DamageFontSize = UiScale.Px(64f);
 
+        [Header("레이저 발사음")]
+        [Tooltip("레이저 발사음 크기. 레이저가 원판에서 뻗기 시작할 때 난다. 소리는 Art/Combat/LaserSound(Unity AI 로 만듦, \"지잉\")다.")]
+        [Range(0f, 1f)]
+        public float LaserSoundVolume = 0.7f;
+
         [Tooltip("코인 정보 팝업의 이름. 피그마 \"공격의 코인\".")]
         [SerializeField] private float _coinPopupNameFontSize = UiScale.Px(17f);
         public float CoinPopupNameFontSize { get { return _coinPopupNameFontSize; } set { _coinPopupNameFontSize = value; } }
@@ -246,8 +251,19 @@ namespace SlotHero.Combat
         [Tooltip("태그를 고른 뒤 원판이 그 태그 색으로 차 있는 시간. 초안 06 의 \"공격 예정\".")]
         public float AttackChargeDuration = 0.45f;
 
-        [Tooltip("공격 구슬이 몬스터까지 가는 시간.")]
-        public float ProjectileDuration = 0.35f;
+        [Header("공격 레이저")]
+        [Tooltip("레이저가 원판에서 적까지 뻗는 시간(초). 그림은 Art/Combat/LaserBeam(Unity AI 로 만듦)이고 태그 색으로 물들인다.")]
+        public float LaserGrowDuration = 0.1f;
+
+        [Tooltip("레이저가 적에 닿은 채 머무는 시간(초).")]
+        public float LaserHoldDuration = 0.12f;
+
+        [Tooltip("레이저가 가늘어지며 사라지는 시간(초).")]
+        public float LaserFadeDuration = 0.18f;
+
+        [Tooltip("태그 색에 흰빛을 섞는 정도. 0 이면 태그 색 그대로, 1 이면 흰색이다.")]
+        [Range(0f, 1f)]
+        public float LaserWhiteMix = 0.3f;
 
         [Tooltip("피해 숫자가 떠 있는 시간.")]
         public float DamageShowDuration = 0.8f;

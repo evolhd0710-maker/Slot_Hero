@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using SlotHero.CurrentBuild;
+using SlotHero.Ui;
 
 namespace SlotHero.Reward.UI
 {
@@ -47,6 +48,10 @@ namespace SlotHero.Reward.UI
         [SerializeField] private TMP_Text _overkillGoldLabel;
         [SerializeField] private TMP_Text _overkillGoldValue;
         [SerializeField] private Image _overkillGoldIcon;
+
+        [Tooltip("오버킬 줄의 회복. 골드 오른쪽에 하트와 회복량을 적는다. 회복이 없으면 끈다.")]
+        [SerializeField] private Image _overkillHealIcon;
+        [SerializeField] private TMP_Text _overkillHealValue;
 
         [Header("카드")]
         [SerializeField] private RectTransform _cardLayer;
@@ -138,11 +143,22 @@ namespace SlotHero.Reward.UI
                 _overkillGoldValue.text = RewardText.Gold(_offer.OverkillGold);
             }
 
-            // 오버킬 골드가 없으면 그 줄은 비워 둔다.
+            if (_overkillHealValue != null)
+            {
+                _overkillHealValue.text = RewardText.Heal(_offer.OverkillHeal);
+            }
+
+            // 오버킬 골드도 회복도 없으면 그 줄은 비워 둔다.
             if (_overkillGoldRow != null)
             {
                 _overkillGoldRow.gameObject.SetActive(_offer.HasOverkill);
             }
+
+            SetActive(_overkillHealIcon, _offer.HasOverkillHeal);
+            SetActive(_overkillHealValue, _offer.HasOverkillHeal);
+
+            // 회복이 있으면 골드와 회복이 줄을 나눠 쓴다. 자리가 달라지니 다시 놓는다.
+            PlaceOverkillRow();
         }
 
         /// <summary>
@@ -176,7 +192,7 @@ namespace SlotHero.Reward.UI
             PlaceTopLeft(_overkillGoldRow, _layout.OverkillGoldPosition, _layout.GoldRowSize);
 
             PlaceGoldRow(_baseGoldLabel, _baseGoldValue, _baseGoldIcon);
-            PlaceGoldRow(_overkillGoldLabel, _overkillGoldValue, _overkillGoldIcon);
+            PlaceOverkillRow();
 
             for (int i = 0; i < _cards.Count; i++)
             {
@@ -226,6 +242,7 @@ namespace SlotHero.Reward.UI
 
             ApplyLabel(_baseGoldValue, null, _visual.GoldValueFontSize, _visual.TextColor);
             ApplyLabel(_overkillGoldValue, null, _visual.GoldValueFontSize, _visual.TextColor);
+            ApplyLabel(_overkillHealValue, null, _visual.GoldValueFontSize, _visual.TextColor);
 
             if (_skipPanel != null)
             {
@@ -340,6 +357,62 @@ namespace SlotHero.Reward.UI
                 RectTransform rect = value.rectTransform;
                 InsideRow(rect, width * 0.55f + height * 0.6f, width * 0.45f - height * 0.6f - padding, height);
                 value.alignment = TextAlignmentOptions.Left;
+            }
+        }
+
+        /// <summary>
+        /// 오버킬 줄. 회복이 없으면 기본 보상 줄과 같다.
+        /// 회복이 있으면 오른쪽 절반을 골드와 하트 회복 둘로 나눈다(2026년 10월 30일).
+        /// </summary>
+        private void PlaceOverkillRow()
+        {
+            PlaceGoldRow(_overkillGoldLabel, _overkillGoldValue, _overkillGoldIcon);
+
+            if (_layout == null || _offer == null || !_offer.HasOverkillHeal)
+            {
+                return;
+            }
+
+            float padding = _layout.GoldRowPadding;
+            float width = _layout.GoldRowSize.x;
+            float height = _layout.GoldRowSize.y;
+            float icon = height * 0.45f;
+            float start = width * 0.5f;
+            float pair = (width - padding - start) * 0.5f;
+
+            if (_overkillGoldIcon != null)
+            {
+                InsideRow(_overkillGoldIcon.rectTransform, start, icon, icon);
+            }
+
+            if (_overkillGoldValue != null)
+            {
+                InsideRow(_overkillGoldValue.rectTransform, start + icon + UiScale.Px(6f), pair - icon - UiScale.Px(6f), height);
+            }
+
+            if (_overkillHealIcon != null)
+            {
+                InsideRow(_overkillHealIcon.rectTransform, start + pair, icon, icon);
+            }
+
+            if (_overkillHealValue != null)
+            {
+                InsideRow(_overkillHealValue.rectTransform, start + pair + icon + UiScale.Px(6f), pair - icon - UiScale.Px(6f), height);
+                _overkillHealValue.alignment = TextAlignmentOptions.Left;
+                _overkillHealValue.textWrappingMode = TextWrappingModes.NoWrap;
+            }
+
+            if (_overkillGoldValue != null)
+            {
+                _overkillGoldValue.textWrappingMode = TextWrappingModes.NoWrap;
+            }
+        }
+
+        private static void SetActive(Component component, bool on)
+        {
+            if (component != null && component.gameObject.activeSelf != on)
+            {
+                component.gameObject.SetActive(on);
             }
         }
 

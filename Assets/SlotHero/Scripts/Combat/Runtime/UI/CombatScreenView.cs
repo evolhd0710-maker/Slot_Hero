@@ -75,6 +75,13 @@ namespace SlotHero.Combat.UI
         [Tooltip("숫자 그림으로 적는 피해 숫자. 있으면 위의 글자 대신 이것을 띄운다.")]
         [SerializeField] private DamageNumberView _enemyDamageNumber;
 
+        [Header("레이저 발사음")]
+        [Tooltip("레이저 발사음. 레이저가 뻗기 시작할 때 소리 칸으로 낸다. 적에 닿을 때 나던 타격음은 2026년 10월 30일 뺐다.")]
+        [SerializeField] private AudioClip _laserClip;
+
+        [Tooltip("효과음을 내는 소리 칸.")]
+        [SerializeField] private AudioSource _sfxAudio;
+
         [Header("소환수")]
         [Tooltip("소환수 칸. 자리 0 이 가장 왼쪽이다. 지금은 소환수를 세우는 적이 없다. 장군의 방패병은 장군이 가진 수다(2026년 10월 29일).")]
         [SerializeField] private Image[] _summonPanels = new Image[0];
@@ -91,7 +98,8 @@ namespace SlotHero.Combat.UI
         [SerializeField] private TMP_Text _hintLabel;
 
         [Header("연출")]
-        [SerializeField] private Image _projectile;
+        [Tooltip("원판에서 적까지 쏘는 공격 레이저. 흰 그림을 태그 색으로 물들인다.")]
+        [SerializeField] private Image _laser;
         [SerializeField] private TMP_Text _resultLabel;
 
         [Tooltip("회전할 때 가운데에 크게 뜨는 6열 × 5행 슬롯. 없으면 원래 칸에서 돈다.")]
@@ -184,6 +192,11 @@ namespace SlotHero.Combat.UI
             if (_spinOverlay != null)
             {
                 _spinOverlay.Hide();
+            }
+
+            if (_laser != null)
+            {
+                _laser.gameObject.SetActive(false);
             }
         }
 
@@ -801,43 +814,86 @@ namespace SlotHero.Combat.UI
         // ---- 연출 ----
 
         /// <summary>
-        /// 원판에서 몬스터로 공격 구슬을 날린다. 초안 06 의 "태그 선택 UI 에서 공격 효과가 출발하여 적 캐릭터에 닿는 방식".
-        /// 구체적인 공격 모션과 에셋은 논의가 필요하다고 적혀 있어 지금은 태그 색 구슬 하나다.
+        /// 원판에서 몬스터로 공격 레이저를 쏜다. 초안 06 의 "태그 선택 UI 에서 공격 효과가 출발하여 적 캐릭터에 닿는 방식".
+        /// 처음에는 태그 색 구슬을 날렸고, 2026년 10월 30일 레이저로 바꿨다.
         /// </summary>
-        public IEnumerator FireProjectile(Color color)
+        public IEnumerator FireLaser(Color color)
         {
-            return FireProjectile(color, null);
+            return FireLaser(color, null);
         }
 
-        /// <summary>그 적에게 공격 구슬을 날린다. 소환수가 맞으면 소환수 칸으로 간다.</summary>
-        public IEnumerator FireProjectile(Color color, CombatEnemy target)
+        /// <summary>
+        /// 그 적에게 레이저를 쏜다. 원판 가운데에서 뻗어 적 가운데에 닿고, 잠시 머물다 가늘어지며 사라진다.
+        /// 뻗기 시작할 때 발사음을 낸다.
+        /// </summary>
+        public IEnumerator FireLaser(Color color, CombatEnemy target)
         {
-            if (_projectile == null || _layout == null)
+            if (_laser == null || _layout == null)
             {
                 yield break;
             }
 
-            RectTransform rect = _projectile.rectTransform;
+            RectTransform rect = _laser.rectTransform;
             Vector2 from = TopLeftToAnchored(_layout.DialCenter);
             Vector2 to = TopLeftToAnchored(GetEnemyCenter(target));
+            Vector2 delta = to - from;
+            float length = delta.magnitude;
+            float thickness = _layout.LaserThickness;
 
-            _projectile.color = color;
-            _projectile.gameObject.SetActive(true);
-            _projectile.transform.SetAsLastSibling();
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0f, 0.5f);
+            rect.anchoredPosition = from;
+            rect.localScale = Vector3.one;
+            rect.localEulerAngles = new Vector3(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
 
-            float duration = _visual != null ? _visual.ProjectileDuration : 0.35f;
-            float elapsed = 0f;
+            float mix = _visual != null ? _visual.LaserWhiteMix : 0.3f;
+            Color tint = Color.Lerp(color, Color.white, mix);
+            tint.a = 1f;
+            _laser.color = tint;
+            _laser.raycastTarget = false;
+            _laser.gameObject.SetActive(true);
+            _laser.transform.SetAsLastSibling();
 
-            while (elapsed < duration)
+            if (_sfxAudio != null && _laserClip != null)
             {
-                float t = elapsed / duration;
-                rect.anchoredPosition = Vector2.Lerp(from, to, t * t);
-                yield return null;
-                elapsed += Time.deltaTime;
+                _sfxAudio.PlayOneShot(_laserClip, _visual != null ? _visual.LaserSoundVolume : 0.7f);
             }
 
-            rect.anchoredPosition = to;
-            _projectile.gameObject.SetActive(false);
+            // 뻗는다. 빠르게 나가다 끝에서 느려진다.
+            float grow = _visual != null ? Mathf.Max(0.01f, _visual.LaserGrowDuration) : 0.1f;
+            for (float t = 0f; t < grow; t += Time.deltaTime)
+            {
+                float k = t / grow;
+                float eased = 1f - (1f - k) * (1f - k);
+                rect.sizeDelta = new Vector2(length * eased, thickness * Mathf.Lerp(0.5f, 1f, eased));
+                yield return null;
+            }
+
+            rect.sizeDelta = new Vector2(length, thickness);
+
+            // 닿은 채 머문다. 굵기가 살짝 떨린다.
+            float hold = _visual != null ? _visual.LaserHoldDuration : 0.12f;
+            for (float t = 0f; t < hold; t += Time.deltaTime)
+            {
+                float pulse = 1f + 0.12f * Mathf.Sin(t * 60f);
+                rect.sizeDelta = new Vector2(length, thickness * pulse);
+                yield return null;
+            }
+
+            // 가늘어지며 사라진다.
+            float fade = _visual != null ? Mathf.Max(0.01f, _visual.LaserFadeDuration) : 0.18f;
+            for (float t = 0f; t < fade; t += Time.deltaTime)
+            {
+                float k = t / fade;
+                rect.sizeDelta = new Vector2(length, thickness * (1f - k));
+                Color c = tint;
+                c.a = 1f - k;
+                _laser.color = c;
+                yield return null;
+            }
+
+            _laser.gameObject.SetActive(false);
         }
 
         /// <summary>몬스터 위에 피해 숫자를 띄우고 몬스터를 흔든다. 세기는 적 최대 체력 대비 비율로 정한다.</summary>
@@ -1117,14 +1173,14 @@ namespace SlotHero.Combat.UI
                 PlaceTopLeftRect(_hintLabel.rectTransform, _layout.HintPosition, _layout.HintSize);
             }
 
-            if (_projectile != null)
+            if (_laser != null)
             {
-                RectTransform rect = _projectile.rectTransform;
+                RectTransform rect = _laser.rectTransform;
                 rect.anchorMin = new Vector2(0f, 1f);
                 rect.anchorMax = new Vector2(0f, 1f);
-                rect.pivot = new Vector2(0.5f, 0.5f);
-                rect.sizeDelta = new Vector2(_layout.ProjectileSize, _layout.ProjectileSize);
-                _projectile.gameObject.SetActive(false);
+                rect.pivot = new Vector2(0f, 0.5f);
+                rect.sizeDelta = new Vector2(0f, _layout.LaserThickness);
+                _laser.gameObject.SetActive(false);
             }
 
             // 피해 숫자는 몬스터 일러스트 가운데와 플레이어 체력 칸 위에 띄운다.

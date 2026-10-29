@@ -88,6 +88,12 @@ namespace SlotHero.Save
         public int RewardOverkillGold;
 
         /// <summary>
+        /// 그 보상에 얹는 오버킬 회복 체력. 오버킬 골드와 같이 전투가 정한 값이라 저장한다.
+        /// 보상을 받을 때 회복하고 0 으로 돌아간다(2026년 10월 30일).
+        /// </summary>
+        public int RewardOverkillHeal;
+
+        /// <summary>
         /// 그 보상에 합쳐지는 전투 골드. 전투가 정한 값이라 시드로는 다시 만들 수 없다.
         /// 전투를 이기는 순간 주지 않고 보상의 기본 골드에 더해 받을 때 한 번에 준다.
         /// 도전 이벤트가 연 전투면 두 배가 된 값이 들어 있다. 보상을 받으면 0 으로 돌아간다.

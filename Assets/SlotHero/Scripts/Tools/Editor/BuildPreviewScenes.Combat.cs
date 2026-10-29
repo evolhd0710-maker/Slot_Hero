@@ -199,9 +199,14 @@ namespace SlotHero.ToolsEditor
             TagDialView tagDial = BuildTagDial(dial.transform, visual, circle, out tagGroup);
 
             // ---- 연출 ----
-            Image projectile = UiSceneBuilder.NewFlatImage("Projectile", root, Color.white);
-            projectile.sprite = circle;
-            projectile.raycastTarget = false;
+            // 공격 레이저. 흰 레이저 그림(Unity AI 로 만든 LaserBeam)을 태그 색으로 물들여 원판에서 적까지 늘인다.
+            Image laser = UiSceneBuilder.NewFlatImage("Laser", root, Color.white);
+            laser.sprite = ImportArt.LoadCombat("LaserBeam");
+            laser.raycastTarget = false;
+            laser.gameObject.SetActive(false);
+
+            AudioSource sfxAudio = root.gameObject.AddComponent<AudioSource>();
+            sfxAudio.playOnAwake = false;
 
             DamageNumberView enemyDamage = BuildDamageNumber("EnemyDamageNumber", root, visual);
 
@@ -245,6 +250,8 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_enemyNameLabel", enemyName);
             UiSceneBuilder.SetField(view, "_enemyInfoLabel", enemyInfoLabel);
             UiSceneBuilder.SetField(view, "_enemyDamageNumber", enemyDamage);
+            UiSceneBuilder.SetField(view, "_sfxAudio", sfxAudio);
+            UiSceneBuilder.SetField(view, "_laserClip", ImportArt.LoadCombatSound("LaserSound"));
             UiSceneBuilder.SetField(view, "_enemyDamageLabel", enemyDamageText);
             UiSceneBuilder.SetArrayField(view, "_summonPanels", summonPanels);
             UiSceneBuilder.SetArrayField(view, "_summonBars", summonBars);
@@ -256,7 +263,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_tagGroup", tagGroup);
             UiSceneBuilder.SetField(view, "_tagDial", tagDial);
             UiSceneBuilder.SetField(view, "_hintLabel", hint);
-            UiSceneBuilder.SetField(view, "_projectile", projectile);
+            UiSceneBuilder.SetField(view, "_laser", laser);
             UiSceneBuilder.SetField(view, "_resultLabel", result);
             UiSceneBuilder.SetField(view, "_spinOverlay", spinOverlay);
 

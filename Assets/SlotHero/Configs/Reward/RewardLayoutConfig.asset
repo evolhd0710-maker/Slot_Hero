@@ -18,9 +18,9 @@ MonoBehaviour:
   _boxPadding: 40
   _titlePosition: {x: 440, y: 210}
   _titleSize: {x: 300, y: 60}
-  _baseGoldPosition: {x: 760, y: 270}
-  _overkillGoldPosition: {x: 760, y: 370}
-  _goldRowSize: {x: 400, y: 90}
+  _baseGoldPosition: {x: 700, y: 270}
+  _overkillGoldPosition: {x: 700, y: 370}
+  _goldRowSize: {x: 520, y: 90}
   _goldRowPadding: 30
   _cardSize: {x: 300, y: 300}
   _cardY: 520

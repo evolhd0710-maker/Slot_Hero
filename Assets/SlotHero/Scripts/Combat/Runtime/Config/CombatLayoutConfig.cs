@@ -279,8 +279,8 @@ namespace SlotHero.Combat
         [SerializeField] private Rect _coinPopupBodyArea = new Rect(UiScale.Px(117f), UiScale.Px(122f), UiScale.Px(180f), UiScale.Px(42f));
         public Rect CoinPopupBodyArea { get { return _coinPopupBodyArea; } set { _coinPopupBodyArea = value; } }
 
-        [Tooltip("공격 구슬의 지름.")]
-        public float ProjectileSize = UiScale.Px(90f);
+        [Tooltip("공격 레이저의 굵기. 원판 가운데에서 적 가운데까지 뻗는다(2026년 10월 30일, 구슬을 레이저로 바꿈).")]
+        public float LaserThickness = UiScale.Px(90f);
 
         [Tooltip("적이 때릴 때 앞으로 나오는 거리.")]
         public float EnemyLunge = UiScale.Px(40f);

@@ -43,6 +43,7 @@ namespace SlotHero.Flow
             }
 
             run.RewardOverkillGold = 0;
+            run.RewardOverkillHeal = 0;
             run.RewardCombatGold = 0;
             run.RewardCardRounds = 0;
             run.RewardCardRoundsTaken = 0;
@@ -64,6 +65,7 @@ namespace SlotHero.Flow
             }
 
             run.RewardOverkillGold += result.OverkillGold;
+            run.RewardOverkillHeal += result.OverkillHeal;
             run.RewardCombatGold += options.DoubleReward ? result.GoldGained * 2 : result.GoldGained;
 
             // 이벤트 방은 방 규칙에 카드가 없다. 이벤트가 연 전투를 이기면 고르기를 따로 쌓는다.
@@ -106,6 +108,7 @@ namespace SlotHero.Flow
 
             offer.BaseGold += run.RewardCombatGold;
             offer.OverkillGold = run.RewardOverkillGold;
+            offer.OverkillHeal = run.RewardOverkillHeal;
 
             if (run.RewardCardRoundsTaken < run.RewardCardRounds)
             {
@@ -142,7 +145,7 @@ namespace SlotHero.Flow
         public void ClearPending(RunContext context)
         {
             if (context == null
-                || (!context.Run.RewardPending && context.Run.RewardOverkillGold == 0 && context.Run.RewardCombatGold == 0
+                || (!context.Run.RewardPending && context.Run.RewardOverkillGold == 0 && context.Run.RewardOverkillHeal == 0 && context.Run.RewardCombatGold == 0
                     && context.Run.RewardCardRounds == 0))
             {
                 return;
@@ -172,6 +175,12 @@ namespace SlotHero.Flow
             if (gold > 0)
             {
                 context.GainGold(gold);
+            }
+
+            // 오버킬 회복. 골드와 함께 받는다(2026년 10월 30일).
+            if (run.RewardOverkillHeal > 0)
+            {
+                context.Heal(run.RewardOverkillHeal);
             }
 
             if (card != null)
@@ -208,6 +217,7 @@ namespace SlotHero.Flow
             {
                 run.RewardCardRoundsTaken++;
                 run.RewardOverkillGold = 0;
+                run.RewardOverkillHeal = 0;
                 run.RewardCombatGold = 0;
                 run.RewardPending = true;
             }
@@ -226,6 +236,7 @@ namespace SlotHero.Flow
         {
             run.RewardPending = false;
             run.RewardOverkillGold = 0;
+            run.RewardOverkillHeal = 0;
             run.RewardCombatGold = 0;
             run.RewardCardRounds = 0;
             run.RewardCardRoundsTaken = 0;

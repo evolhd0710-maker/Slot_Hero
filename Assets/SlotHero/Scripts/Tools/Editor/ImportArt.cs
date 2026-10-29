@@ -459,6 +459,12 @@ namespace SlotHero.ToolsEditor
             return AssetDatabase.LoadAssetAtPath<Sprite>(ArtFolder + "/Combat/" + name + ".png");
         }
 
+        /// <summary>전투 효과음 하나. Art/Combat 의 wav 다. 레이저 발사음(LaserSound)은 Unity AI 로 만들었다.</summary>
+        public static AudioClip LoadCombatSound(string name)
+        {
+            return AssetDatabase.LoadAssetAtPath<AudioClip>(ArtFolder + "/Combat/" + name + ".wav");
+        }
+
         /// <summary>
         /// 성소와 행상 그림 하나.
         /// 이름은 `성소 이미지 예시.psd` 와 `행상 예시.psd` 의 레이어에서 잘라 낸 것이다.

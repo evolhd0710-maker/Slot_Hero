@@ -239,7 +239,9 @@ namespace SlotHero.Flow
 
             CombatResult result = outcome.Won
                 ? CombatResult.Victory(
-                    outcome.BiggestHit, 0, _rules != null ? _rules.GetOverkillGold(outcome.Overkill) : 0)
+                    outcome.BiggestHit, 0,
+                    _rules != null ? _rules.GetOverkillGold(outcome.Overkill) : 0,
+                    _rules != null ? _rules.GetOverkillHeal(outcome.Overkill) : 0)
                 : CombatResult.Defeat();
 
             // 끝나면 화면부터 닫는다. 이벤트가 연 전투는 흐름이 `Leave` 를 부르지 않고 이벤트 화면으로 돌아가는데,

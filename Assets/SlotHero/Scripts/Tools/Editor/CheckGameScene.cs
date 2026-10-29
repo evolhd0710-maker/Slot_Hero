@@ -3362,6 +3362,17 @@ namespace SlotHero.ToolsEditor
                 overkillField.SetValue(combat, overkill);
             }
 
+            // 오버킬 회복도 함께 얹는다(2026년 10월 30일). 받을 때 회복하는지 보려고 체력을 깎아 둔다.
+            const int overkillHeal = 5;
+            FieldInfo healField = typeof(PlaceholderCombatEntry).GetField(
+                "_victoryOverkillHeal", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (combat != null && healField != null)
+            {
+                healField.SetValue(combat, overkillHeal);
+            }
+
+            save.Run.Status.Health = Mathf.Max(1, save.Run.Status.MaxHealth - 20);
+
             // 전투 대역 팝업에서 이긴 것으로 고른다. 방을 깨고 보상 화면이 뜬다.
             int goldAtEntry = save.Run.Status.Gold;
             Invoke(flow, "EnterRoom", fight);
@@ -3390,11 +3401,19 @@ namespace SlotHero.ToolsEditor
                 reward.Offer != null && reward.Offer.OverkillGold == overkill,
                 reward.Offer != null ? reward.Offer.OverkillGold : -1);
             Report("오버킬 골드가 저장된다", save.Run.RewardOverkillGold == overkill, save.Run.RewardOverkillGold);
+            Report("오버킬 회복이 보상 화면에 적힌다",
+                reward.Offer != null && reward.Offer.OverkillHeal == overkillHeal,
+                reward.Offer != null ? reward.Offer.OverkillHeal : -1);
+            Report("오버킬 회복이 저장된다", save.Run.RewardOverkillHeal == overkillHeal, save.Run.RewardOverkillHeal);
+            RewardScreenView healView = GetField<RewardScreenView>(reward, "_view");
+            Image healIcon = healView != null ? GetField<Image>(healView, "_overkillHealIcon") : null;
+            Report("오버킬 줄에 하트가 보인다", healIcon != null && healIcon.gameObject.activeInHierarchy);
 
             // 화면을 열었을 때의 골드. 전투 대역이 이기면서 준 골드까지 들어간 값이다. 보상 골드는 아직 아니다.
             int goldBefore = save.Run.Status.Gold;
             int rewardGold = reward.Offer != null ? reward.Offer.TotalGold : 0;
             int ownedBefore = save.Run.Owned.TotalSymbolCount + save.Run.Owned.Relics.Count + save.Run.Owned.CoinIds.Count;
+            int healthBefore = save.Run.Status.Health;
 
             // 보상 화면에서 저장하고 나간다.
             Invoke(flow, "HandleEndRunConfirmClosed", "save");
@@ -3402,6 +3421,9 @@ namespace SlotHero.ToolsEditor
 
             save.SelectProfile(0);
             Report("다시 읽어도 보상이 남아 있다", save.Run != null && save.Run.RewardPending);
+            Report("다시 읽어도 오버킬 회복이 남아 있다",
+                save.Run != null && save.Run.RewardOverkillHeal == overkillHeal,
+                save.Run != null ? save.Run.RewardOverkillHeal : -1);
             Report("다시 읽어도 오버킬 골드가 남아 있다",
                 save.Run != null && save.Run.RewardOverkillGold == overkill,
                 save.Run != null ? save.Run.RewardOverkillGold : -1);
@@ -3416,6 +3438,8 @@ namespace SlotHero.ToolsEditor
             Report("다시 뜬 보상 뒤로 맵이 닫혀 있다", !map.IsOpen);
             Report("보상을 받기 전에는 골드가 들어오지 않는다",
                 save.Run.Status.Gold == goldBefore, save.Run.Status.Gold - goldBefore);
+            Report("보상을 받기 전에는 체력이 차지 않는다",
+                save.Run.Status.Health == healthBefore, save.Run.Status.Health - healthBefore);
             Report("다시 뜬 보상에 골드가 그대로 있다",
                 reward.Offer != null && reward.Offer.TotalGold == rewardGold && rewardGold > 0,
                 reward.Offer != null ? reward.Offer.TotalGold : -1);
@@ -3434,11 +3458,19 @@ namespace SlotHero.ToolsEditor
                 save.Run.Status.Gold == goldBefore + rewardGold, save.Run.Status.Gold - goldBefore);
             Report("고르고 나면 남은 보상이 없다", !save.Run.RewardPending);
             Report("고르고 나면 오버킬 골드가 비워진다", save.Run.RewardOverkillGold == 0, save.Run.RewardOverkillGold);
+            Report("받을 때 오버킬 회복만큼 체력이 찬다",
+                save.Run.Status.Health == healthBefore + overkillHeal, save.Run.Status.Health - healthBefore);
+            Report("고르고 나면 오버킬 회복이 비워진다", save.Run.RewardOverkillHeal == 0, save.Run.RewardOverkillHeal);
             Report("고르고 나면 전투 골드가 비워진다", save.Run.RewardCombatGold == 0, save.Run.RewardCombatGold);
 
             if (combat != null && overkillField != null)
             {
                 overkillField.SetValue(combat, 0);
+            }
+
+            if (combat != null && healField != null)
+            {
+                healField.SetValue(combat, 0);
             }
             Report("고르고 나면 맵으로 간다", flow.Screen == GameScreen.Map, (int)flow.Screen);
 

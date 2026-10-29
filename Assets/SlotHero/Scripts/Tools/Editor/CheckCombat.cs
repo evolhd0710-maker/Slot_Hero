@@ -4,6 +4,7 @@ using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.UI;
 using SlotHero.Combat;
 using SlotHero.Combat.UI;
 using SlotHero.Flow;
@@ -265,6 +266,7 @@ namespace SlotHero.ToolsEditor
             Report("오버킬은 넘친 피해", outcome.Overkill, 62);
             Report("이긴 뒤에는 적이 때리지 않는다", battle.EnemyAttack(), 0);
             Report("오버킬 골드는 10 마다 1", rules.GetOverkillGold(outcome.Overkill), 6);
+            Report("오버킬 회복은 10 마다 체력 1", rules.GetOverkillHeal(outcome.Overkill), 6);
         }
 
         /// <summary>같은 시드면 같은 릴이 나온다.</summary>
@@ -876,6 +878,7 @@ namespace SlotHero.ToolsEditor
             Report("코인 자리가 셋이다", view != null && view.CoinDial != null ? view.CoinDial.SlotCount : -1, 3);
             CheckSpinOverlay(view);
             CheckEnemyInfo(view);
+            CheckHitEffect(view);
 
             PlayRun(entry, screen);
         }
@@ -1021,6 +1024,19 @@ namespace SlotHero.ToolsEditor
         /// 회전 연출용 큰 슬롯(2026년 10월 27일). 꺼진 채로 있고, 6열 × 5행이며,
         /// 멈추면 가운데 행에 결과가 온다. 재굴림처럼 몇 열만 돌 때 서 있는 열도 가운데가 결과다.
         /// </summary>
+        /// <summary>공격 레이저와 발사음이 전투 화면에 물려 있는지. 레이저는 꺼진 채로 시작한다.</summary>
+        private static void CheckHitEffect(CombatScreenView view)
+        {
+            Image laser = view != null ? GetField<Image>(view, "_laser") : null;
+            AudioSource audio = view != null ? GetField<AudioSource>(view, "_sfxAudio") : null;
+            Report("타격 · 레이저 칸에 LaserBeam 그림이 있다", laser != null && laser.sprite != null && laser.sprite.name == "LaserBeam");
+            Report("타격 · 레이저는 꺼진 채로 시작한다", laser != null && !laser.gameObject.activeSelf);
+            Report("타격 · 효과음 칸이 있다", audio != null);
+            Report("타격 · 효과음은 저절로 나지 않는다", audio != null && !audio.playOnAwake && audio.clip == null);
+            AudioClip laserClip = view != null ? GetField<AudioClip>(view, "_laserClip") : null;
+            Report("타격 · 레이저 발사음 LaserSound 가 있다", laserClip != null && laserClip.name == "LaserSound");
+        }
+
         /// <summary>몬스터 정보 칸이 몬스터 그림만큼 크고, 넘칠 글은 글자를 줄여 칸 안에 담는지.</summary>
         private static void CheckEnemyInfo(CombatScreenView view)
         {

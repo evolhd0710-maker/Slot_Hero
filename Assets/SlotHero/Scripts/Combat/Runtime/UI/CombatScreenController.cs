@@ -290,7 +290,7 @@ namespace SlotHero.Combat.UI
             {
                 if (!Instant)
                 {
-                    yield return _view.FireProjectile(color, attack.Target);
+                    yield return _view.FireLaser(color, attack.Target);
                     yield return _view.ShowEnemyHit(attack.Damage, attack.Target.MaxHealth, attack.Target, attack.Blocked);
                 }
 

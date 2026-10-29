@@ -142,11 +142,12 @@ namespace SlotHero.Tools
 
         /// <summary>
         /// 10 보상 화면 와이어프레임의 보상 한 벌.
-        /// 기본 보상 12, 오버킬 보상 3, 문양 카드 셋이다.
+        /// 기본 보상 12, 오버킬 보상 3 과 회복 3, 문양 카드 셋이다.
         /// </summary>
         public static RewardOffer Reward()
         {
             RewardOffer offer = RewardOffer.Gold(12, 3);
+            offer.OverkillHeal = 3;
 
             offer.Add(RewardCard.Symbol(
                 "Grave", "무덤", SymbolTagType.Saturn, SymbolTagType.Pluto));

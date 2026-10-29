@@ -30,6 +30,9 @@ namespace SlotHero.Flow
         [Tooltip("이겼다고 고르면 보상 화면에 얹는 오버킬 골드. 0 이면 오버킬 줄을 비운다.")]
         [SerializeField] private int _victoryOverkillGold;
 
+        [Tooltip("이겼다고 고르면 보상 화면에 얹는 오버킬 회복 체력.")]
+        [SerializeField] private int _victoryOverkillHeal;
+
         [Tooltip("졌다고 고르면 깎는 체력. 체력이 0 이 되면 런이 끝난다.")]
         [SerializeField] private int _defeatDamage = 999;
 
@@ -102,7 +105,7 @@ namespace SlotHero.Flow
             if (callback != null)
             {
                 callback(won
-                    ? CombatResult.Victory(_victoryBiggestHit, _victoryGold, _victoryOverkillGold)
+                    ? CombatResult.Victory(_victoryBiggestHit, _victoryGold, _victoryOverkillGold, _victoryOverkillHeal)
                     : CombatResult.Defeat());
             }
         }

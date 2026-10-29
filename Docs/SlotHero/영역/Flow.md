@@ -49,7 +49,7 @@ Flow/
 | 떼어 낸 것 | 맡는 일 | 들고 있는 상태 |
 | --- | --- | --- |
 | `RunSession` | 런 시작, 이어하기(늘 파일에서 다시 읽는다), 유물 순서 저장, 런 종료 | 진행 중인 런(`RunContext`), 유물 순서 |
-| `RoomRewardFlow` | 전투 골드와 오버킬 쌓기, 이벤트 전투의 보상 고르기 횟수 쌓기, 방 보상 정하기, 보상 남김 표시, 한 번에 받기 | 런 데이터의 보상 칸(`RewardPending`, `RewardCombatGold`, `RewardOverkillGold`, `RewardCardRounds`, `RewardCardRoundsTaken`)에 적는다 |
+| `RoomRewardFlow` | 전투 골드와 오버킬 쌓기, 이벤트 전투의 보상 고르기 횟수 쌓기, 방 보상 정하기, 보상 남김 표시, 한 번에 받기 | 런 데이터의 보상 칸(`RewardPending`, `RewardCombatGold`, `RewardOverkillGold`, `RewardOverkillHeal`, `RewardCardRounds`, `RewardCardRoundsTaken`)에 적는다 |
 | `EventRoomFlow` | 각본 고르기, 선택지 처리, 고르기 화면 내용, 전투를 연 선택지로 돌아오기, 전투에 넘길 조건(`CombatOptions`) | 돌고 있는 각본, 돌아올 선택지, 보상 두 배, 부정 효과 |
 | `MapPeekFlow` | 지도 버튼을 켤지, 방 안에서 지도를 띄우고 걷기, 버튼 모양 맞추기 | 지도를 잠깐 띄웠는지 |
 | `FlowPopups` | 프로필 지우기, 새 게임, 런 종료, 게임 끄기, 설정 기본값 복원 같은 확인 팝업과 저장 실패 같은 알림 팝업 | 팝업이 떠 있는지만 팝업 쪽에서 읽는다 |
@@ -184,7 +184,7 @@ ESC 는 겹쳐 뜬 화면이 있으면 **그쪽이 먼저 가져간다.**
 - 런의 덱, 코인, 유물, 체력, 시드를 `CombatSetup` 으로 바꿔 전투 화면에 넘긴다. 문양 가치는 물건 목록의 태그 가치 둘을 더한 것이다
 - 방 종류로 적을 고른다. 엘리트와 보스 말고는(이벤트가 연 전투 포함) 일반 적이다
 - 전투가 체력을 깎을 때마다(코인 소모값, 적 공격) 바로 `RunContext.TakeDamage` 로 런에 적는다
-- 끝나면 전투 화면을 닫고 `CombatResult` 로 돌려준다. 전투 골드는 0, 오버킬 골드는 전투 규칙이 정한다
+- 끝나면 전투 화면을 닫고 `CombatResult` 로 돌려준다. 전투 골드는 0, 오버킬 골드와 오버킬 회복은 전투 규칙이 정한다
 - 이벤트가 건 부정 효과는 아직 걸지 않는다
 
 `PlaceholderCombatEntry` 는 남겨 두었다. 흐름 검사(`CheckGameScene`)가 검사하는 동안만 갈아 끼워

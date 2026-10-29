@@ -55,6 +55,7 @@ MonoBehaviour:
   TagSymbolFontSize: 40
   CoinLabelFontSize: 22
   DamageFontSize: 64
+  LaserSoundVolume: 0.7
   _coinPopupNameFontSize: 17
   _coinPopupBodyFontSize: 14
   _damageNoteFontSize: 26
@@ -102,7 +103,10 @@ MonoBehaviour:
   SpinSkipHint: "\uD074\uB9AD \uB610\uB294 \uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uAC74\uB108\uB6F0\uAE30"
   DialSwapDuration: 0.2
   AttackChargeDuration: 0.45
-  ProjectileDuration: 0.35
+  LaserGrowDuration: 0.1
+  LaserHoldDuration: 0.12
+  LaserFadeDuration: 0.18
+  LaserWhiteMix: 0.3
   DamageShowDuration: 0.8
   EnemyAttackDuration: 0.5
   EndDelay: 1

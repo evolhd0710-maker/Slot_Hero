@@ -45,19 +45,19 @@ namespace SlotHero.Reward
         public Vector2 TitleSize { get { return _titleSize; } set { _titleSize = value; } }
 
         [Header("골드 줄")]
-        [Tooltip("기본 보상 줄. (760, 266)")]
+        [Tooltip("기본 보상 줄. 기획서는 (760, 266) 이다. 줄을 넓혀 가운데를 960 에 맞췄다.")]
         [FormerlySerializedAs("BaseGoldPosition")]
-        [SerializeField] private Vector2 _baseGoldPosition = UiScale.V(760f, 270f);
+        [SerializeField] private Vector2 _baseGoldPosition = UiScale.V(700f, 270f);
         public Vector2 BaseGoldPosition { get { return _baseGoldPosition; } set { _baseGoldPosition = value; } }
 
-        [Tooltip("오버킬 보상 줄. 기본 보상 아래다. (760, 366)")]
+        [Tooltip("오버킬 보상 줄. 기본 보상 아래다. 기획서는 (760, 366) 이다.")]
         [FormerlySerializedAs("OverkillGoldPosition")]
-        [SerializeField] private Vector2 _overkillGoldPosition = UiScale.V(760f, 370f);
+        [SerializeField] private Vector2 _overkillGoldPosition = UiScale.V(700f, 370f);
         public Vector2 OverkillGoldPosition { get { return _overkillGoldPosition; } set { _overkillGoldPosition = value; } }
 
-        [Tooltip("골드 줄 하나의 크기. (400 × 90)")]
+        [Tooltip("골드 줄 하나의 크기. 기획서는 400 × 90 이다. 오버킬 줄에 골드와 회복을 함께 적으려고 520 으로 넓혔다(2026년 10월 30일).")]
         [FormerlySerializedAs("GoldRowSize")]
-        [SerializeField] private Vector2 _goldRowSize = UiScale.V(400f, 90f);
+        [SerializeField] private Vector2 _goldRowSize = UiScale.V(520f, 90f);
         public Vector2 GoldRowSize { get { return _goldRowSize; } set { _goldRowSize = value; } }
 
         [Tooltip("골드 줄 안쪽 좌우 여백.")]

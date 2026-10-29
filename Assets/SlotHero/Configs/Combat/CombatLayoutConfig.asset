@@ -150,5 +150,5 @@ MonoBehaviour:
     y: 122
     width: 180
     height: 42
-  ProjectileSize: 90
+  LaserThickness: 90
   EnemyLunge: 40

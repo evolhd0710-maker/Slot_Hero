@@ -537,6 +537,13 @@ namespace SlotHero.ToolsEditor
             TMP_Text overkillValue = UiSceneBuilder.NewText(
                 "OverkillGoldValue", overkillRow.transform, "0",
                 visual.GoldValueFontSize, visual.TextColor, TextAlignmentOptions.Left, true);
+            Image overkillHealIcon = UiSceneBuilder.NewFlatImage(
+                "OverkillHealIcon", overkillRow.transform, Color.white);
+            overkillHealIcon.sprite = ImportArt.LoadTopBar("아이콘_체력");
+            overkillHealIcon.preserveAspect = true;
+            TMP_Text overkillHealValue = UiSceneBuilder.NewText(
+                "OverkillHealValue", overkillRow.transform, "+0",
+                visual.GoldValueFontSize, visual.TextColor, TextAlignmentOptions.Left, true);
 
             RectTransform cardLayer = UiSceneBuilder.NewRect("CardLayer", root);
             UiSceneBuilder.Stretch(cardLayer);
@@ -564,6 +571,8 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_overkillGoldLabel", overkillLabel);
             UiSceneBuilder.SetField(view, "_overkillGoldValue", overkillValue);
             UiSceneBuilder.SetField(view, "_overkillGoldIcon", overkillIcon);
+            UiSceneBuilder.SetField(view, "_overkillHealIcon", overkillHealIcon);
+            UiSceneBuilder.SetField(view, "_overkillHealValue", overkillHealValue);
             UiSceneBuilder.SetField(view, "_cardLayer", cardLayer);
             UiSceneBuilder.SetField(view, "_cardPrefab", cardPrefab.GetComponent<RewardCardView>());
             UiSceneBuilder.SetField(view, "_skipPanel", skipPanel);

@@ -90,6 +90,9 @@ namespace SlotHero.Flow
         /// </summary>
         public int OverkillGold;
 
+        /// <summary>오버킬로 회복하는 체력. 보상 화면의 오버킬 줄에 골드와 함께 적히고, 보상을 받을 때 회복한다.</summary>
+        public int OverkillHeal;
+
         /// <summary>이긴 결과를 만든다.</summary>
         public static CombatResult Victory(int biggestHit, int goldGained)
         {
@@ -99,11 +102,18 @@ namespace SlotHero.Flow
         /// <summary>오버킬 골드까지 담아 이긴 결과를 만든다.</summary>
         public static CombatResult Victory(int biggestHit, int goldGained, int overkillGold)
         {
+            return Victory(biggestHit, goldGained, overkillGold, 0);
+        }
+
+        /// <summary>오버킬 골드와 회복까지 담아 이긴 결과를 만든다.</summary>
+        public static CombatResult Victory(int biggestHit, int goldGained, int overkillGold, int overkillHeal)
+        {
             CombatResult result = new CombatResult();
             result.Won = true;
             result.BiggestHit = biggestHit;
             result.GoldGained = goldGained;
             result.OverkillGold = overkillGold;
+            result.OverkillHeal = overkillHeal;
             return result;
         }
 

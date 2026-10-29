@@ -17,6 +17,12 @@ namespace SlotHero.Reward
             return amount.ToString(CultureInfo.InvariantCulture);
         }
 
+        /// <summary>오버킬 회복 체력. 하트 그림 옆에 적는다.</summary>
+        public static string Heal(int amount)
+        {
+            return "+" + amount.ToString(CultureInfo.InvariantCulture);
+        }
+
         /// <summary>
         /// 카드 아래에 적는 태그 줄. 태그마다 제 색으로 적는다(2026년 10월 25일 원재).
         /// 문양이 아니면 빈 글이다.

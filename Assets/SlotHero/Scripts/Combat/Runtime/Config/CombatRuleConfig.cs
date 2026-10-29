@@ -93,6 +93,11 @@ namespace SlotHero.Combat
         [Min(0)]
         public int OverkillDamagePerGold = 10;
 
+        [Tooltip("이 피해만큼 넘칠 때마다 오버킬 회복 체력 1. 0 이면 회복하지 않는다. " +
+                 "체력 회복 수단이 적어 오버킬에 골드와 함께 체력을 주기로 했다(2026년 10월 30일). 골드와 같은 비율로 시작한다.")]
+        [Min(0)]
+        public int OverkillDamagePerHealth = 10;
+
         /// <summary>그 코인의 규칙. 목록에 없으면 기본값으로 만든다.</summary>
         public CoinRule GetCoinRule(string coinId)
         {
@@ -169,6 +174,17 @@ namespace SlotHero.Combat
             }
 
             return overkill / OverkillDamagePerGold;
+        }
+
+        /// <summary>넘친 피해로 회복하는 체력. 보상 화면에서 골드를 받을 때 함께 회복한다.</summary>
+        public int GetOverkillHeal(int overkill)
+        {
+            if (OverkillDamagePerHealth <= 0 || overkill <= 0)
+            {
+                return 0;
+            }
+
+            return overkill / OverkillDamagePerHealth;
         }
     }
 
