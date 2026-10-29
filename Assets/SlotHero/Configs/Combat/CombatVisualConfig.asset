@@ -50,6 +50,7 @@ MonoBehaviour:
   HealthFontSize: 22
   NameFontSize: 30
   BodyFontSize: 22
+  EnemyInfoMinFontSize: 12
   HintFontSize: 24
   TagSymbolFontSize: 40
   CoinLabelFontSize: 22
@@ -69,10 +70,10 @@ MonoBehaviour:
   AttackLabel: "\uACF5\uACA9\uB825"
   BlockLabel: "\uBC29\uC5B4\uB3C4"
   MomentumLabel: "\uAE30\uC138"
-  JavelinOrderLabel: "\uD22C\uCC3D \uBA85\uB839"
   LastActionLabel: "\uC9C0\uB09C \uD589\uB3D9"
+  NextActionTitle: "\uB2E4\uC74C \uD589\uB3D9"
+  NextActionColor: {r: 1, g: 0.82, b: 0.4, a: 1}
   BlockedText: "\uB9C9\uC74C"
-  ChooseTargetHint: "\uACF5\uACA9\uD560 \uC801\uC744 \uB204\uB974\uC138\uC694"
   VortexHint: "\uC544\uC9C1 \uD6A8\uACFC\uAC00 \uC5C6\uB294 \uCE78\uC785\uB2C8\uB2E4"
   VortexRelicHint: "\uC0AC\uAC74\uC758 \uC9C0\uD3C9\uC120 \xB7 \uAC00\uC7A5 \uB9CE\uC740 \uD0DC\uADF8\uB85C \uACF5\uACA9\uD569\uB2C8\uB2E4"
   VictoryText: "\uC2B9\uB9AC"
@@ -80,6 +81,25 @@ MonoBehaviour:
   SpinDuration: 0.9
   SpinStopInterval: 0.12
   SpinFrame: 0.05
+  SpinRollDuration: 1.6
+  SpinStopStagger: 0.28
+  SpinEasePower: 3.2
+  SpinTravelCells: 20
+  SpinTravelPerColumn: 4
+  SpinOvershoot: 0.35
+  SpinSettleDuration: 0.18
+  SpinStopFlashColor: {r: 0.55, g: 0.42, b: 0.18, a: 1}
+  SpinStopFlashDuration: 0.28
+  SpinResultHold: 0.5
+  SpinOverlayFade: 0.2
+  SpinOverlayDim: {r: 0, g: 0, b: 0, a: 0.72}
+  SpinMachineColor: {r: 0.11, g: 0.09, b: 0.08, a: 0.97}
+  SpinColumnColor: {r: 0.05, g: 0.05, b: 0.06, a: 1}
+  SpinShadeColor: {r: 0, g: 0, b: 0, a: 0.5}
+  SpinLineColor: {r: 0.92, g: 0.74, b: 0.36, a: 1}
+  SpinLineInnerColor: {r: 0.36, g: 0.24, b: 0.08, a: 1}
+  SpinLineGlowColor: {r: 1, g: 0.78, b: 0.32, a: 0.3}
+  SpinSkipHint: "\uD074\uB9AD \uB610\uB294 \uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uAC74\uB108\uB6F0\uAE30"
   DialSwapDuration: 0.2
   AttackChargeDuration: 0.45
   ProjectileDuration: 0.35

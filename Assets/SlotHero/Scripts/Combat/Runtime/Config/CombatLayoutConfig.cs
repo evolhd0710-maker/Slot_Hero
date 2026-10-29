@@ -124,12 +124,12 @@ namespace SlotHero.Combat
         [Tooltip("몬스터 정보(보스 등 특수 능력). 초안의 \"300x300\". 일러스트 왼쪽이다.")]
         public Vector2 EnemyInfoPosition = UiScale.V(460f, 440f);
 
-        public Vector2 EnemyInfoSize = UiScale.V(300f, 300f);
+        public Vector2 EnemyInfoSize = UiScale.V(300f, 416f);
 
         [Header("소환수")]
         [Tooltip("첫 소환수 칸(가장 왼쪽 자리)의 왼쪽 위. 정보 칸 아래, 일러스트 왼쪽이다. " +
                  "몬스터 기획서는 소환수 자리를 그리지 않아 정보 칸 아래 빈 곳에 두었다.")]
-        public Vector2 SummonPosition = UiScale.V(460f, 756f);
+        public Vector2 SummonPosition = UiScale.V(460f, 868f);
 
         [Tooltip("소환수 칸 하나. 셋이 정보 칸 너비(300)에 들어간다.")]
         public Vector2 SummonSize = UiScale.V(92f, 180f);

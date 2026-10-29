@@ -76,18 +76,11 @@ namespace SlotHero.Combat.UI
         [SerializeField] private DamageNumberView _enemyDamageNumber;
 
         [Header("소환수")]
-        [Tooltip("소환수 칸. 자리 0 이 가장 왼쪽이다. 장군의 방패병이 장군 바로 왼쪽(마지막 칸)부터 들어선다.")]
+        [Tooltip("소환수 칸. 자리 0 이 가장 왼쪽이다. 지금은 소환수를 세우는 적이 없다. 장군의 방패병은 장군이 가진 수다(2026년 10월 29일).")]
         [SerializeField] private Image[] _summonPanels = new Image[0];
         [SerializeField] private Image[] _summonBars = new Image[0];
         [SerializeField] private TMP_Text[] _summonNames = new TMP_Text[0];
         [SerializeField] private TMP_Text[] _summonInfos = new TMP_Text[0];
-
-        [Header("공격 대상")]
-        [Tooltip("태그를 건 뒤 누르면 본체를 때린다.")]
-        [SerializeField] private Button _enemyArtButton;
-
-        [Tooltip("태그를 건 뒤 누르면 그 자리 소환수를 때린다. 자리 0 이 가장 왼쪽이다.")]
-        [SerializeField] private Button[] _summonButtons = new Button[0];
 
         [Header("원판")]
         [SerializeField] private Image _dial;
@@ -107,18 +100,6 @@ namespace SlotHero.Combat.UI
         private readonly List<CombatRelic> _shownRelics = new List<CombatRelic>();
         private System.Action<bool>[] _relicHoverHandlers = new System.Action<bool>[0];
 
-        /// 그 자리를 누르는 함수. 소환수 버튼마다 하나다.
-        private UnityEngine.Events.UnityAction[] _summonClickHandlers = new UnityEngine.Events.UnityAction[0];
-
-        /// <summary>
-        /// 적을 눌렀다. 소환수면 그 자리(0 이 가장 왼쪽), 본체면 -1 이다.
-        /// 조종기가 듣고, 태그를 건 뒤라면 그 적을 때린다.
-        /// </summary>
-        public event System.Action<int> EnemyClicked;
-
-        /// <summary>본체를 누른 자리 값.</summary>
-        public const int MainEnemySlot = -1;
-
         private void Awake()
         {
             _relicHoverHandlers = new System.Action<bool>[_relicHovers.Length];
@@ -131,22 +112,6 @@ namespace SlotHero.Combat.UI
                     _relicHovers[i].HoverChanged += _relicHoverHandlers[i];
                 }
             }
-
-            if (_enemyArtButton != null)
-            {
-                _enemyArtButton.onClick.AddListener(HandleMainEnemyClicked);
-            }
-
-            _summonClickHandlers = new UnityEngine.Events.UnityAction[_summonButtons.Length];
-            for (int i = 0; i < _summonButtons.Length; i++)
-            {
-                int slot = i;
-                _summonClickHandlers[i] = () => RaiseEnemyClicked(slot);
-                if (_summonButtons[i] != null)
-                {
-                    _summonButtons[i].onClick.AddListener(_summonClickHandlers[i]);
-                }
-            }
         }
 
         private void OnDestroy()
@@ -157,32 +122,6 @@ namespace SlotHero.Combat.UI
                 {
                     _relicHovers[i].HoverChanged -= _relicHoverHandlers[i];
                 }
-            }
-
-            if (_enemyArtButton != null)
-            {
-                _enemyArtButton.onClick.RemoveListener(HandleMainEnemyClicked);
-            }
-
-            for (int i = 0; i < _summonButtons.Length && i < _summonClickHandlers.Length; i++)
-            {
-                if (_summonButtons[i] != null)
-                {
-                    _summonButtons[i].onClick.RemoveListener(_summonClickHandlers[i]);
-                }
-            }
-        }
-
-        private void HandleMainEnemyClicked()
-        {
-            RaiseEnemyClicked(MainEnemySlot);
-        }
-
-        private void RaiseEnemyClicked(int slot)
-        {
-            if (EnemyClicked != null)
-            {
-                EnemyClicked(slot);
             }
         }
 
@@ -632,14 +571,15 @@ namespace SlotHero.Combat.UI
             }
 
             SetText(_enemyArtLabel, enemy.Name);
-            SetText(_enemyNameLabel, enemy.Name);
+            // 정보 칸은 적 이름과 설명 대신 다음 턴 행동을 보인다(2026년 10월 29일).
+            SetText(_enemyNameLabel, _visual != null ? _visual.NextActionTitle : "다음 행동");
             SetText(_enemyInfoLabel, DescribeEnemy(enemy, true));
 
             ShowEnemyHealth(enemy.Health, enemy.MaxHealth);
         }
 
         /// <summary>
-        /// 본체와 소환수를 모두 그린다. target 소환수 칸은 색을 바꾼다. null 이면 칠하지 않는다.
+        /// 본체와 소환수를 모두 그린다. 영웅의 공격을 받을 소환수 칸은 색을 바꾼다.
         /// 소환수가 없는 자리의 칸은 끈다.
         /// </summary>
         public void ShowEnemies(CombatEnemy main, IReadOnlyList<CombatEnemy> field, CombatEnemy target)
@@ -712,16 +652,28 @@ namespace SlotHero.Combat.UI
         }
 
         /// <summary>
-        /// 정보 칸에 적는 글. 방어도, 버프, 지난 행동, 설명.
+        /// 정보 칸에 적는 글. 다음 턴 행동과 그 설명, 그 아래에 장군 설명(방패병), 방어도, 기세.
         /// full 이 아니면 소환수 칸에 들어가게 상태만 짧게 적는다.
         /// </summary>
         private string DescribeEnemy(CombatEnemy enemy, bool full)
         {
             List<string> lines = new List<string>();
 
-            if (enemy.Monster == MonsterKind.Plain)
+            if (full && enemy.NextAction != null)
             {
-                lines.Add((_visual != null ? _visual.AttackLabel : "공격력") + " " + enemy.Attack);
+                lines.Add(Colored(DescribeAction(enemy.NextAction), _visual != null ? _visual.NextActionColor : Color.white));
+                if (!string.IsNullOrEmpty(enemy.NextAction.Description))
+                {
+                    lines.Add(enemy.NextAction.Description);
+                }
+
+                lines.Add(string.Empty);
+            }
+
+            // 장군은 방패병 수와 피해 감소를 적은 설명(GeneralRule.DescriptionFormat)을 함께 보인다.
+            if (full && enemy.Monster == MonsterKind.General && !string.IsNullOrEmpty(enemy.Description))
+            {
+                lines.Add(Colored(enemy.Description, _visual != null ? _visual.BuffColor : Color.white));
             }
 
             if (enemy.Block > 0)
@@ -736,28 +688,7 @@ namespace SlotHero.Combat.UI
                     _visual != null ? _visual.BuffColor : Color.white));
             }
 
-            if (enemy.JavelinOrdered)
-            {
-                lines.Add(Colored(_visual != null ? _visual.JavelinOrderLabel : "투창 명령",
-                    _visual != null ? _visual.BuffColor : Color.white));
-            }
-
-            if (full)
-            {
-                if (enemy.LastAction != null)
-                {
-                    lines.Add((_visual != null ? _visual.LastActionLabel : "지난 행동") + " · " + DescribeAction(enemy.LastAction));
-                }
-
-                if (lines.Count > 0)
-                {
-                    lines.Add(string.Empty);
-                }
-
-                lines.Add(enemy.Description);
-            }
-
-            return string.Join("\n", lines);
+            return string.Join("\n", lines).TrimEnd('\n');
         }
 
         private static string DescribeAction(EnemyAction action)
@@ -878,7 +809,7 @@ namespace SlotHero.Combat.UI
             return FireProjectile(color, null);
         }
 
-        /// <summary>그 적에게 공격 구슬을 날린다. 방패병이 맞으면 방패병 칸으로 간다.</summary>
+        /// <summary>그 적에게 공격 구슬을 날린다. 소환수가 맞으면 소환수 칸으로 간다.</summary>
         public IEnumerator FireProjectile(Color color, CombatEnemy target)
         {
             if (_projectile == null || _layout == null)
@@ -1255,6 +1186,7 @@ namespace SlotHero.Combat.UI
             Style(_enemyArtLabel, _visual.NameFontSize, _visual.TextColor);
             Style(_enemyNameLabel, _visual.NameFontSize, _visual.TextColor);
             Style(_enemyInfoLabel, _visual.BodyFontSize, _visual.SubTextColor);
+            ShrinkToFit(_enemyInfoLabel, _visual.BodyFontSize, _visual.EnemyInfoMinFontSize);
             Style(_hintLabel, _visual.HintFontSize, _visual.TextColor);
             Style(_enemyDamageLabel, _visual.DamageFontSize, Color.white);
             Style(_playerDamageLabel, _visual.DamageFontSize * 0.7f, _visual.CostColor);
@@ -1296,6 +1228,23 @@ namespace SlotHero.Combat.UI
                 label.fontSize = size;
                 label.color = color;
             }
+        }
+
+        /// <summary>
+        /// 글이 칸을 넘칠 것 같으면 글자를 줄인다. 넘치지 않으면 max 그대로다(TMP 자동 크기).
+        /// 장군의 행동 설명과 방패병 설명이 함께 들어가 몬스터 정보 칸을 넘쳤다(2026년 10월 29일).
+        /// </summary>
+        private static void ShrinkToFit(TMP_Text label, float max, float min)
+        {
+            if (label == null)
+            {
+                return;
+            }
+
+            label.enableAutoSizing = true;
+            label.fontSizeMax = max;
+            label.fontSizeMin = Mathf.Min(min, max);
+            label.overflowMode = TextOverflowModes.Overflow;
         }
 
         private static void SetText(TMP_Text label, string text)

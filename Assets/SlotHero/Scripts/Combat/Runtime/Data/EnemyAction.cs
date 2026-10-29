@@ -29,6 +29,9 @@ namespace SlotHero.Combat
         /// <summary>얻은 방어도.</summary>
         public int BlockGained;
 
+        /// <summary>행동 설명. 다음 행동 미리보기에만 채운다. 정보 칸에 적는다.</summary>
+        public string Description = string.Empty;
+
         /// <summary>소환한 적. 소환하지 않았으면 null 이다.</summary>
         public CombatEnemy Summoned;
 

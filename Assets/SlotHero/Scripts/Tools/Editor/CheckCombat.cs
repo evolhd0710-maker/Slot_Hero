@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -48,7 +49,6 @@ namespace SlotHero.ToolsEditor
             CheckRelics(rules);
             CheckGladiator(rules);
             CheckGeneral(rules);
-            CheckTargetSelection(rules);
             CheckMonsterRules(rules);
 
             Object.DestroyImmediate(rules);
@@ -482,6 +482,9 @@ namespace SlotHero.ToolsEditor
             bool blockAbsorbs = true;
             bool blockFades = true;
             bool momentumMatchesShouts = true;
+            bool firstIntentIsStrike = true;
+            bool intentMatches = true;
+            bool intentDescribed = true;
             int strikes = 0;
             int guards = 0;
             int shouts = 0;
@@ -497,6 +500,10 @@ namespace SlotHero.ToolsEditor
                 CombatBattle battle = Begin(setup, rules);
                 int battleShouts = 0;
 
+                EnemyAction firstIntent = battle.Enemy.NextAction;
+                firstIntentIsStrike &= firstIntent != null && firstIntent.Pattern == "타격" && firstIntent.Damage == 6
+                    && firstIntent.Description == "영웅에게 6 피해를 준다.";
+
                 for (int turn = 0; turn < 30 && battle.Phase == CombatPhase.ChoosingCoin; turn++)
                 {
                     battle.SelectWithoutCoin();
@@ -511,12 +518,17 @@ namespace SlotHero.ToolsEditor
                     }
 
                     int momentum = battle.Enemy.Momentum;
+                    EnemyAction intent = battle.Enemy.NextAction;
                     battle.EnemyAttack();
                     EnemyAction action = battle.EnemyActions.Count > 0 ? battle.EnemyActions[0] : null;
                     if (action == null)
                     {
                         break;
                     }
+
+                    intentMatches &= intent != null && intent.Pattern == action.Pattern && intent.Damage == action.Damage
+                        && intent.BlockGained == action.BlockGained;
+                    intentDescribed &= intent != null && !string.IsNullOrEmpty(intent.Description) && !intent.Description.Contains("{");
 
                     if (turn == 0)
                     {
@@ -549,6 +561,9 @@ namespace SlotHero.ToolsEditor
             }
 
             Report("검투사 · 첫 턴은 타격 6", firstIsStrike);
+            Report("다음 행동 · 전투 시작부터 검투사의 타격 6 과 설명을 보인다", firstIntentIsStrike);
+            Report("다음 행동 · 검투사가 보인 행동(패턴, 피해, 방어도)을 그대로 한다", intentMatches);
+            Report("다음 행동 · 검투사의 행동마다 설명이 붙는다", intentDescribed);
             Report("검투사 · 타격 · 방어 · 함성을 모두 쓴다", strikes > 0 && guards > 0 && shouts > 0, strikes * 100 + guards * 10 + shouts);
             Report("검투사 · 타격이 가장 잦다", strikes > guards && strikes > shouts, strikes);
             Report("검투사 · 방어가 함성보다 잦다(30 : 20)", guards > shouts, guards);
@@ -559,215 +574,168 @@ namespace SlotHero.ToolsEditor
         }
 
         /// <summary>
-        /// 장군과 방패병. 방패병이 없으면 진형 갖추기, 셋이면 더 소환하지 않는다.
-        /// 방패병이 장군 대신 맞고, 투창 명령 다음 턴에 방패병마다 투창 7 을 던진다.
+        /// 장군 패턴 재설계(2026년 10월 29일). 방패병은 장군이 가진 수다.
+        /// 턴 시작마다 1 소환(최대 3), 그 수로 기술을 고르고, 위력은 쓰는 순간의 수로 셈한다.
+        /// 50 이상 피해는 방패병 1기를 써서 10 줄인다. 공격 한 번에 한 번이다.
         /// </summary>
         private static void CheckGeneral(CombatRuleConfig rules)
         {
-            // 방패병이 영웅 공격에 쓰러지지 않게 체력을 크게 둔 규칙으로 패턴만 본다.
-            CombatRuleConfig sturdy = Object.Instantiate(rules);
-            sturdy.Shieldman = new ShieldmanRule();
-            sturdy.Shieldman.MaxHealth = 100000;
+            // 시작. 첫 턴 시작에 방패병 1.
+            CombatSetup startSetup = ExampleSetup(5000, 5000);
+            startSetup.PlayerMaxHealth = 5000;
+            startSetup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+            CombatBattle start = Begin(startSetup, rules);
+            Report("장군 · 첫 턴 시작에 방패병 1", start.Enemy.Shieldmen, 1);
+            Report("장군 · 방패병은 따로 서는 적이 아니다", start.Enemies.Count, 1);
+            Report("장군 · 설명에 지금 방패병 수를 적는다", start.Enemy.Description.Contains("(현재 방패병 수:1)"));
+            Report("장군 · 설명에 피해 감소를 적는다", start.Enemy.Description.Contains("(50) 이상 데미지를 받을 때마다 데미지를 (10) 감소"));
 
-            CombatSetup setup = ExampleSetup(100000, 5000);
-            setup.PlayerMaxHealth = 100000;
-            setup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+            // 피해 감소. 코인을 걸어 50 을 넘긴다.
+            start.SelectCoin(0);
+            int healthBefore = start.Enemy.Health;
+            AttackResult cut = start.Attack(SymbolTagType.Neptune);
+            int raw = cut != null ? cut.ValueSum * cut.Multiplier : -1;
+            Report("방패병 · 50 이상이면 10 줄인다", cut != null ? cut.ShieldmanReduced : -1, 10);
+            Report("방패병 · 줄인 피해로 때린다", cut != null ? cut.Damage : -1, raw - 10);
+            Report("방패병 · 장군 체력은 줄인 만큼만 깎인다", healthBefore - start.Enemy.Health, raw - 10);
+            Report("방패병 · 1기가 사라진다", start.Enemy.Shieldmen, 0);
+            Report("방패병 · 설명의 수도 줄어든다", start.Enemy.Description.Contains("(현재 방패병 수:0)"));
+            Report("방패병 · 대상을 고르지 않고 장군이 맞는다", cut != null && cut.Target == start.Enemy);
 
-            CombatBattle battle = Begin(setup, sturdy);
-            battle.SelectWithoutCoin();
-            AttackResult first = battle.Attack(FirstUsableTag(battle));
-            Report("장군 · 방패병이 없으면 장군이 맞는다", first != null && first.Target == battle.Enemy);
+            // 방패병이 없으면 줄이지 않는다. 다음 턴 시작에 다시 1.
+            start.EnemyAttack();
+            start.Reroll();
+            Report("장군 · 턴 시작마다 방패병 1 소환", start.Enemy.Shieldmen >= 1);
 
-            battle.EnemyAttack();
-            EnemyAction formation = battle.EnemyActions.Count > 0 ? battle.EnemyActions[0] : null;
-            Report("장군 · 방패병이 없으면 진형 갖추기", formation != null && formation.Kind == PatternKind.Summon);
-            Report("장군 · 방패병 1기가 선다", battle.SummonCount, 1);
-            Report("장군 · 첫 방패병은 장군 바로 왼쪽 자리", formation != null && formation.Summoned != null ? formation.Summoned.Slot : -1, battle.Enemy.Slot - 1);
-            Report("장군 · 소환된 방패병은 그 턴에 행동하지 않는다", battle.EnemyActions.Count, 1);
-            Report("장군 · 방패병 체력은 규칙의 방패병 체력", formation != null && formation.Summoned != null ? formation.Summoned.MaxHealth : -1, 100000);
+            CombatSetup emptySetup = ExampleSetup(5000, 5000);
+            emptySetup.PlayerMaxHealth = 5000;
+            emptySetup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+            CombatBattle empty = Begin(emptySetup, rules);
+            empty.Enemy.Shieldmen = 0;
+            empty.SelectCoin(0);
+            AttackResult bare = empty.Attack(SymbolTagType.Neptune);
+            Report("방패병 · 없으면 줄이지 않는다", bare != null ? bare.ShieldmanReduced : -1, 0);
 
-            battle.Reroll();
-            battle.SelectWithoutCoin();
-            int generalBefore = battle.Enemy.Health;
-            AttackResult guarded = battle.Attack(FirstUsableTag(battle));
-            Report("장군 · 방패병이 장군 대신 맞는다", guarded != null && guarded.Target != battle.Enemy && guarded.Target.IsSummon);
-            Report("장군 · 장군 체력은 그대로", battle.Enemy.Health, generalBefore);
+            // 50 아래는 줄이지 않는다.
+            CombatRuleConfig high = Object.Instantiate(rules);
+            high.General = new GeneralRule();
+            high.General.GuardThreshold = 100000;
+            CombatSetup lowSetup = ExampleSetup(5000, 5000);
+            lowSetup.PlayerMaxHealth = 5000;
+            lowSetup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
+            CombatBattle low = Begin(lowSetup, high);
+            low.SelectCoin(0);
+            AttackResult small = low.Attack(SymbolTagType.Neptune);
+            Report("방패병 · 문턱 아래 피해는 줄이지 않는다", small != null ? small.ShieldmanReduced : -1, 0);
+            Report("방패병 · 줄이지 않으면 그대로 남는다", low.Enemy.Shieldmen, 1);
+            Object.DestroyImmediate(high);
+
+            // 기술. 피해 감소를 1 로 두어 공격마다 방패병 하나를 쓰게 한다.
+            // 그러면 고를 때 수와 쓸 때 수가 달라 위력이 쓰는 순간의 수를 따르는지 함께 본다.
+            CombatRuleConfig every = Object.Instantiate(rules);
+            every.General = new GeneralRule();
+            every.General.GuardThreshold = 0;
+            every.General.GuardReduction = 1;
 
             bool neverOverMax = true;
-            bool noFormationAtMax = true;
-            bool javelinFollowsOrder = true;
-            bool guardWithoutOrder = true;
-            bool chargeIs15 = true;
+            bool weightsFollowCount = true;
+            bool powerUsesActCount = true;
+            bool formationSummonsTwo = true;
+            bool generalIntentMatches = true;
+            bool generalIntentDescribed = true;
+            bool intentFollowsCut = true;
             int charges = 0;
-            int orders = 0;
-            int javelins = 0;
-            bool ordered = false;
-            int orderedCount = 0;
+            int formations = 0;
+            int walls = 0;
+            int allOuts = 0;
 
-            for (int turn = 0; turn < 80 && battle.Phase == CombatPhase.EnemyTurn; turn++)
+            for (int seed = 0; seed < 20; seed++)
             {
-                int shieldmenBefore = battle.SummonCount;
-                battle.EnemyAttack();
+                CombatSetup setup = ExampleSetup(1000000, 1000000);
+                setup.PlayerMaxHealth = 1000000;
+                setup.Seed = 20261029 + seed * 7919;
+                setup.Enemy = new CombatEnemy("장군", string.Empty, 1000000, 15, MonsterKind.General);
+                CombatBattle battle = Begin(setup, every);
 
-                int thrown = 0;
-                for (int i = 0; i < battle.EnemyActions.Count; i++)
+                for (int turn = 0; turn < 30 && battle.Phase == CombatPhase.ChoosingCoin; turn++)
                 {
-                    EnemyAction action = battle.EnemyActions[i];
-                    if (action.Actor.Monster == MonsterKind.Shieldman)
-                    {
-                        if (action.Pattern == "투창")
-                        {
-                            thrown++;
-                            javelins++;
-                            javelinFollowsOrder &= ordered && action.Damage == 7;
-                        }
-                        else
-                        {
-                            guardWithoutOrder &= action.Kind == PatternKind.Defend && action.BlockGained == 8;
-                        }
+                    int chosenWith = battle.Enemy.Shieldmen;
+                    neverOverMax &= chosenWith >= 1 && chosenWith <= 3;
 
-                        continue;
+                    EnemyAction shownBefore = battle.Enemy.NextAction;
+                    battle.SelectWithoutCoin();
+                    battle.Attack(FirstUsableTag(battle));
+                    int actWith = battle.Enemy.Shieldmen;
+                    powerUsesActCount &= actWith == chosenWith - 1;
+
+                    // 영웅 공격에 방패병이 줄면 같은 기술의 예상 피해를 다시 셈한다.
+                    EnemyAction intent = battle.Enemy.NextAction;
+                    intentFollowsCut &= shownBefore != null && intent != null && shownBefore.Pattern == intent.Pattern
+                        && (intent.Kind != PatternKind.Attack || intent.Damage <= shownBefore.Damage);
+
+                    battle.EnemyAttack();
+                    EnemyAction action = battle.EnemyActions.Count > 0 ? battle.EnemyActions[0] : null;
+                    if (action == null)
+                    {
+                        break;
                     }
 
-                    if (action.Kind == PatternKind.Summon)
+                    generalIntentMatches &= intent.Pattern == action.Pattern && intent.Damage == action.Damage;
+                    generalIntentDescribed &= !string.IsNullOrEmpty(intent.Description) && !intent.Description.Contains("{");
+                    generalIntentDescribed &= battle.Enemy.NextAction == null;
+
+                    switch (action.Pattern)
                     {
-                        noFormationAtMax &= shieldmenBefore < 3;
+                        case "돌격":
+                            charges++;
+                            weightsFollowCount &= chosenWith >= 1 && chosenWith <= 2;
+                            powerUsesActCount &= action.Damage == 10 * (actWith + 1);
+                            break;
+                        case "진형 형성":
+                            formations++;
+                            weightsFollowCount &= chosenWith == 1;
+                            formationSummonsTwo &= battle.Enemy.Shieldmen == Mathf.Min(3, actWith + 2);
+                            break;
+                        case "방패 진형":
+                            walls++;
+                            weightsFollowCount &= chosenWith >= 2;
+                            powerUsesActCount &= action.Damage == 15 * (actWith + 1);
+                            break;
+                        case "총공세":
+                            allOuts++;
+                            weightsFollowCount &= chosenWith == 3;
+                            powerUsesActCount &= action.Damage == 30 * actWith;
+                            break;
+                        default:
+                            weightsFollowCount = false;
+                            break;
                     }
-                    else if (action.Kind == PatternKind.Attack)
-                    {
-                        charges++;
-                        chargeIs15 &= action.Damage == 15;
-                    }
-                    else if (action.Kind == PatternKind.Buff)
-                    {
-                        orders++;
-                    }
+
+                    battle.Reroll();
                 }
-
-                if (ordered)
-                {
-                    javelinFollowsOrder &= thrown == orderedCount;
-                }
-
-                // 이번 턴에 명령을 받은 방패병 수. 다음 턴에 그만큼 던진다.
-                ordered = false;
-                orderedCount = 0;
-                for (int i = 0; i < battle.Enemies.Count; i++)
-                {
-                    if (battle.Enemies[i].JavelinOrdered)
-                    {
-                        ordered = true;
-                        orderedCount++;
-                    }
-                }
-
-                neverOverMax &= battle.SummonCount <= 3;
-
-                battle.Reroll();
-                battle.SelectWithoutCoin();
-                battle.Attack(FirstUsableTag(battle));
             }
 
-            Report("장군 · 방패병은 3기를 넘지 않는다", neverOverMax);
-            Report("장군 · 방패병이 3기면 진형 갖추기를 쓰지 않는다", noFormationAtMax);
-            Report("장군 · 기마병 돌격과 투창 명령을 쓴다", charges > 0 && orders > 0, charges * 100 + orders);
-            Report("장군 · 기마병 돌격은 15", chargeIs15);
-            Report("방패병 · 투창 명령 다음 턴에 명령받은 방패병마다 투창 7", javelins > 0 && javelinFollowsOrder, javelins);
-            Report("방패병 · 명령이 없으면 방어 상태 8", guardWithoutOrder);
+            Object.DestroyImmediate(every);
 
-            Object.DestroyImmediate(sturdy);
+            Report("장군 · 방패병은 1 ~ 3기다", neverOverMax);
+            Report("장군 · 네 기술을 모두 쓴다", charges > 0 && formations > 0 && walls > 0 && allOuts > 0,
+                charges * 1000 + formations * 100 + walls * 10 + allOuts);
+            Report("장군 · 기술은 고를 때의 방패병 수 가중치를 따른다", weightsFollowCount);
+            Report("장군 · 위력은 쓰는 순간의 방패병 수로 셈한다", powerUsesActCount);
+            Report("장군 · 진형 형성은 방패병 2 소환(최대 3)", formationSummonsTwo);
+            Report("다음 행동 · 장군이 보인 기술과 피해를 그대로 쓴다", generalIntentMatches);
+            Report("다음 행동 · 장군 기술마다 설명이 붙고, 쓴 뒤에는 비운다", generalIntentDescribed);
+            Report("다음 행동 · 방패병이 줄면 같은 기술의 예상 피해를 다시 셈한다", intentFollowsCut);
 
-            // 기본 규칙(방패병 체력 15). 방패병을 쓰러뜨리면 다시 장군이 맞는다.
-            CombatSetup plainSetup = ExampleSetup(5000, 5000);
-            plainSetup.PlayerMaxHealth = 5000;
-            plainSetup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
-            CombatBattle plain = Begin(plainSetup, rules);
-            plain.SelectWithoutCoin();
-            plain.Attack(FirstUsableTag(plain));
-            plain.EnemyAttack();
-            plain.Reroll();
-            plain.SelectCoin(0);
-            AttackResult kill = plain.Attack(SymbolTagType.Mars);
-            Report("방패병 · 체력 15", kill != null && kill.Target.IsSummon ? kill.Target.MaxHealth : -1, 15);
-            Report("방패병 · 쓰러지면 자리에서 빠진다", plain.SummonCount, 0);
-            Report("방패병 · 쓰러지면 다시 장군이 맞는다", plain.Target == plain.Enemy);
-
-            // 본체가 쓰러지면 소환수도 사라지고 이긴다.
+            // 본체가 쓰러지면 이긴다.
             CombatSetup lastSetup = ExampleSetup(5000, 5000);
             lastSetup.PlayerMaxHealth = 5000;
             lastSetup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
             CombatBattle last = Begin(lastSetup, rules);
+            last.Enemy.Health = 1;
             last.SelectWithoutCoin();
             last.Attack(FirstUsableTag(last));
-            last.EnemyAttack();
-            last.Reroll();
-            last.Enemy.Health = 0;
-            last.SelectWithoutCoin();
-            last.Attack(FirstUsableTag(last));
-            Report("장군 · 본체가 쓰러지면 방패병도 사라진다", last.SummonCount, 0);
-            Report("장군 · 본체가 쓰러지면 이긴다", last.Phase == CombatPhase.Won, (int)last.Phase);
-        }
-
-        /// <summary>
-        /// 공격 대상 고르기. 적이 둘 이상이면 태그를 건 뒤 때릴 적을 고른다.
-        /// 방패병이 있어도 장군을 골라 때릴 수 있고, 하나뿐이면 태그를 고르는 순간 때린다.
-        /// </summary>
-        private static void CheckTargetSelection(CombatRuleConfig rules)
-        {
-            CombatSetup setup = ExampleSetup(5000, 5000);
-            setup.PlayerMaxHealth = 5000;
-            setup.Enemy = new CombatEnemy("장군", string.Empty, 5000, 15, MonsterKind.General);
-
-            CombatBattle battle = Begin(setup, rules);
-            Report("대상 · 적이 하나면 고르지 않는다", !battle.NeedsTargetChoice);
-            Report("대상 · 걸기 전에는 적을 때릴 수 없다", battle.AttackTarget(battle.Enemy) == null);
-            battle.SelectWithoutCoin();
-            battle.Attack(FirstUsableTag(battle));
-            battle.EnemyAttack();
-            battle.Reroll();
-
-            CombatEnemy shieldman = battle.Enemies.Count > 1 ? battle.Enemies[0] : null;
-            Report("대상 · 방패병이 섰다", shieldman != null && shieldman.IsSummon);
-            Report("대상 · 적이 둘이면 골라야 한다", battle.NeedsTargetChoice);
-
-            SymbolTagType tag = FirstUsableTag(battle);
-            battle.SelectWithoutCoin();
-            Report("대상 · 태그를 걸면 대상 선택으로 간다", battle.BetTag(tag) && battle.Phase == CombatPhase.ChoosingTarget);
-            Report("대상 · 걸기만 해서는 때리지 않는다", battle.Turns, 1);
-
-            Report("대상 · 가운데를 누르면 태그 선택으로 돌아간다", battle.CancelTarget() && battle.Phase == CombatPhase.ChoosingTag);
-            battle.BetTag(tag);
-
-            int generalBefore = battle.Enemy.Health;
-            int shieldBefore = shieldman != null ? shieldman.Health : 0;
-            AttackResult hit = battle.AttackTarget(battle.Enemy);
-            Report("대상 · 방패병이 있어도 고른 장군이 맞는다", hit != null && hit.Target == battle.Enemy && hit.Tag == tag);
-            Report("대상 · 장군 체력이 깎인다", battle.Enemy.Health < generalBefore);
-            Report("대상 · 방패병은 그대로", shieldman != null ? shieldman.Health : -1, shieldBefore);
-            Report("대상 · 때리면 적 차례다", battle.Phase == CombatPhase.EnemyTurn, (int)battle.Phase);
-
-            battle.EnemyAttack();
-            battle.Reroll();
-
-            // 방패병을 골라 쓰러뜨린다.
-            CombatEnemy front = null;
-            for (int i = 0; i < battle.Enemies.Count; i++)
-            {
-                if (battle.Enemies[i].IsSummon)
-                {
-                    front = battle.Enemies[i];
-                    break;
-                }
-            }
-
-            battle.SelectCoin(0);
-            Report("대상 · 코인을 건 태그도 대상 선택으로 간다", battle.BetTag(SymbolTagType.Mars));
-            Report("대상 · 대상 선택 중에는 다른 적 차례로 넘어가지 않는다", battle.EnemyAttack(), 0);
-            AttackResult kill = battle.AttackTarget(front);
-            Report("대상 · 고른 방패병이 맞고 쓰러진다", kill != null && kill.Target == front && front.IsDead);
-            Report("대상 · 코인 소모값을 냈다", kill != null ? kill.HealthPaid : -1, 10);
-            Report("대상 · 쓰러진 적은 고를 수 없다", !battle.CanTarget(front));
-            Report("대상 · 대상은 공격마다 새로 고른다", battle.Target == battle.Enemies[0]);
+            Report("장군 · 쓰러지면 이긴다", last.Phase == CombatPhase.Won, (int)last.Phase);
         }
 
         /// <summary>규칙 설정의 적이 몬스터 기획서와 맞는지.</summary>
@@ -783,7 +751,6 @@ namespace SlotHero.ToolsEditor
 
             Report("스테이지가 오르면 패턴 피해에 더한다", rules.MakeEnemy(CombatEnemyKind.Normal, 2).AttackBonus, rules.EnemyAttackGrowthPerStage);
             Report("Plain 적은 공격력에 이미 더해 따로 더하지 않는다", rules.MakeEnemy(CombatEnemyKind.Boss, 2).AttackBonus, 0);
-            Report("방패병은 장군과 같은 스테이지로 오른다", rules.MakeShieldman(2).MaxHealth > rules.MakeShieldman(1).MaxHealth);
 
             CombatRuleConfig asset = UiSceneBuilder.LoadConfig<CombatRuleConfig>("Combat", "CombatRuleConfig");
             Report("설정 에셋도 일반 방이 검투사", asset != null && asset.MakeEnemy(CombatEnemyKind.Normal, 1).Monster == MonsterKind.Gladiator);
@@ -908,75 +875,9 @@ namespace SlotHero.ToolsEditor
             Report("태그 칸이 열이다", view != null && view.TagDial != null ? view.TagDial.Sectors.Count : -1, TagDialView.SectorCount);
             Report("코인 자리가 셋이다", view != null && view.CoinDial != null ? view.CoinDial.SlotCount : -1, 3);
             CheckSpinOverlay(view);
-
-            UnityEngine.UI.Button artButton = view != null ? GetField<UnityEngine.UI.Button>(view, "_enemyArtButton") : null;
-            UnityEngine.UI.Button[] summonButtons = view != null ? GetField<UnityEngine.UI.Button[]>(view, "_summonButtons") : null;
-            Report("대상 · 몬스터 일러스트를 누를 수 있다",
-                artButton != null && artButton.GetComponent<UnityEngine.UI.Image>() != null
-                && artButton.GetComponent<UnityEngine.UI.Image>().raycastTarget);
-            Report("대상 · 소환수 칸마다 버튼이 있다", summonButtons != null ? summonButtons.Length : -1, 3);
+            CheckEnemyInfo(view);
 
             PlayRun(entry, screen);
-            PlayEliteRun(entry, screen);
-        }
-
-        /// <summary>
-        /// 엘리트 방(장군)을 화면으로 끝까지 눌러 본다. 방패병이 서면 태그를 건 뒤 장군을 눌러 때린다.
-        /// 태그를 누르면 바로 때리지 않고 대상 선택으로 가는지, 적을 누르면 그 적을 때리는지 본다.
-        /// </summary>
-        private static void PlayEliteRun(CombatEntry entry, CombatScreenController screen)
-        {
-            RunCatalogConfig catalogConfig = GetField<RunCatalogConfig>(entry, "_catalog");
-            RunSaveData run = RunSaveData.StartNew(1, 20261027, 99);
-            RunCatalog catalog = new RunCatalog(catalogConfig);
-            catalog.Attach(run);
-
-            RunContext context = new RunContext(run, catalog);
-            context.GiveStartingItems(
-                catalogConfig.StartingSymbolIds, catalogConfig.StartingCoinIds, catalogConfig.StartingRelicIds, 0);
-
-            MapNode node = new MapNode();
-            node.Id = 7;
-            node.Stage = 1;
-            node.RoomType = RoomType.Elite;
-
-            bool finished = false;
-            entry.Enter(context, node, CombatOptions.None, r => finished = true);
-
-            bool sawTargetPhase = false;
-            bool betDidNotAttack = true;
-            bool clickHitGeneral = true;
-            int turns = 0;
-
-            while (!finished && turns < 100 && screen.Battle != null)
-            {
-                CombatBattle battle = screen.Battle;
-                screen.ChooseWithoutCoin();
-
-                int attacksBefore = battle.Turns;
-                screen.ChooseTag(FirstUsableTag(battle));
-
-                if (battle.Phase == CombatPhase.ChoosingTarget)
-                {
-                    sawTargetPhase = true;
-                    betDidNotAttack &= battle.Turns == attacksBefore;
-
-                    int generalBefore = battle.Enemy.Health;
-                    screen.ChooseTarget(CombatScreenView.MainEnemySlot);
-                    clickHitGeneral &= battle.LastAttack != null && battle.LastAttack.Target == battle.Enemy
-                        && battle.Enemy.Health < generalBefore + 1;
-                }
-
-                turns++;
-            }
-
-            Report("엘리트 · 방패병이 서면 대상 선택으로 간다", sawTargetPhase);
-            Report("엘리트 · 태그를 걸기만 해서는 때리지 않는다", betDidNotAttack);
-            Report("엘리트 · 장군을 누르면 장군이 맞는다", sawTargetPhase && clickHitGeneral);
-            Report("엘리트 · 전투가 끝난다", finished, turns);
-
-            entry.Leave();
-            entry.ResetForNewRun();
         }
 
         /// <summary>
@@ -1120,6 +1021,35 @@ namespace SlotHero.ToolsEditor
         /// 회전 연출용 큰 슬롯(2026년 10월 27일). 꺼진 채로 있고, 6열 × 5행이며,
         /// 멈추면 가운데 행에 결과가 온다. 재굴림처럼 몇 열만 돌 때 서 있는 열도 가운데가 결과다.
         /// </summary>
+        /// <summary>몬스터 정보 칸이 몬스터 그림만큼 크고, 넘칠 글은 글자를 줄여 칸 안에 담는지.</summary>
+        private static void CheckEnemyInfo(CombatScreenView view)
+        {
+            CombatLayoutConfig layout = UiSceneBuilder.LoadConfig<CombatLayoutConfig>("Combat", "CombatLayoutConfig");
+            Report("정보 칸 · 몬스터 그림과 크기가 같다", layout != null && layout.EnemyInfoSize == layout.EnemyArtSize);
+
+            TMP_Text info = view != null ? GetField<TMP_Text>(view, "_enemyInfoLabel") : null;
+            Report("정보 칸 · 글 칸이 있다", info != null);
+            if (info == null)
+            {
+                return;
+            }
+
+            view.ApplyStyle();
+            Report("정보 칸 · 넘칠 것 같으면 글자를 줄인다", info.enableAutoSizing && info.fontSizeMin < info.fontSizeMax);
+
+            // 장군의 가장 긴 설명을 넣어 본다.
+            CombatSetup setup = ExampleSetup(99, 500);
+            setup.Enemy = new CombatEnemy("장군", string.Empty, 500, 15, MonsterKind.General);
+            CombatBattle battle = Begin(setup, UiSceneBuilder.LoadConfig<CombatRuleConfig>("Combat", "CombatRuleConfig"));
+            battle.Enemy.Block = 8;
+            battle.Enemy.Momentum = 50;
+            view.ShowEnemy(battle.Enemy);
+            info.ForceMeshUpdate(true, true);
+            Vector2 room = info.rectTransform.rect.size;
+            Report("정보 칸 · 장군 설명이 칸 안에 들어간다", info.textBounds.size.y <= room.y + 1f,
+                Mathf.RoundToInt(info.textBounds.size.y));
+        }
+
         private static void CheckSpinOverlay(CombatScreenView view)
         {
             SlotSpinOverlay overlay = view != null ? view.SpinOverlay : null;

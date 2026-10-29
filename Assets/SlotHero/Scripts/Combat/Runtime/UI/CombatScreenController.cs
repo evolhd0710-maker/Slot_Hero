@@ -99,8 +99,6 @@ namespace SlotHero.Combat.UI
                     _view.TagDial.CenterClicked += HandleTagCenterClicked;
                     _view.TagDial.VortexClicked += HandleVortexClicked;
                 }
-
-                _view.EnemyClicked += HandleEnemyClicked;
             }
 
             if (_hideOnAwake)
@@ -132,8 +130,6 @@ namespace SlotHero.Combat.UI
                 _view.TagDial.CenterClicked -= HandleTagCenterClicked;
                 _view.TagDial.VortexClicked -= HandleVortexClicked;
             }
-
-            _view.EnemyClicked -= HandleEnemyClicked;
         }
 
         /// <summary>전투를 연다. 릴을 모두 돌린 뒤 코인 선택으로 간다.</summary>
@@ -233,15 +229,6 @@ namespace SlotHero.Combat.UI
             HandleTagCenterClicked();
         }
 
-        /// <summary>
-        /// 태그를 건 뒤 그 자리의 적을 때린다. 적을 눌렀을 때와 같다. 대상을 고르는 중이 아니면 아무것도 하지 않는다.
-        /// 소환수는 자리(0 이 가장 왼쪽), 본체는 `CombatScreenView.MainEnemySlot` 이다.
-        /// </summary>
-        public void ChooseTarget(int slot)
-        {
-            HandleEnemyClicked(slot);
-        }
-
         // ---- 차례 ----
 
         private IEnumerator Intro()
@@ -301,11 +288,16 @@ namespace SlotHero.Combat.UI
 
             if (_view != null)
             {
-                // 방패병이 있으면 방패병이 장군 대신 맞는다. 구슬도 그 칸으로 간다.
                 if (!Instant)
                 {
                     yield return _view.FireProjectile(color, attack.Target);
                     yield return _view.ShowEnemyHit(attack.Damage, attack.Target.MaxHealth, attack.Target, attack.Blocked);
+                }
+
+                // 장군의 방패병이 피해를 줄였으면 안내 글로 알린다.
+                if (attack.ShieldmanReduced > 0)
+                {
+                    _view.SetHint(attack.Target.Name + " · 방패병이 피해 -" + attack.ShieldmanReduced);
                 }
 
                 RefreshEnemies();
@@ -488,33 +480,13 @@ namespace SlotHero.Combat.UI
             _view.SetDial(true);
             _view.SetDialInteractable(true);
             _view.ShowPlayerHealth(_battle.PlayerHealth, _battle.PlayerMaxHealth, 0);
+            RefreshEnemies();
             _view.RefreshRelicCounters();
 
             // 릴이 멈출 때 발동한 유물(망치와 끌, 12개의 금화)이 있으면 그 소식을 먼저 보인다.
             _view.SetHint(_battle.Notices.Count > 0
                 ? string.Join("  ·  ", _battle.Notices)
                 : (_view.Visual != null ? _view.Visual.ChooseCoinHint : string.Empty));
-        }
-
-        /// <summary>
-        /// 태그를 걸고 때릴 적을 고르는 동안의 화면. 건 칸과 그 태그 문양을 태그 색으로 칠해 두고 안내 글을 바꾼다.
-        /// 원판은 그대로 누를 수 있다. 가운데를 누르면 태그 선택으로, 다른 태그를 누르면 그 태그로 다시 건다.
-        /// </summary>
-        private void ShowTargetPhase(Color color, List<int> reels)
-        {
-            if (_view == null)
-            {
-                return;
-            }
-
-            _view.HighlightReels(reels, color);
-            if (_view.TagDial != null)
-            {
-                _view.TagDial.SetCharge(true, color);
-            }
-
-            _view.SetHint(_view.Visual != null ? _view.Visual.ChooseTargetHint : string.Empty);
-            RefreshEnemies();
         }
 
         /// <summary>태그 UI 를 고른 코인과 고를 수 있는 태그로 채운다.</summary>
@@ -616,73 +588,26 @@ namespace SlotHero.Combat.UI
 
         private void HandleTagCenterClicked()
         {
-            if (!CanAct())
+            if (!CanAct() || _battle.Phase != CombatPhase.ChoosingTag)
             {
                 return;
             }
 
-            // 대상을 고르는 중이면 건 태그를 풀고 태그 선택으로 돌아간다.
-            if (_battle.Phase == CombatPhase.ChoosingTarget)
-            {
-                CancelTarget();
-                return;
-            }
-
-            if (_battle.Phase == CombatPhase.ChoosingTag && _battle.BackToCoins())
+            if (_battle.BackToCoins())
             {
                 Run(EnterCoinPhase());
             }
         }
 
-        /// <summary>대상 선택을 그만두고 태그 선택 화면으로 되돌린다.</summary>
-        private void CancelTarget()
-        {
-            if (_battle.CancelTarget() && _view != null)
-            {
-                _view.ClearReelHighlights();
-                ShowTagPhase();
-            }
-        }
-
-        /// <summary>
-        /// 태그를 눌렀다. 적이 하나면 바로 때린다. 둘 이상이면 태그를 걸고 때릴 적을 고르게 한다.
-        /// 대상을 고르는 중에 다른 태그를 누르면 그 태그로 다시 건다.
-        /// </summary>
         private void HandleTagClicked(SymbolTagType tag)
         {
-            if (!CanAct())
-            {
-                return;
-            }
-
-            if (_battle.Phase == CombatPhase.ChoosingTarget)
-            {
-                CancelTarget();
-            }
-
-            if (!_battle.CanAttackWith(tag))
+            if (!CanAct() || !_battle.CanAttackWith(tag))
             {
                 return;
             }
 
             MarkChosen(TagDialView.GetSectorIndex(tag));
-
-            if (_battle.NeedsTargetChoice)
-            {
-                if (_battle.BetTag(tag))
-                {
-                    ShowTargetPhase(TagColor(tag), _battle.FindReels(tag));
-                }
-
-                return;
-            }
-
             Run(AttackRoutine(() => _battle.Attack(tag)));
-        }
-
-        private Color TagColor(SymbolTagType tag)
-        {
-            return _view != null ? _view.GetTagVisual(tag).BarColor : Color.white;
         }
 
         /// <summary>공격 예정 표시를 켤 칸을 원판에 알린다. 피그마 디자인은 원판 전체 대신 고른 칸만 빛낸다.</summary>
@@ -696,35 +621,12 @@ namespace SlotHero.Combat.UI
 
         private void HandleVortexClicked()
         {
-            if (!CanAct())
-            {
-                return;
-            }
-
-            if (_battle.Phase == CombatPhase.ChoosingTarget)
-            {
-                CancelTarget();
-            }
-
-            if (!_battle.CanUseVortex())
+            if (!CanAct() || !_battle.CanUseVortex())
             {
                 return;
             }
 
             MarkChosen(TagDialView.VortexIndex);
-
-            if (_battle.NeedsTargetChoice)
-            {
-                SymbolTagType top;
-                int count;
-                if (_battle.TryGetTopTag(out top, out count) && _battle.BetVortex())
-                {
-                    ShowTargetPhase(TagColor(top), _battle.FindReels(top));
-                }
-
-                return;
-            }
-
             Run(AttackRoutine(() => _battle.AttackWithVortex()));
         }
 
@@ -826,46 +728,6 @@ namespace SlotHero.Combat.UI
             _view.SetHint(hovering ? vortex : _view.Visual.ChooseTagHint);
         }
 
-        /// <summary>
-        /// 적을 눌렀다. 태그를 걸고 대상을 고르는 중이면 그 적을 때린다.
-        /// 그 밖의 때나 연출 중, 쓰러진 적이면 무시한다.
-        /// </summary>
-        private void HandleEnemyClicked(int slot)
-        {
-            if (!CanAct() || _battle.Phase != CombatPhase.ChoosingTarget)
-            {
-                return;
-            }
-
-            CombatEnemy enemy = FindEnemyAt(slot);
-            if (!_battle.CanTarget(enemy))
-            {
-                return;
-            }
-
-            Run(AttackRoutine(() => _battle.AttackTarget(enemy)));
-        }
-
-        /// <summary>그 자리의 살아 있는 적. 본체 자리 값이면 본체다. 없으면 null 이다.</summary>
-        private CombatEnemy FindEnemyAt(int slot)
-        {
-            if (slot == CombatScreenView.MainEnemySlot)
-            {
-                return _battle.Enemy;
-            }
-
-            IReadOnlyList<CombatEnemy> enemies = _battle.Enemies;
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                if (enemies[i].IsSummon && enemies[i].Slot == slot)
-                {
-                    return enemies[i];
-                }
-            }
-
-            return null;
-        }
-
         private bool CanAct()
         {
             return _battle != null && !_busy && !_finished;
@@ -889,8 +751,7 @@ namespace SlotHero.Combat.UI
         {
             if (_view != null && _battle != null)
             {
-                // 대상은 태그를 건 뒤 누른 적이라 미리 칠해 둘 대상이 없다.
-                _view.ShowEnemies(_battle.Enemy, _battle.Enemies, null);
+                _view.ShowEnemies(_battle.Enemy, _battle.Enemies, _battle.Target);
             }
         }
 

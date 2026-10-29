@@ -67,14 +67,17 @@ namespace SlotHero.Combat
             new EnemyRule(CombatEnemyKind.Normal, MonsterKind.Gladiator, "검투사",
                 "공격 · 방어 · 버프를 고루 쓴다. 함성으로 얻는 기세로 턴이 지날수록 강해진다.", 30, 6),
             new EnemyRule(CombatEnemyKind.Elite, MonsterKind.General, "장군",
-                "방패병을 소환해 진형을 세우고, 기마병 돌격과 투창 명령으로 몰아붙인다.", 80, 15),
+                "매 턴 방패병을 소환하고, 방패병 수에 따라 돌격 · 방패 진형 · 총공세를 쓴다.", 80, 15),
             new EnemyRule(CombatEnemyKind.Boss, MonsterKind.Plain, "콜로세움의 주인", "콜로세움을 지배하는 자.", 160, 12),
         };
 
         [Header("몬스터 패턴")]
+        [Tooltip("패턴이 없는 적(Plain)의 공격 설명. {0} 은 예상 피해다.")]
+        public string PlainAttackText = "영웅에게 {0} 피해를 준다.";
+
+
         public GladiatorRule Gladiator = new GladiatorRule();
         public GeneralRule General = new GeneralRule();
-        public ShieldmanRule Shieldman = new ShieldmanRule();
 
         [Tooltip("스테이지가 하나 오를 때마다 적 체력에 곱하는 비율의 증가분. 0.5 면 2스테이지 1.5배, 3스테이지 2배다. 임시다.")]
         [Min(0f)]
@@ -148,20 +151,6 @@ namespace SlotHero.Combat
             // Plain 은 공격력에 이미 더했다. 패턴 몬스터는 패턴 피해마다 더한다.
             enemy.AttackBonus = rule.Monster == MonsterKind.Plain ? 0 : EnemyAttackGrowthPerStage * above;
             enemy.Stage = stage < 1 ? 1 : stage;
-            return enemy;
-        }
-
-        /// <summary>장군이 소환하는 방패병. 본체와 같은 스테이지로 체력과 피해를 올린다.</summary>
-        public CombatEnemy MakeShieldman(int stage)
-        {
-            int above = stage > 1 ? stage - 1 : 0;
-
-            CombatEnemy enemy = new CombatEnemy(
-                Shieldman.Name, Shieldman.Description, ScaleHealth(Shieldman.MaxHealth, stage),
-                Shieldman.JavelinDamage, MonsterKind.Shieldman);
-            enemy.AttackBonus = EnemyAttackGrowthPerStage * above;
-            enemy.Stage = stage < 1 ? 1 : stage;
-            enemy.IsSummon = true;
             return enemy;
         }
 

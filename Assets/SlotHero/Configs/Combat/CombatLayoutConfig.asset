@@ -79,8 +79,8 @@ MonoBehaviour:
   EnemyArtPosition: {x: 780, y: 440}
   EnemyArtSize: {x: 300, y: 416}
   EnemyInfoPosition: {x: 460, y: 440}
-  EnemyInfoSize: {x: 300, y: 300}
-  SummonPosition: {x: 460, y: 756}
+  EnemyInfoSize: {x: 300, y: 416}
+  SummonPosition: {x: 460, y: 868}
   SummonSize: {x: 92, y: 180}
   SummonGap: 12
   DialPosition: {x: 1150, y: 340}
@@ -108,6 +108,13 @@ MonoBehaviour:
   _tagMedalOffset: {x: -2, y: -10}
   _tagCenterCoinSize: 112
   TagSectorGapDegrees: 1.2
+  SpinCellSize: 150
+  SpinColumnGap: 16
+  SpinMachinePadding: 34
+  SpinIconRatio: 0.86
+  SpinLineThickness: 6
+  SpinLineOverhang: 22
+  SpinMarkerSize: 44
   DamageRise: 90
   _damageSparkSize: {x: 300, y: 225}
   _damageDigitSize: {x: 96, y: 120}

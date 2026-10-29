@@ -138,32 +138,29 @@ namespace SlotHero.ToolsEditor
                 out enemyPanel, out enemyBar, out enemyLabel);
 
             // 몬스터 그림이 아직 없어 이름을 적은 칸으로 둔다.
-            // 태그를 건 뒤 누르면 본체를 때린다.
             Image enemyArt = UiSceneBuilder.NewImage("EnemyArt", root, visual.EnemyArtStandIn);
-            Button enemyArtButton = UiSceneBuilder.AddButton(enemyArt.gameObject, enemyArt);
+            enemyArt.raycastTarget = false;
             TMP_Text enemyArtLabel = NewLabel("NameLabel", enemyArt.transform, visual.NameFontSize, visual.TextColor, true);
             UiSceneBuilder.Stretch(enemyArtLabel.rectTransform);
 
             Image enemyInfo = UiSceneBuilder.NewImage("EnemyInfo", root, visual.PanelColor);
             enemyInfo.raycastTarget = false;
             TMP_Text enemyName = NewLabel("NameLabel", enemyInfo.transform, visual.NameFontSize, visual.TextColor, true);
-            AnchorBand(enemyName.rectTransform, 0.78f, 1f, UiScale.Px(16f));
+            AnchorBand(enemyName.rectTransform, 0.85f, 1f, UiScale.Px(16f));
             TMP_Text enemyInfoLabel = NewLabel("InfoLabel", enemyInfo.transform, visual.BodyFontSize, visual.SubTextColor, false);
-            AnchorBand(enemyInfoLabel.rectTransform, 0f, 0.78f, UiScale.Px(20f));
+            AnchorBand(enemyInfoLabel.rectTransform, 0.03f, 0.85f, UiScale.Px(20f));
             enemyInfoLabel.alignment = TextAlignmentOptions.TopLeft;
 
-            // 소환수 칸. 장군의 방패병 자리다. 소환되기 전에는 꺼 둔다.
+            // 소환수 칸. 소환되기 전에는 꺼 둔다. 장군의 방패병은 칸을 쓰지 않는다.
             int summonCount = rules.General != null ? rules.General.MaxShieldmen : 3;
             Image[] summonPanels = new Image[summonCount];
             Image[] summonBars = new Image[summonCount];
             TMP_Text[] summonNames = new TMP_Text[summonCount];
             TMP_Text[] summonInfos = new TMP_Text[summonCount];
-            Button[] summonButtons = new Button[summonCount];
             for (int i = 0; i < summonCount; i++)
             {
-                // 태그를 건 뒤 누르면 그 소환수를 때린다.
                 summonPanels[i] = UiSceneBuilder.NewImage("Summon" + i, root, visual.PanelColor);
-                summonButtons[i] = UiSceneBuilder.AddButton(summonPanels[i].gameObject, summonPanels[i]);
+                summonPanels[i].raycastTarget = false;
                 UiSceneBuilder.AddShadowPx(summonPanels[i], 6f, 4f);
 
                 summonNames[i] = NewLabel("NameLabel", summonPanels[i].transform, visual.BodyFontSize, visual.TextColor, true);
@@ -253,8 +250,6 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetArrayField(view, "_summonBars", summonBars);
             UiSceneBuilder.SetArrayField(view, "_summonNames", summonNames);
             UiSceneBuilder.SetArrayField(view, "_summonInfos", summonInfos);
-            UiSceneBuilder.SetField(view, "_enemyArtButton", enemyArtButton);
-            UiSceneBuilder.SetArrayField(view, "_summonButtons", summonButtons);
             UiSceneBuilder.SetField(view, "_dial", dial);
             UiSceneBuilder.SetField(view, "_coinGroup", coinGroup);
             UiSceneBuilder.SetField(view, "_coinDial", coinDial);

@@ -51,8 +51,12 @@ namespace SlotHero.Combat
         /// <summary>최종 공격력.</summary>
         public int Damage;
 
+        /// <summary>장군의 방패병이 줄인 피해. `Damage` 는 이미 줄인 값이다. 줄이지 않았으면 0 이다.</summary>
+        public int ShieldmanReduced;
+
         /// <summary>
-        /// 맞은 적. 플레이어가 고른 대상이고, 고르지 않았으면 가장 왼쪽에 살아 있는 적이다(`CombatBattle.Target`).
+        /// 맞은 적. 가장 왼쪽에 살아 있는 적이다.
+        /// 방패병이 있으면 방패병이 장군 대신 받는다(몬스터 기획서 06-1 의 "장군에게 가는 피해를 대신 받아낸다").
         /// </summary>
         public CombatEnemy Target;
 

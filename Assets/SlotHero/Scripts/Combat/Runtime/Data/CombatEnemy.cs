@@ -16,8 +16,7 @@ namespace SlotHero.Combat
     {
         Plain,
         Gladiator,
-        General,
-        Shieldman
+        General
     }
 
     /// <summary>
@@ -58,8 +57,20 @@ namespace SlotHero.Combat
         /// <summary>버프 '기세'. 1 당 주는 피해 1% 증가. 중첩된다(검투사의 함성).</summary>
         public int Momentum;
 
-        /// <summary>버프 '투창 명령'. 다음 행동이 투창으로 바뀌고 사라진다(장군 → 방패병).</summary>
-        public bool JavelinOrdered;
+        /// <summary>
+        /// 장군의 방패병 수. 방패병은 따로 서는 적이 아니라 장군이 가진 수다(2026년 10월 29일 장군 재설계).
+        /// 턴 시작마다 늘고, 큰 피해를 줄일 때마다 하나씩 준다.
+        /// </summary>
+        public int Shieldmen;
+
+        /// <summary>턴 시작에 미리 고른 패턴 칸. 적 차례에 이 패턴을 쓴다. 고르지 않았으면 -1 이다.</summary>
+        public int PlannedPick = -1;
+
+        /// <summary>
+        /// 다음 적 차례에 할 행동. 정보 칸에 적는다. 피해는 지금 기세, 스테이지 보정, 유물로 셈한 예상값이다.
+        /// 턴 시작에 정하고 영웅 공격 뒤 다시 셈한다. 적 차례가 끝나 다음 턴 시작 전까지는 null 이다.
+        /// </summary>
+        public EnemyAction NextAction;
 
         /// <summary>소환수인지. 본체가 쓰러지면 사라진다.</summary>
         public bool IsSummon;
