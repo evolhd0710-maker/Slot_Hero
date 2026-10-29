@@ -428,8 +428,10 @@ namespace SlotHero.Events
 
             for (int i = 0; i < spec.Lines.Count; i++)
             {
+                // 줄을 그대로 복사하고 글만 바꾼다. 새로 만들면 "혹은" 으로 잇는 표시(`Alternative`)가 빠진다.
                 EventEffectLine line = spec.Lines[i];
-                choice.Lines.Add(new EventEffectLine(line.Kind, FillAmounts(line.Text, spec.Action, linkId, targetName, decided), line.Met));
+                line.Text = FillAmounts(line.Text, spec.Action, linkId, targetName, decided);
+                choice.Lines.Add(line);
             }
 
             // 4장 공통 규칙 · 종료 선택지는 항상 비용 없이 고를 수 있다.

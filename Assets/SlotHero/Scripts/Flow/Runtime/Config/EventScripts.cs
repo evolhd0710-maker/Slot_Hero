@@ -873,11 +873,12 @@ namespace SlotHero.Flow
         private static EventScreenChoice FiftyFifty(string id, string label)
         {
             // 무엇이 걸렸는지 적는다. 예전에는 "?" 만 있어 무엇을 얻고 잃는지 알 수 없었다(2026년 10월 25일 원재).
+            // "유물 혹은 체력 손실"로 적는다(2026년 10월 28일 원재). 유물은 초록, 체력 손실은 빨강이다.
             return EventScreenChoice.Advance(id, label, string.Empty)
                 .Branch(50, "2A")
                 .Branch(50, "2B")
-                .With(EventEffectLine.Gain("보물이면 유물"))
-                .With(EventEffectLine.Cost("함정이면 체력 손실"));
+                .With(EventEffectLine.Gain("유물"))
+                .With(EventEffectLine.Cost("체력 손실").OrPrevious());
         }
 
         /// <summary>

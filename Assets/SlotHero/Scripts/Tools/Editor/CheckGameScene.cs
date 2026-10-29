@@ -227,8 +227,10 @@ namespace SlotHero.ToolsEditor
             Report("금성과 목성의 문양 이름이 금월계관",
                 catalog != null && catalog.GetDisplayName("GoldLaurel") == "금월계관",
                 catalog != null ? catalog.GetDisplayName("GoldLaurel") : "목록 빠짐");
-            // 성소 기획서 06 재화 의 "시작 수치 0". 2026년 10월 8일에 100 에서 고쳤다.
-            Report("시작 골드 0", save.Run.Status.Gold == 0, save.Run.Status.Gold);
+            // 성소 기획서 06 재화 는 "시작 수치 0" 이다. 2026년 10월 29일 팀원 밸런스 조정(8a5674f)이 설정 에셋을 100 으로 바꿔
+            // 수치는 설정(`RunCatalogConfig.StartingGold`)을 따른다. 검사는 새 런이 설정대로 시작하는지만 본다.
+            int startingGold = catalog != null ? catalog.StartingGold : 0;
+            Report("시작 골드가 설정 값", save.Run.Status.Gold == startingGold, save.Run.Status.Gold);
             Report("체력이 가득", save.Run.Status.Health == save.Run.Status.MaxHealth,
                 save.Run.Status.Health);
 
@@ -3551,6 +3553,9 @@ namespace SlotHero.ToolsEditor
                 }
 
                 Report("싸우면 전투가 열린다", flow.Screen == GameScreen.Combat, (int)flow.Screen);
+                // 이벤트 화면은 전투 화면보다 위에 그려진다. 열어 두면 전투가 가려졌다(2026년 10월 28일 원재).
+                EventScreenController eventScreen = Object.FindAnyObjectByType<EventScreenController>(FindObjectsInactive.Include);
+                Report("이벤트가 연 전투 동안 이벤트 화면이 닫혀 있다", eventScreen != null && !eventScreen.IsOpen);
                 Report("도전자 전투에 고른 부정 효과가 넘어간다", options.HasPenalty && known, options.PenaltyId);
                 Report("도전자 전투는 이벤트 전투이고 보상이 두 배다", options.FromEvent && options.DoubleReward);
 
@@ -3559,6 +3564,7 @@ namespace SlotHero.ToolsEditor
                 AwakenNew();
 
                 Report("이기면 이벤트 마무리 화면으로 돌아간다", flow.Screen == GameScreen.Event, (int)flow.Screen);
+                Report("이벤트로 돌아오면 이벤트 화면이 다시 열린다", eventScreen != null && eventScreen.IsOpen);
                 Report("이기면 보상 고르기 두 번이 쌓인다", save.Run.RewardCardRounds == 2, save.Run.RewardCardRounds);
 
                 Invoke(flow, "HandleEventChoice", "challenger", "leave");
@@ -5383,8 +5389,8 @@ namespace SlotHero.ToolsEditor
                             for (int m = 0; m < spec.Lines.Count; m++)
                             {
                                 EventEffectLine line = spec.Lines[m];
-                                string text = SampleFill(line.Text);
-                                choice.Lines.Add(new EventEffectLine(line.Kind, text, line.Met));
+                                line.Text = SampleFill(line.Text);
+                                choice.Lines.Add(line);
                             }
 
                             choice.ResolveState();

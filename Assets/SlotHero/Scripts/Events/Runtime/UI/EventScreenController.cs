@@ -152,6 +152,21 @@ namespace SlotHero.Events.UI
             SetActive(false);
         }
 
+        /// <summary>
+        /// 닫아 둔 이벤트 화면을 보던 페이지 그대로 다시 연다.
+        /// 이벤트가 연 전투가 끝나 이벤트로 돌아올 때 쓴다. 전투 동안에는 화면을 닫아 둔다.
+        /// </summary>
+        public void Reopen()
+        {
+            if (_page == null)
+            {
+                return;
+            }
+
+            SetActive(true);
+            Refresh();
+        }
+
         /// <summary>지금 페이지를 다시 그린다.</summary>
         public void Refresh()
         {

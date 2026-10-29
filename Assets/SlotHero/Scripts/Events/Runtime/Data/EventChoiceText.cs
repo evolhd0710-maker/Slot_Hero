@@ -67,6 +67,9 @@ namespace SlotHero.Events
     /// </summary>
     public static class EventChoiceText
     {
+        /// <summary>둘 가운데 하나만 일어나는 결과 줄 사이에 넣는 글자. 색 없이 적는다.</summary>
+        public const string AlternativeSeparator = " 혹은 ";
+
         // 결과 문장에서 얻는 것과 잃는 것을 감싸는 표시.
         // 결과 문장은 런 쪽(`IEventWorld.Apply`)이 짓는데 그쪽은 화면 색을 모른다.
         // 그래서 표시만 넣어 보내고 화면이 그릴 때 `ColorMarks` 로 색을 입힌다.
@@ -198,7 +201,7 @@ namespace SlotHero.Events
                 }
                 else
                 {
-                    builder.Append(format.LineSeparator);
+                    builder.Append(line.Alternative ? AlternativeSeparator : format.LineSeparator);
                 }
 
                 // 얻는 것은 초록, 잃거나 치르는 것은 빨강이다.

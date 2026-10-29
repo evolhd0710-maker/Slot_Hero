@@ -767,19 +767,19 @@ MonoBehaviour:
   - _tag: 0
     _value: 1
   - _tag: 1
-    _value: 1
+    _value: 2
   - _tag: 2
     _value: 2
   - _tag: 3
-    _value: 2
+    _value: 3
   - _tag: 4
     _value: 3
   - _tag: 5
-    _value: 3
+    _value: 4
   - _tag: 6
     _value: 4
   - _tag: 7
-    _value: 4
+    _value: 5
   - _tag: 8
     _value: 5
   _coinSellPrices: 080000000d00000012000000170000001e000000i
@@ -823,7 +823,7 @@ MonoBehaviour:
   _startingCoinIds:
   - coin_gold
   _startingRelicIds: []
-  _startingGold: 0
+  _startingGold: 100
   _startingCoinCapacity: 5
   _startingRelicCapacity: 6
   _minimumDeckSize: 6
