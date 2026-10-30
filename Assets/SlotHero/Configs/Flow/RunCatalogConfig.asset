@@ -767,19 +767,19 @@ MonoBehaviour:
   - _tag: 0
     _value: 1
   - _tag: 1
-    _value: 2
+    _value: 1
   - _tag: 2
     _value: 2
   - _tag: 3
-    _value: 3
+    _value: 2
   - _tag: 4
     _value: 3
   - _tag: 5
-    _value: 4
+    _value: 3
   - _tag: 6
     _value: 4
   - _tag: 7
-    _value: 5
+    _value: 4
   - _tag: 8
     _value: 5
   _coinSellPrices: 080000000d00000012000000170000001e000000i
@@ -820,6 +820,49 @@ MonoBehaviour:
   - Hail
   - NightSky
   - Shipwerck
+  - Quicksilver
+  - Quicksilver
+  - Fish
+  - Fish
+  - Geyser
+  - Geyser
+  - Chariot
+  - Chariot
+  - Furnace
+  - Furnace
+  - Lotus
+  - Lotus
+  - Mud
+  - Mud
+  - GoldLaurel
+  - GoldLaurel
+  - Gem
+  - Gem
+  - Pheonix
+  - Pheonix
+  - DarkCloud
+  - DarkCloud
+  - Tsunami
+  - Tsunami
+  - Meteorite
+  - Meteorite
+  - Anchor
+  - Anchor
+  - Druid
+  - Druid
+  - Golem
+  - Golem
+  - FireFlower
+  - FireFlower
+  - Volcano
+  - Volcano
+  - Styx
+  - Scythe
+  - Bird
+  - Whale
+  - Sunrise
+  - LightHouse
+  - Forest
   _startingCoinIds:
   - coin_gold
   _startingRelicIds: []

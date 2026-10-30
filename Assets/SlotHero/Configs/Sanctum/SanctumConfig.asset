@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b9ada1fbd1ebce4b9e4b71b5e9a1036, type: 3}
   m_Name: SanctumConfig
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Sanctum.SanctumConfig
-  CampHealAmount: 40
-  CampUseLimit: 1
-  CampCost: 0
-  SymbolSlotCount: 4
-  CoinSlotCount: 2
-  RelicSlotCount: 3
-  RefreshRefillsSoldSlots: 1
-  SymbolChangeExcludesSource: 1
-  SymbolChangeExcludesOwned: 0
-  GoldStartAmount: 0
+  _campHealAmount: 70
+  _campUseLimit: 1
+  _campCost: 0
+  _symbolSlotCount: 4
+  _coinSlotCount: 2
+  _relicSlotCount: 3
+  _rarityByStage: []
+  _refreshRefillsSoldSlots: 1
+  _symbolChangeExcludesOwned: 0
+  _goldStartAmount: 0
