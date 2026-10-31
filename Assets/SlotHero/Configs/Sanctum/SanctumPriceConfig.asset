@@ -12,33 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c26ede49ea153043b3f8198f33d5c58, type: 3}
   m_Name: SanctumPriceConfig
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Sanctum.SanctumPriceConfig
-  SymbolBasePrice: 20
-  SymbolTagValueMultiplier: 5
-  CoinPrices:
-  - Rarity: 0
-    Price: 15
-  - Rarity: 1
-    Price: 25
-  - Rarity: 2
-    Price: 35
-  - Rarity: 3
-    Price: 45
-  - Rarity: 4
-    Price: 60
-  RelicPrices:
-  - Rarity: 0
-    Price: 30
-  - Rarity: 1
-    Price: 45
-  - Rarity: 2
-    Price: 60
-  - Rarity: 3
-    Price: 75
-  - Rarity: 4
-    Price: 100
-  SymbolChangeStartPrice: 10
-  SymbolChangeStep: 10
-  SymbolChangeGrowth: 1
-  RelicRefreshStartPrice: 20
-  RelicRefreshStep: 10
-  RelicRefreshGrowth: 0
+  _symbolBasePrice: 20
+  _symbolTagValueMultiplier: 5
+  _coinPrices:
+  - _rarity: 0
+    _price: 15
+  - _rarity: 1
+    _price: 25
+  - _rarity: 2
+    _price: 35
+  - _rarity: 3
+    _price: 45
+  - _rarity: 4
+    _price: 60
+  _relicPrices:
+  - _rarity: 0
+    _price: 30
+  - _rarity: 1
+    _price: 45
+  - _rarity: 2
+    _price: 60
+  - _rarity: 3
+    _price: 75
+  - _rarity: 4
+    _price: 100
+  _symbolChangeStartPrice: 10
+  _symbolChangeStep: 10
+  _symbolChangeGrowth: 1
+  _relicRefreshStartPrice: 20
+  _relicRefreshStep: 10
+  _relicRefreshGrowth: 0

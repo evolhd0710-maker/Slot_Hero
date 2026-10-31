@@ -3073,6 +3073,7 @@ GameObject:
   - component: {fileID: 90532402}
   - component: {fileID: 90532404}
   - component: {fileID: 90532403}
+  - component: {fileID: 90532406}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3107,10 +3108,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.125
-    width: 1
-    height: 0.75
+    x: 0.00028783083
+    y: 0
+    width: 0.99942434
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
@@ -3168,6 +3169,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &90532406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 90532401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &94628489
 GameObject:
   m_ObjectHideFlags: 0
@@ -7169,7 +7214,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9b100e0fd1a78aa46ab8361c8236b8ac, type: 3}
+  m_Sprite: {fileID: 504474297057466715, guid: 58f53bc4907efd04fa581230bc25bf9e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -20800,7 +20845,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 33290f5054ea97c40ad0f4e0cea38ca4, type: 3}
+  m_Sprite: {fileID: -6128889081305105821, guid: ba7c7fd98645b0f4ba929eb7c1b02048, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -26219,7 +26264,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0f6ff979f07faaf46b7a5017e54aab13, type: 3}
+  m_Sprite: {fileID: 591051138935682529, guid: f1514db27bd0651459923be79160a5f4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -31351,7 +31396,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 08f4c2830db64ca48b6070044f260333, type: 3}
+  m_Sprite: {fileID: 3414184781904392622, guid: 51428b20c35f0c447b9aa57ec975c56c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
