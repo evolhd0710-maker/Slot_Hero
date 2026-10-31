@@ -1,0 +1,872 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e5325ea7ca876f4fa9c16e43fcf6c7d, type: 3}
+  m_Name: RunCatalogConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Flow.RunCatalogConfig
+  _symbols:
+  - _id: Quicksilver
+    _displayName: "\uC218\uC740"
+    _firstTag: 0
+    _secondTag: 1
+    _icon: {fileID: 21300000, guid: 6bb527f6a93209e45816bd2ffed4cb65, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Fish
+    _displayName: "\uBB3C\uACE0\uAE30"
+    _firstTag: 0
+    _secondTag: 2
+    _icon: {fileID: 21300000, guid: 7f1db14c9fd7a8340b15a43d055f66fd, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Geyser
+    _displayName: "\uAC04\uD5D0\uCC9C"
+    _firstTag: 0
+    _secondTag: 3
+    _icon: {fileID: 21300000, guid: 237d6ccfcc21fb149a8548d0edb0a748, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Lotus
+    _displayName: "\uC5F0\uAF43"
+    _firstTag: 0
+    _secondTag: 4
+    _icon: {fileID: 21300000, guid: 90531b0a473549e448a314d51b210ce8, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Mud
+    _displayName: "\uC9C4\uD759"
+    _firstTag: 0
+    _secondTag: 5
+    _icon: {fileID: 21300000, guid: 2f22041bfd566a441a76a89e7a94e26a, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: DarkCloud
+    _displayName: "\uBA39\uAD6C\uB984"
+    _firstTag: 0
+    _secondTag: 6
+    _icon: {fileID: 21300000, guid: fc1a6e557d168b44a87e67a5633344aa, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Tsunami
+    _displayName: "\uD574\uC77C"
+    _firstTag: 0
+    _secondTag: 7
+    _icon: {fileID: 21300000, guid: 6390f295d67e3684f9c27ee5b198605e, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Styx
+    _displayName: "\uC2A4\uD2F1\uC2A4\uAC15"
+    _firstTag: 0
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: fc8276a5df495024ab14b39d024a43a0, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Chariot
+    _displayName: "\uC804\uCC28"
+    _firstTag: 1
+    _secondTag: 2
+    _icon: {fileID: 21300000, guid: d6bea1de4cf412749be1d50efcf54400, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Furnace
+    _displayName: "\uC6A9\uAD11\uB85C"
+    _firstTag: 1
+    _secondTag: 3
+    _icon: {fileID: 21300000, guid: 5f67c992129512a45ab2d0e890e4385e, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: GoldLaurel
+    _displayName: "\uAE08\uC6D4\uACC4\uAD00"
+    _firstTag: 1
+    _secondTag: 4
+    _icon: {fileID: 21300000, guid: 0c1157ae12b821b468b03e28f46ba276, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Gem
+    _displayName: "\uBCF4\uC11D"
+    _firstTag: 1
+    _secondTag: 5
+    _icon: {fileID: 21300000, guid: 7f026cc07f67dae4a9c89b23080f344b, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Meteorite
+    _displayName: "\uC6B4\uC11D"
+    _firstTag: 1
+    _secondTag: 6
+    _icon: {fileID: 21300000, guid: d82f84248b1647e4799ecc7bc7baf98e, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Anchor
+    _displayName: "\uB2FB"
+    _firstTag: 1
+    _secondTag: 7
+    _icon: {fileID: 21300000, guid: 49894ac129eb97d4488868746670c841, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Scythe
+    _displayName: "\uB0AB"
+    _firstTag: 1
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: b9dc842a90837af48bad06372027a9dc, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Pheonix
+    _displayName: "\uBD88\uC0AC\uC870"
+    _firstTag: 2
+    _secondTag: 3
+    _icon: {fileID: 21300000, guid: dbe19f18db2e840449768dd4cdf28c07, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Druid
+    _displayName: "\uB4DC\uB8E8\uC774\uB4DC"
+    _firstTag: 2
+    _secondTag: 4
+    _icon: {fileID: 21300000, guid: f4397f89e0d5bea419cec1509550956f, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Golem
+    _displayName: "\uACE8\uB818"
+    _firstTag: 2
+    _secondTag: 5
+    _icon: {fileID: 21300000, guid: 7e95c2318384cb74eb6b7d57cdd29376, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Bird
+    _displayName: "\uC0C8"
+    _firstTag: 2
+    _secondTag: 6
+    _icon: {fileID: 21300000, guid: 577da8049438dad42b4f3f9e10c3bd55, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Whale
+    _displayName: "\uACE0\uB798"
+    _firstTag: 2
+    _secondTag: 7
+    _icon: {fileID: 21300000, guid: 178d5afc72ad81e448b2b46f0831671a, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Raven
+    _displayName: "\uAE4C\uB9C8\uADC0"
+    _firstTag: 2
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: 3da984c9b0f497a4e99bf9f676a4a0e0, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: FireFlower
+    _displayName: "\uBD88\uC758 \uAF43"
+    _firstTag: 3
+    _secondTag: 4
+    _icon: {fileID: 21300000, guid: 0afb2534d909c464ebfdb2a52e7ff9f9, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Volcano
+    _displayName: "\uD654\uC0B0"
+    _firstTag: 3
+    _secondTag: 5
+    _icon: {fileID: 21300000, guid: ba5009d7d80e96942a2b2168bb410d3d, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Sunrise
+    _displayName: "\uC77C\uCD9C"
+    _firstTag: 3
+    _secondTag: 6
+    _icon: {fileID: 21300000, guid: 03aa87ac55a17284fa6fac3e97899514, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: LightHouse
+    _displayName: "\uB4F1\uB300"
+    _firstTag: 3
+    _secondTag: 7
+    _icon: {fileID: 21300000, guid: f11027b9b7208d1438d000a09c8fd1e1, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Fullmoon
+    _displayName: "\uB9CC\uC6D4"
+    _firstTag: 3
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: c0d481f76f448d94d96bd6c1aadcc4c8, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Forest
+    _displayName: "\uC232"
+    _firstTag: 4
+    _secondTag: 5
+    _icon: {fileID: 21300000, guid: 5968930c67f278042a35151e6e81ac07, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Yggdrasil
+    _displayName: "\uC138\uACC4\uC218"
+    _firstTag: 4
+    _secondTag: 6
+    _icon: {fileID: 21300000, guid: 1636055b168a0664baff731bfde688e0, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Coral
+    _displayName: "\uC0B0\uD638"
+    _firstTag: 4
+    _secondTag: 7
+    _icon: {fileID: 21300000, guid: b0f1c4bf7fbf58048bc64fd12547a0a1, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Coffin
+    _displayName: "\uAD00"
+    _firstTag: 4
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: 127a4bbfe4849354284dd9127e26a2e7, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Desert
+    _displayName: "\uC0AC\uB9C9"
+    _firstTag: 5
+    _secondTag: 6
+    _icon: {fileID: 21300000, guid: e03647af89ec3464785dcd29522623f5, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Island
+    _displayName: "\uC12C"
+    _firstTag: 5
+    _secondTag: 7
+    _icon: {fileID: 21300000, guid: 9ebcd52cd55a25f4f8157074b13f73bf, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Grave
+    _displayName: "\uBB34\uB364"
+    _firstTag: 5
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: 78326c1bfaf592d4a87d726895519a20, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Hail
+    _displayName: "\uC6B0\uBC15"
+    _firstTag: 6
+    _secondTag: 7
+    _icon: {fileID: 21300000, guid: 328ce39632330104192df8d1cf2d9958, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: NightSky
+    _displayName: "\uBC24\uD558\uB298"
+    _firstTag: 6
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: 963e71e674e25a44187a8adbf59eb74e, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  - _id: Shipwerck
+    _displayName: "\uB09C\uD30C\uC120"
+    _firstTag: 7
+    _secondTag: 8
+    _icon: {fileID: 21300000, guid: 8182dcd8794b8214094ae1760f4355f8, type: 3}
+    _minStage: 0
+    _maxStage: 0
+  _coins:
+  - _id: coin_gold
+    _displayName: "\uAE08\uD654"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: 51bdc7a55d3fe824db62ddc6ccc3d4ea, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver
+    _displayName: "\uC740\uD654"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: 94640581f7dc6e344af57e24185ccdc8, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_emperor
+    _displayName: "\uD669\uC81C \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 95344bf92aa488c47a56f52ac1f21ca5, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_arch
+    _displayName: "\uAC1C\uC120\uBB38 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 9699774e057fbc04f93f5d909899753c, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_athena
+    _displayName: "\uC544\uD14C\uB098 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: ae5afbff1f90c6b45ab458040739119d, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_sunchariot
+    _displayName: "\uD0DC\uC591 \uC804\uCC28 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: f70aaf395a0327b439484a105a27c1f1, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_poseidon
+    _displayName: "\uD3EC\uC138\uC774\uB3C8 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: c686a8a9e9d50904696e43923010d509, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_galley
+    _displayName: "\uD669\uAE08 \uD568\uC120 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 01c0499c2d2cf544b8c9ebe88edf0e01, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_sundisk
+    _displayName: "\uD0DC\uC591 \uC6D0\uBC18 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 6d8edf9c961882543aeaf928b6c53a8a, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_pharaoh
+    _displayName: "\uD30C\uB77C\uC624 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 2a9414e88edcc61458d8f2b136d55b31, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_ishtar
+    _displayName: "\uC774\uC288\uD0C0\uB974 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 9cb205efe224bf049b7e9888605da6ea, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_gold_lamassu
+    _displayName: "\uB77C\uB9C8\uC218 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: a7808ce4e3492ec4b8c9372123c34c8e, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_eagle
+    _displayName: "\uB3C5\uC218\uB9AC \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: d20468325938c7744b922fc3171592d0, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_laurel
+    _displayName: "\uC6D4\uACC4\uAD00 \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: af6b0ee91f0acaf488f1d5d359e6cf52, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_owl
+    _displayName: "\uBD80\uC5C9\uC774 \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 804b45226e9109d4c918ab1b38858834, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_column
+    _displayName: "\uC2E0\uC804 \uAE30\uB465 \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 190d0d4a9eaaec94a890dad45efcef99, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_dolphin
+    _displayName: "\uB3CC\uACE0\uB798 \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 22c3710a5f6b64146ab30a1a9db0b12d, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_trireme
+    _displayName: "\uC0BC\uB2E8\uB178\uC120 \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 9addaa888af97f347ab42b7fc57615f9, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_scarab
+    _displayName: "\uC2A4\uCE74\uB77C\uBE0C \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 90b9303ef85dd1845a295e964921b5df, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_moon
+    _displayName: "\uCD08\uC2B9\uB2EC \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 2d098e299c541824a95b2f74ad39d7a7, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_wedge
+    _displayName: "\uC410\uAE30\uBB38\uC790 \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 45a8e56c209668d4bac5b77df937c99b, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_silver_ziggurat
+    _displayName: "\uC9C0\uAD6C\uB77C\uD2B8 \uC740\uD654"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: a662c61a013d01941a43bceea8cdd5da, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_wolf
+    _displayName: "\uB291\uB300 \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: ef9ef141501609c41ac0e65e0f455346, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_shield
+    _displayName: "\uBC29\uD328 \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: e32415eae78c8424581fa638f8a66fa9, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_lyre
+    _displayName: "\uB9AC\uB77C \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: e98205cdf420a5a4f8790cbb07164c21, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_amphora
+    _displayName: "\uC554\uD3EC\uB77C \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: eecf4c7af5d4a6845b7dd530c5a43e42, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_octopus
+    _displayName: "\uBB38\uC5B4 \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: 096809ae4b607654ea1c02da77ee7972, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_anchor
+    _displayName: "\uB2FB \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: d7b16a805ef5b8e46b868c44059182b7, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_pyramid
+    _displayName: "\uD53C\uB77C\uBBF8\uB4DC \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: 858252daa46c4de449c9bf18a02d5723, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_camel
+    _displayName: "\uB099\uD0C0 \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: 94f1e38a2f38d464fbe4469470995e9d, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_lion
+    _displayName: "\uC0AC\uC790 \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: babf8b19b0d249d47bfd1631196ab9c0, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: coin_bronze_palm
+    _displayName: "\uB300\uCD94\uC57C\uC790 \uB3D9\uC804"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: b600efabe59d6e34ea51b520a13f13e4, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  _relics:
+  - _id: relic_12001
+    _displayName: "\uC81C\uAD6D \uAD70\uAE30"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: 9984c0962a717c942895c0062a4b5c6b, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12002
+    _displayName: "\uD751\uC694\uC11D \uB2E8\uAC80"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 542bd7b5b5d9f2749b0d6bdc2c889077, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12003
+    _displayName: "12\uAC1C\uC758 \uAE08\uD654"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 0dabd29889b447548b95835ccc0071f1, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12004
+    _displayName: "\uB9DD\uCE58\uC640 \uB04C"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: aad6e91b15c2d98429f08c83d0e3cb55, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12005
+    _displayName: "\uCCA0\uC81C \uBC29\uD328"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: 08d70ace05d955e468e3ff9041441357, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12006
+    _displayName: "\uC0AC\uAC74\uC758 \uC9C0\uD3C9\uC120"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 72d2a227957af2e4296a398e9068e886, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12007
+    _displayName: "\uBCC4\uC758 \uC800\uD3B8"
+    _rarity: 4
+    _icon: {fileID: 21300000, guid: 82f8118164ae49042ae1d4504530e007, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12008
+    _displayName: "\uC77C\uC2DD"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 6545e97a35a69c44e8379894de78ec0b, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12009
+    _displayName: "\uACF0 \uAC00\uC8FD \uB9DD\uD1A0"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 0da92d980943e714588683315e1ea164, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_12010
+    _displayName: "\uC18D\uC784\uC218 \uC8FC\uC0AC\uC704"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 0fe9fb6e7cbe3704995a075b473e3aa7, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_rusted_gladius
+    _displayName: "\uB179\uC2A8 \uB2E8\uAC80"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: d696b44e0d3337a48b0bdb1ef9d0a826, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_senate_ring
+    _displayName: "\uC6D0\uB85C\uC6D0 \uC778\uC7A5 \uBC18\uC9C0"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: d5733bcd9e28974449ae5699ad6eb9b2, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_legion_eagle
+    _displayName: "\uAD70\uB2E8 \uB3C5\uC218\uB9AC"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 73be4c7eb77c55847bcdeb8773363fb1, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_cracked_crown
+    _displayName: "\uAE08 \uAC04 \uC655\uAD00"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: d8e3703f02308ac4f95447656892fe61, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_owl_lamp
+    _displayName: "\uBD80\uC5C9\uC774 \uB4F1\uC794"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: 30442658dfc18d445ba3d743bb19a5cf, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_marble_mask
+    _displayName: "\uB300\uB9AC\uC11D \uAC00\uBA74"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: 4a4658ff96afd9649b62b02c1ca42c9f, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_laurel_lyre
+    _displayName: "\uC6D4\uACC4\uC218 \uB9AC\uB77C"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: 609b6b5af1b4b08448716e454c5fe5bb, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_oracle_tripod
+    _displayName: "\uC2E0\uD0C1\uC758 \uC0BC\uBC1C\uC774"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: ead34934c3ca1544fb461efd78d0d1e8, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_sealed_amphora
+    _displayName: "\uBD09\uC778\uB41C \uC554\uD3EC\uB77C"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: 45d6ca2b2c9bda24eb49263bd0a9e76c, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_siren_shell
+    _displayName: "\uC138\uC774\uB80C\uC758 \uC18C\uB77C"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: 60ca505a68ba17b4086ccea0f0d3260a, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_star_disc
+    _displayName: "\uBCC4\uC790\uB9AC \uC6D0\uBC18"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: fa1fa113fc3475244a3b668ff0db7441, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_bronze_trident
+    _displayName: "\uCCAD\uB3D9 \uC0BC\uC9C0\uCC3D"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 2d44e0c7166a9774fb8b0d66ac721839, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_canopic_jar
+    _displayName: "\uCE74\uB178\uD478\uC2A4 \uB2E8\uC9C0"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: 213be8a99132feb4f99fe4b174194a32, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_eye_pendant
+    _displayName: "\uD638\uB8E8\uC2A4\uC758 \uB208 \uBAA9\uAC78\uC774"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: dea2f6226f448004b9bda394d30613a5, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_golden_scarab
+    _displayName: "\uD669\uAE08 \uC2A4\uCE74\uB77C\uBE0C"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: c43dc070c80c30644a5b60b9cf7a109e, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_ankh
+    _displayName: "\uC0DD\uBA85\uC758 \uC559\uD06C"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: 5e01c5122fe67b74989b80a860bebd5e, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_clay_tablet
+    _displayName: "\uC410\uAE30\uBB38\uC790 \uC810\uD1A0\uD310"
+    _rarity: 0
+    _icon: {fileID: 21300000, guid: 17691fedf0746234bba76edc98bb821d, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_cylinder_seal
+    _displayName: "\uC6D0\uD1B5 \uC778\uC7A5"
+    _rarity: 1
+    _icon: {fileID: 21300000, guid: 52fdbcea082663642bb293664943f51c, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_lapis_harp
+    _displayName: "\uCCAD\uAE08\uC11D \uD558\uD504"
+    _rarity: 2
+    _icon: {fileID: 21300000, guid: d8744a102e720ce42b9446854a412b8a, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  - _id: relic_lamassu_idol
+    _displayName: "\uB77C\uB9C8\uC218 \uC870\uAC01"
+    _rarity: 3
+    _icon: {fileID: 21300000, guid: aae44ed2bc6582b40bffd49dbe3e5213, type: 3}
+    _minStage: 0
+    _maxStage: 0
+    _excludedFrom: 0
+    _onlyInEvents: []
+  _tagValues:
+  - _tag: 0
+    _value: 1
+  - _tag: 1
+    _value: 1
+  - _tag: 2
+    _value: 2
+  - _tag: 3
+    _value: 2
+  - _tag: 4
+    _value: 3
+  - _tag: 5
+    _value: 3
+  - _tag: 6
+    _value: 4
+  - _tag: 7
+    _value: 4
+  - _tag: 8
+    _value: 5
+  _coinSellPrices: 080000000d00000012000000170000001e000000i
+  _startingSymbolIds:
+  - Quicksilver
+  - Fish
+  - Geyser
+  - Lotus
+  - Mud
+  - DarkCloud
+  - Tsunami
+  - Styx
+  - Chariot
+  - Furnace
+  - GoldLaurel
+  - Gem
+  - Meteorite
+  - Anchor
+  - Scythe
+  - Pheonix
+  - Druid
+  - Golem
+  - Bird
+  - Whale
+  - Raven
+  - FireFlower
+  - Volcano
+  - Sunrise
+  - LightHouse
+  - Fullmoon
+  - Forest
+  - Yggdrasil
+  - Coral
+  - Coffin
+  - Desert
+  - Island
+  - Grave
+  - Hail
+  - NightSky
+  - Shipwerck
+  - Quicksilver
+  - Quicksilver
+  - Fish
+  - Fish
+  - Geyser
+  - Geyser
+  - Chariot
+  - Chariot
+  - Furnace
+  - Furnace
+  - Lotus
+  - Lotus
+  - Mud
+  - Mud
+  - GoldLaurel
+  - GoldLaurel
+  - Gem
+  - Gem
+  - Pheonix
+  - Pheonix
+  - DarkCloud
+  - DarkCloud
+  - Tsunami
+  - Tsunami
+  - Meteorite
+  - Meteorite
+  - Anchor
+  - Anchor
+  - Druid
+  - Druid
+  - Golem
+  - Golem
+  - FireFlower
+  - FireFlower
+  - Volcano
+  - Volcano
+  - Styx
+  - Scythe
+  - Bird
+  - Whale
+  - Sunrise
+  - LightHouse
+  - Forest
+  _startingCoinIds:
+  - coin_gold
+  _startingRelicIds: []
+  _startingGold: 100
+  _startingCoinCapacity: 5
+  _startingRelicCapacity: 6
+  _minimumDeckSize: 6

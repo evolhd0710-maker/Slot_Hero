@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb3a1060d3a71ef43b4db163260b71af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Reward.RewardLayoutConfig
+  _referenceResolution: {x: 1920, y: 1080}
+  _boxPosition: {x: 410, y: 180}
+  _boxSize: {x: 1100, y: 660}
+  _boxPadding: 40
+  _titlePosition: {x: 440, y: 210}
+  _titleSize: {x: 300, y: 60}
+  _baseGoldPosition: {x: 700, y: 270}
+  _overkillGoldPosition: {x: 700, y: 370}
+  _goldRowSize: {x: 520, y: 90}
+  _goldRowPadding: 30
+  _cardSize: {x: 300, y: 300}
+  _cardY: 520
+  _cardGap: 60
+  _cardIconSize: 176
+  _cardIconTop: 18
+  _skipPosition: {x: 760, y: 870}
+  _skipSize: {x: 400, y: 90}

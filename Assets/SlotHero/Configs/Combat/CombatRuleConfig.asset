@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82e499c66255bf6459ddd02c16764ddb, type: 3}
+  m_Name: CombatRuleConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Combat.CombatRuleConfig
+  ReelCount: 6
+  CoinsOffered: 3
+  MinimumHealthAfterCoin: 1
+  Coins:
+  - Id: coin_gold
+    HealthCost: 10
+    Weight: 5
+    Description: "\uAC74 \uD0DC\uADF8\uC758 \uBC30\uC218\uC5D0 5 \uB97C \uB354\uD55C\uB2E4."
+  - Id: coin_silver
+    HealthCost: 20
+    Weight: 10
+    Description: "\uAC74 \uD0DC\uADF8\uC758 \uBC30\uC218\uC5D0 15 \uB97C \uB354\uD55C\uB2E4."
+  DefaultCoinCost: 10
+  DefaultCoinWeight: 5
+  DuplicateMultipliers:
+  - Count: 1
+    Multiplier: 1
+  - Count: 2
+    Multiplier: 2
+  - Count: 3
+    Multiplier: 3
+  - Count: 4
+    Multiplier: 5
+  - Count: 5
+    Multiplier: 9
+  - Count: 6
+    Multiplier: 10
+  Enemies:
+  - Kind: 0
+    Monster: 1
+    Name: "\uAC80\uD22C\uC0AC"
+    Description: "\uACF5\uACA9 \xB7 \uBC29\uC5B4 \xB7 \uBC84\uD504\uB97C \uACE0\uB8E8 \uC4F4\uB2E4. \uD568\uC131\uC73C\uB85C \uC5BB\uB294 \uAE30\uC138\uB85C \uD134\uC774 \uC9C0\uB0A0\uC218\uB85D \uAC15\uD574\uC9C4\uB2E4."
+    MaxHealth: 200
+    Attack: 15
+  - Kind: 1
+    Monster: 2
+    Name: "\uC7A5\uAD70"
+    Description: "\uB9E4 \uD134 \uBC29\uD328\uBCD1\uC744 \uC18C\uD658\uD558\uACE0, \uBC29\uD328\uBCD1 \uC218\uC5D0 \uB530\uB77C \uB3CC\uACA9 \xB7 \uBC29\uD328 \uC9C4\uD615 \xB7 \uCD1D\uACF5\uC138\uB97C \uC4F4\uB2E4."
+    MaxHealth: 350
+    Attack: 15
+  - Kind: 2
+    Monster: 0
+    Name: "\uCF5C\uB85C\uC138\uC6C0\uC758 \uC8FC\uC778"
+    Description: "\uCF5C\uB85C\uC138\uC6C0\uC744 \uC9C0\uBC30\uD558\uB294 \uC790."
+    MaxHealth: 750
+    Attack: 25
+  PlainAttackText: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4."
+  Gladiator:
+    StrikeDamage: 15
+    StrikeWeight: 50
+    GuardBlock: 10
+    GuardWeight: 30
+    ShoutMomentum: 50
+    ShoutWeight: 20
+    StrikeText: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4."
+    GuardText: "\uBC29\uC5B4\uB3C4 {0} \uC744 \uC5BB\uB294\uB2E4. \uBC29\uC5B4\uB3C4\uB294 \uC601\uC6C5\uC758 \uB2E4\uC74C \uACF5\uACA9\uC744 \uBA3C\uC800 \uB9C9\uB294\uB2E4."
+    ShoutText: "\uAE30\uC138 {0} \uC744 \uC313\uB294\uB2E4. \uAE30\uC138 1 \uB2F9 \uC8FC\uB294 \uD53C\uD574\uAC00 1% \uB298\uC5B4\uB09C\uB2E4."
+  General:
+    MaxShieldmen: 3
+    SummonPerTurn: 1
+    GuardThreshold: 30
+    GuardReduction: 10
+    ChargeDamage: 10
+    ChargeWeight: 50
+    FormationSummon: 1
+    FormationWeight: 20
+    ShieldWallDamage: 15
+    ShieldWallWeight: 70
+    AllOutDamage: 20
+    AllOutWeight: 130
+    ChargeText: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4.\n{1} \xD7 (\uBC29\uD328\uBCD1 {2} + 1)"
+    FormationText: "\uBC29\uD328\uBCD1 {0} \uAE30\uB97C \uC18C\uD658\uD55C\uB2E4. \uCD5C\uB300 {1} \uAE30\uB2E4."
+    ShieldWallText: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4.\n{1} \xD7 (\uBC29\uD328\uBCD1 {2} + 1)"
+    AllOutText: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4.\n{1} \xD7 \uBC29\uD328\uBCD1 {2}"
+    DescriptionFormat: "\uB9E4 \uD134 \uC2DC\uC791\uC2DC \uBC29\uD328\uBCD1\uC744 {0} \uC18C\uD658\uD569\uB2C8\uB2E4\n(\uD604\uC7AC \uBC29\uD328\uBCD1 \uC218:{1})\n({2}) \uC774\uC0C1 \uB370\uBBF8\uC9C0\uB97C \uBC1B\uC744 \uB54C\uB9C8\uB2E4 \uB370\uBBF8\uC9C0\uB97C ({3}) \uAC10\uC18C\uC2DC\uD0A4\uACE0 \uBC29\uD328\uBCD1\uC774 1\uAE30 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4"
+  EnemyHealthGrowthPerStage: 0.5
+  EnemyAttackGrowthPerStage: 2
+  OverkillDamagePerGold: 10
+  OverkillDamagePerHealth: 5

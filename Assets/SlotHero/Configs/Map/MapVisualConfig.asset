@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 674945dfbfca8874ea8eafbecbb0484c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Map.MapVisualConfig
+  _parchmentSize: {x: 1800, y: 1200}
+  _mapSize: {x: 1300, y: 500}
+  _nodeSize: 70
+  _iconShapeRatio: 0.78
+  _widestIconShapeRatio: 0.85
+  _edgeGap: 3
+  _edgeThickness: 3
+  _checkMarkSize: {x: 36, y: 36}
+  _checkMarkOffset: {x: 0, y: 0}
+  _useRoomTypeColor: 0
+  _roomVisuals:
+  - _roomType: 1
+    _icon: {fileID: 21300000, guid: 709cafa28a722e94d85f3387006390fb, type: 3}
+    _detailIcon: {fileID: 21300000, guid: 06556151b95be974aa2d8e8e7558ca7c, type: 3}
+    _color: {r: 0.95, g: 0.78, b: 0.2, a: 1}
+  - _roomType: 2
+    _icon: {fileID: 21300000, guid: f2e61348990d612438d95c0d9ec05873, type: 3}
+    _detailIcon: {fileID: 21300000, guid: 609300c6951476b49af860f0335097f9, type: 3}
+    _color: {r: 0.62, g: 0.17, b: 0.15, a: 1}
+  - _roomType: 3
+    _icon: {fileID: 21300000, guid: 07ffa6f4d727632409180295339dc7a2, type: 3}
+    _detailIcon: {fileID: 21300000, guid: 2478618b52b4a23499e3544d8586f963, type: 3}
+    _color: {r: 0.25, g: 0.6, b: 0.35, a: 1}
+  - _roomType: 4
+    _icon: {fileID: 21300000, guid: e9882d24fe4fe144894cb5ec42d5ed24, type: 3}
+    _detailIcon: {fileID: 21300000, guid: 553734626f49a0c49820b936e236f5e8, type: 3}
+    _color: {r: 0.55, g: 0.53, b: 0.5, a: 1}
+  - _roomType: 5
+    _icon: {fileID: 0}
+    _detailIcon: {fileID: 0}
+    _color: {r: 0.7, g: 0.68, b: 0.65, a: 1}
+  - _roomType: 6
+    _icon: {fileID: 21300000, guid: 6b8ca857b88780141826b49928c29069, type: 3}
+    _detailIcon: {fileID: 21300000, guid: dd96acf7cd8ed1745b31284cc83b27f2, type: 3}
+    _color: {r: 0.12, g: 0.11, b: 0.09, a: 1}
+  _clearedTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  _skippedTint: {r: 0.584, g: 0.557, b: 0.514, a: 1}
+  _futureTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  _selectableTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  _currentTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  _iconDetailColor: {r: 0.933, g: 0.871, b: 0.729, a: 1}
+  _checkMarkColor: {r: 1, g: 1, b: 1, a: 1}
+  _selectableScale: 1.05
+  _traveledEdgeColor: {r: 0.169, g: 0.125, b: 0.086, a: 0.9}
+  _openEdgeColor: {r: 0.169, g: 0.125, b: 0.086, a: 0.9}
+  _closedEdgeColor: {r: 0.588, g: 0.561, b: 0.518, a: 0.78}
+  _peekDimColor: {r: 0, g: 0, b: 0, a: 0.75}
+  _allowHorizontalPan: 1
+  _scrollSpeed: 120

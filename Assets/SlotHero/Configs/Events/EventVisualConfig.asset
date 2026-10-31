@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d1ece9e304d594280bfbd647311416, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Events.EventVisualConfig
+  _illustrationPlaceholderColor: {r: 1, g: 1, b: 1, a: 0.12}
+  _panelColor: {r: 1, g: 1, b: 1, a: 1}
+  _chosenPanelColor: {r: 0.463, g: 0.459, b: 0.455, a: 1}
+  _blockedPanelColor: {r: 1, g: 1, b: 1, a: 1}
+  _chosenAlpha: 0.7
+  _bodyFontSize: 24
+  _bodyMinFontSize: 20
+  _choiceFontSize: 24
+  _choiceMinFontSize: 20
+  _textColor: {r: 0.925, g: 0.886, b: 0.784, a: 1}
+  _choiceTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  _chosenTextColor: {r: 0.925, g: 0.886, b: 0.784, a: 1}
+  _bodyPadding: {x: 30, y: 40}
+  _choicePadding: 20
+  _gainColor: {r: 0.082, g: 0.353, b: 0.145, a: 1}
+  _costColor: {r: 0.557, g: 0.122, b: 0.09, a: 1}
+  _requirementMetColor: {r: 0.082, g: 0.353, b: 0.145, a: 1}
+  _requirementUnmetColor: {r: 0.557, g: 0.122, b: 0.09, a: 1}
+  _bodyGainColor: {r: 0.498, g: 0.824, b: 0.478, a: 1}
+  _bodyCostColor: {r: 0.941, g: 0.478, b: 0.416, a: 1}
+  _separator: " \u2014 "
+  _lineSeparator: ', '
+  _hiddenMark: '?'
+  _requirementFormat: ' [{0}]'
+  _hoverBrightness: 1.1
+  _pressedBrightness: 0.9
