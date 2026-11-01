@@ -1,0 +1,143 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c01b7397c9aae834b856d1b3854dd2cc, type: 3}
+  m_Name: TagAttackFxConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.TagAttack.TagAttackFxConfig
+  _entries:
+  - _tag: 0
+    _effect: {fileID: 2050942648380966923, guid: e907b21874663904f94d3afdc0482a13, type: 3}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: 4765cbd8dab139041948a719290ab9c8, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  - _tag: 1
+    _effect: {fileID: 1804271297273058015, guid: 085e0f8fbb250f445b54524dc434c163, type: 3}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: 121cc7358f7014947a6d2c633914c83e, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  - _tag: 2
+    _effect: {fileID: 3966057806598352778, guid: 0ec674be7b2e4204399930321468d5c7, type: 3}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: 9902f7a2e64167c4494f627e7faeafa8, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  - _tag: 3
+    _effect: {fileID: 3987639476403127188, guid: e5cf076c5b39b8644bb6dce6f7b11d03, type: 3}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: ff3d580e76a1fe94ca3d0424da355306, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  - _tag: 4
+    _effect: {fileID: 0}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: 5e7186e69f9681e46ac8ba40de28317b, type: 3}
+    _volume: 1
+    _sprite: {fileID: 5686282174936954878, guid: 6174328dcd2abef409a65ae12b76c27f, type: 3}
+    _spriteSize: {x: 460, y: 520}
+    _spritePivot: {x: 0.5, y: 0}
+    _spriteOffset: {x: 0, y: -240}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0.2
+    _spriteInSeconds: 0.4
+    _spriteHoldSeconds: 0.8
+    _spriteOutSeconds: 0.4
+  - _tag: 5
+    _effect: {fileID: 8739280591939866853, guid: e133a08102e87b94a97efd18f9115d44, type: 3}
+    _effectSeconds: 1
+    _sound: {fileID: 8300000, guid: 37ad1032184cbf540bbed267385a97eb, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  - _tag: 6
+    _effect: {fileID: 4421104794958075047, guid: c6212e1e25bd695429856c78fe07e896, type: 3}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: c6fefc05c63fae04c823892a9eb3e084, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  - _tag: 7
+    _effect: {fileID: 8647942759380570412, guid: 68d2dab45d6f3b0498f8a26b76532578, type: 3}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: de3e8a68edd2bcb438d54d2ec3243e26, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  - _tag: 8
+    _effect: {fileID: 87893666460187031, guid: f677a440fbe815a4aab9c8c771482c04, type: 3}
+    _effectSeconds: 0
+    _sound: {fileID: 8300000, guid: a15f589d121b45346b94dd9a57e18fe3, type: 3}
+    _volume: 1
+    _sprite: {fileID: 0}
+    _spriteSize: {x: 400, y: 400}
+    _spritePivot: {x: 0.5, y: 0.5}
+    _spriteOffset: {x: 0, y: 0}
+    _spriteFromScale: {x: 1, y: 0}
+    _spriteSqueeze: 0
+    _spriteInSeconds: 0.25
+    _spriteHoldSeconds: 0.5
+    _spriteOutSeconds: 0.3
+  _soundVolume: 1
+  _sortingOffset: 10

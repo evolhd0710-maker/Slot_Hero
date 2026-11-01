@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cb255dcda9d2794dac8d3e3ffaf62c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Settings.SettingsLayoutConfig
+  _referenceResolution: {x: 1920, y: 1080}
+  _titlePosition: {x: 120, y: 80}
+  _titleSize: {x: 580, y: 90}
+  _tabPanelPosition: {x: 120, y: 210}
+  _tabPanelSize: {x: 380, y: 680}
+  _tabSize: {x: 350, y: 90}
+  _tabSpacing: 10
+  _tabPanelPadding: 20
+  _tabPanelTopPadding: 20
+  _listPanelPosition: {x: 560, y: 210}
+  _listPanelSize: {x: 1240, y: 680}
+  _itemSize: {x: 1160, y: 70}
+  _itemSpacing: 20
+  _listPanelPadding: 40
+  _listPanelTopPadding: 50
+  _itemPadding: 20
+  _sliderLeft: 300
+  _sliderHeight: 14
+  _sliderHandleSize: 30
+  _sliderValueWidth: 80
+  _muteButtonSize: {x: 130, y: 50}
+  _sliderGap: 20
+  _optionSize: {x: 300, y: 60}
+  _restorePosition: {x: 120, y: 930}
+  _restoreSize: {x: 360, y: 90}
+  _closePosition: {x: 1450, y: 930}
+  _closeSize: {x: 350, y: 90}

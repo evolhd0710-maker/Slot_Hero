@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4fe1de2c4611294091c27e7fba284aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Profile.ProfileVisualConfig
+  _panelColor: {r: 1, g: 1, b: 1, a: 1}
+  _backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+  _cardColors:
+  - {r: 1, g: 0.72, b: 0.68, a: 1}
+  - {r: 0.74, g: 0.92, b: 0.72, a: 1}
+  - {r: 0.7, g: 0.8, b: 1, a: 1}
+  _nameColor: {r: 0.925, g: 0.886, b: 0.784, a: 1}
+  _buttonTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  _infoColor: {r: 1, g: 1, b: 1, a: 1}
+  _emptyTextColor: {r: 1, g: 1, b: 1, a: 1}
+  _actionButtonColor: {r: 1, g: 1, b: 1, a: 0.9}
+  _editTextColor: {r: 0.122, g: 0.106, b: 0.086, a: 1}
+  _deleteTextColor: {r: 0.62, g: 0.169, b: 0.145, a: 1}
+  _currentButtonBorderColor: {r: 1, g: 1, b: 1, a: 1}
+  _currentButtonFillColor: {r: 0, g: 0, b: 0, a: 0}
+  _currentButtonTextColor: {r: 0.925, g: 0.886, b: 0.784, a: 1}
+  _titleFontSize: 40
+  _nameFontSize: 32
+  _infoFontSize: 24
+  _emptyFontSize: 30
+  _actionFontSize: 20
+  _backFontSize: 30
+  _currentButtonFontSize: 26
+  _hoverBrightness: 1.1
+  _pressedBrightness: 0.9
+  _cardHoverScale: 1.05
+  _brokenSaturation: 0
+  _titleText: "\uD504\uB85C\uD544 \uC120\uD0DD"
+  _emptyText: "\uBE44\uC5B4 \uC788\uC74C"
+  _editText: "\uC218\uC815"
+  _deleteText: "\uC0AD\uC81C"
+  _backText: "\uB4A4\uB85C"
+  _playTimeFormat: "\uD50C\uB808\uC774 \uC2DC\uAC04 {0}\uC2DC\uAC04 {1}\uBD84"
+  _lastPlayedFormat: "\uB9C8\uC9C0\uB9C9 \uD50C\uB808\uC774 {0}"
+  _lastPlayedNoneText: "\uC5C6\uC74C"
+  _brokenText: "\uBD88\uB7EC\uC62C \uC218 \uC5C6\uC74C"
+  _noProfileText: "\uD504\uB85C\uD544 \uC5C6\uC74C"

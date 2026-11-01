@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c26ede49ea153043b3f8198f33d5c58, type: 3}
+  m_Name: SanctumPriceConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Sanctum.SanctumPriceConfig
+  SymbolBasePrice: 20
+  SymbolTagValueMultiplier: 5
+  CoinPrices:
+  - Rarity: 0
+    Price: 15
+  - Rarity: 1
+    Price: 25
+  - Rarity: 2
+    Price: 35
+  - Rarity: 3
+    Price: 45
+  - Rarity: 4
+    Price: 60
+  RelicPrices:
+  - Rarity: 0
+    Price: 30
+  - Rarity: 1
+    Price: 45
+  - Rarity: 2
+    Price: 60
+  - Rarity: 3
+    Price: 75
+  - Rarity: 4
+    Price: 100
+  SymbolChangeStartPrice: 10
+  SymbolChangeStep: 10
+  SymbolChangeGrowth: 1
+  RelicRefreshStartPrice: 20
+  RelicRefreshStep: 10
+  RelicRefreshGrowth: 0

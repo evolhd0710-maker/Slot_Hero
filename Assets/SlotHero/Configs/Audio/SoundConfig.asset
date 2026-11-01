@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40a3327df824e7f449a5cdf0a4fe45ec, type: 3}
+  m_Name: SoundConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.SoundConfig
+  _cues:
+  - _cue: 23
+    _grade: 2
+    _clips:
+    - {fileID: 8300000, guid: c2581b1cb2832e74dbf3dfe3d98e5aa3, type: 3}
+    - {fileID: 8300000, guid: 94ed273a395d8924dbd9ce93ca2efe59, type: 3}
+    - {fileID: 8300000, guid: 619d7ba5c8a4f1f49b067c7706507dd1, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  - _cue: 12
+    _grade: 3
+    _clips: []
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  - _cue: 24
+    _grade: 3
+    _clips:
+    - {fileID: 8300000, guid: 59040d947f4fd5640abecf296bb210fa, type: 3}
+    _volume: 1
+    _playSeconds: 2
+    _fadeSeconds: 0.5
+  - _cue: 7
+    _grade: 4
+    _clips: []
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  _bundleWindowSeconds: 0.1
+  _repeatGapSeconds: 0.1
+  _maxVoiceCount: 2
+  _purchaseGoldSteps: 1e00000050000000i

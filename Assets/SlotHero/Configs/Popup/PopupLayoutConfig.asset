@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71394144685cc914b8e36c79a429a92e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Popup.PopupLayoutConfig
+  _referenceResolution: {x: 1920, y: 1080}
+  _maxPopupSize: {x: 1080, y: 820}
+  _popupPadding: 40
+  _popupTopPadding: 60
+  _popupBottomPadding: 40
+  _titleHeight: 80
+  _titleToBodyGap: 30
+  _bodyToButtonGap: 40
+  _bodyPadding: 30
+  _buttonHeight: 100
+  _wideButtonWidth: 450
+  _narrowButtonWidth: 300
+  _wideButtonGap: 80
+  _narrowButtonGap: 40
+  _itemDetailSize: {x: 500, y: 380}
+  _itemDetailCursorOffset: {x: 20, y: -20}
+  _screenEdgePadding: 40
