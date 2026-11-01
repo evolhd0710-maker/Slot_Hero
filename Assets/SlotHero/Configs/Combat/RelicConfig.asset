@@ -173,3 +173,284 @@ MonoBehaviour:
       Amount: 1
       Threshold: 1
       Multiplier: 1
+  _temporaryRelics:
+  - Id: relic_rusted_gladius
+    Number: 0
+    DisplayName: "\uB179\uC2A8 \uB2E8\uAC80"
+    EnglishName: 
+    Rarity: 1
+    Description: "\uD654\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 03000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_senate_ring
+    Number: 0
+    DisplayName: "\uC6D0\uB85C\uC6D0 \uC778\uC7A5 \uBC18\uC9C0"
+    EnglishName: 
+    Rarity: 2
+    Description: "\uBAA9\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 04000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_legion_eagle
+    Number: 0
+    DisplayName: "\uAD70\uB2E8 \uB3C5\uC218\uB9AC"
+    EnglishName: 
+    Rarity: 3
+    Description: "\uBAA9\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 04000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_cracked_crown
+    Number: 0
+    DisplayName: "\uAE08 \uAC04 \uC655\uAD00"
+    EnglishName: 
+    Rarity: 4
+    Description: "\uD1A0\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 05000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_owl_lamp
+    Number: 0
+    DisplayName: "\uBD80\uC5C9\uC774 \uB4F1\uC794"
+    EnglishName: 
+    Rarity: 1
+    Description: "\uC218\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 00000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_marble_mask
+    Number: 0
+    DisplayName: "\uB300\uB9AC\uC11D \uAC00\uBA74"
+    EnglishName: 
+    Rarity: 2
+    Description: "\uAE08\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 01000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_laurel_lyre
+    Number: 0
+    DisplayName: "\uC6D4\uACC4\uC218 \uB9AC\uB77C"
+    EnglishName: 
+    Rarity: 3
+    Description: "\uC218\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 00000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_oracle_tripod
+    Number: 0
+    DisplayName: "\uC2E0\uD0C1\uC758 \uC0BC\uBC1C\uC774"
+    EnglishName: 
+    Rarity: 4
+    Description: "\uCC9C\uC655\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 06000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_sealed_amphora
+    Number: 0
+    DisplayName: "\uBD09\uC778\uB41C \uC554\uD3EC\uB77C"
+    EnglishName: 
+    Rarity: 1
+    Description: "\uC9C0\uAD6C \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 02000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_siren_shell
+    Number: 0
+    DisplayName: "\uC138\uC774\uB80C\uC758 \uC18C\uB77C"
+    EnglishName: 
+    Rarity: 2
+    Description: "\uD574\uC655\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 07000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_star_disc
+    Number: 0
+    DisplayName: "\uBCC4\uC790\uB9AC \uC6D0\uBC18"
+    EnglishName: 
+    Rarity: 3
+    Description: "\uCC9C\uC655\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 06000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_bronze_trident
+    Number: 0
+    DisplayName: "\uCCAD\uB3D9 \uC0BC\uC9C0\uCC3D"
+    EnglishName: 
+    Rarity: 4
+    Description: "\uD574\uC655\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 07000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_canopic_jar
+    Number: 0
+    DisplayName: "\uCE74\uB178\uD478\uC2A4 \uB2E8\uC9C0"
+    EnglishName: 
+    Rarity: 1
+    Description: "\uBA85\uC655\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 08000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_eye_pendant
+    Number: 0
+    DisplayName: "\uD638\uB8E8\uC2A4\uC758 \uB208 \uBAA9\uAC78\uC774"
+    EnglishName: 
+    Rarity: 2
+    Description: "\uD654\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 03000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_golden_scarab
+    Number: 0
+    DisplayName: "\uD669\uAE08 \uC2A4\uCE74\uB77C\uBE0C"
+    EnglishName: 
+    Rarity: 3
+    Description: "\uC9C0\uAD6C \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 02000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_ankh
+    Number: 0
+    DisplayName: "\uC0DD\uBA85\uC758 \uC559\uD06C"
+    EnglishName: 
+    Rarity: 4
+    Description: "\uBA85\uC655\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 08000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_clay_tablet
+    Number: 0
+    DisplayName: "\uC410\uAE30\uBB38\uC790 \uC810\uD1A0\uD310"
+    EnglishName: 
+    Rarity: 1
+    Description: "\uC9C0\uAD6C \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 02000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_cylinder_seal
+    Number: 0
+    DisplayName: "\uC6D0\uD1B5 \uC778\uC7A5"
+    EnglishName: 
+    Rarity: 2
+    Description: "\uD1A0\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 05000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_lapis_harp
+    Number: 0
+    DisplayName: "\uCCAD\uAE08\uC11D \uD558\uD504"
+    EnglishName: 
+    Rarity: 3
+    Description: "\uAE08\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 01000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1
+  - Id: relic_lamassu_idol
+    Number: 0
+    DisplayName: "\uB77C\uB9C8\uC218 \uC870\uAC01"
+    EnglishName: 
+    Rarity: 4
+    Description: "\uD654\uC131 \uD0DC\uADF8 \uAC00\uCE58 +2"
+    Flavor: 
+    CounterStart: 0
+    Effects:
+    - Kind: 0
+      Tags: 03000000i
+      Amount: 2
+      Threshold: 0
+      Multiplier: 1

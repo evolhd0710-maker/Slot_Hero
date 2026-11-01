@@ -171,6 +171,7 @@ namespace SlotHero.Flow
             if (_context != null)
             {
                 _context.Changed -= HandleChanged;
+                _context.HealthLost -= HandleHealthLost;
                 _context = null;
             }
 
@@ -203,6 +204,21 @@ namespace SlotHero.Flow
             _catalog.Attach(run);
             _context = new RunContext(run, _catalog);
             _context.Changed += HandleChanged;
+            _context.HealthLost += HandleHealthLost;
+        }
+
+        /// <summary>
+        /// 붙든 런의 체력이 줄었다. 줄어든 만큼을 넘긴다. 런이 바뀌어도 이 창구 하나만 들으면 된다.
+        /// 흐름이 피격음(S12 체력 잃음)을 낸다(2026년 10월 30일 원재).
+        /// </summary>
+        public event Action<int> HealthLost;
+
+        private void HandleHealthLost(int amount)
+        {
+            if (HealthLost != null)
+            {
+                HealthLost(amount);
+            }
         }
 
         private void HandleChanged()

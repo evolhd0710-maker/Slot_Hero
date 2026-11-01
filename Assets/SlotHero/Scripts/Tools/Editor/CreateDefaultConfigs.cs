@@ -1,4 +1,5 @@
 using System.IO;
+using SlotHero.Audio;
 using SlotHero.Combat;
 using SlotHero.CurrentBuild;
 using SlotHero.Events;
@@ -12,6 +13,7 @@ using SlotHero.RunResult;
 using SlotHero.Sanctum;
 using SlotHero.Save;
 using SlotHero.Settings;
+using SlotHero.TagAttack;
 using SlotHero.Title;
 using SlotHero.TopBar;
 using SlotHero.Ui;
@@ -85,6 +87,12 @@ namespace SlotHero.ToolsEditor
             made += Make<RewardVisualConfig>("Reward", "RewardVisualConfig");
 
             made += Make<SaveConfig>("Save", "SaveConfig");
+
+            // 효과음. 소리 파일은 `소리 가져오기` 가 물린다(2026년 10월 29일).
+            made += Make<SoundConfig>("Audio", "SoundConfig");
+
+            // 태그별 공격 이펙트와 소리. 프리팹과 소리는 `태그 공격 이펙트 가져오기` 가 물린다(2026년 11월 1일).
+            made += Make<TagAttackFxConfig>("TagAttack", "TagAttackFxConfig");
 
             // 여러 화면이 함께 쓰는 스크롤 휠 거리와 스크롤 바 생김새(2026년 10월 25일 원재).
             made += Make<ScrollVisualConfig>("Ui", "ScrollVisualConfig");

@@ -33,6 +33,7 @@ namespace SlotHero.Reward.UI
         private RewardCard _card;
         private RewardVisualConfig _visual;
         private bool _selected;
+        private float _flash;
         private bool _hovering;
         private bool _pressed;
 
@@ -158,6 +159,16 @@ namespace SlotHero.Reward.UI
             ApplyStyle();
         }
 
+        /// <summary>
+        /// 카드 바탕을 반짝임 색 쪽으로 얼마나 보낼지 정한다. 0 이면 원래 색이다.
+        /// 보상 화면이 열릴 때 세 카드가 함께 잠깐 반짝인다(2026년 10월 31일 원재).
+        /// </summary>
+        public void SetFlash(float amount)
+        {
+            _flash = Mathf.Clamp01(amount);
+            ApplyStyle();
+        }
+
         /// <summary>고른 카드인지 정한다. 고른 것만 밝아지고 테두리가 생긴다.</summary>
         public void SetSelected(bool selected)
         {
@@ -177,7 +188,8 @@ namespace SlotHero.Reward.UI
 
             if (_background != null)
             {
-                _background.color = _visual.GetTint(baseColor, _hovering, _pressed);
+                Color tint = _visual.GetTint(baseColor, _hovering, _pressed);
+                _background.color = _flash > 0f ? Color.Lerp(tint, _visual.CardFlashColor, _flash) : tint;
             }
 
             if (_border != null)

@@ -20,14 +20,14 @@ namespace SlotHero.CurrentBuild.UI
         [SerializeField] private CurrentBuildScreenView _view;
 
         [Header("정렬")]
-        [Tooltip("처음 열었을 때의 정렬 기준. 화면 예시는 개수 순이다.")]
-        [SerializeField] private BuildSortOrder _sortOrder = BuildSortOrder.Count;
+        [Tooltip("처음 열었을 때의 정렬 기준. 화면 예시는 개수 순이었고 2026년 11월 1일 원재가 태그 순으로 바꿨다.")]
+        [SerializeField] private BuildSortOrder _sortOrder = BuildSortOrder.Tag;
 
-        [Tooltip("정렬 칸을 누를 때 돌아가는 차례.")]
+        [Tooltip("정렬 칸을 누를 때 돌아가는 차례. 태그 순 → 개수 순 → 이름 순이다(2026년 11월 1일 원재).")]
         [SerializeField] private BuildSortOrder[] _sortCycle =
         {
-            BuildSortOrder.Count,
             BuildSortOrder.Tag,
+            BuildSortOrder.Count,
             BuildSortOrder.Name,
         };
 

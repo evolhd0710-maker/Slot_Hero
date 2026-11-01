@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using SlotHero.CurrentBuild;
+using SlotHero.TagAttack.UI;
 using SlotHero.Ui;
 
 namespace SlotHero.Combat.UI
@@ -53,6 +54,9 @@ namespace SlotHero.Combat.UI
         [SerializeField] private TMP_Text _relicPopupBody;
         [SerializeField] private TMP_Text _relicPopupFlavor;
 
+        [Tooltip("유물 정보 팝업 왼쪽의 유물 그림. 코인 정보 팝업과 같은 꼴이다(2026년 10월 31일 원재).")]
+        [SerializeField] private Image _relicPopupIcon;
+
         [Header("플레이어")]
         [Tooltip("주인공 깃발과 초상. 피그마 그림 그대로다.")]
         [SerializeField] private Image _playerPortrait;
@@ -67,6 +71,7 @@ namespace SlotHero.Combat.UI
         [SerializeField] private TMP_Text _enemyHealthLabel;
         [SerializeField] private Image _enemyArt;
         [SerializeField] private TMP_Text _enemyArtLabel;
+        private Sprite _enemySprite;
         [SerializeField] private Image _enemyInfo;
         [SerializeField] private TMP_Text _enemyNameLabel;
         [SerializeField] private TMP_Text _enemyInfoLabel;
@@ -81,6 +86,21 @@ namespace SlotHero.Combat.UI
 
         [Tooltip("효과음을 내는 소리 칸.")]
         [SerializeField] private AudioSource _sfxAudio;
+
+        [Tooltip("태그별 공격 이펙트와 소리(2026년 11월 1일 원재). 레이저가 적에 닿는 순간 낸다. 소리가 있는 태그는 레이저 발사음을 내지 않는다.")]
+        [SerializeField] private TagAttackFxPlayer _tagAttackFx;
+
+        private float _soundVolume = 1f;
+
+        /// <summary>
+        /// 설정의 소리 크기(전체 × 효과음, 0 ~ 1). 레이저 발사음에 곱한다.
+        /// 흐름이 설정을 적용할 때 넣는다(인게임 화면 기획서 07 설정 화면의 사운드 탭, 2026년 10월 31일 원재).
+        /// </summary>
+        public float SoundVolume
+        {
+            get { return _soundVolume; }
+            set { _soundVolume = Mathf.Clamp01(value); }
+        }
 
         [Header("소환수")]
         [Tooltip("소환수 칸. 자리 0 이 가장 왼쪽이다. 지금은 소환수를 세우는 적이 없다. 장군의 방패병은 장군이 가진 수다(2026년 10월 29일).")]
@@ -271,6 +291,8 @@ namespace SlotHero.Combat.UI
             SetText(_enemyHealthLabel, string.Empty);
             SetBar(_playerHealthBar, 0, 0);
             SetBar(_enemyHealthBar, 0, 0);
+            _enemySprite = null;
+            PaintEnemyArt();
             SetText(_enemyArtLabel, string.Empty);
             SetText(_enemyNameLabel, string.Empty);
             SetText(_enemyInfoLabel, string.Empty);
@@ -517,6 +539,15 @@ namespace SlotHero.Combat.UI
             SetText(_relicPopupBody, relic.Description);
             SetText(_relicPopupFlavor, relic.Definition != null ? relic.Definition.Flavor : string.Empty);
 
+            // 코인 정보 팝업처럼 왼쪽에 그 유물 그림을 둔다. 칸에 그려 둔 그림을 그대로 쓴다.
+            if (_relicPopupIcon != null)
+            {
+                Sprite icon = index < _relicIcons.Length && _relicIcons[index] != null ? _relicIcons[index].sprite : null;
+                _relicPopupIcon.sprite = icon;
+                _relicPopupIcon.enabled = icon != null;
+                _relicPopupIcon.preserveAspect = true;
+            }
+
             if (_layout != null)
             {
                 Vector2 slot = _layout.GetRelicSlotPosition(index);
@@ -575,6 +606,38 @@ namespace SlotHero.Combat.UI
             return _visual != null ? Colored("/" + maxHealth, _visual.HealthMaxColor) : "/" + maxHealth;
         }
 
+        /// <summary>
+        /// 몬스터 일러스트 자리를 칠한다. 그림이 있으면 흰색으로 비율을 지켜 그리고, 없으면 대신 색을 깐다.
+        /// 자리는 9조각 칸 그림으로 만들어져 늘여 그리기(Sliced)라 비율 지키기가 먹지 않았다.
+        /// 몬스터 그림이 세로로 늘어나 2026년 11월 1일 그림을 그대로 그리기(Simple)로 바꿨다.
+        /// </summary>
+        private void PaintEnemyArt()
+        {
+            if (_enemyArt == null)
+            {
+                return;
+            }
+
+            _enemyArt.sprite = _enemySprite;
+            _enemyArt.type = Image.Type.Simple;
+            _enemyArt.preserveAspect = true;
+            _enemyArt.color = _enemySprite != null
+                ? Color.white
+                : (_visual != null ? _visual.EnemyArtStandIn : _enemyArt.color);
+        }
+
+        /// <summary>지금 몬스터 일러스트 자리에 그린 그림. 없으면 null 이다.</summary>
+        public Sprite EnemySprite
+        {
+            get { return _enemySprite; }
+        }
+
+        /// <summary>몬스터 그림을 늘이지 않고 제 비율로 그리는지.</summary>
+        public bool EnemyArtKeepsAspect
+        {
+            get { return _enemyArt != null && _enemyArt.type == Image.Type.Simple && _enemyArt.preserveAspect; }
+        }
+
         /// <summary>몬스터 정보와 일러스트 자리를 채운다.</summary>
         public void ShowEnemy(CombatEnemy enemy)
         {
@@ -583,7 +646,10 @@ namespace SlotHero.Combat.UI
                 return;
             }
 
-            SetText(_enemyArtLabel, enemy.Name);
+            // 몬스터 그림이 있으면 그림을, 없으면 색 칸에 이름을 적는다(2026년 10월 31일 팀원 그림 `c887667`).
+            _enemySprite = _visual != null ? _visual.GetEnemyArt(enemy.Kind) : null;
+            PaintEnemyArt();
+            SetText(_enemyArtLabel, _enemySprite != null ? string.Empty : enemy.Name);
             // 정보 칸은 적 이름과 설명 대신 다음 턴 행동을 보인다(2026년 10월 29일).
             SetText(_enemyNameLabel, _visual != null ? _visual.NextActionTitle : "다음 행동");
             SetText(_enemyInfoLabel, DescribeEnemy(enemy, true));
@@ -828,6 +894,15 @@ namespace SlotHero.Combat.UI
         /// </summary>
         public IEnumerator FireLaser(Color color, CombatEnemy target)
         {
+            return FireLaser(color, target, null);
+        }
+
+        /// <summary>
+        /// 그 태그로 공격하는 레이저. 레이저가 적에 닿는 순간 태그 이펙트를 터뜨리고 태그 소리를 낸다(2026년 11월 1일 원재).
+        /// 태그 소리가 있으면 레이저 발사음은 내지 않는다.
+        /// </summary>
+        public IEnumerator FireLaser(Color color, CombatEnemy target, SymbolTagType? tag)
+        {
             if (_laser == null || _layout == null)
             {
                 yield break;
@@ -855,9 +930,10 @@ namespace SlotHero.Combat.UI
             _laser.gameObject.SetActive(true);
             _laser.transform.SetAsLastSibling();
 
-            if (_sfxAudio != null && _laserClip != null)
+            bool tagSound = tag.HasValue && _tagAttackFx != null && _tagAttackFx.HasSound(tag.Value);
+            if (!tagSound && _sfxAudio != null && _laserClip != null && _soundVolume > 0f)
             {
-                _sfxAudio.PlayOneShot(_laserClip, _visual != null ? _visual.LaserSoundVolume : 0.7f);
+                _sfxAudio.PlayOneShot(_laserClip, (_visual != null ? _visual.LaserSoundVolume : 0.7f) * _soundVolume);
             }
 
             // 뻗는다. 빠르게 나가다 끝에서 느려진다.
@@ -871,6 +947,12 @@ namespace SlotHero.Combat.UI
             }
 
             rect.sizeDelta = new Vector2(length, thickness);
+
+            // 닿는 순간 태그 이펙트와 소리.
+            if (tag.HasValue && _tagAttackFx != null)
+            {
+                _tagAttackFx.Play(tag.Value, GetEnemyRect(target), _soundVolume);
+            }
 
             // 닿은 채 머문다. 굵기가 살짝 떨린다.
             float hold = _visual != null ? _visual.LaserHoldDuration : 0.12f;
@@ -1225,6 +1307,8 @@ namespace SlotHero.Combat.UI
                 if (_reels[i] != null)
                 {
                     _reels[i].SetBackground(_visual.ReelBackColor);
+                    _reels[i].SetFrameMaterial(_visual.ReelFrameMaterial);
+                    _reels[i].SetFrameStyle(_visual);
                 }
             }
 
@@ -1232,7 +1316,7 @@ namespace SlotHero.Combat.UI
             Paint(_relicPanel, _visual.RelicPanelColor);
             Paint(_relicPopup, _visual.PopupColor);
             Paint(_enemyInfo, _visual.PanelColor);
-            Paint(_enemyArt, _visual.EnemyArtStandIn);
+            PaintEnemyArt();
             Paint(_dial, _visual.DialColor);
             Paint(_playerHealthBar, _visual.PlayerBarColor);
             Paint(_enemyHealthBar, _visual.EnemyBarColor);

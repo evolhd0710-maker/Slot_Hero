@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Combat
 {
@@ -60,15 +61,16 @@ namespace SlotHero.Combat
         };
 
         [Header("적")]
-        [Tooltip("방 종류마다 첫 스테이지의 적. 일반은 검투사, 엘리트는 장군이다(Stage 1 몬스터 기획서). " +
-                 "보스(황제)는 기획서가 아직 오지 않아 **임시** 적이다.")]
+        [Tooltip("방 종류마다 첫 스테이지의 적. 일반은 검투사 패턴, 엘리트는 장군 패턴이다(Stage 1 몬스터 기획서). " +
+                 "보스(황제)는 기획서가 아직 오지 않아 **임시** 적이다. " +
+                 "2026년 10월 31일 원재가 팀원 몬스터 그림에 맞춰 이름을 덤(일반), 더머(엘리트), 더스트(보스)로 바꿨다. 패턴은 그대로다.")]
         public List<EnemyRule> Enemies = new List<EnemyRule>
         {
-            new EnemyRule(CombatEnemyKind.Normal, MonsterKind.Gladiator, "검투사",
+            new EnemyRule(CombatEnemyKind.Normal, MonsterKind.Gladiator, "덤",
                 "공격 · 방어 · 버프를 고루 쓴다. 함성으로 얻는 기세로 턴이 지날수록 강해진다.", 30, 6),
-            new EnemyRule(CombatEnemyKind.Elite, MonsterKind.General, "장군",
+            new EnemyRule(CombatEnemyKind.Elite, MonsterKind.General, "더머",
                 "매 턴 방패병을 소환하고, 방패병 수에 따라 돌격 · 방패 진형 · 총공세를 쓴다.", 80, 15),
-            new EnemyRule(CombatEnemyKind.Boss, MonsterKind.Plain, "콜로세움의 주인", "콜로세움을 지배하는 자.", 160, 12),
+            new EnemyRule(CombatEnemyKind.Boss, MonsterKind.Plain, "더스트", "콜로세움을 지배하는 자.", 160, 12),
         };
 
         [Header("몬스터 패턴")]
@@ -98,8 +100,22 @@ namespace SlotHero.Combat
         [Min(0)]
         public int OverkillDamagePerHealth = 10;
 
+        [Tooltip("위 목록에 없던 코인 서른 개의 임시 소모값과 가중치. 설정의 \"임시 아이템 효과 적용\" 이 켜져 있을 때만 쓴다. " +
+                 "2026년 11월 1일 원재가 동전 5 / +1, 은화 8 / +2, 금화 15 / +5 쯤으로 정했다. 같은 등급 안에서 소모가 클수록 가중치도 크다.")]
+        [FormerlySerializedAs("TemporaryCoins")]
+        [SerializeField] private List<CoinRule> _temporaryCoins = TemporaryCoinList();
+        public List<CoinRule> TemporaryCoins { get { return _temporaryCoins; } set { _temporaryCoins = value; } }
+
         /// <summary>그 코인의 규칙. 목록에 없으면 기본값으로 만든다.</summary>
         public CoinRule GetCoinRule(string coinId)
+        {
+            return GetCoinRule(coinId, false);
+        }
+
+        /// <summary>
+        /// 그 코인의 규칙. 위 목록을 먼저 찾고, withTemporary 면 임시 목록에서도 찾는다. 둘 다 없으면 기본값으로 만든다.
+        /// </summary>
+        public CoinRule GetCoinRule(string coinId, bool withTemporary)
         {
             for (int i = 0; i < Coins.Count; i++)
             {
@@ -109,8 +125,64 @@ namespace SlotHero.Combat
                 }
             }
 
+            for (int i = 0; withTemporary && TemporaryCoins != null && i < TemporaryCoins.Count; i++)
+            {
+                if (TemporaryCoins[i].Id == coinId)
+                {
+                    return TemporaryCoins[i];
+                }
+            }
+
             return new CoinRule(coinId, DefaultCoinCost, DefaultCoinWeight,
                 "건 태그의 배수에 " + DefaultCoinWeight + " 를 더한다.");
+        }
+
+        /// <summary>
+        /// 코인 서른 개의 임시 소모값과 가중치(2026년 11월 1일 원재).
+        /// 동전은 4 ~ 6 / +1 ~ 2, 은화는 7 ~ 9 / +2 ~ 3, 금화는 14 ~ 16 / +4 ~ 6 이다.
+        /// </summary>
+        public static List<CoinRule> TemporaryCoinList()
+        {
+            return new List<CoinRule>
+            {
+                TemporaryCoin("coin_bronze_wolf", 5, 1),
+                TemporaryCoin("coin_bronze_shield", 4, 1),
+                TemporaryCoin("coin_bronze_lyre", 4, 1),
+                TemporaryCoin("coin_bronze_amphora", 5, 1),
+                TemporaryCoin("coin_bronze_octopus", 6, 2),
+                TemporaryCoin("coin_bronze_anchor", 5, 1),
+                TemporaryCoin("coin_bronze_pyramid", 6, 2),
+                TemporaryCoin("coin_bronze_camel", 4, 1),
+                TemporaryCoin("coin_bronze_lion", 6, 2),
+                TemporaryCoin("coin_bronze_palm", 5, 1),
+
+                TemporaryCoin("coin_silver_eagle", 9, 3),
+                TemporaryCoin("coin_silver_laurel", 8, 2),
+                TemporaryCoin("coin_silver_owl", 7, 2),
+                TemporaryCoin("coin_silver_column", 8, 2),
+                TemporaryCoin("coin_silver_dolphin", 7, 2),
+                TemporaryCoin("coin_silver_trireme", 9, 3),
+                TemporaryCoin("coin_silver_scarab", 8, 2),
+                TemporaryCoin("coin_silver_moon", 7, 2),
+                TemporaryCoin("coin_silver_wedge", 8, 2),
+                TemporaryCoin("coin_silver_ziggurat", 9, 3),
+
+                TemporaryCoin("coin_gold_emperor", 16, 6),
+                TemporaryCoin("coin_gold_arch", 15, 5),
+                TemporaryCoin("coin_gold_athena", 15, 5),
+                TemporaryCoin("coin_gold_sunchariot", 16, 6),
+                TemporaryCoin("coin_gold_poseidon", 15, 5),
+                TemporaryCoin("coin_gold_galley", 14, 4),
+                TemporaryCoin("coin_gold_sundisk", 15, 5),
+                TemporaryCoin("coin_gold_pharaoh", 16, 6),
+                TemporaryCoin("coin_gold_ishtar", 14, 4),
+                TemporaryCoin("coin_gold_lamassu", 15, 5),
+            };
+        }
+
+        private static CoinRule TemporaryCoin(string id, int cost, int weight)
+        {
+            return new CoinRule(id, cost, weight, "건 태그의 배수 +" + weight);
         }
 
         /// <summary>
@@ -156,6 +228,7 @@ namespace SlotHero.Combat
             // Plain 은 공격력에 이미 더했다. 패턴 몬스터는 패턴 피해마다 더한다.
             enemy.AttackBonus = rule.Monster == MonsterKind.Plain ? 0 : EnemyAttackGrowthPerStage * above;
             enemy.Stage = stage < 1 ? 1 : stage;
+            enemy.Kind = rule.Kind;
             return enemy;
         }
 

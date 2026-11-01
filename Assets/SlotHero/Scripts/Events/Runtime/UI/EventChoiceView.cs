@@ -26,6 +26,7 @@ namespace SlotHero.Events.UI
         [SerializeField] private TMP_Text _label;
 
         private RectTransform _rectTransform;
+        private CanvasGroup _group;
         private EventVisualConfig _visual;
         private Action<EventChoiceView> _onClicked;
         private Action<string, bool> _onItemHover;
@@ -290,6 +291,48 @@ namespace SlotHero.Events.UI
 
             _pressed = false;
             Refresh();
+        }
+
+        /// <summary>
+        /// 칸 전체의 투명도. 0 이면 보이지 않는다. 선택지가 하나씩 드러나는 연출이 쓴다(2026년 10월 30일 원재).
+        /// 칸에 CanvasGroup 이 없으면 처음 쓸 때 붙인다.
+        /// </summary>
+        public float Alpha
+        {
+            get { return _group != null ? _group.alpha : 1f; }
+            set
+            {
+                if (_group == null)
+                {
+                    _group = GetComponent<CanvasGroup>();
+                    if (_group == null)
+                    {
+                        _group = gameObject.AddComponent<CanvasGroup>();
+                    }
+                }
+
+                _group.alpha = Mathf.Clamp01(value);
+            }
+        }
+
+        /// <summary>
+        /// 고른 칸이 위로 올라가는 동안의 모습. flash 가 1 이면 가장 밝은 색(`ChosenFlashColor`), 0 이면 고른 칸 색이다.
+        /// 글자는 고른 칸 글자 색으로 바꾼다.
+        /// </summary>
+        public void ShowChosenFlash(float flash)
+        {
+            if (_background == null || _visual == null)
+            {
+                return;
+            }
+
+            Color chosen = _visual.GetPanelColor(EventChoiceState.Chosen, false, false);
+            _background.color = Color.Lerp(chosen, _visual.ChosenFlashColor, Mathf.Clamp01(flash));
+
+            if (_label != null)
+            {
+                _label.color = Color.Lerp(_visual.ChosenTextColor, _visual.ChoiceTextColor, Mathf.Clamp01(flash));
+            }
         }
 
         /// <summary>지금 상태를 화면에 반영한다.</summary>

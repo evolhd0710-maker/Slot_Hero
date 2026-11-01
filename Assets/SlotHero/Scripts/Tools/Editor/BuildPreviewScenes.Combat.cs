@@ -2,6 +2,8 @@ using SlotHero.Combat;
 using SlotHero.Combat.UI;
 using SlotHero.CurrentBuild;
 using SlotHero.Flow;
+using SlotHero.TagAttack;
+using SlotHero.TagAttack.UI;
 using SlotHero.Tools;
 using SlotHero.Ui;
 using TMPro;
@@ -48,15 +50,20 @@ namespace SlotHero.ToolsEditor
             RectTransform root = UiSceneBuilder.NewRect("CombatScreen", canvas.transform);
             UiSceneBuilder.Stretch(root);
 
-            // 확인용 씬에서만 까는 바탕. 게임 씬으로 옮길 때 지워지고 공용 배경이 보인다.
-            UiSceneBuilder.NewStoneBackdrop("BehindScreen", root);
+            // 확인용 씬에서만 까는 바탕. 게임 씬으로 옮길 때 지워지고 게임 씬의 전투 배경이 보인다.
+            // 그래서 게임 씬과 같은 전투 배경을 깐다. 그림이 없으면 공용 배경이다.
+            if (UiSceneBuilder.NewBattleBackdrop("BehindScreen", root) == null)
+            {
+                UiSceneBuilder.NewStoneBackdrop("BehindScreen", root);
+            }
 
             // ---- 문양 ----
             CombatReelView[] reels = new CombatReelView[rules.ReelCount];
             for (int i = 0; i < reels.Length; i++)
             {
-                // 피그마 릴 틀은 여섯 색이다. 왼쪽부터 청록, 빨강, 금, 회색, 녹청, 보라.
-                Sprite frame = ImportArt.LoadCombat("릴틀_" + (i % ReelFrameCount));
+                // 피그마 릴 틀은 여섯 색(청록, 빨강, 금, 회색, 녹청, 보라)이었다. 무채색 재질을 씌워도 밝기가 제각각이라
+                // 2026년 11월 1일 원재가 회색 틀(`릴틀_3`) 한 장으로 모으라고 했다.
+                Sprite frame = ImportArt.LoadCombat(ReelFrameName);
                 reels[i] = BuildReel("Reel" + i, root, layout, visual, frame);
             }
 
@@ -101,18 +108,34 @@ namespace SlotHero.ToolsEditor
             }
 
             // 유물 정보 팝업. 유물 목록 오른쪽에 뜬다.
-            Image relicPopup = UiSceneBuilder.NewImage("RelicPopup", root, visual.PopupColor);
+            // 코인 정보 팝업과 같은 검은 설명 풍선에 왼쪽 그림, 오른쪽 이름과 구분선과 글이다(2026년 10월 31일 원재).
+            // 밝은 바탕에 검은 글이던 것이 검은 화면 위에서 혼자 튀고 글이 잘 안 보였다.
+            Image relicPopup = UiSceneBuilder.NewFlatImage("RelicPopup", root, visual.PopupColor);
+            UseArt(relicPopup, ImportArt.LoadCombat("설명_풍선"));
             relicPopup.raycastTarget = false;
-            TMP_Text relicPopupName = NewLabel("NameLabel", relicPopup.transform, visual.NameFontSize * 0.85f, visual.DarkTextColor, true);
-            AnchorBand(relicPopupName.rectTransform, 0.78f, 1f, UiScale.Px(14f));
+            Image relicPopupIcon = UiSceneBuilder.NewFlatImage("Icon", relicPopup.transform, Color.white);
+            relicPopupIcon.raycastTarget = false;
+            PlaceInPopup(relicPopupIcon.rectTransform, layout, layout.RelicPopupIconArea);
+            Color relicPopupText = visual.CoinPopupTextColor;
+            TMP_Text relicPopupName = NewLabel("NameLabel", relicPopup.transform, visual.CoinPopupNameFontSize, relicPopupText, true);
+            PlaceInPopup(relicPopupName.rectTransform, layout, layout.RelicPopupNameArea);
             relicPopupName.alignment = TextAlignmentOptions.Left;
-            TMP_Text relicPopupBody = NewLabel("BodyLabel", relicPopup.transform, visual.BodyFontSize, visual.DarkTextColor, false);
-            AnchorBand(relicPopupBody.rectTransform, 0.3f, 0.78f, UiScale.Px(14f));
+            Image relicPopupLine = UiSceneBuilder.NewFlatImage("Line", relicPopup.transform, visual.CoinPopupLineColor);
+            relicPopupLine.raycastTarget = false;
+            PlaceInPopup(relicPopupLine.rectTransform, layout, layout.RelicPopupLineArea);
+            TMP_Text relicPopupBody = NewLabel("BodyLabel", relicPopup.transform, visual.CoinPopupBodyFontSize, relicPopupText, false);
+            PlaceInPopup(relicPopupBody.rectTransform, layout, layout.RelicPopupBodyArea);
             relicPopupBody.alignment = TextAlignmentOptions.TopLeft;
-            TMP_Text relicPopupFlavor = NewLabel("FlavorLabel", relicPopup.transform, visual.BodyFontSize * 0.85f, visual.SubTextColor, false);
-            AnchorBand(relicPopupFlavor.rectTransform, 0.04f, 0.3f, UiScale.Px(14f));
+            relicPopupBody.enableAutoSizing = true;
+            relicPopupBody.fontSizeMax = visual.CoinPopupBodyFontSize;
+            relicPopupBody.fontSizeMin = visual.CoinPopupBodyFontSize * 0.7f;
+            TMP_Text relicPopupFlavor = NewLabel("FlavorLabel", relicPopup.transform, visual.CoinPopupBodyFontSize * 0.9f, visual.SubTextColor, false);
+            PlaceInPopup(relicPopupFlavor.rectTransform, layout, layout.RelicPopupFlavorArea);
             relicPopupFlavor.alignment = TextAlignmentOptions.BottomLeft;
             relicPopupFlavor.fontStyle = FontStyles.Italic;
+            relicPopupFlavor.enableAutoSizing = true;
+            relicPopupFlavor.fontSizeMax = visual.CoinPopupBodyFontSize * 0.9f;
+            relicPopupFlavor.fontSizeMin = visual.CoinPopupBodyFontSize * 0.6f;
             relicPopup.gameObject.SetActive(false);
 
             // ---- 플레이어 ----
@@ -208,6 +231,12 @@ namespace SlotHero.ToolsEditor
             AudioSource sfxAudio = root.gameObject.AddComponent<AudioSource>();
             sfxAudio.playOnAwake = false;
 
+            // 태그별 공격 이펙트와 소리(2026년 11월 1일 원재). 효과음 자리를 함께 쓴다.
+            TagAttackFxPlayer tagAttackFx = root.gameObject.AddComponent<TagAttackFxPlayer>();
+            UiSceneBuilder.SetField(tagAttackFx, "_config",
+                UiSceneBuilder.LoadConfig<TagAttackFxConfig>("TagAttack", "TagAttackFxConfig"));
+            UiSceneBuilder.SetField(tagAttackFx, "_audio", sfxAudio);
+
             DamageNumberView enemyDamage = BuildDamageNumber("EnemyDamageNumber", root, visual);
 
             // 숫자 그림으로 적을 수 없을 때(그림이 빠졌거나 자리 수를 넘을 때) 쓰는 글자 피해 숫자.
@@ -236,6 +265,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_relicPopupName", relicPopupName);
             UiSceneBuilder.SetField(view, "_relicPopupBody", relicPopupBody);
             UiSceneBuilder.SetField(view, "_relicPopupFlavor", relicPopupFlavor);
+            UiSceneBuilder.SetField(view, "_relicPopupIcon", relicPopupIcon);
             UiSceneBuilder.SetField(view, "_playerPortrait", playerPortrait);
             UiSceneBuilder.SetField(view, "_playerHealthPanel", playerPanel);
             UiSceneBuilder.SetField(view, "_playerHealthBar", playerBar);
@@ -252,6 +282,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_enemyDamageNumber", enemyDamage);
             UiSceneBuilder.SetField(view, "_sfxAudio", sfxAudio);
             UiSceneBuilder.SetField(view, "_laserClip", ImportArt.LoadCombatSound("LaserSound"));
+            UiSceneBuilder.SetField(view, "_tagAttackFx", tagAttackFx);
             UiSceneBuilder.SetField(view, "_enemyDamageLabel", enemyDamageText);
             UiSceneBuilder.SetArrayField(view, "_summonPanels", summonPanels);
             UiSceneBuilder.SetArrayField(view, "_summonBars", summonBars);
@@ -395,30 +426,36 @@ namespace SlotHero.ToolsEditor
             return frame;
         }
 
-        /// 피그마 릴 틀 그림 수. 릴이 더 많으면 처음 색부터 다시 쓴다.
-        private const int ReelFrameCount = 6;
+        /// 모든 릴이 함께 쓰는 피그마 릴 틀 그림. 본래 색이 회색이라 태그 색을 입혀도 색이 그대로 나온다.
+        private const string ReelFrameName = "릴틀_3";
+
+        /// 릴 틀 빛 그림(`릴틀_빛`)이 틀 둘레에 둔 여백. 한 변의 비율이다. `릴틀_빛_그리기.ps1` 과 같아야 한다.
+        private const float ReelGlowPadding = 0.15f;
 
         /// 피해 숫자 자리 수. 백만 단위까지 적는다.
         private const int DamageDigitCount = 7;
 
-        /// <summary>릴 한 칸. 강조 테두리, 바탕, 흑요석 판, 문양 그림, 태그 테두리, 피그마 릴 틀.</summary>
+        /// <summary>
+        /// 릴 한 칸. 바탕, 흑요석 판, 문양 그림, 태그 테두리, 피그마 릴 틀.
+        /// 강조는 릴 틀에 태그 색을 입혀 보인다. 예전 바깥 사각 테두리는 2026년 10월 31일 걷었다.
+        /// </summary>
         private static CombatReelView BuildReel(
             string name, Transform parent, CombatLayoutConfig layout, CombatVisualConfig visual, Sprite frame)
         {
             RectTransform rect = UiSceneBuilder.NewRect(name, parent);
             rect.sizeDelta = layout.ReelSize;
 
-            // 테두리는 바탕보다 뒤에 두고 바깥으로 삐져나오게 한다.
-            // 펼친 칸에 크기를 넣으면 구조 감사가 잡는다. 가운데에 고정 크기로 둔다.
-            Image highlight = UiSceneBuilder.NewImage("Highlight", rect, Color.white);
-            float spread = layout.ReelHighlightThickness * 2f;
-            highlight.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            highlight.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-            highlight.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            highlight.rectTransform.sizeDelta = layout.ReelSize + new Vector2(spread, spread);
-            highlight.rectTransform.anchoredPosition = Vector2.zero;
-            highlight.raycastTarget = false;
-            highlight.gameObject.SetActive(false);
+            // 강조한 틀 둘레에 번지는 빛(2026년 11월 1일 원재). 맨 뒤에 깔아 틀 바깥으로만 보인다.
+            // 빛 그림은 틀 그림 둘레에 한 변의 15퍼센트씩 여백을 둔 크기라 칸보다 그만큼 크게 둔다. 처음에는 꺼 둔다.
+            Image glow = UiSceneBuilder.NewFlatImage("Glow", rect, Color.white);
+            glow.sprite = ImportArt.LoadCombat("릴틀_빛");
+            glow.raycastTarget = false;
+            RectTransform glowRect = glow.rectTransform;
+            glowRect.anchorMin = new Vector2(-ReelGlowPadding, -ReelGlowPadding);
+            glowRect.anchorMax = new Vector2(1f + ReelGlowPadding, 1f + ReelGlowPadding);
+            glowRect.offsetMin = Vector2.zero;
+            glowRect.offsetMax = Vector2.zero;
+            glow.gameObject.SetActive(false);
 
             // 바탕은 틀 안쪽만 검게 메운다. 틀 바깥 깨진 가장자리로 비치지 않게 들인다.
             Image background = UiSceneBuilder.NewFlatImage("Background", rect, visual.ReelBackColor);
@@ -450,12 +487,21 @@ namespace SlotHero.ToolsEditor
             frameImage.raycastTarget = false;
             UiSceneBuilder.Stretch(frameImage.rectTransform);
 
+            // 강조한 틀 위에 밝힌 태그 색으로 덧칠하는 흰 틀 윤곽(2026년 11월 1일 원재가 색을 더 밝게 하라고 했다). 처음에는 꺼 둔다.
+            Image shine = UiSceneBuilder.NewFlatImage("Shine", rect, Color.white);
+            UseArt(shine, ImportArt.LoadCombat("릴틀_흰"));
+            shine.raycastTarget = false;
+            UiSceneBuilder.Stretch(shine.rectTransform);
+            shine.gameObject.SetActive(false);
+
             CombatReelView view = rect.gameObject.AddComponent<CombatReelView>();
-            UiSceneBuilder.SetField(view, "_highlight", highlight);
             UiSceneBuilder.SetField(view, "_background", background);
             UiSceneBuilder.SetField(view, "_icon", icon);
             UiSceneBuilder.SetField(view, "_nameLabel", nameLabel);
             UiSceneBuilder.SetField(view, "_tagCorners", corners);
+            UiSceneBuilder.SetField(view, "_frame", frameImage);
+            UiSceneBuilder.SetField(view, "_glow", glow);
+            UiSceneBuilder.SetField(view, "_shine", shine);
             return view;
         }
 
@@ -639,18 +685,20 @@ namespace SlotHero.ToolsEditor
             ring.raycastTarget = false;
             UiSceneBuilder.Stretch(ring.rectTransform);
 
-            Image wheel = UiSceneBuilder.NewFlatImage("Wheel", root, Color.white);
-            UseArt(wheel, ImportArt.LoadCombat("원판_열칸"));
-            wheel.raycastTarget = false;
-
+            // 바퀴 선은 칸마다 따로 그린다. 마우스를 올린 칸은 커지면서 제 선을 감추고 붉은 테두리만 보인다(2026년 10월 31일 원재).
             RectTransform sectorLayer = UiSceneBuilder.NewRect("Sectors", root);
             Sprite outlineSprite = ImportArt.LoadCombat("원판_칸_강조_열칸");
+            Sprite lineSprite = ImportArt.LoadCombat("원판_칸_선");
 
             TagSectorView[] sectors = new TagSectorView[TagDialView.SectorCount];
             for (int i = 0; i < sectors.Length; i++)
             {
                 RectTransform sector = UiSceneBuilder.NewRect("Sector" + i, sectorLayer);
                 UiSceneBuilder.Stretch(sector);
+
+                Image line = UiSceneBuilder.NewFlatImage("Line", sector, Color.white);
+                UseArt(line, lineSprite);
+                line.raycastTarget = false;
 
                 // 칸 그림은 누르기를 받는 자리이자 공격 예정 때 태그 색으로 차는 자리다. 평소에는 투명하다.
                 Image fill = UiSceneBuilder.NewFlatImage("Fill", sector, Color.clear);
@@ -672,6 +720,7 @@ namespace SlotHero.ToolsEditor
                 UiSceneBuilder.SetField(view, "_icon", icon);
                 UiSceneBuilder.SetField(view, "_label", label);
                 UiSceneBuilder.SetField(view, "_outline", outline);
+                UiSceneBuilder.SetField(view, "_line", line);
                 sectors[i] = view;
             }
 
@@ -690,20 +739,28 @@ namespace SlotHero.ToolsEditor
             centerCoin.preserveAspect = true;
             centerCoin.enabled = false;
 
+            // 가운데 코인에 마우스를 올리면 코인 고르기와 같은 붉은 빛을 두른다. 누르면 코인 고르기로 돌아간다(2026년 10월 31일 원재).
+            Image centerGlow = UiSceneBuilder.NewFlatImage("Glow", center, Color.white);
+            UseArt(centerGlow, ImportArt.LoadCombat("코인_고름_강조"));
+            centerGlow.raycastTarget = false;
+            centerGlow.gameObject.SetActive(false);
+
             TMP_Text centerLabel = NewLabel("Label", center, visual.CoinLabelFontSize, visual.DarkTextColor, true);
             UiSceneBuilder.Stretch(centerLabel.rectTransform);
             Button centerButton = UiSceneBuilder.AddButton(center.gameObject, centerBack);
+            PointerRelay centerHover = center.gameObject.AddComponent<PointerRelay>();
 
             TagDialView dialView = root.gameObject.AddComponent<TagDialView>();
             UiSceneBuilder.SetArrayField(dialView, "_sectors", sectors);
             UiSceneBuilder.SetField(dialView, "_sectorLayer", sectorLayer);
             UiSceneBuilder.SetField(dialView, "_wheelBack", wheelBack);
-            UiSceneBuilder.SetField(dialView, "_wheel", wheel);
             UiSceneBuilder.SetField(dialView, "_centerButton", centerButton);
             UiSceneBuilder.SetField(dialView, "_centerBack", centerBack);
             UiSceneBuilder.SetField(dialView, "_medal", medal);
             UiSceneBuilder.SetField(dialView, "_centerCoin", centerCoin);
             UiSceneBuilder.SetField(dialView, "_centerLabel", centerLabel);
+            UiSceneBuilder.SetField(dialView, "_centerGlow", centerGlow);
+            UiSceneBuilder.SetField(dialView, "_centerHover", centerHover);
             return dialView;
         }
 

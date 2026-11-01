@@ -32,6 +32,9 @@ namespace SlotHero.Flow
         private RunContext _context;
         private Action<CombatResult> _onFinished;
 
+        // 설정의 "임시 아이템 효과 적용". 켜면 효과 없던 유물과 코인이 임시 효과를 쓴다.
+        private bool _temporaryItemEffects;
+
         /// <summary>전투 화면. 검사가 직접 누르는 데 쓴다.</summary>
         public CombatScreenController Screen
         {
@@ -95,6 +98,27 @@ namespace SlotHero.Flow
             }
         }
 
+        /// <summary>레이저 발사음에 곱할 소리 크기를 전투 화면에 넘긴다.</summary>
+        public void SetSoundVolume(float volume)
+        {
+            if (_screen != null && _screen.View != null)
+            {
+                _screen.View.SoundVolume = volume;
+            }
+        }
+
+        /// <inheritdoc />
+        public void SetTemporaryItemEffects(bool enabled)
+        {
+            _temporaryItemEffects = enabled;
+        }
+
+        /// <summary>임시 아이템 효과를 쓰는지.</summary>
+        public bool TemporaryItemEffects
+        {
+            get { return _temporaryItemEffects; }
+        }
+
         /// <inheritdoc />
         public Sprite GetIcon(string id)
         {
@@ -135,7 +159,7 @@ namespace SlotHero.Flow
             for (int i = 0; i < run.Owned.Relics.Count; i++)
             {
                 OwnedRelic owned = run.Owned.Relics[i];
-                RelicDefinition definition = _relics != null ? _relics.Find(owned.RelicId) : null;
+                RelicDefinition definition = _relics != null ? _relics.Find(owned.RelicId, _temporaryItemEffects) : null;
                 string name = _catalog != null ? _catalog.GetDisplayName(owned.RelicId) : owned.RelicId;
                 CombatRelic relic = new CombatRelic(owned.RelicId, name, definition, owned.Stack);
 
@@ -209,7 +233,7 @@ namespace SlotHero.Flow
         private CombatCoin MakeCoin(string id)
         {
             CoinRule rule = _rules != null
-                ? _rules.GetCoinRule(id)
+                ? _rules.GetCoinRule(id, _temporaryItemEffects)
                 : new CoinRule(id, 10, 5, string.Empty);
             string name = _catalog != null ? _catalog.GetDisplayName(id) : id;
 

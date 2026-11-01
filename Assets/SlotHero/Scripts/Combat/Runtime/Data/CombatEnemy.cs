@@ -33,6 +33,9 @@ namespace SlotHero.Combat
     {
         public string Name;
 
+        /// <summary>방 종류. 몬스터 그림을 고를 때 쓴다(2026년 10월 31일).</summary>
+        public CombatEnemyKind Kind;
+
         /// <summary>몬스터 정보 칸에 적는 설명. 보스 등 특수 능력을 적는 자리다.</summary>
         public string Description;
 

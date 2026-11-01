@@ -48,9 +48,9 @@ namespace SlotHero.Sanctum
         public Vector2 RightMatSize { get { return _rightMatSize; } set { _rightMatSize = value; } }
 
         [Header("문양 자리 · 2 × 2")]
-        [Tooltip("첫 문양 자리의 왼쪽 위. (353, 207)")]
+        [Tooltip("첫 문양 자리의 왼쪽 위. (353, 207) 위와 오른쪽이 비어 보여 2026년 11월 1일 원재가 문양과 코인 묶음을 돗자리 가운데(555, 505)에 맞추라고 해 (355, 180) 이다.")]
         [FormerlySerializedAs("SymbolFirstPosition")]
-        [SerializeField] private Vector2 _symbolFirstPosition = UiScale.V(350f, 210f);
+        [SerializeField] private Vector2 _symbolFirstPosition = UiScale.V(355f, 180f);
         public Vector2 SymbolFirstPosition { get { return _symbolFirstPosition; } set { _symbolFirstPosition = value; } }
 
         [Tooltip("문양 자리 하나의 크기. 예전 바닥 그림은 169 × 176 이었다. " +
@@ -59,9 +59,10 @@ namespace SlotHero.Sanctum
         [SerializeField] private Vector2 _symbolSlotSize = UiScale.V(170f, 170f);
         public Vector2 SymbolSlotSize { get { return _symbolSlotSize; } set { _symbolSlotSize = value; } }
 
-        [Tooltip("문양 자리 사이의 가로와 세로 간격. (실측 213, 209) 가격 줄이 문양 칸에 걸쳐 2026년 10월 25일 원재가 옮기라고 해 줄 사이를 230 으로 넓혔다.")]
+        [Tooltip("문양 자리 사이의 가로와 세로 간격. (실측 213, 209) 가격 줄이 문양 칸에 걸쳐 2026년 10월 25일 원재가 옮기라고 해 줄 사이를 230 으로 넓혔다. " +
+            "2026년 11월 1일 돗자리 좌우 여백을 맞추며 가로도 230 으로 넓혔다.")]
         [FormerlySerializedAs("SymbolSpacing")]
-        [SerializeField] private Vector2 _symbolSpacing = UiScale.V(210f, 230f);
+        [SerializeField] private Vector2 _symbolSpacing = UiScale.V(230f, 230f);
         public Vector2 SymbolSpacing { get { return _symbolSpacing; } set { _symbolSpacing = value; } }
 
         [Tooltip("한 줄에 놓는 문양 수.")]
@@ -71,9 +72,10 @@ namespace SlotHero.Sanctum
         public int SymbolColumns { get { return _symbolColumns; } set { _symbolColumns = value; } }
 
         [Header("코인 자리 · 가로")]
-        [Tooltip("첫 코인 자리의 왼쪽 위. (364, 634) 문양 둘째 줄과 그 가격이 내려가 670 으로 옮겼다(2026년 10월 25일).")]
+        [Tooltip("첫 코인 자리의 왼쪽 위. (364, 634) 문양 둘째 줄과 그 가격이 내려가 670 으로 옮겼다(2026년 10월 25일). " +
+            "2026년 11월 1일 묶음을 돗자리 가운데로 올리며 코인 가운데를 문양 열 가운데에 맞춰 (365, 640) 이다.")]
         [FormerlySerializedAs("CoinFirstPosition")]
-        [SerializeField] private Vector2 _coinFirstPosition = UiScale.V(360f, 670f);
+        [SerializeField] private Vector2 _coinFirstPosition = UiScale.V(365f, 640f);
         public Vector2 CoinFirstPosition { get { return _coinFirstPosition; } set { _coinFirstPosition = value; } }
 
         [Tooltip("코인 자리 하나의 크기. 받침 그림 크기다. (145 × 145)")]
@@ -81,37 +83,44 @@ namespace SlotHero.Sanctum
         [SerializeField] private Vector2 _coinSlotSize = UiScale.V(150f, 150f);
         public Vector2 CoinSlotSize { get { return _coinSlotSize; } set { _coinSlotSize = value; } }
 
-        [Tooltip("코인 자리 사이의 가로 간격. (실측 195)")]
+        [Tooltip("코인 자리 사이의 가로 간격. (실측 195) 문양 열과 같은 230 이다(2026년 11월 1일).")]
         [FormerlySerializedAs("CoinSpacing")]
-        [SerializeField] private float _coinSpacing = UiScale.Px(200f);
+        [SerializeField] private float _coinSpacing = UiScale.Px(230f);
         public float CoinSpacing { get { return _coinSpacing; } set { _coinSpacing = value; } }
 
         [Header("유물 자리 · 가로")]
-        [Tooltip("첫 유물 자리의 왼쪽 위. (1172, 579) 육각 받침을 세로로 세우며 받침 가운데 곧은 변 사이로 옮겼다(2026년 10월 25일 원재).")]
+        [Tooltip("첫 유물 자리의 왼쪽 위. (1172, 579) 육각 받침을 세로로 세우며 받침 가운데 곧은 변 사이로 옮겼다(2026년 10월 25일 원재). " +
+            "2026년 10월 31일 받침을 가로로 늘리고 유물 칸을 두 배로 키우며 (1085, 505) 로 옮겼다. " +
+            "2026년 11월 1일 칸과 받침을 20% 줄이며 받침 가운데 줄에 맞춰 (1139, 525) 로 옮겼다.")]
         [FormerlySerializedAs("RelicFirstPosition")]
-        [SerializeField] private Vector2 _relicFirstPosition = UiScale.V(1210f, 560f);
+        [SerializeField] private Vector2 _relicFirstPosition = UiScale.V(1139f, 525f);
         public Vector2 RelicFirstPosition { get { return _relicFirstPosition; } set { _relicFirstPosition = value; } }
 
-        [Tooltip("유물 자리 하나의 크기. 칸 그림(행상_유물칸)이 이 크기로 깔린다. (약 92 × 115) 세로 받침의 폭에 셋이 들어가게 90 × 108 이다(2026년 10월 25일).")]
+        [Tooltip("유물 자리 하나의 크기. 칸 그림(행상_유물칸)이 이 크기로 깔린다. (약 92 × 115) 세로 받침의 폭에 셋이 들어가게 90 × 108 이었다(2026년 10월 25일). " +
+            "유물이 작아 잘 안 보인다고 2026년 10월 31일 원재가 가로 세로 두 배인 180 × 216 으로 키웠다. " +
+            "너무 커졌다고 2026년 11월 1일 원재가 20% 줄여 144 × 173 이다.")]
         [FormerlySerializedAs("RelicSlotSize")]
-        [SerializeField] private Vector2 _relicSlotSize = UiScale.V(90f, 108f);
+        [SerializeField] private Vector2 _relicSlotSize = UiScale.V(144f, 173f);
         public Vector2 RelicSlotSize { get { return _relicSlotSize; } set { _relicSlotSize = value; } }
 
-        [Tooltip("유물 자리 사이의 가로 간격. 예전 실측은 134 와 137 이었다. 세로 받침의 폭에 맞춰 110 이다(2026년 10월 25일).")]
+        [Tooltip("유물 자리 사이의 가로 간격. 예전 실측은 134 와 137 이었다. 세로 받침의 폭에 맞춰 110 이었다(2026년 10월 25일). 칸을 두 배로 키우며 칸 사이 10 을 남긴 190 이었다(2026년 10월 31일). 칸을 20% 줄이며 칸 사이 10 을 그대로 둔 154 다(2026년 11월 1일).")]
         [FormerlySerializedAs("RelicSpacing")]
-        [SerializeField] private float _relicSpacing = UiScale.Px(110f);
+        [SerializeField] private float _relicSpacing = UiScale.Px(154f);
         public float RelicSpacing { get { return _relicSpacing; } set { _relicSpacing = value; } }
 
         [Header("유물 받침")]
         [Tooltip("유물 세 칸을 얹는 육각 받침의 왼쪽 위. 예전에는 양탄자 그림에 박혀 있었고 2026년 10월 19일에 따로 떼었다. " +
             "옛 양탄자에서 잰 자리(1108, 445)를 10 단위로 옮겼다. 2026년 10월 25일 원재가 위아래가 뾰족한 세로 육각형으로 세우라고 해 " +
-            "그림을 90 도 돌리고 양탄자 가운데(1365)에 맞춰 문양 변경 칸 아래로 옮겼다. 위 꼭짓점에 새로고침 구슬이 앉는다.")]
-        [SerializeField] private Vector2 _relicBoardPosition = UiScale.V(1170f, 380f);
+            "그림을 90 도 돌리고 양탄자 가운데(1365)에 맞춰 문양 변경 칸 아래로 옮겼다. 위 꼭짓점에 새로고침 구슬이 앉는다. " +
+            "2026년 11월 1일 받침을 20% 줄이며 가운데(1365, 630)를 그대로 두고 (1113, 430) 으로 옮겼다.")]
+        [SerializeField] private Vector2 _relicBoardPosition = UiScale.V(1113f, 430f);
         public Vector2 RelicBoardPosition { get { return _relicBoardPosition; } set { _relicBoardPosition = value; } }
 
         [Tooltip("육각 받침의 크기. 옛 가로 받침은 옛 양탄자에서 잰 약 504 × 397 이었다. " +
-            "세로로 세운 그림(800 × 1000)의 비율로 양탄자 안 금테 위에 들어가게 390 × 480 이다(2026년 10월 25일).")]
-        [SerializeField] private Vector2 _relicBoardSize = UiScale.V(390f, 480f);
+            "세로로 세운 그림(800 × 1000)의 비율로 양탄자 안 금테 위에 들어가게 390 × 480 이었다(2026년 10월 25일). " +
+            "유물 칸을 두 배로 키운 셋이 곧은 옆변 사이에 들어가게 2026년 10월 31일 원재가 가로로 늘려 630 × 500 이었다. 위아래 꼭짓점은 그대로 뾰족하다. " +
+            "양탄자를 벗어난다고 2026년 11월 1일 원재가 유물 칸과 함께 20% 줄여 504 × 400 이다.")]
+        [SerializeField] private Vector2 _relicBoardSize = UiScale.V(504f, 400f);
         public Vector2 RelicBoardSize { get { return _relicBoardSize; } set { _relicBoardSize = value; } }
 
         [Header("문양 변경")]

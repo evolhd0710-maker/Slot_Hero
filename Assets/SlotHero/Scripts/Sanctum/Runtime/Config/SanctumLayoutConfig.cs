@@ -52,11 +52,13 @@ namespace SlotHero.Sanctum
         [Tooltip(
             "오른쪽을 가리키는 화살표 버튼의 왼쪽 위.\n" +
             "PSD 실측은 (1532, 898) 인데 **현재 빌드 버튼과 겹쳐** 왼쪽으로 220 물렸다.\n" +
-            "현재 빌드 버튼은 04 화면 공통 규칙 이 우측 하단 1650 부터로 정해 둔 고정 자리다.\n" +
+            "현재 빌드 버튼은 우측 하단 고정 자리다. 기획서는 1650 부터, 2026년 10월 31일부터 1680 부터다.\n" +
             "화살표를 PSD 자리로 되돌리려면 현재 빌드 버튼을 왼쪽 아래로 옮겨야 한다. " +
-            "`HudLayoutConfig.OnLeftCorner` 로 바꾼다.")]
+            "`HudLayoutConfig.OnLeftCorner` 로 바꾼다.\n" +
+            "2026년 10월 31일 현재 빌드 버튼을 모서리 40 으로 옮기며 자동 저장 표시가 버튼 왼쪽 아래 줄(1000 ~ 1040)로 왔다. " +
+            "화살표와 겹쳐 900 에서 830 으로 70 올렸다.")]
         [FormerlySerializedAs("ExitPosition")]
-        [SerializeField] private Vector2 _exitPosition = UiScale.V(1310f, 900f);
+        [SerializeField] private Vector2 _exitPosition = UiScale.V(1310f, 830f);
         public Vector2 ExitPosition { get { return _exitPosition; } set { _exitPosition = value; } }
 
         [Tooltip("화살표 버튼의 크기. (343 × 161)")]

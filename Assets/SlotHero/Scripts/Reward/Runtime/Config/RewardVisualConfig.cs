@@ -133,6 +133,105 @@ namespace SlotHero.Reward
         [SerializeField] private float _pressedBrightness = 0.90f;
         public float PressedBrightness { get { return _pressedBrightness; } set { _pressedBrightness = value; } }
 
+        [Header("연출")]
+        [Tooltip("세 카드가 함께 반짝이는 시간(초). 2026년 10월 31일 원재가 0.4초로 정했고 " +
+                 "2026년 11월 1일 원재가 세 배인 1.2초로 늘렸다.")]
+        [SerializeField, Min(0f)] private float _cardFlashSeconds = 1.2f;
+        public float CardFlashSeconds { get { return _cardFlashSeconds; } set { _cardFlashSeconds = value; } }
+
+        [Tooltip("앞 연출(골드 오르기, 오버킬 회복 등장)이 끝나고 카드 반짝임이 시작되기까지 기다리는 시간(초). " +
+                 "2026년 10월 31일 원재가 반짝임이 너무 일찍 시작한다고 0.3초 늦췄다.")]
+        [SerializeField, Min(0f)] private float _cardFlashDelaySeconds = 0.3f;
+        public float CardFlashDelaySeconds { get { return _cardFlashDelaySeconds; } set { _cardFlashDelaySeconds = value; } }
+
+        [Tooltip("기본 보상 골드, 오버킬 골드, 오버킬 회복이 차례로 나올 때 앞 연출이 끝나고 다음이 시작하기까지 쉬는 시간(초). " +
+                 "2026년 11월 1일 원재가 넷을 차례로 보이게 했다.")]
+        [SerializeField, Min(0f)] private float _revealStepGapSeconds = 0.15f;
+        public float RevealStepGapSeconds { get { return _revealStepGapSeconds; } set { _revealStepGapSeconds = value; } }
+
+        [Tooltip("오버킬 회복(하트와 회복량)이 튀어나오는 시간(초). 숫자가 오르지 않고 팝업처럼 커졌다가 제 크기로 앉는다(2026년 11월 1일 원재).")]
+        [SerializeField, Min(0f)] private float _healPopSeconds = 0.3f;
+        public float HealPopSeconds { get { return _healPopSeconds; } set { _healPopSeconds = value; } }
+
+        [Tooltip("오버킬 회복이 튀어나올 때 가장 커지는 배율.")]
+        [SerializeField, Min(1f)] private float _healPopPeakScale = 1.35f;
+        public float HealPopPeakScale { get { return _healPopPeakScale; } set { _healPopPeakScale = value; } }
+
+        [Tooltip("반짝임이 가장 밝을 때 카드 바탕이 가는 색.")]
+        [SerializeField] private Color _cardFlashColor = new Color(1f, 0.93f, 0.72f, 1f);
+        public Color CardFlashColor { get { return _cardFlashColor; } set { _cardFlashColor = value; } }
+
+        [Tooltip("골드 숫자가 0 에서 받는 골드까지 오르는 시간(초). 2026년 10월 31일 원재가 정했다.")]
+        [SerializeField, Min(0f)] private float _goldCountSeconds = 0.3f;
+        public float GoldCountSeconds { get { return _goldCountSeconds; } set { _goldCountSeconds = value; } }
+
+        /// <summary>골드가 오르기 시작하고 elapsed 초가 지났을 때 적을 값. 0 에서 target 까지 고르게 오른다.</summary>
+        public static int GetCountedGold(int target, float elapsed, float seconds)
+        {
+            if (seconds <= 0f || elapsed >= seconds)
+            {
+                return target;
+            }
+
+            float t = Mathf.Clamp01(elapsed / seconds);
+            return Mathf.RoundToInt(target * t);
+        }
+
+        /// <summary>
+        /// 보상 화면이 열린 뒤 연출 넷이 시작하는 때(2026년 11월 1일 원재).
+        /// 기본 보상 골드가 오르고, 오버킬 골드가 오르고, 오버킬 회복이 튀어나오고, 카드가 반짝인다.
+        /// 없는 연출(오버킬 골드 0, 회복 0)은 건너뛰고 다음이 바로 이어진다.
+        /// </summary>
+        public RewardRevealTimeline GetRevealTimeline(bool hasOverkillGold, bool hasOverkillHeal)
+        {
+            RewardRevealTimeline timeline = new RewardRevealTimeline();
+            timeline.BaseGoldStart = 0f;
+            float end = GoldCountSeconds;
+
+            timeline.OverkillGoldStart = hasOverkillGold ? end + RevealStepGapSeconds : end;
+            if (hasOverkillGold)
+            {
+                end = timeline.OverkillGoldStart + GoldCountSeconds;
+            }
+
+            timeline.HealPopStart = hasOverkillHeal ? end + RevealStepGapSeconds : end;
+            if (hasOverkillHeal)
+            {
+                end = timeline.HealPopStart + HealPopSeconds;
+            }
+
+            timeline.CardFlashStart = end + CardFlashDelaySeconds;
+            timeline.End = timeline.CardFlashStart + CardFlashSeconds;
+            return timeline;
+        }
+
+        /// <summary>
+        /// 튀어나온 지 elapsed 초 된 오버킬 회복의 배율. 시작 전은 0 이라 보이지 않는다.
+        /// 앞 60퍼센트 동안 가장 큰 배율까지 커지고 나머지 동안 제 크기(1)로 줄어든다.
+        /// </summary>
+        public static float GetPopScale(float elapsed, float seconds, float peak)
+        {
+            if (elapsed < 0f)
+            {
+                return 0f;
+            }
+
+            if (seconds <= 0f || elapsed >= seconds)
+            {
+                return 1f;
+            }
+
+            float t = elapsed / seconds;
+            const float grow = 0.6f;
+            if (t < grow)
+            {
+                float k = t / grow;
+                return peak * (1f - (1f - k) * (1f - k));
+            }
+
+            return Mathf.Lerp(peak, 1f, (t - grow) / (1f - grow));
+        }
+
         /// <summary>카드 배경색. 고른 것과 아닌 것이 다르다.</summary>
         public Color GetCardColor(bool selected)
         {

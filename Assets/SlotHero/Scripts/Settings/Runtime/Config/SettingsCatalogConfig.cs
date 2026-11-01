@@ -92,6 +92,9 @@ namespace SlotHero.Settings
                 .KeptOnRestore());
             tab.Items.Add(SettingDefinition.Toggle("autoSaveNotice", "자동 저장", true, "꺼짐", "켜짐"));
             tab.Items.Add(SettingDefinition.Choice("presentationSpeed", "연출 속도", 0, "보통", "빠름", "스킵"));
+
+            // 효과가 없던 유물과 코인에 붙인 임시 효과를 켜고 끈다(2026년 11월 1일 원재). 처음에는 켜져 있다.
+            tab.Items.Add(SettingDefinition.Toggle("temporaryItemEffects", "임시 아이템 효과 적용", true, "꺼짐", "켜짐"));
             return tab;
         }
 

@@ -114,7 +114,7 @@ namespace SlotHero.ToolsEditor
 
             // 배경은 세 갈래로 고른다.
             //
-            // 1. 배경 요청 기획서로 발주한 "메인 화면 배경 · 고대 유적 슬롯". 아직 안 왔다
+            // 1. 메인 화면 배경(`배경_메인화면`). 팀원이 `메인 메뉴 배경 1` 로 올렸다(2026년 10월 31일 `c887667`)
             // 2. 와이어프레임 `06 타이틀 화면` 이 쓴 임시 그림 `배경 · 폐허.png`.
             //    그 위에 `배경 · 검정 35%` 를 얹는다. 와이어프레임이 그렇게 했다
             // 3. 둘 다 없으면 배경 요청 기획서가 정한 딥 브라운 한 색
@@ -135,6 +135,7 @@ namespace SlotHero.ToolsEditor
             background.sprite = titleBackground;
             background.type = Image.Type.Simple;
             UiSceneBuilder.Stretch(background.rectTransform);
+            UiSceneBuilder.CoverParent(background);
 
             if (temporary)
             {
@@ -228,12 +229,20 @@ namespace SlotHero.ToolsEditor
             Image background = UiSceneBuilder.NewFlatImage("Background", root, visual.BackgroundColor);
             UiSceneBuilder.Stretch(background.rectTransform);
 
-            // 회색 바탕 대신 방 화면과 같은 돌벽 그림을 깐다(2026년 10월 20일 원재).
-            Sprite profileBackdrop = ImportArt.LoadItemArt("배경_돌벽");
+            // 회색 바탕 대신 그림을 깐다(2026년 10월 20일 원재).
+            // 2026년 10월 31일 원재가 팀원 배경과 같은 풍으로 다시 그리게 해 코덱스가 그린 달밤 폐허 회랑(`배경_프로필`)이다.
+            // 없으면 예전 돌벽을 쓴다.
+            Sprite profileBackdrop = ImportArt.LoadItemArt("배경_프로필");
+            if (profileBackdrop == null)
+            {
+                profileBackdrop = ImportArt.LoadItemArt("배경_돌벽");
+            }
+
             if (profileBackdrop != null)
             {
                 background.sprite = profileBackdrop;
                 background.type = Image.Type.Simple;
+                UiSceneBuilder.CoverParent(background);
             }
 
             Image titlePanel = UiSceneBuilder.NewImage("TitlePanel", root, visual.PanelColor);
@@ -321,7 +330,8 @@ namespace SlotHero.ToolsEditor
             RectTransform listContent = UiSceneBuilder.NewRect("ListContent", listViewport);
             UiSceneBuilder.Stretch(listContent);
 
-            ScrollRect listScroll = UiSceneBuilder.AddScroll(listViewport, listContent);
+            // 설정 목록은 휠과 스크롤 바로만 움직인다. 마우스로 끌어도 밀리지 않는다(2026년 10월 31일 원재).
+            ScrollRect listScroll = UiSceneBuilder.AddScroll(listViewport, listContent, true);
 
             Image restorePanel = UiSceneBuilder.NewButtonImage("RestorePanel", root, visual.PanelColor);
             UiSceneBuilder.AddShadowPx(restorePanel, 8f, 5f);
@@ -798,9 +808,15 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_buttonLayer", buttonLayer);
             UiSceneBuilder.SetField(view, "_buttonPrefab", buttonPrefab.GetComponent<PopupButtonView>());
 
+            // 열고 닫을 때 팝업 칸이 살짝 커지고 작아진다. 막은 크기는 그대로 두고 함께 흐려진다(2026년 10월 31일 원재).
+            CanvasGroup bodyGroup = body.gameObject.AddComponent<CanvasGroup>();
+            PopAnimation pop = body.gameObject.AddComponent<PopAnimation>();
+            pop.Setup(popupPanel.rectTransform, bodyGroup);
+
             PopupPresenter presenter = root.gameObject.AddComponent<PopupPresenter>();
             UiSceneBuilder.SetField(presenter, "_popupRoot", body.gameObject);
             UiSceneBuilder.SetField(presenter, "_view", view);
+            UiSceneBuilder.SetField(presenter, "_animation", pop);
 
             // 08장 예시 1 · 새 게임 확인. 되돌릴 수 없는 조작이라 오른쪽에 강조색이 붙는다.
             view.ApplyStyle();
@@ -1040,7 +1056,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(controller, "_view", view);
 
             view.ApplyLayout();
-            view.Show(PreviewSamples.Build(), BuildSortOrder.Count, null);
+            view.Show(PreviewSamples.Build(), BuildSortOrder.Tag, null);
 
             AddDriver();
             SaveScene(scene, "13 현재 빌드 화면");
@@ -1169,14 +1185,14 @@ namespace SlotHero.ToolsEditor
             CurrentBuildSnapshot build = PreviewSamples.Build();
             ItemPickRequest request = new ItemPickRequest();
             request.Kind = ItemPickKind.Symbol;
-            request.Title = "바꿀 문양 선택";
+            request.Title = "변환할 문양 선택";
             request.Candidates.AddRange(build.Symbols);
             request.Build = build;
-            request.ResultFormat = "[{0}] 을 무작위 문양으로 바꾼다";
+            request.ShowResult = false;
             request.ConfirmText = "바꾸기";
 
             view.ApplyLayout();
-            view.Show(request, BuildSortOrder.Count, null, build.Symbols.Count > 0 ? build.Symbols[0].Id : string.Empty);
+            view.Show(request, BuildSortOrder.Tag, null, build.Symbols.Count > 0 ? build.Symbols[0].Id : string.Empty);
 
             AddDriver();
             SaveScene(scene, "13 고르기 화면");
@@ -1232,6 +1248,10 @@ namespace SlotHero.ToolsEditor
             paper.type = Image.Type.Simple;
             paper.raycastTarget = false;
 
+            // 두루마리 펼치기(효과음과 이펙트 목록 E05). 양피지 바로 위, 노드 아래에 둔다.
+            // 조각 그림이 모두 지도_양피지와 같은 판이라 양피지와 같은 크기로 겹친다. 펼치는 동안만 켠다.
+            MapScrollUnroll unroll = BuildMapScrollUnroll(root, visual, paper.gameObject);
+
             // 노드 영역을 화면 가운데에 둔다. 양피지의 종이 몸통 안이다.
             RectTransform viewport = UiSceneBuilder.NewRect("Viewport", root);
             viewport.anchorMin = new Vector2(0.5f, 0.5f);
@@ -1240,6 +1260,10 @@ namespace SlotHero.ToolsEditor
             viewport.sizeDelta = visual.MapSize;
             viewport.anchoredPosition = Vector2.zero;
             viewport.gameObject.AddComponent<RectMask2D>();
+
+            // 두루마리를 펼치는 동안 노드와 간선을 감추고 누르지 못하게 한다.
+            CanvasGroup mapContent = viewport.gameObject.AddComponent<CanvasGroup>();
+            UiSceneBuilder.SetField(unroll, "_mapContent", mapContent);
 
             RectTransform content = UiSceneBuilder.NewRect("Content", viewport);
             UiSceneBuilder.Stretch(content);
@@ -1270,12 +1294,71 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(controller, "_view", view);
             UiSceneBuilder.SetField(controller, "_screenRoot", root.gameObject);
             UiSceneBuilder.SetField(controller, "_peekDim", peekDim.gameObject);
+            UiSceneBuilder.SetField(controller, "_unroll", unroll);
 
             // 지도가 화면보다 넓어 좌우로 움직인다. 처음에는 왼쪽 끝부터 보이게 둔다.
             view.Build(map, progress);
 
             AddDriver();
             SaveScene(scene, "09 맵 화면");
+        }
+
+        /// <summary>
+        /// 두루마리 펼치기 조각을 만든다. 효과음과 이펙트 목록 E05.
+        ///   ScrollUnroll        : 펼치는 동안만 켠다
+        ///     PaperMask         : RectMask2D. 두 두루마리 사이만큼만 종이를 보인다
+        ///       Paper           : `두루마리_펼침_가운데`
+        ///     LeftOpen, RightOpen     : `두루마리_펼침_왼쪽`, `오른쪽`. 말린 그림 아래에 깔린다
+        ///     LeftRolled, RightRolled : `두루마리_말림_왼쪽`, `오른쪽`
+        /// 자리와 크기는 `MapScrollUnroll` 이 매 프레임 놓는다. 그림이 없으면 조각만 만들고 연출은 돌지 않는다.
+        /// </summary>
+        private static MapScrollUnroll BuildMapScrollUnroll(RectTransform root, MapVisualConfig visual, GameObject parchment)
+        {
+            RectTransform pieces = UiSceneBuilder.NewRect("ScrollUnroll", root);
+            UiSceneBuilder.Stretch(pieces);
+
+            RectTransform mask = UiSceneBuilder.NewRect("PaperMask", pieces);
+            mask.anchorMin = new Vector2(0.5f, 0.5f);
+            mask.anchorMax = new Vector2(0.5f, 0.5f);
+            mask.pivot = new Vector2(0.5f, 0.5f);
+            mask.sizeDelta = new Vector2(0f, visual.ParchmentSize.y);
+            mask.gameObject.AddComponent<RectMask2D>();
+
+            Image paper = NewScrollPiece("Paper", mask, "두루마리_펼침_가운데", visual);
+            Image leftOpen = NewScrollPiece("LeftOpen", pieces, "두루마리_펼침_왼쪽", visual);
+            Image rightOpen = NewScrollPiece("RightOpen", pieces, "두루마리_펼침_오른쪽", visual);
+            Image leftRolled = NewScrollPiece("LeftRolled", pieces, "두루마리_말림_왼쪽", visual);
+            Image rightRolled = NewScrollPiece("RightRolled", pieces, "두루마리_말림_오른쪽", visual);
+
+            pieces.gameObject.SetActive(false);
+
+            MapScrollUnroll unroll = root.gameObject.AddComponent<MapScrollUnroll>();
+            UiSceneBuilder.SetField(unroll, "_visual", visual);
+            UiSceneBuilder.SetField(unroll, "_parchment", parchment);
+            UiSceneBuilder.SetField(unroll, "_pieces", pieces.gameObject);
+            UiSceneBuilder.SetField(unroll, "_paperMask", mask);
+            UiSceneBuilder.SetField(unroll, "_paper", paper.rectTransform);
+            UiSceneBuilder.SetField(unroll, "_leftOpen", leftOpen);
+            UiSceneBuilder.SetField(unroll, "_rightOpen", rightOpen);
+            UiSceneBuilder.SetField(unroll, "_leftRolled", leftRolled);
+            UiSceneBuilder.SetField(unroll, "_rightRolled", rightRolled);
+            return unroll;
+        }
+
+        /// <summary>두루마리 조각 하나. 지도_양피지와 같은 판이라 양피지 크기로 가운데에 놓는다.</summary>
+        private static Image NewScrollPiece(string name, RectTransform parent, string art, MapVisualConfig visual)
+        {
+            Image image = UiSceneBuilder.NewFlatImage(name, parent, Color.white);
+            RectTransform rect = image.rectTransform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.anchoredPosition = Vector2.zero;
+            rect.sizeDelta = visual.ParchmentSize;
+            image.sprite = ImportArt.LoadMap(art);
+            image.type = Image.Type.Simple;
+            image.raycastTarget = false;
+            return image;
         }
 
         [MenuItem("Slot Hero/확인용 씬 만들기/상단 표시줄")]
@@ -1488,8 +1571,11 @@ namespace SlotHero.ToolsEditor
         {
             Image background = UiSceneBuilder.NewFlatImage("Background", panel, Color.white);
             UiSceneBuilder.Stretch(background.rectTransform);
-            background.sprite = ImportArt.LoadSanctum("배경_황무지");
+            // 팀원이 올린 `지도 배경 3`(`배경_성소`)이다(2026년 10월 31일 `c887667`). 없으면 예전 황무지 그림을 쓴다.
+            Sprite sanctumBackground = ImportArt.LoadSanctum("배경_성소");
+            background.sprite = sanctumBackground != null ? sanctumBackground : ImportArt.LoadSanctum("배경_황무지");
             background.type = Image.Type.Simple;
+            UiSceneBuilder.CoverParent(background);
 
             Sprite campOn = ImportArt.LoadSanctum("야영_모닥불");
             Sprite campOff = ImportArt.LoadSanctum("야영_모닥불_꺼짐");
@@ -1518,7 +1604,12 @@ namespace SlotHero.ToolsEditor
             exitLabelRect.sizeDelta = new Vector2(layout.GetExitLabelSize().x, 0f);
             exitLabelRect.anchoredPosition = Vector2.zero;
 
+            CampEffectView campEffect = BuildCampEffect(panel);
+
             SanctumScreenView view = panel.gameObject.AddComponent<SanctumScreenView>();
+            UiSceneBuilder.SetField(view, "_campEffect", campEffect);
+            UiSceneBuilder.SetField(view, "_visual",
+                UiSceneBuilder.LoadConfig<SanctumVisualConfig>("Sanctum", "SanctumVisualConfig"));
             UiSceneBuilder.SetField(view, "_campButton", camp.GetComponent<Button>());
             UiSceneBuilder.SetField(view, "_campImage", camp);
             UiSceneBuilder.SetField(view, "_campAvailableSprite", campOn);
@@ -1526,6 +1617,25 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_merchantButton", merchant.GetComponent<Button>());
             UiSceneBuilder.SetField(view, "_exitButton", exit.GetComponent<Button>());
             return view;
+        }
+
+        /// <summary>
+        /// 야영 연출 칸. 성소 화면 맨 위에 둔다(2026년 10월 31일 원재).
+        /// 화면을 덮는 검은 막이다. 처음에는 꺼 둔다.
+        /// 2026년 11월 1일 원재가 초록 회복 빛과 빛 알갱이를 뺐다.
+        /// </summary>
+        private static CampEffectView BuildCampEffect(RectTransform panel)
+        {
+            RectTransform root = UiSceneBuilder.NewRect("CampEffect", panel);
+            UiSceneBuilder.Stretch(root);
+
+            Image dim = UiSceneBuilder.NewFlatImage("Dim", root, new Color(0f, 0f, 0f, 0f));
+            UiSceneBuilder.Stretch(dim.rectTransform);
+            dim.gameObject.SetActive(false);
+
+            CampEffectView effect = root.gameObject.AddComponent<CampEffectView>();
+            UiSceneBuilder.SetField(effect, "_dim", dim);
+            return effect;
         }
 
         /// <summary>
@@ -1537,8 +1647,12 @@ namespace SlotHero.ToolsEditor
         {
             Image background = UiSceneBuilder.NewFlatImage("Background", panel, Color.white);
             UiSceneBuilder.Stretch(background.rectTransform);
-            background.sprite = ImportArt.LoadItemArt("배경_돌바닥");
+            // 2026년 10월 31일 원재가 팀원 배경과 같은 풍으로 다시 그리게 해 코덱스가 그린 위에서 본 흙과 돌바닥(`배경_행상`)이다.
+            // 없으면 예전 돌바닥을 쓴다.
+            Sprite merchantFloor = ImportArt.LoadItemArt("배경_행상");
+            background.sprite = merchantFloor != null ? merchantFloor : ImportArt.LoadItemArt("배경_돌바닥");
             background.type = Image.Type.Simple;
+            UiSceneBuilder.CoverParent(background);
 
             NewPicture("LeftMat", panel, ImportArt.LoadSanctum("행상_돗자리"),
                 layout.LeftMatPosition, layout.LeftMatSize);
@@ -1555,7 +1669,8 @@ namespace SlotHero.ToolsEditor
             // 문양 바닥은 한 장이다. PSD 는 자리마다 조금씩 다른 넉 장이었는데
             // 2026년 10월 25일 원재가 가장 깔끔한 한 장으로 모으라고 했다.
             string[] symbolBaseNames = { "문양_바닥" };
-            Sprite coinBase = ImportArt.LoadSanctum("행상_코인받침");
+            // 코인은 받침 없이 코인 그림만 둔다. 둘레의 금테 무늬를 2026년 11월 1일 원재가 지우라고 했다.
+            Sprite coinBase = null;
 
             MerchantSlotView[] symbolSlots = new MerchantSlotView[config.SymbolSlotCount];
             for (int i = 0; i < symbolSlots.Length; i++)
@@ -1571,7 +1686,7 @@ namespace SlotHero.ToolsEditor
             {
                 coinSlots[i] = BuildMerchantSlot(
                     "CoinSlot" + i, panel, layout, coinBase,
-                    layout.GetCoinPosition(i), layout.CoinSlotSize, layout.CoinPriceOffsetY);
+                    layout.GetCoinPosition(i), layout.CoinSlotSize, layout.CoinPriceOffsetY, 0f);
             }
 
             MerchantSlotView[] relicSlots = new MerchantSlotView[config.RelicSlotCount];
@@ -1650,15 +1765,18 @@ namespace SlotHero.ToolsEditor
             return view;
         }
 
-        /// <summary>진열 자리 하나. 바닥 그림과 물건 그림과 가격 줄을 둔다.</summary>
+        /// <summary>
+        /// 진열 자리 하나. 바닥 그림과 물건 그림과 가격 줄을 둔다.
+        /// iconInset 은 물건 그림을 자리 가장자리에서 들이는 비율이다. 바닥 그림이 없는 코인은 0 으로 자리를 꽉 채운다.
+        /// </summary>
         private static MerchantSlotView BuildMerchantSlot(
             string name, RectTransform parent, MerchantLayoutConfig layout,
-            Sprite baseSprite, Vector2 position, Vector2 size, float priceOffsetY)
+            Sprite baseSprite, Vector2 position, Vector2 size, float priceOffsetY, float iconInset = 0.1f)
         {
             RectTransform slot = UiSceneBuilder.NewRect(name, parent);
             UiSceneBuilder.PlaceTopLeft(slot, position, size);
 
-            // 바닥 그림. 문양은 검은 유리 칸, 코인은 받침, 유물은 칸 그림(`행상_유물칸`)이다.
+            // 바닥 그림. 문양은 검은 유리 칸, 유물은 칸 그림(`행상_유물칸`)이다. 코인은 바닥 그림 없이 투명하게 누름만 받는다.
             Image slotImage = slot.gameObject.AddComponent<Image>();
             slotImage.sprite = baseSprite;
             slotImage.type = Image.Type.Simple;
@@ -1666,11 +1784,23 @@ namespace SlotHero.ToolsEditor
 
             UiSceneBuilder.AddButton(slot.gameObject);
 
+            // 유물 진열을 새로 고칠 때 물건 그림 뒤에서 뭉치는 암흑물질 구름(2026년 10월 31일 원재). 처음에는 꺼 둔다.
+            // 흰 구름 그림에 성소 표시 설정의 암흑물질 색을 곱한다. 칸보다 조금 크게 두어 둘레로 번지게 한다.
+            Image darkMatter = UiSceneBuilder.NewFlatImage("DarkMatter", slot, Color.white);
+            darkMatter.sprite = ImportArt.LoadSanctum("행상_암흑물질");
+            darkMatter.raycastTarget = false;
+            RectTransform darkRect = darkMatter.rectTransform;
+            darkRect.anchorMin = new Vector2(-0.1f, -0.1f);
+            darkRect.anchorMax = new Vector2(1.1f, 1.1f);
+            darkRect.offsetMin = Vector2.zero;
+            darkRect.offsetMax = Vector2.zero;
+            darkMatter.gameObject.SetActive(false);
+
             // 물건 그림은 바닥 안쪽에 넉넉히 넣는다. 그림마다 비율이 달라 가운데 맞춤으로 둔다.
             Image icon = UiSceneBuilder.NewFlatImage("Icon", slot, Color.white);
             RectTransform iconRect = icon.rectTransform;
-            iconRect.anchorMin = new Vector2(0.1f, 0.1f);
-            iconRect.anchorMax = new Vector2(0.9f, 0.9f);
+            iconRect.anchorMin = new Vector2(iconInset, iconInset);
+            iconRect.anchorMax = new Vector2(1f - iconInset, 1f - iconInset);
             iconRect.offsetMin = Vector2.zero;
             iconRect.offsetMax = Vector2.zero;
             icon.preserveAspect = true;
@@ -1684,26 +1814,7 @@ namespace SlotHero.ToolsEditor
             RectTransform priceRoot = UiSceneBuilder.NewRect(name + "Price", parent);
             UiSceneBuilder.PlaceTopLeft(
                 priceRoot, layout.GetPricePosition(position, size, priceOffsetY), layout.PriceSize);
-
-            Image goldIcon = UiSceneBuilder.NewFlatImage("GoldIcon", priceRoot, Color.white);
-            goldIcon.sprite = ImportArt.LoadItemArt("아이콘_골드");
-            goldIcon.preserveAspect = true;
-            RectTransform goldRect = goldIcon.rectTransform;
-            goldRect.anchorMin = new Vector2(0.5f, 0.5f);
-            goldRect.anchorMax = new Vector2(0.5f, 0.5f);
-            goldRect.pivot = new Vector2(1f, 0.5f);
-            goldRect.sizeDelta = layout.PriceIconSize;
-            goldRect.anchoredPosition = new Vector2(-layout.PriceIconGap * 0.5f, 0f);
-
-            TMP_Text priceLabel = UiSceneBuilder.NewText(
-                "PriceLabel", priceRoot, "0", layout.PriceFontSize,
-                new Color(1f, 0.85f, 0.25f), TextAlignmentOptions.MidlineLeft, true);
-            RectTransform labelRect = priceLabel.rectTransform;
-            labelRect.anchorMin = new Vector2(0.5f, 0.5f);
-            labelRect.anchorMax = new Vector2(0.5f, 0.5f);
-            labelRect.pivot = new Vector2(0f, 0.5f);
-            labelRect.sizeDelta = new Vector2(layout.PriceSize.x * 0.5f, layout.PriceSize.y);
-            labelRect.anchoredPosition = new Vector2(layout.PriceIconGap * 0.5f, 0f);
+            TMP_Text priceLabel = NewPriceRow("PriceLabel", priceRoot, layout);
 
             MerchantSlotView view = slot.gameObject.AddComponent<MerchantSlotView>();
             UiSceneBuilder.SetField(view, "_icon", icon);
@@ -1711,6 +1822,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_button", slot.GetComponent<Button>());
             UiSceneBuilder.SetField(view, "_priceRoot", priceRoot.gameObject);
             UiSceneBuilder.SetField(view, "_priceLabel", priceLabel);
+            UiSceneBuilder.SetField(view, "_darkMatter", darkMatter);
             return view;
         }
 
@@ -1720,26 +1832,39 @@ namespace SlotHero.ToolsEditor
         {
             RectTransform root = UiSceneBuilder.NewRect(name, parent);
             UiSceneBuilder.PlaceTopLeft(root, position, layout.PriceSize);
+            return NewPriceRow(name + "Label", root, layout);
+        }
+
+        /// <summary>
+        /// 가격 줄 안에 골드 그림과 숫자를 한 묶음으로 놓는다. 묶음의 가운데가 줄의 가운데다.
+        /// 예전에는 그림과 숫자 사이 틈을 줄 가운데에 두어 세 자리 가격이 오른쪽으로 길게 뻗었다.
+        /// 2026년 11월 1일 원재가 그림과 숫자 사이를 일정하게 두고 둘을 함께 가운데 맞추라고 했다.
+        /// 숫자가 바뀌면 가로 줄 배치가 숫자 폭을 다시 재어 묶음을 가운데에 둔다.
+        /// </summary>
+        private static TMP_Text NewPriceRow(string labelName, RectTransform root, MerchantLayoutConfig layout)
+        {
+            HorizontalLayoutGroup row = root.gameObject.AddComponent<HorizontalLayoutGroup>();
+            row.childAlignment = TextAnchor.MiddleCenter;
+            row.spacing = layout.PriceIconGap;
+            row.childControlWidth = true;
+            row.childControlHeight = true;
+            row.childForceExpandWidth = false;
+            row.childForceExpandHeight = false;
 
             Image goldIcon = UiSceneBuilder.NewFlatImage("GoldIcon", root, Color.white);
             goldIcon.sprite = ImportArt.LoadItemArt("아이콘_골드");
             goldIcon.preserveAspect = true;
-            RectTransform goldRect = goldIcon.rectTransform;
-            goldRect.anchorMin = new Vector2(0.5f, 0.5f);
-            goldRect.anchorMax = new Vector2(0.5f, 0.5f);
-            goldRect.pivot = new Vector2(1f, 0.5f);
-            goldRect.sizeDelta = layout.PriceIconSize;
-            goldRect.anchoredPosition = new Vector2(-layout.PriceIconGap * 0.5f, 0f);
+            LayoutElement iconSize = goldIcon.gameObject.AddComponent<LayoutElement>();
+            iconSize.minWidth = layout.PriceIconSize.x;
+            iconSize.preferredWidth = layout.PriceIconSize.x;
+            iconSize.minHeight = layout.PriceIconSize.y;
+            iconSize.preferredHeight = layout.PriceIconSize.y;
+            iconSize.flexibleWidth = 0f;
 
             TMP_Text label = UiSceneBuilder.NewText(
-                name + "Label", root, "0", layout.PriceFontSize,
-                new Color(1f, 0.85f, 0.25f), TextAlignmentOptions.MidlineLeft, true);
-            RectTransform labelRect = label.rectTransform;
-            labelRect.anchorMin = new Vector2(0.5f, 0.5f);
-            labelRect.anchorMax = new Vector2(0.5f, 0.5f);
-            labelRect.pivot = new Vector2(0f, 0.5f);
-            labelRect.sizeDelta = new Vector2(layout.PriceSize.x * 0.5f, layout.PriceSize.y);
-            labelRect.anchoredPosition = new Vector2(layout.PriceIconGap * 0.5f, 0f);
+                labelName, root, "0", layout.PriceFontSize,
+                new Color(1f, 0.85f, 0.25f), TextAlignmentOptions.Midline, true);
+            label.textWrappingMode = TextWrappingModes.NoWrap;
             return label;
         }
 

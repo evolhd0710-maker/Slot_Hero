@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using SlotHero.Ui;
+using SlotHero.Audio;
 using SlotHero.CurrentBuild;
 using SlotHero.CurrentBuild.UI;
 using SlotHero.Events;
@@ -94,6 +95,7 @@ namespace SlotHero.ToolsEditor
             CheckNoDemoItems();
             CheckCatalogItems(GetField<RunCatalogConfig>(flow, "_catalogConfig"));
             CheckBackdrops();
+            CheckSoundWiring(flow);
 
             // 게임 씬이 모든 화면을 끈 상태에서 구조를 본다.
             // 켜도 안 보이는 칸과 따로 노는 어두운 막을 찾는다.
@@ -193,22 +195,25 @@ namespace SlotHero.ToolsEditor
                 return;
             }
 
-            // 시작 덱은 **모든 문양 한 장씩**이다. 2026년 10월 2일에 그렇게 정했다.
+            // 시작 덱은 물건 목록 설정의 시작 문양 목록 그대로다. 모든 문양이 한 장 이상 들어 있다.
+            // 2026년 10월 2일에는 모든 문양 한 장씩이었고, 2026년 10월 31일 팀원 밸런스 조정(`b0d741b`)으로
+            // 태그 가치가 낮은 문양이 여러 장씩 들어가 79장이 되었다. 장수는 설정 값과 비교한다.
             RunCatalogConfig catalog = GetField<RunCatalogConfig>(flow, "_catalogConfig");
             int symbolKinds = catalog != null ? catalog.Symbols.Count : 0;
+            int startingCount = catalog != null ? catalog.StartingSymbolIds.Count : 0;
 
             Report("문양이 서른여섯 종 있다", symbolKinds, 36);
-            Report("시작 덱이 모든 문양 한 장씩",
-                save.Run.Owned.TotalSymbolCount == symbolKinds, save.Run.Owned.TotalSymbolCount);
-            Report("시작 덱에 같은 문양이 겹치지 않는다",
+            Report("시작 덱 장수가 설정의 시작 문양 목록과 같다",
+                save.Run.Owned.TotalSymbolCount == startingCount && startingCount > 0, save.Run.Owned.TotalSymbolCount);
+            Report("시작 덱에 모든 문양이 한 종씩 이상 있다",
                 save.Run.Owned.Symbols.Count == symbolKinds, save.Run.Owned.Symbols.Count);
 
             // 문양 이름은 전투 시스템 기획서 10c 의 04 표를 따른다(2026년 10월 19일 원재).
             // 현재 빌드, 행상 진열, 고르기 화면은 모두 물건 목록의 이름을 쓰므로 목록과 덱을 본다.
             Report("시작 덱에 새 식별자의 문양 셋이 있다",
-                save.Run.Owned.GetSymbolCount("Quicksilver") == 1
-                && save.Run.Owned.GetSymbolCount("Pheonix") == 1
-                && save.Run.Owned.GetSymbolCount("Shipwerck") == 1);
+                save.Run.Owned.GetSymbolCount("Quicksilver") >= 1
+                && save.Run.Owned.GetSymbolCount("Pheonix") >= 1
+                && save.Run.Owned.GetSymbolCount("Shipwerck") >= 1);
             Report("시작 덱에 옛 식별자가 남지 않았다",
                 save.Run.Owned.GetSymbolCount("QuickSilver") == 0
                 && save.Run.Owned.GetSymbolCount("Phoenix") == 0
@@ -276,6 +281,12 @@ namespace SlotHero.ToolsEditor
             // 전투 중에 런을 포기한 것처럼 전투 배경을 켜 둔다. 포기하면 꺼져야 한다.
             // 예전에는 런을 끝내도 전투 화면과 전투 배경이 남아 새 게임 뒤에도 보였다(2026년 10월 26일 원재).
             GameObject battleBackground = GetField<GameObject>(flow, "_battleBackground");
+
+            // 전투 배경은 후보 셋 가운데 하나를 고른다(2026년 10월 31일 원재).
+            Sprite[] battleSprites = GetField<Sprite[]>(flow, "_battleBackgroundSprites");
+            Image battleImage = GetField<Image>(flow, "_battleBackgroundImage");
+            Report("전투 배경 후보가 셋이다", battleSprites != null && battleSprites.Length == 3, battleSprites != null ? battleSprites.Length : -1);
+            Report("전투 배경 그림이 전투 배경에 물려 있다", battleImage != null && battleBackground != null && battleImage.gameObject == battleBackground);
             Invoke(flow, "ShowBattleBackground", true);
             Report("포기 전 전투 배경을 켰다", battleBackground != null && battleBackground.activeSelf);
 
@@ -462,7 +473,8 @@ namespace SlotHero.ToolsEditor
             Invoke(scroll, "LateUpdate");
 
             List<SettingsRowView> rows = view.GetShownRows();
-            Report("일반 탭 줄이 넷", rows.Count, 4);
+            // 언어, 창 모드, 자동 저장, 연출 속도에 임시 아이템 효과 적용(2026년 11월 1일 원재)을 더해 다섯이다.
+            Report("일반 탭 줄이 다섯", rows.Count, 5);
 
             if (rows.Count < 4)
             {
@@ -668,6 +680,43 @@ namespace SlotHero.ToolsEditor
             Report("연출 속도를 누르면 빠름", speed.ValueText == "빠름");
             speed.GetComponent<Button>().onClick.Invoke();
             Report("한 번 더 누르면 스킵", speed.ValueText == "스킵");
+
+            // 임시 아이템 효과 적용(2026년 11월 1일 원재). 처음에는 켜져 있고, 바꾸면 흐름이 전투에 바로 넘긴다.
+            SettingsRowView temporary = FindRow(rows, "temporaryItemEffects");
+            GameFlowController flow = Object.FindAnyObjectByType<GameFlowController>();
+            PlaceholderCombatEntry combat = Object.FindAnyObjectByType<PlaceholderCombatEntry>(FindObjectsInactive.Include);
+            Report("임시 아이템 효과 적용 줄이 있다", temporary != null);
+            if (temporary == null || flow == null)
+            {
+                return;
+            }
+
+            Report("임시 아이템 효과 적용은 켜짐으로 시작", temporary.ValueText == "켜짐" && flow.TemporaryItemEffects);
+            temporary.GetComponent<Button>().onClick.Invoke();
+            Report("임시 아이템 효과 적용을 누르면 꺼지고 흐름도 끈다",
+                temporary.ValueText == "꺼짐" && !flow.TemporaryItemEffects && (combat == null || !combat.TemporaryItemEffects));
+            temporary.GetComponent<Button>().onClick.Invoke();
+            Report("한 번 더 누르면 다시 켜지고 전투에도 넘긴다",
+                temporary.ValueText == "켜짐" && flow.TemporaryItemEffects && (combat == null || combat.TemporaryItemEffects));
+
+            // 전투 중에 바꾸면 다음 전투부터 적용된다고 알린다(2026년 11월 1일 원재). 전투 밖에서는 알리지 않는다.
+            PopupPresenter popup = Object.FindAnyObjectByType<PopupPresenter>(FindObjectsInactive.Include);
+            SettingDefinition temporaryDefinition = temporary.Definition;
+            Report("전투 밖에서 바꾸면 다음 전투 안내가 뜨지 않는다", popup != null && !popup.IsOpen);
+            FieldInfo behind = typeof(GameFlowController).GetField("_screenBehindOverlay", BindingFlags.NonPublic | BindingFlags.Instance);
+            object behindBefore = behind != null ? behind.GetValue(flow) : null;
+            if (behind != null && popup != null)
+            {
+                behind.SetValue(flow, GameScreen.Combat);
+                Invoke(flow, "NotifyNextCombatSetting", temporaryDefinition);
+                AwakenNew();
+                Report("전투 중에 임시 아이템 효과를 바꾸면 다음 전투부터 적용된다고 알린다",
+                    popup.IsOpen && popup.Current != null && popup.Current.Title == "다음 전투부터 적용됩니다"
+                    && popup.Current.Body.Contains("임시 아이템 효과 적용"));
+                PressPopupButton(popup, "confirm");
+                behind.SetValue(flow, behindBefore);
+                Report("확인을 누르면 안내가 닫힌다", !popup.IsOpen);
+            }
         }
 
         /// <summary>사운드 탭의 막대와 음소거 버튼이 도는지 본다.</summary>
@@ -739,12 +788,47 @@ namespace SlotHero.ToolsEditor
                 sfx.MuteButton.onClick.Invoke();
             }
 
+            // 이 검사는 전투 대역을 붙여 돈다. 진짜 전투 화면까지 가는지는 전투 검사가 본다.
+            PlaceholderCombatEntry combatStand = Object.FindAnyObjectByType<PlaceholderCombatEntry>(FindObjectsInactive.Include);
+            Report("효과음을 음소거하면 전투 창구에도 소리 크기 0 이 간다",
+                combatStand != null && combatStand.SoundVolume == 0f,
+                combatStand != null ? Mathf.RoundToInt(combatStand.SoundVolume * 100f) : -1);
+
             Canvas.ForceUpdateCanvases();
             CapturePreviewScenes.CaptureOpenScene("게임 설정 사운드");
 
             SettingsScreenView settingsView = Object.FindAnyObjectByType<SettingsScreenView>();
             ProbeWheel("설정 목록", settingsView != null ? GetField<ScrollRect>(settingsView, "_listScroll") : null);
             CheckScrollBarByContent("설정 목록", settingsView != null ? GetField<ScrollRect>(settingsView, "_listScroll") : null);
+            CheckNoDragScroll("설정 목록", settingsView != null ? GetField<ScrollRect>(settingsView, "_listScroll") : null);
+        }
+
+        /// <summary>마우스로 내용을 끌어도 창이 움직이지 않는지. 설정 목록은 휠과 스크롤 바로만 움직인다(2026년 10월 31일 원재).</summary>
+        private static void CheckNoDragScroll(string where, ScrollRect scroll)
+        {
+            Report(where + " 은 끌기를 받지 않는 스크롤 창이다", scroll is WheelOnlyScrollRect,
+                scroll != null ? scroll.GetType().Name : "없음");
+
+            if (scroll == null || scroll.content == null)
+            {
+                return;
+            }
+
+            Vector2 before = scroll.content.anchoredPosition;
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            pointer.button = PointerEventData.InputButton.Left;
+            pointer.position = new Vector2(960f, 540f);
+            ExecuteEvents.Execute(scroll.gameObject, pointer, ExecuteEvents.initializePotentialDrag);
+            ExecuteEvents.Execute(scroll.gameObject, pointer, ExecuteEvents.beginDragHandler);
+            pointer.position = new Vector2(960f, 840f);
+            pointer.delta = new Vector2(0f, 300f);
+            ExecuteEvents.Execute(scroll.gameObject, pointer, ExecuteEvents.dragHandler);
+            ExecuteEvents.Execute(scroll.gameObject, pointer, ExecuteEvents.endDragHandler);
+            Vector2 after = scroll.content.anchoredPosition;
+            scroll.content.anchoredPosition = before;
+
+            Report(where + " 내용을 마우스로 끌어도 움직이지 않는다", (after - before).sqrMagnitude < 0.01f,
+                Mathf.RoundToInt((after - before).y));
         }
 
         private static SettingsRowView FindRow(List<SettingsRowView> rows, string id)
@@ -927,6 +1011,7 @@ namespace SlotHero.ToolsEditor
             if (expected == GameScreen.Sanctum)
             {
                 CheckCamp();
+                CheckHitSound(flow);
                 CheckMerchant();
             }
 
@@ -1435,6 +1520,63 @@ namespace SlotHero.ToolsEditor
         /// **뷰포트 안에 두면 말린 끝이 잘린다.** 뷰포트가 노드 영역 크기로 잘라 내기 때문이다.
         /// 노드 영역도 양피지 종이 몸통 안에 들어가야 하고 노드끼리 겹치면 안 된다.
         /// </summary>
+        /// <summary>
+        /// 두루마리 펼치기(효과음과 이펙트 목록 E05). 조각이 양피지와 노드 사이에 있고,
+        /// 편집 모드에서 맵을 열면 연출 없이 바로 다 펼친 모습이 되는지 본다.
+        /// </summary>
+        private static void CheckScrollUnroll(MapScreenController map, Transform paper, RectTransform viewport)
+        {
+            MapScrollUnroll unroll = GetField<MapScrollUnroll>(map, "_unroll");
+            Report("맵 화면에 두루마리 펼치기가 붙어 있다", unroll != null);
+
+            if (unroll == null)
+            {
+                return;
+            }
+
+            GameObject pieces = GetField<GameObject>(unroll, "_pieces");
+            Report("두루마리 펼치기가 다 펼친 양피지를 안다", GetField<GameObject>(unroll, "_parchment") == paper.gameObject);
+            Report("두루마리 조각이 양피지 위, 노드 아래에 있다",
+                pieces != null
+                && pieces.transform.GetSiblingIndex() > paper.GetSiblingIndex()
+                && pieces.transform.GetSiblingIndex() < viewport.GetSiblingIndex());
+
+            string[] images = { "_leftOpen", "_rightOpen", "_leftRolled", "_rightRolled" };
+            bool allArt = true;
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = GetField<Image>(unroll, images[i]);
+                allArt &= image != null && image.sprite != null && !image.raycastTarget;
+            }
+
+            RectTransform paperPiece = GetField<RectTransform>(unroll, "_paper");
+            Image paperImage = paperPiece != null ? paperPiece.GetComponent<Image>() : null;
+            allArt &= paperImage != null && paperImage.sprite != null && !paperImage.raycastTarget;
+            Report("두루마리 조각 다섯에 그림이 붙어 있고 커서를 받지 않는다", allArt);
+
+            Sprite rolled = GetField<Image>(unroll, "_leftRolled") != null ? GetField<Image>(unroll, "_leftRolled").sprite : null;
+            Sprite whole = paper.GetComponent<Image>().sprite;
+            Report("두루마리 조각이 지도_양피지와 같은 판이다",
+                rolled != null && whole != null && rolled.rect.size == whole.rect.size,
+                rolled != null ? (int)rolled.rect.width : 0);
+
+            CanvasGroup content = GetField<CanvasGroup>(unroll, "_mapContent");
+            Report("노드 묶음에 감추는 CanvasGroup 이 있다", content != null && content.gameObject == viewport.gameObject);
+
+            // 편집 모드에서 펼치면 바로 다 펼친 모습이어야 한다. 노드도 그대로 눌린다.
+            // 맵을 직접 여닫으면 흐름 쪽이 지도 버튼과 소리를 건드려 펼치기만 부른다.
+            unroll.Play();
+            Report("편집 모드에서 펼치면 바로 다 펼친 양피지가 보인다",
+                !unroll.IsPlaying && paper.gameObject.activeSelf && pieces != null && !pieces.activeSelf
+                && content != null && content.alpha >= 1f && content.blocksRaycasts);
+
+            // 편집 모드에서는 말지 않는다. 부른 쪽이 바로 닫도록 거짓을 돌려준다.
+            bool rolledUpCalled = false;
+            bool started = unroll.PlayRollUp(() => rolledUpCalled = true);
+            Report("편집 모드에서는 두루마리를 말지 않고 바로 닫는다",
+                !started && !rolledUpCalled && !unroll.IsRollingUp && paper.gameObject.activeSelf && !pieces.activeSelf);
+        }
+
         private static void CheckParchment(MapScreenController map)
         {
             MapScreenView view = Object.FindAnyObjectByType<MapScreenView>(FindObjectsInactive.Include);
@@ -1469,6 +1611,8 @@ namespace SlotHero.ToolsEditor
                 Vector2.Distance(paperRect.rect.size, visual.ParchmentSize) < 1f,
                 (int)paperRect.rect.width);
             Report("노드 영역이 양피지 안에 들어간다", visual.MapFitsInsideParchment());
+
+            CheckScrollUnroll(map, paper, viewport);
 
             // 이웃 노드의 누르는 영역이 어떤 지터에서도 겹치지 않아야 한다.
             // 아이콘 모양은 가장 넓은 이벤트 방 둘이 끝까지 쏠릴 때만 4 안쪽으로 닿는다. 그것은 받아들였다.
@@ -1816,6 +1960,33 @@ namespace SlotHero.ToolsEditor
                 Debug.Log("  물건  유물 정보시트의 유물 " + sheetWithoutIcon + "개는 아직 그림이 없다");
             }
 
+            // 임시 아이템 효과를 켜면 목록의 유물과 코인이 모두 효과를 갖는다(2026년 11월 1일 원재).
+            SlotHero.Combat.RelicConfig relicConfig = UiSceneBuilder.LoadConfig<SlotHero.Combat.RelicConfig>("Combat", "RelicConfig");
+            SlotHero.Combat.CombatRuleConfig coinRules = UiSceneBuilder.LoadConfig<SlotHero.Combat.CombatRuleConfig>("Combat", "CombatRuleConfig");
+            int relicsWithoutEffect = 0;
+            for (int i = 0; relicConfig != null && i < catalog.Relics.Count; i++)
+            {
+                if (relicConfig.Find(catalog.Relics[i].Id, true) == null)
+                {
+                    relicsWithoutEffect++;
+                    Debug.LogWarning("  물건  임시 효과를 켜도 효과가 없는 유물: " + catalog.Relics[i].Id);
+                }
+            }
+
+            int coinsWithoutRule = 0;
+            for (int i = 0; coinRules != null && i < catalog.Coins.Count; i++)
+            {
+                string coinId = catalog.Coins[i].Id;
+                if (!coinRules.Coins.Exists(c => c.Id == coinId) && !coinRules.TemporaryCoins.Exists(c => c.Id == coinId))
+                {
+                    coinsWithoutRule++;
+                    Debug.LogWarning("  물건  임시 효과를 켜도 규칙이 없는 코인: " + coinId);
+                }
+            }
+
+            Report("임시 효과를 켜면 목록의 유물이 모두 효과를 갖는다", relicConfig != null && relicsWithoutEffect == 0, relicsWithoutEffect);
+            Report("임시 효과를 켜면 목록의 코인이 모두 소모값과 가중치를 갖는다", coinRules != null && coinsWithoutRule == 0, coinsWithoutRule);
+
             Report("금화 · 은화 · 동전이 열씩 있다", gold == 10 && silver == 10 && bronze == 10,
                 gold + " / " + silver + " / " + bronze);
             Report("코인 등급이 동 고급 · 은 희귀 · 금 영웅이다", wrongRarity, 0);
@@ -1825,6 +1996,16 @@ namespace SlotHero.ToolsEditor
 
         private static void CheckNoDemoItems()
         {
+            // 연출 중 화면을 누르면 건너뛰는 투명 칸이 하나 있고, 연출이 없을 때는 누르기를 받지 않는다(2026년 11월 1일 원재).
+            EffectSkip.Clear();
+            EffectSkipCatcher catcher = Object.FindAnyObjectByType<EffectSkipCatcher>(FindObjectsInactive.Include);
+            Report("연출 건너뛰기 칸이 씬에 하나 있다", CountOf<EffectSkipCatcher>(), 1);
+            Report("연출이 없을 때 건너뛰기 칸은 누르기를 받지 않는다", catcher != null && !catcher.Catching);
+            // 꺼져 있으면 매 장면 돌지 않아 연출이 돌아도 누르기를 받지 못한다. 씬을 만들 때 모든 화면과 함께 꺼지던 것을 고쳤다.
+            Report("연출 건너뛰기 칸이 켜져 있다", catcher != null && catcher.gameObject.activeInHierarchy);
+            ScreenFade fade = Object.FindAnyObjectByType<ScreenFade>(FindObjectsInactive.Include);
+            Report("화면 전환 막이 켜져 있다", fade != null && fade.gameObject.activeInHierarchy);
+
             Report("예시 선택지가 남아 있지 않다", CountOf<EventChoiceView>(), 0);
             Report("예시 보상 카드가 남아 있지 않다", CountOf<RewardCardView>(), 0);
             Report("예시 프로필 카드가 남아 있지 않다", CountOf<ProfileCardView>(), 0);
@@ -1911,6 +2092,7 @@ namespace SlotHero.ToolsEditor
 
             Report("행상 진열에 문양 상품이 있다", symbolGoods > 0, symbolGoods);
             Report("행상 문양 상품마다 테두리와 문양 그림이 판 안쪽에 함께 들어간다", notFramedGoods, 0);
+            CheckPriceRowsCentered(all);
 
             for (int i = 0; i < all.Length; i++)
             {
@@ -1942,6 +2124,62 @@ namespace SlotHero.ToolsEditor
 
             sanctum.CloseMerchant();
             Report("돌아가기를 누르면 닫힌다", !sanctum.IsMerchantOpen);
+        }
+
+        /// <summary>
+        /// 행상 가격은 골드 그림과 숫자가 한 묶음으로 줄 가운데에 놓이고 둘 사이가 늘 같다(2026년 11월 1일 원재).
+        /// 한 자리와 세 자리 가격을 차례로 적어 묶음의 가운데와 틈을 잰다.
+        /// </summary>
+        private static void CheckPriceRowsCentered(MerchantSlotView[] slots)
+        {
+            MerchantLayoutConfig layout = UiSceneBuilder.LoadConfig<MerchantLayoutConfig>("Sanctum", "MerchantLayoutConfig");
+            MerchantSlotView sample = null;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                GameObject root = GetField<GameObject>(slots[i], "_priceRoot");
+                if (root != null && root.activeInHierarchy)
+                {
+                    sample = slots[i];
+                    break;
+                }
+            }
+
+            if (sample == null || layout == null)
+            {
+                Report("가격 줄을 잴 행상 칸이 있다", false);
+                return;
+            }
+
+            RectTransform rowRect = (RectTransform)GetField<GameObject>(sample, "_priceRoot").transform;
+            TMP_Text label = GetField<TMP_Text>(sample, "_priceLabel");
+            RectTransform icon = (RectTransform)rowRect.Find("GoldIcon");
+            string before = label.text;
+            bool centered = true;
+            bool sameGap = true;
+            float offCenter = 0f;
+            foreach (string price in new[] { "5", "100" })
+            {
+                label.text = price;
+                label.ForceMeshUpdate();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rowRect);
+
+                // 줄 안쪽 좌표로 잰다. 줄의 가운데는 0 이다.
+                float iconLeft = icon.anchoredPosition.x - icon.rect.width * icon.pivot.x;
+                float iconRight = iconLeft + icon.rect.width;
+                RectTransform labelRect = label.rectTransform;
+                float labelLeft = labelRect.anchoredPosition.x - labelRect.rect.width * labelRect.pivot.x;
+                float labelRight = labelLeft + labelRect.rect.width;
+                float rowLeft = -rowRect.rect.width * rowRect.pivot.x;
+                float middle = (iconLeft + labelRight) * 0.5f - (rowLeft + rowRect.rect.width * 0.5f);
+                offCenter = Mathf.Max(offCenter, Mathf.Abs(middle));
+                centered &= Mathf.Abs(middle) <= 1f;
+                sameGap &= Mathf.Abs(labelLeft - iconRight - layout.PriceIconGap) <= 0.5f;
+            }
+
+            label.text = before;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rowRect);
+            Report("행상 가격은 골드 그림과 숫자 묶음이 줄 가운데에 놓인다(한 자리, 세 자리)", centered, offCenter.ToString("0.0"));
+            Report("행상 가격의 골드 그림과 숫자 사이가 늘 같다", sameGap);
         }
 
         /// <summary>
@@ -2025,9 +2263,28 @@ namespace SlotHero.ToolsEditor
             target.OnPointerEnter(new PointerEventData(EventSystem.current));
             Report("행상 물건에 커서를 올리면 상세가 뜬다", detail != null && detail.IsShowing);
 
+            // 앞 검사의 소리와 한 묶음으로 묶이지 않게 시간을 흘려 둔다.
+            SoundPlayer sound = Object.FindAnyObjectByType<SoundPlayer>();
+            if (sound != null)
+            {
+                sound.AdvanceClock(1f);
+            }
+
             Invoke(sanctum, "HandleSlotClicked", target);
 
             Report("행상에서 산 뒤에는 그 물건의 상세가 닫힌다", detail != null && !detail.IsShowing);
+
+            if (sound != null)
+            {
+                sound.Flush();
+            }
+
+            Report("행상에서 사면 S23 행상 구매 소리를 고른다",
+                sound != null && sound.LastChosen == SoundCue.MerchantPurchase);
+
+            int expectedClip = sound != null && sound.Config != null ? sound.Config.PurchaseClipIndex(slot.Price) : -2;
+            Report("행상 구매 소리는 치른 골드 구간의 파일을 쓴다",
+                sound != null && sound.LastClipIndex == expectedClip, slot.Price);
 
             int ownedAfter = save.Run.Owned.TotalSymbolCount + save.Run.Owned.Relics.Count
                 + save.Run.Owned.CoinIds.Count;
@@ -3086,7 +3343,7 @@ namespace SlotHero.ToolsEditor
         /// 정렬 칸을 스크롤 안으로 옮겼다. 그래서 세 가지를 본다.
         /// 스크롤하면 `문양` 줄 이름과 같은 거리만큼 움직이는지,
         /// 칸 가운데를 누르면 문양 칸이나 스크롤 바탕이 아니라 정렬 버튼이 받는지,
-        /// 누를 때마다 기준이 개수 → 태그 → 이름 → 개수로 돌고 글자도 따라 바뀌는지.
+        /// 누를 때마다 기준이 태그 → 개수 → 이름 → 태그로 돌고 글자도 따라 바뀌는지(2026년 11월 1일 원재가 태그 순을 처음으로 했다).
         /// 스크롤을 내린 뒤에도 한 번 더 눌러 본다. 끝나면 기준과 스크롤을 처음대로 돌린다.
         /// </summary>
         private static void CheckBuildSortButton(CurrentBuildScreenController build)
@@ -3108,11 +3365,12 @@ namespace SlotHero.ToolsEditor
             Report("정렬 칸이 스크롤 안에 있다", sortRect.IsChildOf(scroll.content));
 
             BuildSortOrder original = build.SortOrder;
+            Report("현재 빌드는 태그 순으로 시작한다", original == BuildSortOrder.Tag, (int)original);
             float startY = scroll.content.anchoredPosition.y;
 
-            // 누를 때마다 기준이 하나씩 넘어가 세 번이면 처음으로 돌아온다.
-            BuildSortOrder[] expected = { BuildSortOrder.Tag, BuildSortOrder.Name, BuildSortOrder.Count };
-            build.SetSortOrder(BuildSortOrder.Count);
+            // 누를 때마다 기준이 하나씩 넘어가 세 번이면 처음으로 돌아온다. 태그 순 → 개수 순 → 이름 순이다(2026년 11월 1일 원재).
+            BuildSortOrder[] expected = { BuildSortOrder.Count, BuildSortOrder.Name, BuildSortOrder.Tag };
+            build.SetSortOrder(BuildSortOrder.Tag);
             int wrong = 0;
             string previousText = sortValue.text;
             for (int i = 0; i < expected.Length; i++)
@@ -3127,7 +3385,7 @@ namespace SlotHero.ToolsEditor
                 previousText = sortValue.text;
             }
 
-            Report("정렬 칸 가운데를 누르면 정렬 버튼이 받고 기준이 개수 → 태그 → 이름 → 개수로 돈다", wrong, 0);
+            Report("정렬 칸 가운데를 누르면 정렬 버튼이 받고 기준이 태그 → 개수 → 이름 → 태그로 돈다", wrong, 0);
 
             // 스크롤을 내리면 정렬 칸이 `문양` 글자와 같은 거리만큼 올라간다.
             // 누르기 검사가 캔버스 방식을 잠깐 바꿨다 돌려 세계 좌표가 한 박자 늦게 바뀐다.
@@ -3257,6 +3515,47 @@ namespace SlotHero.ToolsEditor
         /// 보상의 문양 카드마다 흑요석 판이 깔리고 테두리와 문양 그림이 판 안쪽에 들어가는지(2026년 10월 20일 원재).
         /// 코인과 유물 카드에는 판이 없어야 한다.
         /// </summary>
+        /// <summary>
+        /// 보상 화면 연출 차례(2026년 11월 1일 원재). 기본 골드 → 오버킬 골드 → 오버킬 회복 팝업 → 카드 반짝임이고,
+        /// 연출 중 화면을 누르면 끝 모습으로 넘어간다. 편집 모드라 연출 시각을 손으로 옮겨 본다.
+        /// </summary>
+        private static void CheckRewardRevealOrder(RewardScreenView view, RewardOffer offer)
+        {
+            if (view == null || offer == null || offer.OverkillGold <= 0 || !offer.HasOverkillHeal)
+            {
+                Report("보상 연출 차례를 볼 오버킬 골드와 회복이 있다", false);
+                return;
+            }
+
+            TMP_Text baseGold = GetField<TMP_Text>(view, "_baseGoldValue");
+            TMP_Text overkillGold = GetField<TMP_Text>(view, "_overkillGoldValue");
+            EffectSkip.Clear();
+            view.BeginRevealForCheck();
+            RewardRevealTimeline timeline = view.RevealTimeline;
+
+            Report("보상 연출 처음에는 오버킬 회복이 보이지 않는다", view.HealScale == 0f, view.HealScale.ToString("0.00"));
+            Report("보상 연출 중에는 화면 누르기를 기다린다", EffectSkip.Waiting);
+
+            view.AdvanceReveal(timeline.OverkillGoldStart - 0.01f);
+            Report("기본 골드가 다 오른 뒤에도 오버킬 골드는 아직 0 이다",
+                baseGold.text == RewardText.Gold(offer.BaseGold) && overkillGold.text == RewardText.Gold(0),
+                overkillGold.text);
+
+            view.AdvanceReveal(timeline.HealPopStart - timeline.OverkillGoldStart);
+            Report("오버킬 골드가 다 오른 뒤에 회복이 튀어나오기 시작한다",
+                overkillGold.text == RewardText.Gold(offer.OverkillGold) && view.HealScale < 0.05f,
+                view.HealScale.ToString("0.00"));
+
+            RewardVisualConfig rewardVisual = GetField<RewardVisualConfig>(view, "_visual");
+            view.AdvanceReveal(0.01f + 0.6f * (rewardVisual != null ? rewardVisual.HealPopSeconds : 0f));
+            Report("오버킬 회복은 숫자가 오르지 않고 팝업처럼 커진다", view.HealScale > 1f, view.HealScale.ToString("0.00"));
+
+            EffectSkip.SkipAll();
+            Report("연출 중 화면을 누르면 끝 모습으로 넘어간다",
+                !view.IsRevealing && view.HealScale == 1f && !EffectSkip.Waiting
+                && baseGold.text == RewardText.Gold(offer.BaseGold) && overkillGold.text == RewardText.Gold(offer.OverkillGold));
+        }
+
         private static void CheckRewardSymbolFrames(string title, RewardScreenView view)
         {
             CurrentBuildVisualConfig tagVisual = GetField<CurrentBuildVisualConfig>(view, "_buildVisual");
@@ -3410,6 +3709,7 @@ namespace SlotHero.ToolsEditor
             RewardScreenView healView = GetField<RewardScreenView>(reward, "_view");
             Image healIcon = healView != null ? GetField<Image>(healView, "_overkillHealIcon") : null;
             Report("오버킬 줄에 하트가 보인다", healIcon != null && healIcon.gameObject.activeInHierarchy);
+            CheckRewardRevealOrder(healView, reward.Offer);
 
             // 화면을 열었을 때의 골드. 전투 대역이 이기면서 준 골드까지 들어간 값이다. 보상 골드는 아직 아니다.
             int goldBefore = save.Run.Status.Gold;
@@ -4443,6 +4743,12 @@ namespace SlotHero.ToolsEditor
                         continue;
                     }
 
+                    // 연출 건너뛰기 칸은 연출이 돌 때만 커서를 받는다. 연출이 없는 지금은 일부러 받지 않는다(2026년 11월 1일).
+                    if (behaviour is EffectSkipCatcher)
+                    {
+                        continue;
+                    }
+
                     handlers++;
 
                     if (!HasHitGraphic(behaviour.gameObject))
@@ -4871,6 +5177,110 @@ namespace SlotHero.ToolsEditor
         /// `overrideSprite` 를 비활성 그림으로 덮어써 화면에 나오지 않았다.
         /// 04 야영 의 사용 표시는 쓴 뒤에 아이콘을 회색으로 바꾸고 선택을 막는 것이다.
         /// </summary>
+        /// <summary>
+        /// 효과음이 씬에 물려 있는지. 흐름에 소리 창구가, 소리 창구에 효과음 설정이, 설정에 고른 소리 파일이 있어야 한다.
+        /// 파일은 `효과음과 이펙트 목록.md` 6.0 받은 것 의 넷이다.
+        /// </summary>
+        private static void CheckSoundWiring(GameFlowController flow)
+        {
+            SoundPlayer sound = GetField<SoundPlayer>(flow, "_sound");
+            Report("흐름에 효과음 창구가 물려 있다", sound != null);
+
+            SoundConfig config = sound != null ? sound.Config : null;
+            Report("효과음 창구에 효과음 설정이 물려 있다", config != null);
+
+            if (config == null)
+            {
+                return;
+            }
+
+            Report("행상 구매 소리 파일 셋", ClipCount(config, SoundCue.MerchantPurchase) == 3,
+                ClipCount(config, SoundCue.MerchantPurchase));
+
+            // 파일 차례가 치른 골드의 구간 차례다. 한 닢, 부드러운 바닥의 자루, 나무 바닥의 자루(2026년 10월 31일 원재).
+            Report("행상 구매 첫 구간은 동전 한 닢",
+                ClipName(config, SoundCue.MerchantPurchase, 0) == "Coin Dropped on Wood Rattle");
+            Report("행상 구매 둘째 구간은 부드러운 바닥의 자루",
+                ClipName(config, SoundCue.MerchantPurchase, 1) == "Coins in Sack Dropped on Soft Surface");
+            Report("행상 구매 셋째 구간은 나무 바닥의 자루",
+                ClipName(config, SoundCue.MerchantPurchase, 2) == "Coins In Sack Dropped on Wood");
+
+            Report("야영 소리 파일 하나", ClipCount(config, SoundCue.Camp) == 1, ClipCount(config, SoundCue.Camp));
+        }
+
+        private static string ClipName(SoundConfig config, SoundCue cue, int clip)
+        {
+            int index = config.IndexOf(cue);
+            if (index < 0 || config.Cues[index].Clips == null || clip >= config.Cues[index].Clips.Length
+                || config.Cues[index].Clips[clip] == null)
+            {
+                return "";
+            }
+
+            return config.Cues[index].Clips[clip].name;
+        }
+
+        private static int ClipCount(SoundConfig config, SoundCue cue)
+        {
+            int index = config.IndexOf(cue);
+            if (index < 0 || config.Cues[index].Clips == null)
+            {
+                return 0;
+            }
+
+            int count = 0;
+            AudioClip[] clips = config.Cues[index].Clips;
+            for (int i = 0; i < clips.Length; i++)
+            {
+                if (clips[i] != null)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        /// <summary>
+        /// 체력이 줄면 S12 체력 잃음(피격음)을 고르는지. 전투와 이벤트가 모두 `RunContext.TakeDamage` 와
+        /// `ChangeMaxHealth` 로 체력을 깎으므로 런 쪽에서 깎아 본다(2026년 10월 30일 원재).
+        /// 깎은 체력은 되돌린다.
+        /// </summary>
+        private static void CheckHitSound(GameFlowController flow)
+        {
+            SoundPlayer sound = Object.FindAnyObjectByType<SoundPlayer>();
+            RunContext context = flow != null ? flow.Context : null;
+            if (sound == null || context == null || context.Health <= 1)
+            {
+                Report("피격음을 볼 런과 효과음 창구가 있다", false);
+                return;
+            }
+
+            sound.AdvanceClock(1f);
+            context.TakeDamage(1);
+            sound.Flush();
+            Report("체력이 줄면 S12 체력 잃음 소리를 고른다", sound.LastChosen == SoundCue.HealthLost);
+            context.Heal(1);
+
+            // 최대 체력이 줄어 지금 체력이 깎일 때도 같은 소리다. 줄지 않는 회복은 고르지 않는다.
+            sound.AdvanceClock(1f);
+            int health = context.Health;
+            int maxHealth = context.MaxHealth;
+            context.ChangeMaxHealth(-(maxHealth - health + 1));
+            sound.Flush();
+            Report("최대 체력이 줄어 체력이 깎여도 S12 를 고른다", sound.LastChosen == SoundCue.HealthLost);
+            // 최대 체력을 올리면 지금 체력도 함께 오르므로 런 자료에 바로 되돌려 적는다.
+            RunSaveData run = GetField<RunSaveData>(context, "_run");
+            if (run != null)
+            {
+                run.Status.MaxHealth = maxHealth;
+                run.Status.Health = health;
+            }
+
+            Report("피격음 검사 뒤 체력이 그대로다", context.Health == health && context.MaxHealth == maxHealth,
+                context.Health);
+        }
+
         private static void CheckCamp()
         {
             SanctumController sanctum = Object.FindAnyObjectByType<SanctumController>();
@@ -4901,8 +5311,20 @@ namespace SlotHero.ToolsEditor
             Report("쓰기 전에는 야영을 누를 수 있다", campButton.interactable);
             Report("쓰기 전에는 불이 붙어 있다", ShownSpriteOf(campImage) == onSprite);
 
+            SoundPlayer sound = Object.FindAnyObjectByType<SoundPlayer>();
+            if (sound != null)
+            {
+                sound.AdvanceClock(1f);
+            }
+
             sanctum.UseCamp();
 
+            if (sound != null)
+            {
+                sound.Flush();
+            }
+
+            Report("야영을 쓰면 S24 야영 소리를 고른다", sound != null && sound.LastChosen == SoundCue.Camp);
             Report("쓰면 야영을 누를 수 없다", !campButton.interactable);
             Report("쓰면 불 꺼진 모닥불로 바뀐다", ShownSpriteOf(campImage) == offSprite);
 
@@ -5007,7 +5429,9 @@ namespace SlotHero.ToolsEditor
             int targetCount = save.Run.Owned.GetSymbolCount(targetId);
             target.Press();
             Report("칸을 누르면 테두리로 골라진다", target.IsSelected && picker.SelectedId == targetId);
-            Report("고르면 아래 줄에 고른 문양이 적힌다", pickerView.ResultText.Contains("[" + target.Entry.DisplayName + "]"));
+            Report("문양 변경 고르기 제목이 \"변환할 문양 선택\"", picker.Request != null && picker.Request.Title == "변환할 문양 선택");
+            Report("문양 변경 고르기에는 아래 줄 칸이 없다",
+                !GetField<Image>(pickerView, "_resultPanel").gameObject.activeSelf);
             Report("고르면 확인을 누를 수 있다", pickerView.CanConfirm);
 
             CapturePreviewScenes.CaptureOpenScene("게임 성소 문양 변경 고르기");

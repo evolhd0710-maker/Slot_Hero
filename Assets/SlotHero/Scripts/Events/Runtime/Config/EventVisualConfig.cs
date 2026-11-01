@@ -159,6 +159,53 @@ namespace SlotHero.Events
         [SerializeField] private float _pressedBrightness = 0.90f;
         public float PressedBrightness { get { return _pressedBrightness; } set { _pressedBrightness = value; } }
 
+        [Header("연출")]
+        [Tooltip("선택지를 고르면 고른 칸이 밝아지며 위로 올라가 쌓이는 시간(초). 이 동안 고르지 않은 칸은 사라지고 삽화가 어두워진다(2026년 10월 30일 원재). " +
+                 "삽화 연출이 빨라 0.4 에서 0.8 로 두 배 느리게 했다(2026년 10월 31일 원재).")]
+        [Min(0f)]
+        [SerializeField] private float _chosenRiseSeconds = 0.8f;
+        public float ChosenRiseSeconds { get { return _chosenRiseSeconds; } set { _chosenRiseSeconds = value; } }
+
+        [Tooltip("고른 칸이 올라가는 동안 가장 밝을 때의 칸 색. 올라가는 시간의 가운데에 가장 밝고 끝에는 고른 칸 색으로 가라앉는다.")]
+        [SerializeField] private Color _chosenFlashColor = new Color(1f, 0.93f, 0.72f, 1f);
+        public Color ChosenFlashColor { get { return _chosenFlashColor; } set { _chosenFlashColor = value; } }
+
+        [Tooltip("어두워진 삽화의 어두운 정도. 0 이면 그대로, 1 이면 검정이다.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _illustrationDarkness = 0.85f;
+        public float IllustrationDarkness { get { return _illustrationDarkness; } set { _illustrationDarkness = value; } }
+
+        [Tooltip("어두워진 삽화가 다음 화면의 삽화로 바뀌며 밝아지는 시간(초). 바뀌는 순간 본문도 다음 글로 바뀐다. " +
+                 "0.4 에서 0.8 로 두 배 느리게 했다(2026년 10월 31일 원재).")]
+        [Min(0f)]
+        [SerializeField] private float _illustrationBrightenSeconds = 0.8f;
+        public float IllustrationBrightenSeconds { get { return _illustrationBrightenSeconds; } set { _illustrationBrightenSeconds = value; } }
+
+        [Tooltip("새 선택지가 위에서부터 하나씩 나타나는 전체 시간(초). 선택지가 하나면 한 칸이 드러나는 시간만 걸린다(2026년 10월 30일 원재).")]
+        [Min(0f)]
+        [SerializeField] private float _choiceRevealSeconds = 1f;
+        public float ChoiceRevealSeconds { get { return _choiceRevealSeconds; } set { _choiceRevealSeconds = value; } }
+
+        [Tooltip("선택지 한 칸이 서서히 드러나는 시간(초)(2026년 10월 30일 원재).")]
+        [Min(0f)]
+        [SerializeField] private float _choiceFadeSeconds = 0.5f;
+        public float ChoiceFadeSeconds { get { return _choiceFadeSeconds; } set { _choiceFadeSeconds = value; } }
+
+        /// <summary>
+        /// 새 선택지 i 번째(0 부터)가 드러나기 시작하는 때(초). count 개가 위에서부터 차례로 나타나
+        /// 마지막 칸이 `ChoiceRevealSeconds` 에 다 드러나게 고르게 띄운다. 하나뿐이면 바로 시작한다.
+        /// </summary>
+        public float GetChoiceRevealStart(int index, int count)
+        {
+            if (count <= 1 || index <= 0)
+            {
+                return 0f;
+            }
+
+            float spread = Mathf.Max(0f, ChoiceRevealSeconds - ChoiceFadeSeconds);
+            return spread * index / (count - 1);
+        }
+
         /// <summary>선택지 글을 만들 때 쓸 꼴을 지금 설정으로 만든다.</summary>
         public EventChoiceTextFormat GetTextFormat()
         {

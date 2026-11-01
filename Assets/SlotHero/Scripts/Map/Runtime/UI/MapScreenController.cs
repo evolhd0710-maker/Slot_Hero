@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using SlotHero.Ui;
 
 namespace SlotHero.Map.UI
 {
@@ -20,6 +21,9 @@ namespace SlotHero.Map.UI
         [Tooltip("지도를 잠깐 띄울 때 지도 뒤에 까는 반투명 검은 막. 아래 방 화면을 가리고 누르는 것을 막는다.")]
         [SerializeField] private GameObject _peekDim;
 
+        [Tooltip("맵 화면을 열 때 두루마리를 펼치는 연출(효과음과 이펙트 목록 E05). 비워 두면 바로 다 펼친 지도가 나온다.")]
+        [SerializeField] private MapScrollUnroll _unroll;
+
         [Header("시작 설정")]
         [Tooltip("켜면 시작할 때 아래 시드로 맵을 만든다. 실제 런에서는 런 시드를 넘겨 호출한다.")]
         [SerializeField] private bool _generateOnStart;
@@ -35,8 +39,21 @@ namespace SlotHero.Map.UI
         /// 잠깐 띄운 지도인지. 이때는 노드를 고를 수 없다.
         private bool _peeking;
 
-        /// <summary>노드를 골라 그 방으로 들어갈 때.</summary>
+        /// 닫으려고 두루마리를 마는 중인지. 다 말면 화면을 끈다.
+        private bool _closing;
+
+        // 고른 노드가 반짝이는 동안 기다리는 노드와 지난 시간. 반짝임이 끝나면 두루마리를 만다.
+        private MapNode _enteringNode;
+        private float _enterTime;
+
+        /// 두루마리를 다 말기를 기다리는 노드. 다 말면 그 방으로 들어간다.
+        private MapNode _rollingNode;
+
+        /// <summary>노드를 골라 그 방으로 들어갈 때. 고른 노드가 반짝이고 두루마리를 다 만 뒤에 울린다.</summary>
         public event Action<MapNode> RoomEntered;
+
+        /// <summary>노드를 누른 바로 그때. 반짝임보다 먼저 울린다. 방 고르기 소리를 여기서 낸다.</summary>
+        public event Action<MapNode> NodeChosen;
 
         /// <summary>맵 화면이 열리거나 닫힐 때. 상단 표시줄의 지도 버튼 활성 처리에 쓴다.</summary>
         public event Action<bool> ScreenVisibilityChanged;
@@ -51,10 +68,13 @@ namespace SlotHero.Map.UI
             get { return _progress; }
         }
 
-        /// <summary>맵 화면이 열려 있는지.</summary>
+        /// <summary>
+        /// 맵 화면이 열려 있는지. 닫으려고 두루마리를 마는 동안에는 이미 닫힌 것으로 친다.
+        /// 마는 것은 보이기만 하고 노드를 누를 수 없다.
+        /// </summary>
         public bool IsOpen
         {
-            get { return _screenRoot != null && _screenRoot.activeInHierarchy; }
+            get { return _screenRoot != null && _screenRoot.activeInHierarchy && !_closing; }
         }
 
         private void Awake()
@@ -196,6 +216,17 @@ namespace SlotHero.Map.UI
 
         private void Show()
         {
+            // 방으로 들어가려고 마는 중에는 열지 않는다. 열면 마는 것이 멈춰 방에 들어가지 못한다.
+            if (_rollingNode != null)
+            {
+                return;
+            }
+
+            // 이미 떠 있는 지도를 다시 열 때는 두루마리를 다시 펼치지 않는다.
+            // 마는 도중에 다시 열면 마는 것을 멈추고 처음부터 펼친다.
+            bool wasOpen = IsOpen;
+            _closing = false;
+
             if (_screenRoot != null)
             {
                 _screenRoot.SetActive(true);
@@ -207,25 +238,59 @@ namespace SlotHero.Map.UI
                 _view.FocusOnCurrentNode();
             }
 
+            if (_unroll != null && !wasOpen)
+            {
+                _unroll.Play();
+            }
+
             if (ScreenVisibilityChanged != null)
             {
                 ScreenVisibilityChanged(true);
             }
         }
 
-        /// <summary>맵 화면을 닫는다. 잠깐 띄운 지도도 이것으로 걷는다.</summary>
+        /// <summary>
+        /// 맵 화면을 닫는다. 잠깐 띄운 지도도 이것으로 걷는다.
+        /// 두루마리를 0.3초 동안 다시 만 뒤 화면을 끈다(`MapVisualConfig.RollUpSeconds`, 2026년 10월 31일 원재).
+        /// 닫힌 것으로 치는 것은 바로다. 다음 화면은 기다리지 않고 열리고 마는 두루마리가 그 위에서 잠깐 보인다.
+        /// </summary>
         public void Close()
         {
+            bool wasOpen = IsOpen;
             SetPeeking(false);
 
-            if (_screenRoot != null)
+            // 이미 마는 중이면 마저 말고 끈다.
+            if (!_closing)
             {
-                _screenRoot.SetActive(false);
+                if (wasOpen && _unroll != null && _unroll.PlayRollUp(HideScreen))
+                {
+                    _closing = true;
+                }
+                else
+                {
+                    HideScreen();
+                }
             }
 
             if (ScreenVisibilityChanged != null)
             {
                 ScreenVisibilityChanged(false);
+            }
+        }
+
+        /// <summary>맵 화면을 끈다. 두루마리를 다 말았을 때나 말지 않고 닫을 때 부른다.</summary>
+        private void HideScreen()
+        {
+            _closing = false;
+
+            if (_unroll != null)
+            {
+                _unroll.CancelRollUp();
+            }
+
+            if (_screenRoot != null)
+            {
+                _screenRoot.SetActive(false);
             }
         }
 
@@ -265,6 +330,18 @@ namespace SlotHero.Map.UI
                 return;
             }
 
+            // 고른 노드가 반짝이는 동안에는 다른 노드를 받지 않는다.
+            if (_enteringNode != null)
+            {
+                return;
+            }
+
+            // 두루마리를 펼치는 동안에는 노드를 받지 않는다. 뷰포트가 커서를 막지만 한 번 더 막는다.
+            if (_unroll != null && _unroll.IsPlaying)
+            {
+                return;
+            }
+
             if (!_progress.EnterNode(_map, node.Id))
             {
                 return;
@@ -273,6 +350,134 @@ namespace SlotHero.Map.UI
             if (_view != null)
             {
                 _view.Refresh();
+            }
+
+            if (NodeChosen != null)
+            {
+                NodeChosen(node);
+            }
+
+            // 고른 노드가 0.3초 반짝인 뒤 방으로 들어간다(2026년 10월 31일 원재).
+            // 게임이 돌지 않으면(편집 모드 검사) 바로 들어간다.
+            float seconds = _view != null && _view.Visual != null ? _view.Visual.SelectFlashSeconds : 0f;
+            if (!Application.isPlaying || seconds <= 0f || !isActiveAndEnabled)
+            {
+                EnterRoom(node);
+                return;
+            }
+
+            _enteringNode = node;
+            _enterTime = 0f;
+
+            // 반짝이는 중 화면을 누르면 반짝임과 이어지는 두루마리 말기를 한꺼번에 건너뛰고 방으로 들어간다(2026년 11월 1일 원재).
+            EffectSkip.Begin(this, SkipEntering);
+        }
+
+        private void Update()
+        {
+            if (_enteringNode == null)
+            {
+                return;
+            }
+
+            float seconds = _view != null && _view.Visual != null ? _view.Visual.SelectFlashSeconds : 0f;
+            _enterTime += Time.unscaledDeltaTime;
+            float t = seconds <= 0f ? 1f : Mathf.Clamp01(_enterTime / seconds);
+
+            if (_view != null)
+            {
+                _view.SetNodeFlash(_enteringNode, MapVisualConfig.GetFlashAmount(t));
+            }
+
+            if (t < 1f)
+            {
+                return;
+            }
+
+            FinishEntering(false);
+        }
+
+        /// <summary>화면을 눌러 노드 반짝임을 건너뛰었다. 말기까지 바로 끝내고 방으로 들어간다.</summary>
+        private void SkipEntering()
+        {
+            if (_enteringNode != null)
+            {
+                FinishEntering(true);
+            }
+        }
+
+        /// <summary>
+        /// 노드 반짝임이 끝났다. 두루마리를 말고 다 말면 그 방으로 들어간다.
+        /// skipRollUp 이면 말기도 바로 끝낸다.
+        /// </summary>
+        private void FinishEntering(bool skipRollUp)
+        {
+            EffectSkip.End(this);
+            MapNode node = _enteringNode;
+            _enteringNode = null;
+
+            if (_view != null)
+            {
+                _view.SetNodeFlash(node, 0f);
+            }
+
+            // 두루마리를 다 만 뒤에 방으로 들어간다. 예전에는 말기 시작과 함께 방이 열려
+            // 지도 연출이 끝나기 전에 다음 방이 나왔다(2026년 10월 31일 원재).
+            if (_unroll != null && !_closing && _unroll.PlayRollUp(HandleRolledUpToRoom))
+            {
+                _closing = true;
+                _rollingNode = node;
+
+                if (ScreenVisibilityChanged != null)
+                {
+                    ScreenVisibilityChanged(false);
+                }
+
+                if (skipRollUp)
+                {
+                    _unroll.SkipToEnd();
+                }
+
+                return;
+            }
+
+            EnterRoom(node);
+        }
+
+        /// <summary>방으로 들어가려고 만 두루마리를 다 말았다. 맵 화면을 끄고 그 방으로 들어간다.</summary>
+        private void HandleRolledUpToRoom()
+        {
+            MapNode node = _rollingNode;
+            _rollingNode = null;
+            HideScreen();
+
+            if (node != null)
+            {
+                EnterRoom(node);
+            }
+        }
+
+        /// <summary>
+        /// 반짝이거나 마는 도중에 꺼지면 기다리지 않고 바로 방으로 들어간다. 그러지 않으면 방이 열리지 않아 런이 멈춘다.
+        /// </summary>
+        private void OnDisable()
+        {
+            EffectSkip.End(this);
+            MapNode node = _enteringNode ?? _rollingNode;
+            _enteringNode = null;
+            _rollingNode = null;
+
+            if (node != null)
+            {
+                EnterRoom(node);
+            }
+        }
+
+        private void EnterRoom(MapNode node)
+        {
+            if (_view != null)
+            {
+                _view.SetNodeFlash(node, 0f);
             }
 
             if (RoomEntered != null)

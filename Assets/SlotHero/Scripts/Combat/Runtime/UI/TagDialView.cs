@@ -9,8 +9,9 @@ namespace SlotHero.Combat.UI
     /// <summary>
     /// 태그 UI. 전투 UI 및 연출 초안 / 04 태그 UI 세부.
     ///
-    /// 바깥 원은 열 칸이다. 맨 위가 소용돌이고 시계 방향으로 금성, 지구, 화성, 목성, 토성, 천왕성, 해왕성, 명왕성, 수성이다.
-    /// 초안 그림의 차례를 그대로 옮겼다. 가운데는 고른 코인이고 누르면 코인 UI 로 돌아간다.
+    /// 바깥 원은 열 칸이다. 맨 위가 소용돌이고 시계 방향으로 수성, 금성, 지구, 화성, 목성, 토성, 천왕성, 해왕성, 명왕성이다.
+    /// 처음에는 초안 그림대로 금성에서 시작해 수성으로 끝났고, 2026년 10월 31일 원재가 수성에서 시작하게 바꿨다.
+    /// 가운데는 고른 코인이고 누르면 코인 UI 로 돌아간다. 마우스를 올리면 코인 둘레가 붉게 빛난다(2026년 10월 31일 원재).
     ///
     /// **소용돌이 칸은 평소에 효과가 없다.** 블랙홀은 아직 기획 중이라 칸만 두었다(2026년 10월 25일).
     /// 유물 사건의 지평선이 있을 때만 켜지고, 누르면 가장 많은 태그로 공격한다.
@@ -18,6 +19,7 @@ namespace SlotHero.Combat.UI
     /// 그림은 피그마 `Jackpot 아트웍 (복사)` Frame 3 · 4 다. 원판 테두리 안을 어둡게 메우고 열 칸 바퀴를 그린 뒤
     /// 가운데에 메달을 놓고 그 위에 고른 코인을 얹는다. 피그마 바퀴는 칸 간격이 1 ~ 2 도씩 어긋나 있어
     /// 같은 선 모양으로 36 도 간격 바퀴를 다시 그려 쓴다(`Combat/Art/피그마에서 가져온 그림/열칸_원판_그리기.ps1`).
+    /// 바퀴 선은 칸마다 따로 그린다(`TagSectorView`). 마우스를 올린 칸이 커질 때 제 선을 감춘다(2026년 10월 31일 원재).
     /// </summary>
     public class TagDialView : MonoBehaviour
     {
@@ -30,6 +32,7 @@ namespace SlotHero.Combat.UI
         /// <summary>칸 차례. 소용돌이 다음부터 시계 방향이다.</summary>
         public static readonly SymbolTagType[] TagOrder =
         {
+            SymbolTagType.Mercury,
             SymbolTagType.Venus,
             SymbolTagType.Earth,
             SymbolTagType.Mars,
@@ -38,7 +41,6 @@ namespace SlotHero.Combat.UI
             SymbolTagType.Uranus,
             SymbolTagType.Neptune,
             SymbolTagType.Pluto,
-            SymbolTagType.Mercury,
         };
 
         [SerializeField] private TagSectorView[] _sectors = new TagSectorView[0];
@@ -50,9 +52,6 @@ namespace SlotHero.Combat.UI
         [Tooltip("원판 테두리 안쪽을 메우는 어두운 원.")]
         [SerializeField] private Image _wheelBack;
 
-        [Tooltip("열 칸 바퀴 선 그림.")]
-        [SerializeField] private Image _wheel;
-
         [Header("가운데")]
         [SerializeField] private Button _centerButton;
         [SerializeField] private Image _centerBack;
@@ -61,6 +60,13 @@ namespace SlotHero.Combat.UI
         [SerializeField] private Image _medal;
         [SerializeField] private Image _centerCoin;
         [SerializeField] private TMPro.TMP_Text _centerLabel;
+
+        [Tooltip("가운데 코인에 마우스를 올리면 코인 둘레에 켜는 붉은 빛. 코인 고르기의 강조와 같은 그림이다. " +
+                 "누르면 코인 고르기로 돌아간다는 것을 보이려고 2026년 10월 31일 원재가 더했다.")]
+        [SerializeField] private Image _centerGlow;
+
+        [Tooltip("가운데 코인의 마우스 올림을 받는다.")]
+        [SerializeField] private PointerRelay _centerHover;
 
         [Header("공격 예정")]
         [Tooltip("예전 방식의 원판 전체 채우기. 지금은 고른 칸만 태그 색으로 채우고 테두리를 켠다. " +
@@ -114,6 +120,11 @@ namespace SlotHero.Combat.UI
             {
                 _centerButton.onClick.AddListener(HandleCenterClicked);
             }
+
+            if (_centerHover != null)
+            {
+                _centerHover.HoverChanged += HandleCenterHover;
+            }
         }
 
         private void OnDestroy()
@@ -130,6 +141,11 @@ namespace SlotHero.Combat.UI
             if (_centerButton != null)
             {
                 _centerButton.onClick.RemoveListener(HandleCenterClicked);
+            }
+
+            if (_centerHover != null)
+            {
+                _centerHover.HoverChanged -= HandleCenterHover;
             }
         }
 
@@ -175,7 +191,6 @@ namespace SlotHero.Combat.UI
             _chargeAlpha = visual.TagChargeAlpha;
 
             PlaceCentered(_sectorLayer, Vector2.zero, new Vector2(layout.TagWheelSize, layout.TagWheelSize));
-            PlaceCentered(_wheel != null ? _wheel.rectTransform : null, Vector2.zero, new Vector2(artSize, artSize));
             PlaceCentered(_wheelBack != null ? _wheelBack.rectTransform : null, Vector2.zero,
                 new Vector2(layout.TagWheelBackSize, layout.TagWheelBackSize));
 
@@ -242,6 +257,14 @@ namespace SlotHero.Combat.UI
                     new Vector2(layout.TagCenterCoinSize, layout.TagCenterCoinSize));
             }
 
+            // 코인 고르기의 강조와 같은 비율로 코인보다 크게 둘러 빛나게 한다.
+            if (_centerGlow != null)
+            {
+                float glow = layout.TagCenterCoinSize * layout.CoinGlowScale;
+                PlaceCentered(_centerGlow.rectTransform, Vector2.zero, new Vector2(glow, glow));
+                _centerGlow.gameObject.SetActive(false);
+            }
+
             if (_centerBack != null)
             {
                 _centerBack.color = visual.DialCenterColor;
@@ -267,6 +290,8 @@ namespace SlotHero.Combat.UI
         /// <summary>가운데에 고른 코인을 놓는다. 코인 없이 골랐으면 글자만 둔다.</summary>
         public void SetCenterCoin(Sprite icon, string label)
         {
+            SetCenterGlow(false);
+
             if (_centerCoin != null)
             {
                 _centerCoin.sprite = icon;
@@ -376,8 +401,29 @@ namespace SlotHero.Combat.UI
             }
         }
 
+        /// <summary>가운데 코인 둘레의 붉은 빛이 켜져 있는지.</summary>
+        public bool CenterGlowVisible
+        {
+            get { return _centerGlow != null && _centerGlow.gameObject.activeSelf; }
+        }
+
+        private void SetCenterGlow(bool on)
+        {
+            if (_centerGlow != null)
+            {
+                _centerGlow.gameObject.SetActive(on);
+            }
+        }
+
+        /// <summary>가운데 코인에 마우스가 올라가면 누를 수 있을 때만 붉게 빛낸다. 누르면 코인 고르기로 돌아간다.</summary>
+        private void HandleCenterHover(bool hovering)
+        {
+            SetCenterGlow(hovering && _centerButton != null && _centerButton.IsInteractable());
+        }
+
         private void HandleCenterClicked()
         {
+            SetCenterGlow(false);
             if (CenterClicked != null)
             {
                 CenterClicked();

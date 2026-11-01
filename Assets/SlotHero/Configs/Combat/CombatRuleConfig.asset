@@ -42,19 +42,19 @@ MonoBehaviour:
   Enemies:
   - Kind: 0
     Monster: 1
-    Name: "\uAC80\uD22C\uC0AC"
+    Name: "\uB364"
     Description: "\uACF5\uACA9 \xB7 \uBC29\uC5B4 \xB7 \uBC84\uD504\uB97C \uACE0\uB8E8 \uC4F4\uB2E4. \uD568\uC131\uC73C\uB85C \uC5BB\uB294 \uAE30\uC138\uB85C \uD134\uC774 \uC9C0\uB0A0\uC218\uB85D \uAC15\uD574\uC9C4\uB2E4."
     MaxHealth: 200
     Attack: 15
   - Kind: 1
     Monster: 2
-    Name: "\uC7A5\uAD70"
+    Name: "\uB354\uBA38"
     Description: "\uB9E4 \uD134 \uBC29\uD328\uBCD1\uC744 \uC18C\uD658\uD558\uACE0, \uBC29\uD328\uBCD1 \uC218\uC5D0 \uB530\uB77C \uB3CC\uACA9 \xB7 \uBC29\uD328 \uC9C4\uD615 \xB7 \uCD1D\uACF5\uC138\uB97C \uC4F4\uB2E4."
     MaxHealth: 350
     Attack: 15
   - Kind: 2
     Monster: 0
-    Name: "\uCF5C\uB85C\uC138\uC6C0\uC758 \uC8FC\uC778"
+    Name: "\uB354\uC2A4\uD2B8"
     Description: "\uCF5C\uB85C\uC138\uC6C0\uC744 \uC9C0\uBC30\uD558\uB294 \uC790."
     MaxHealth: 750
     Attack: 25

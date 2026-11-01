@@ -19,8 +19,34 @@ namespace SlotHero.Combat
         [Tooltip("빈 칸. 유물이 없는 자리나 꺼낸 코인이 없는 자리다.")]
         public Color EmptyColor = new Color(0.22f, 0.21f, 0.2f, 0.7f);
 
-        [Tooltip("몬스터 일러스트가 아직 없어 그 자리에 까는 색.")]
+        [Tooltip("몬스터 일러스트가 없을 때 그 자리에 까는 색.")]
         public Color EnemyArtStandIn = new Color(0.32f, 0.2f, 0.17f, 1f);
+
+        [Tooltip("일반 방 몬스터(덤) 그림. 팀원이 올린 `Dur` 다(2026년 10월 31일 `c887667`). `그림 가져오기` 가 채운다.")]
+        [SerializeField] private Sprite _normalEnemyArt;
+        public Sprite NormalEnemyArt { get { return _normalEnemyArt; } set { _normalEnemyArt = value; } }
+
+        [Tooltip("엘리트 방 몬스터(더머) 그림. 팀원이 올린 `Dummy` 다(2026년 10월 31일 `c887667`).")]
+        [SerializeField] private Sprite _eliteEnemyArt;
+        public Sprite EliteEnemyArt { get { return _eliteEnemyArt; } set { _eliteEnemyArt = value; } }
+
+        [Tooltip("보스 방 몬스터(더스트) 그림. 팀원이 올린 `Dum` 이다(2026년 10월 31일 `c887667`).")]
+        [SerializeField] private Sprite _bossEnemyArt;
+        public Sprite BossEnemyArt { get { return _bossEnemyArt; } set { _bossEnemyArt = value; } }
+
+        /// <summary>그 방 종류 몬스터의 그림. 없으면 null 이고 화면은 대신 색 칸에 이름을 적는다.</summary>
+        public Sprite GetEnemyArt(CombatEnemyKind kind)
+        {
+            switch (kind)
+            {
+                case CombatEnemyKind.Elite:
+                    return _eliteEnemyArt;
+                case CombatEnemyKind.Boss:
+                    return _bossEnemyArt;
+                default:
+                    return _normalEnemyArt;
+            }
+        }
 
         [Tooltip("체력 막대 바탕. 피그마 체력 틀 안쪽처럼 거의 검다.")]
         public Color BarBackColor = new Color(0.07f, 0.065f, 0.06f, 1f);
@@ -87,8 +113,82 @@ namespace SlotHero.Combat
         [Tooltip("코인 한 개의 바탕. 코인 그림이 없으면 이 색 원만 남는다.")]
         public Color CoinColor = new Color(0.86f, 0.74f, 0.42f, 1f);
 
-        [Tooltip("유물 정보 팝업 바탕.")]
-        public Color PopupColor = new Color(0.94f, 0.92f, 0.88f, 1f);
+        [Tooltip("릴 칸의 피그마 릴 틀에 입히는 재질. 무채색 재질(UI 무채)이면 회색으로 그린다. " +
+                 "기본은 무채색으로 두고 어느 때 색을 넣을지는 나중에 정한다(2026년 10월 31일 원재). 비우면 그림 색 그대로다. " +
+                 "문양의 태그 테두리와 기호는 늘 제 색이라 이 재질을 쓰지 않는다.")]
+        [SerializeField] private Material _reelFrameMaterial;
+        public Material ReelFrameMaterial { get { return _reelFrameMaterial; } set { _reelFrameMaterial = value; } }
+
+        [Tooltip("강조하지 않은 릴 틀에 곱하는 색. 흰색이면 회색 틀 그대로다. " +
+                 "강조한 틀이 더 잘 보이게 2026년 11월 1일 원재가 기본 틀을 더 어둡게 하라고 했다.")]
+        [SerializeField] private Color _reelFrameIdleColor = new Color(0.5f, 0.5f, 0.5f, 1f);
+        public Color ReelFrameIdleColor { get { return _reelFrameIdleColor; } set { _reelFrameIdleColor = value; } }
+
+        [Tooltip("강조한 릴 틀 둘레의 빛(`릴틀_빛`)이 한 번 밝아졌다 어두워지는 시간(초). " +
+                 "태그 강조를 반짝이게 해 더 잘 보이게 했다(2026년 11월 1일 원재).")]
+        [Min(0.05f)]
+        [SerializeField] private float _reelGlowPulseSeconds = 0.9f;
+        public float ReelGlowPulseSeconds { get { return _reelGlowPulseSeconds; } set { _reelGlowPulseSeconds = value; } }
+
+        [Tooltip("릴 틀 빛이 가장 어두울 때의 불투명도. 빛을 더 세게 하라고 해 2026년 11월 1일 0.25 에서 0.55 로 올렸다.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _reelGlowMinAlpha = 0.55f;
+        public float ReelGlowMinAlpha { get { return _reelGlowMinAlpha; } set { _reelGlowMinAlpha = value; } }
+
+        [Tooltip("강조 빛과 덧칠의 밝기를 올리는 정도. 태그 색의 가장 밝은 채널을 1 쪽으로 이만큼 올리고 나머지 채널도 같은 비율로 올려 색감은 그대로다. " +
+                 "2026년 11월 1일 원재가 색을 더 밝게 하라고 했다. 처음에는 흰색 쪽으로 섞어 채도가 낮아졌다.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _reelGlowBrighten = 0.6f;
+        public float ReelGlowBrighten { get { return _reelGlowBrighten; } set { _reelGlowBrighten = value; } }
+
+        [Tooltip("강조 빛과 덧칠의 채도 배율. 1 이면 태그 색 그대로, 클수록 회색에서 멀어져 짙다. 빛의 채도가 낮다고 해 올렸다(2026년 11월 1일 원재).")]
+        [Min(0f)]
+        [SerializeField] private float _reelGlowSaturation = 1.35f;
+        public float ReelGlowSaturation { get { return _reelGlowSaturation; } set { _reelGlowSaturation = value; } }
+
+        [Tooltip("강조한 릴 틀 위에 밝힌 태그 색으로 덧칠하는 가장자리 선(`릴틀_흰`)이 가장 옅을 때의 불투명도. 빛과 함께 오르내린다. " +
+                 "덧칠이 틀 띠 전체라 너무 넓다고 해 가는 가장자리 선으로 바꾸며 올렸다(2026년 11월 1일 원재).")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _reelShineMinAlpha = 0.45f;
+        public float ReelShineMinAlpha { get { return _reelShineMinAlpha; } set { _reelShineMinAlpha = value; } }
+
+        [Tooltip("강조한 릴 틀 덧칠이 가장 짙을 때의 불투명도.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _reelShineMaxAlpha = 0.9f;
+        public float ReelShineMaxAlpha { get { return _reelShineMaxAlpha; } set { _reelShineMaxAlpha = value; } }
+
+        /// <summary>
+        /// 강조 빛과 덧칠에 쓰는 색. 태그 색의 채도를 올리고, 색감을 지킨 채 밝기를 올린다.
+        /// 흰색과 섞으면 밝아지는 만큼 색이 바래 2026년 11월 1일 이 방식으로 바꿨다.
+        /// </summary>
+        public Color GetReelGlowColor(Color tagColor)
+        {
+            // 회색에서 멀어지게 해 채도를 올린다.
+            float gray = tagColor.r * 0.299f + tagColor.g * 0.587f + tagColor.b * 0.114f;
+            float r = Mathf.Clamp01(gray + (tagColor.r - gray) * _reelGlowSaturation);
+            float g = Mathf.Clamp01(gray + (tagColor.g - gray) * _reelGlowSaturation);
+            float b = Mathf.Clamp01(gray + (tagColor.b - gray) * _reelGlowSaturation);
+
+            // 가장 밝은 채널을 1 쪽으로 올리고 나머지도 같은 비율로 올린다. 색감과 채도가 그대로다.
+            float top = Mathf.Max(r, Mathf.Max(g, b));
+            if (top > 0f)
+            {
+                float scale = Mathf.Lerp(top, 1f, _reelGlowBrighten) / top;
+                r = Mathf.Clamp01(r * scale);
+                g = Mathf.Clamp01(g * scale);
+                b = Mathf.Clamp01(b * scale);
+            }
+
+            return new Color(r, g, b, 1f);
+        }
+
+        [Tooltip("릴 틀 빛이 가장 밝을 때의 불투명도.")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _reelGlowMaxAlpha = 1f;
+        public float ReelGlowMaxAlpha { get { return _reelGlowMaxAlpha; } set { _reelGlowMaxAlpha = value; } }
+
+        [Tooltip("유물 정보 팝업의 풍선 그림에 곱하는 색. 코인 정보 팝업과 같은 검은 풍선이라 흰색이면 그림 그대로다.")]
+        public Color PopupColor = Color.white;
 
         [Tooltip("코인 정보 팝업 글자. 피그마 설명 풍선은 검은 바탕에 밝은 글자다.")]
         [SerializeField] private Color _coinPopupTextColor = new Color(0.93f, 0.91f, 0.87f, 1f);

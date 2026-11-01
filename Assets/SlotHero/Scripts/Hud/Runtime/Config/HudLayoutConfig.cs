@@ -30,10 +30,11 @@ namespace SlotHero.Hud
         [SerializeField] private float _buttonSize = UiScale.Px(200f);
         public float ButtonSize { get { return _buttonSize; } set { _buttonSize = value; } }
 
-        [Tooltip("화면 우측 하단 모서리에서 가로 세로로 떨어뜨리는 거리. 기획서 기준 70.")]
+        [Tooltip("화면 우측 하단 모서리에서 가로 세로로 떨어뜨리는 거리. 기획서 기준은 70 이다.\n" +
+                 "2026년 10월 31일 원재가 버튼을 더 구석으로 보내 안전 영역 끝인 40 으로 줄였다.")]
         [Min(0f)]
         [FormerlySerializedAs("ButtonCornerMargin")]
-        [SerializeField] private float _buttonCornerMargin = UiScale.Px(70f);
+        [SerializeField] private float _buttonCornerMargin = UiScale.Px(40f);
         public float ButtonCornerMargin { get { return _buttonCornerMargin; } set { _buttonCornerMargin = value; } }
 
         [Tooltip("버튼 안에 놓는 아이콘의 크기. 와이어프레임 기준 150 × 150.")]
@@ -56,7 +57,7 @@ namespace SlotHero.Hud
         [SerializeField] private Vector2 _autoSaveNoticeSize = UiScale.V(200f, 40f);
         public Vector2 AutoSaveNoticeSize { get { return _autoSaveNoticeSize; } set { _autoSaveNoticeSize = value; } }
 
-        [Tooltip("현재 빌드 버튼과 표시 사이, 표시와 화면 아래 모서리 사이의 간격. 기획서 기준 15.")]
+        [Tooltip("현재 빌드 버튼과 표시 사이의 가로 간격. 기획서의 버튼과 표시 사이 간격 15 를 옮겨 쓴다.")]
         [Min(0f)]
         [FormerlySerializedAs("AutoSaveNoticeGap")]
         [SerializeField] private float _autoSaveNoticeGap = UiScale.Px(15f);
@@ -82,21 +83,19 @@ namespace SlotHero.Hud
 
         /// <summary>
         /// 자동 저장 표시의 자리. 버튼과 같은 기준점을 쓴다.
-        /// 버튼 아래 간격만큼 띄우고, 표시 아래로도 같은 간격이 남는다.
+        /// 기획서는 버튼 아래 70 칸에 두었는데, 2026년 10월 31일 버튼을 모서리 40 으로 옮기며 그 칸이 없어졌다.
+        /// 그래서 버튼 옆(화면 안쪽)으로 간격만큼 띄우고, 아래 끝을 버튼 아래 끝과 같은 줄에 맞춘다.
         /// </summary>
         public Vector2 GetAutoSaveNoticePosition()
         {
-            float bottom = ButtonCornerMargin - AutoSaveNoticeGap - AutoSaveNoticeSize.y;
-            return new Vector2(SideSign() * ButtonCornerMargin, bottom);
+            float side = ButtonCornerMargin + ButtonSize + AutoSaveNoticeGap;
+            return new Vector2(SideSign() * side, ButtonCornerMargin);
         }
 
-        /// <summary>
-        /// 버튼 아래에 자동 저장 표시가 들어갈 자리가 남는지.
-        /// 기획서 수치인 70 = 15 + 40 + 15 에서 하나라도 어긋나면 알 수 있다.
-        /// </summary>
-        public bool AutoSaveNoticeFitsUnderButton()
+        /// <summary>버튼 옆에 둔 자동 저장 표시가 화면 안에 들어가는지.</summary>
+        public bool AutoSaveNoticeFitsBesideButton()
         {
-            return ButtonCornerMargin >= AutoSaveNoticeGap * 2f + AutoSaveNoticeSize.y;
+            return ButtonCornerMargin + ButtonSize + AutoSaveNoticeGap + AutoSaveNoticeSize.x <= ReferenceResolution.x;
         }
 
         private void OnValidate()

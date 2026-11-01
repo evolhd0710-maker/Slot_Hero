@@ -38,3 +38,9 @@ MonoBehaviour:
   _requirementFormat: ' [{0}]'
   _hoverBrightness: 1.1
   _pressedBrightness: 0.9
+  _chosenRiseSeconds: 0.8
+  _chosenFlashColor: {r: 1, g: 0.93, b: 0.72, a: 1}
+  _illustrationDarkness: 0.85
+  _illustrationBrightenSeconds: 0.8
+  _choiceRevealSeconds: 1
+  _choiceFadeSeconds: 0.5

@@ -48,6 +48,80 @@ namespace SlotHero.Map
         [SerializeField] private Vector2 _parchmentSize = UiScale.V(1800f, 1200f);
         public Vector2 ParchmentSize { get { return _parchmentSize; } set { _parchmentSize = value; } }
 
+        // 효과음과 이펙트 목록 E05 두루마리 펼치기. 맵 화면을 열 때 가운데에 말려 있던 두루마리가 양쪽으로 풀린다.
+        // 그림은 `Map/Art/두루마리 완성9 20261031` 이고 조각 일곱이 모두 지도_양피지와 같은 1774 x 1183 판에 제자리로 놓여 있다.
+        // 아래 네 칸은 그 판 위의 픽셀 실측이다. 왼쪽 위가 (0, 0) 이고 아래로 갈수록 y 가 커진다. 그림을 바꾸면 다시 잰다.
+        [Header("두루마리 펼치기")]
+        [Tooltip("두루마리가 다 펼쳐지는 데 걸리는 초. 0 이면 펼치지 않고 바로 다 펼친 지도가 나온다. 0.5초는 2026년 10월 31일 원재가 정했다.")]
+        [SerializeField, Min(0f)] private float _unrollSeconds = 0.5f;
+        public float UnrollSeconds { get { return _unrollSeconds; } set { _unrollSeconds = value; } }
+
+        [Tooltip("맵 화면을 닫을 때 두루마리를 다시 마는 데 걸리는 초. 펼치기를 거꾸로 돌린다. " +
+                 "0 이면 말지 않고 바로 닫는다. 0.3초는 2026년 10월 31일 원재가 정했다.")]
+        [SerializeField, Min(0f)] private float _rollUpSeconds = 0.3f;
+        public float RollUpSeconds { get { return _rollUpSeconds; } set { _rollUpSeconds = value; } }
+
+        [Tooltip("말린 두루마리 그림이 사라지기 시작하는 진행도(0 ~ 1). 이때부터 끝까지 서서히 투명해지고 아래의 펼친 두루마리 그림이 드러난다.")]
+        [SerializeField, Range(0f, 0.99f)] private float _unrollRolledFadeStart = 0.5f;
+        public float UnrollRolledFadeStart { get { return _unrollRolledFadeStart; } set { _unrollRolledFadeStart = value; } }
+
+        [Tooltip("다 펼친 뒤 노드와 간선이 나타나는 데 걸리는 초. 이 동안에도 노드를 누를 수 없다.")]
+        [SerializeField, Min(0f)] private float _unrollNodeFadeSeconds = 0.15f;
+        public float UnrollNodeFadeSeconds { get { return _unrollNodeFadeSeconds; } set { _unrollNodeFadeSeconds = value; } }
+
+        [Tooltip("`말림_왼쪽` 의 그림이 차지하는 칸. x, y, 가로, 세로. 판 위 픽셀 실측이다.")]
+        [SerializeField] private Rect _rolledLeftArt = new Rect(714f, 224f, 177f, 747f);
+        public Rect RolledLeftArt { get { return _rolledLeftArt; } set { _rolledLeftArt = value; } }
+
+        [Tooltip("`말림_오른쪽` 의 그림이 차지하는 칸. x, y, 가로, 세로. 판 위 픽셀 실측이다.")]
+        [SerializeField] private Rect _rolledRightArt = new Rect(884f, 224f, 177f, 747f);
+        public Rect RolledRightArt { get { return _rolledRightArt; } set { _rolledRightArt = value; } }
+
+        [Tooltip("`펼침_왼쪽` 의 그림이 차지하는 칸. x, y, 가로, 세로. 판 위 픽셀 실측이다. " +
+                 "가운데 x 가 종이(`펼침_가운데`) 왼쪽 끝과 맞아 종이를 드러내는 가림판의 왼쪽 끝도 이것을 따라간다.")]
+        [SerializeField] private Rect _openLeftArt = new Rect(102f, 259f, 97f, 714f);
+        public Rect OpenLeftArt { get { return _openLeftArt; } set { _openLeftArt = value; } }
+
+        [Tooltip("`펼침_오른쪽` 의 그림이 차지하는 칸. x, y, 가로, 세로. 판 위 픽셀 실측이다. " +
+                 "가운데 x 가 종이 오른쪽 끝과 맞는다.")]
+        [SerializeField] private Rect _openRightArt = new Rect(1577f, 222f, 97f, 711f);
+        public Rect OpenRightArt { get { return _openRightArt; } set { _openRightArt = value; } }
+
+        /// <summary>
+        /// 펼치는 곡선. 처음은 빠르고 끝은 느리다(3차 감속). t 는 0 ~ 1 이다.
+        /// 효과음과 이펙트 목록 E05 두루마리 펼치기.
+        /// </summary>
+        public static float GetUnrollEase(float t)
+        {
+            float rest = 1f - Mathf.Clamp01(t);
+            return 1f - rest * rest * rest;
+        }
+
+        /// <summary>
+        /// 말린 두루마리 그림의 불투명도. fadeStart 까지는 1 이고 진행도 1 에서 0 이 된다.
+        /// 효과음과 이펙트 목록 E05 두루마리 펼치기.
+        /// </summary>
+        public static float GetRolledAlpha(float progress, float fadeStart)
+        {
+            if (fadeStart >= 1f)
+            {
+                return progress >= 1f ? 0f : 1f;
+            }
+
+            return 1f - Mathf.Clamp01((progress - fadeStart) / (1f - fadeStart));
+        }
+
+        /// <summary>
+        /// 그림 판 위의 픽셀 자리를 화면에 그린 양피지의 가운데 기준 자리로 바꾼다.
+        /// 판은 왼쪽 위가 (0, 0) 이고 아래로 y 가 커지며, 화면은 가운데가 (0, 0) 이고 위로 y 가 커진다.
+        /// </summary>
+        public static Vector2 ArtToLocal(Vector2 artPoint, Vector2 artSize, Vector2 drawSize)
+        {
+            float scaleX = artSize.x > 0f ? drawSize.x / artSize.x : 1f;
+            float scaleY = artSize.y > 0f ? drawSize.y / artSize.y : 1f;
+            return new Vector2((artPoint.x - artSize.x * 0.5f) * scaleX, (artSize.y * 0.5f - artPoint.y) * scaleY);
+        }
+
         [Header("크기")]
         [Tooltip("노드를 늘어놓는 영역의 크기. 화면 가운데에 놓는다.\n" +
                  "**기획서는 1600 x 800 인데 와이어프레임대로 1300 x 500 이다.** 2026년 10월 3일에 원재가 정했다. " +
@@ -156,6 +230,44 @@ namespace SlotHero.Map
         [FormerlySerializedAs("CurrentTint")]
         [SerializeField] private Color _currentTint = new Color(0.169f, 0.125f, 0.086f, 1f);
         public Color CurrentTint { get { return _currentTint; } set { _currentTint = value; } }
+
+        [Header("연출")]
+        [Tooltip("지금 방 노드가 밝아졌다 어두워지는 한 주기(초). 2026년 10월 31일 원재가 2초로 정했다.")]
+        [SerializeField, Min(0f)] private float _currentPulseSeconds = 2f;
+        public float CurrentPulseSeconds { get { return _currentPulseSeconds; } set { _currentPulseSeconds = value; } }
+
+        [Tooltip("지금 방 노드가 가장 밝을 때 더하는 밝기. 0.3 이면 30 퍼센트 밝아진다(2026년 10월 31일 원재).")]
+        [SerializeField, Range(0f, 1f)] private float _currentPulseBrightness = 0.3f;
+        public float CurrentPulseBrightness { get { return _currentPulseBrightness; } set { _currentPulseBrightness = value; } }
+
+        [Tooltip("노드를 고르면 그 노드가 반짝이는 시간(초). 반짝임이 끝나면 방으로 들어간다(2026년 10월 31일 원재).")]
+        [SerializeField, Min(0f)] private float _selectFlashSeconds = 0.3f;
+        public float SelectFlashSeconds { get { return _selectFlashSeconds; } set { _selectFlashSeconds = value; } }
+
+        [Tooltip("반짝임이 가장 밝을 때의 색. 노드 색이 이 색으로 갔다가 돌아온다.")]
+        [SerializeField] private Color _selectFlashColor = new Color(1f, 0.93f, 0.72f, 1f);
+        public Color SelectFlashColor { get { return _selectFlashColor; } set { _selectFlashColor = value; } }
+
+        /// <summary>
+        /// 지금 방 노드에 곱하는 밝기. 0초에 1 로 시작해 주기의 절반에 1 + 밝기 로 가장 밝고 한 주기에 1 로 돌아온다.
+        /// </summary>
+        public static float GetPulseMultiplier(float elapsed, float period, float brightness)
+        {
+            if (period <= 0f)
+            {
+                return 1f;
+            }
+
+            float phase = (elapsed % period) / period;
+            float wave = (1f - Mathf.Cos(phase * Mathf.PI * 2f)) * 0.5f;
+            return 1f + brightness * wave;
+        }
+
+        /// <summary>반짝임의 세기. 0 에서 시작해 가운데에서 1 이 되고 끝에서 0 으로 돌아온다. t 는 0 ~ 1 이다.</summary>
+        public static float GetFlashAmount(float t)
+        {
+            return Mathf.Sin(Mathf.Clamp01(t) * Mathf.PI);
+        }
 
         [Tooltip("아이콘 안쪽 무늬(눈, 선)의 색. 진한 갈색 몸통 위에서 잘 보이게 양피지 색으로 둔다(2026년 10월 25일 원재).")]
         [SerializeField] private Color _iconDetailColor = new Color(0.933f, 0.871f, 0.729f, 1f);

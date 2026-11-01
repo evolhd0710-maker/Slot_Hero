@@ -13,6 +13,34 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Map.MapVisualConfig
   _parchmentSize: {x: 1800, y: 1200}
+  _unrollSeconds: 0.5
+  _rollUpSeconds: 0.3
+  _unrollRolledFadeStart: 0.5
+  _unrollNodeFadeSeconds: 0.15
+  _rolledLeftArt:
+    serializedVersion: 2
+    x: 714
+    y: 224
+    width: 177
+    height: 747
+  _rolledRightArt:
+    serializedVersion: 2
+    x: 884
+    y: 224
+    width: 177
+    height: 747
+  _openLeftArt:
+    serializedVersion: 2
+    x: 102
+    y: 259
+    width: 97
+    height: 714
+  _openRightArt:
+    serializedVersion: 2
+    x: 1577
+    y: 222
+    width: 97
+    height: 711
   _mapSize: {x: 1300, y: 500}
   _nodeSize: 70
   _iconShapeRatio: 0.78
@@ -52,6 +80,10 @@ MonoBehaviour:
   _futureTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
   _selectableTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
   _currentTint: {r: 0.169, g: 0.125, b: 0.086, a: 1}
+  _currentPulseSeconds: 2
+  _currentPulseBrightness: 0.3
+  _selectFlashSeconds: 0.3
+  _selectFlashColor: {r: 1, g: 0.93, b: 0.72, a: 1}
   _iconDetailColor: {r: 0.933, g: 0.871, b: 0.729, a: 1}
   _checkMarkColor: {r: 1, g: 1, b: 1, a: 1}
   _selectableScale: 1.05

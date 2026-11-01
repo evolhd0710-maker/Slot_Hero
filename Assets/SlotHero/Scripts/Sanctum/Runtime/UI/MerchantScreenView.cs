@@ -188,6 +188,28 @@ namespace SlotHero.Sanctum.UI
             }
         }
 
+        /// <summary>
+        /// 새로 놓인 유물들이 암흑물질에서 형체를 갖추는 연출을 왼쪽 칸부터 차례로 건다(2026년 10월 31일 원재).
+        /// 유물 진열을 새로 고친 뒤 부른다.
+        /// </summary>
+        public void PlayRelicForming()
+        {
+            if (_relicSlots == null)
+            {
+                return;
+            }
+
+            int order = 0;
+            for (int i = 0; i < _relicSlots.Length; i++)
+            {
+                if (_relicSlots[i] != null && _relicSlots[i].gameObject.activeSelf)
+                {
+                    _relicSlots[i].PlayForming(order);
+                    order++;
+                }
+            }
+        }
+
         private void HandleRelicRefreshClick()
         {
             if (RelicRefreshClicked != null)

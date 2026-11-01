@@ -87,6 +87,24 @@ namespace SlotHero.Flow
             Leave();
         }
 
+        /// <summary>받은 소리 크기. 대역은 소리를 내지 않는다. 게임 씬 검사가 흐름이 넘겼는지 본다.</summary>
+        public float SoundVolume { get; private set; }
+
+        /// <summary>대역은 소리를 내지 않아 받기만 한다.</summary>
+        public void SetSoundVolume(float volume)
+        {
+            SoundVolume = volume;
+        }
+
+        /// <summary>받은 "임시 아이템 효과 적용". 대역은 효과를 쓰지 않는다. 게임 씬 검사가 흐름이 넘겼는지 본다.</summary>
+        public bool TemporaryItemEffects { get; private set; }
+
+        /// <summary>대역은 효과를 쓰지 않아 받기만 한다.</summary>
+        public void SetTemporaryItemEffects(bool enabled)
+        {
+            TemporaryItemEffects = enabled;
+        }
+
         private void HandleChosen(string buttonId)
         {
             Finish(buttonId == "victory");

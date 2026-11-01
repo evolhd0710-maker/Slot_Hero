@@ -54,6 +54,12 @@ namespace SlotHero.Flow
         /// <summary>골드나 체력이 바뀌었다. 상단 표시줄이 듣는다.</summary>
         public event Action Changed;
 
+        /// <summary>
+        /// 체력이 줄었다. 줄어든 만큼을 넘긴다. 전투에서 맞을 때와 이벤트에서 체력이나 최대 체력을 잃을 때 울린다.
+        /// 피격음(효과음 목록 S12 체력 잃음)이 듣는다(2026년 10월 30일 원재).
+        /// </summary>
+        public event Action<int> HealthLost;
+
         // ---- IPlayerVitals ----
 
         /// <inheritdoc />
@@ -88,8 +94,18 @@ namespace SlotHero.Flow
                 return;
             }
 
+            int before = _run.Status.Health;
             _run.Status.TakeDamage(amount);
             Notify();
+            NotifyHealthLost(before - _run.Status.Health);
+        }
+
+        private void NotifyHealthLost(int lost)
+        {
+            if (lost > 0 && HealthLost != null)
+            {
+                HealthLost(lost);
+            }
         }
 
         /// <summary>
@@ -108,6 +124,7 @@ namespace SlotHero.Flow
 
             RunStatusData status = _run.Status;
             int before = status.MaxHealth;
+            int healthBefore = status.Health;
             int wanted = before + amount;
             status.MaxHealth = wanted < 1 ? 1 : wanted;
 
@@ -124,6 +141,7 @@ namespace SlotHero.Flow
             }
 
             Notify();
+            NotifyHealthLost(healthBefore - status.Health);
             return changed;
         }
 

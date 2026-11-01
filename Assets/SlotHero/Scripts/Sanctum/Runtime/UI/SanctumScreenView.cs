@@ -24,6 +24,18 @@ namespace SlotHero.Sanctum.UI
         [Tooltip("이미 쓴 야영. 불이 꺼진 모닥불이다. 비워 두면 그림 대신 색만 흐려진다.")]
         [SerializeField] private Sprite _campUsedSprite;
 
+        [Tooltip("야영을 쓸 때의 연출. 화면이 어두워지고 회복 빛이 떠올랐다가 다시 밝아진다(2026년 10월 31일 원재).")]
+        [SerializeField] private CampEffectView _campEffect;
+
+        [Tooltip("연출 시간과 색. 성소 표시 설정이다.")]
+        [SerializeField] private SanctumVisualConfig _visual;
+
+        // 연출이 가장 어두워질 때까지 불 붙은 모닥불을 그대로 둔다. 그때 꺼진 그림으로 바꾼다.
+        private bool _holdCampLit;
+        private SanctumState _lastState;
+        private SanctumConfig _lastConfig;
+        private SanctumVisualConfig _lastVisual;
+
         [Header("행상")]
         [SerializeField] private Button _merchantButton;
 
@@ -82,12 +94,19 @@ namespace SlotHero.Sanctum.UI
         /// </summary>
         public void Refresh(SanctumState state, SanctumConfig config, SanctumVisualConfig visual)
         {
+            _lastState = state;
+            _lastConfig = config;
+            _lastVisual = visual;
+
             bool campAvailable = state != null && state.CanUseCamp(config);
 
             if (_campButton != null)
             {
                 _campButton.interactable = campAvailable;
             }
+
+            // 야영 연출이 가장 어두워지기 전에는 불 붙은 모닥불을 보인다.
+            bool campLit = campAvailable || _holdCampLit;
 
             if (_campImage != null && visual != null)
             {
@@ -97,7 +116,7 @@ namespace SlotHero.Sanctum.UI
 
                 if (hasBothSprites)
                 {
-                    _campImage.sprite = campAvailable ? _campAvailableSprite : _campUsedSprite;
+                    _campImage.sprite = campLit ? _campAvailableSprite : _campUsedSprite;
 
                     // 이 칸이 버튼의 Target Graphic 이면 버튼이 상태마다 overrideSprite 를 덮어쓴다.
                     // 덮인 것을 치워야 방금 넣은 sprite 가 화면에 나온다.
@@ -107,7 +126,7 @@ namespace SlotHero.Sanctum.UI
                 }
                 else
                 {
-                    _campImage.color = campAvailable ? visual.CampAvailableTint : visual.CampUsedTint;
+                    _campImage.color = campLit ? visual.CampAvailableTint : visual.CampUsedTint;
                 }
             }
 
@@ -122,8 +141,38 @@ namespace SlotHero.Sanctum.UI
             }
         }
 
+        /// <summary>
+        /// 야영 연출을 시작한다. 가장 어두울 때 모닥불을 꺼진 그림으로 바꾼다.
+        /// 연출이 없거나 게임이 돌지 않으면 바로 바뀐다.
+        /// </summary>
+        public void PlayCampEffect()
+        {
+            if (_campEffect == null || !Application.isPlaying)
+            {
+                return;
+            }
+
+            _holdCampLit = true;
+            _campEffect.Play(_visual, ReleaseCampLit);
+        }
+
+        /// <summary>야영 연출이 도는 중인지.</summary>
+        public bool CampEffectPlaying
+        {
+            get { return _campEffect != null && _campEffect.Playing; }
+        }
+
+        private void ReleaseCampLit()
+        {
+            _holdCampLit = false;
+            Refresh(_lastState, _lastConfig, _lastVisual);
+        }
+
         private void HandleCampClick()
         {
+            // 연출을 먼저 걸어 두어야 야영을 쓰고 화면을 다시 그릴 때 모닥불이 바로 꺼지지 않는다.
+            PlayCampEffect();
+
             if (CampClicked != null)
             {
                 CampClicked();

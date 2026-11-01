@@ -14,8 +14,10 @@ namespace SlotHero.Combat.UI
     /// 그래서 이 칸의 각도와 반지름 안을 누를 때만 받는다(`ICanvasRaycastFilter`).
     /// 유니티는 그림의 부모에 붙은 거름도 묻는다. 칸 그림은 이 오브젝트의 자식이다.
     ///
-    /// 피그마 `Jackpot 아트웍 (복사)` Frame 3 · 4 를 따라 칸은 평소에 비워 두고(바퀴 선은 원판 그림이 그린다)
-    /// 마우스를 올리면 붉게 빛나는 칸 테두리(`_outline`)를 켠다. 공격할 태그를 고르면 그 칸을 태그 색으로 채우고 테두리를 켠다.
+    /// 피그마 `Jackpot 아트웍 (복사)` Frame 3 · 4 를 따라 칸은 평소에 비워 두고 바퀴 선(`_line`)만 그린다.
+    /// 마우스를 올리면 붉게 빛나는 칸 테두리(`_outline`)를 켜고 바퀴 선을 감춘다.
+    /// 칸이 커질 때 제자리의 회색 선이 붉은 선 안쪽에 남아 어색해 2026년 10월 31일 원재가 걷으라고 했다.
+    /// 그래서 바퀴 선을 원판 한 장이 아니라 칸마다 따로 그린다. 공격할 태그를 고르면 그 칸을 태그 색으로 채우고 테두리를 켠다.
     /// 고를 수 없는 칸은 아이콘을 어둡게 한다.
     /// </summary>
     public class TagSectorView : MonoBehaviour,
@@ -27,6 +29,9 @@ namespace SlotHero.Combat.UI
 
         [Tooltip("칸 테두리 빛. 맨 위 칸 모양 그림을 칸 방향으로 돌려 쓴다.")]
         [SerializeField] private Image _outline;
+
+        [Tooltip("이 칸의 바퀴 선. 맨 위 칸 선 그림을 칸 방향으로 돌려 쓴다. 테두리 빛을 켜면 감춘다.")]
+        [SerializeField] private Image _line;
 
         [Tooltip("이 칸의 시작 각도. 위에서 시계 방향으로 잰다.")]
         [SerializeField] private float _startDegrees;
@@ -100,21 +105,44 @@ namespace SlotHero.Combat.UI
             }
 
             // 테두리 그림은 맨 위 칸(가운데가 12 시) 모양이다. 이 칸 가운데 방향으로 시계 방향으로 돌린다.
+            Quaternion facing = Quaternion.Euler(0f, 0f, -(startDegrees + sweepDegrees * 0.5f));
             if (_outline != null)
             {
-                _outline.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -(startDegrees + sweepDegrees * 0.5f));
+                _outline.rectTransform.localRotation = facing;
+            }
+
+            if (_line != null)
+            {
+                _line.rectTransform.localRotation = facing;
             }
 
             Paint();
         }
 
-        /// <summary>테두리 그림의 크기를 정한다. 원판 바퀴 그림과 같은 크기다.</summary>
+        /// <summary>테두리 그림과 바퀴 선 그림의 크기를 정한다. 원판 바퀴 그림 크기다.</summary>
         public void SetOutlineSize(float size)
         {
             if (_outline != null)
             {
                 PlaceAt(_outline.rectTransform, Vector2.zero, size);
             }
+
+            if (_line != null)
+            {
+                PlaceAt(_line.rectTransform, Vector2.zero, size);
+            }
+        }
+
+        /// <summary>이 칸의 바퀴 선이 보이는지. 테두리 빛을 켜면 감춘다.</summary>
+        public bool LineVisible
+        {
+            get { return _line != null && _line.gameObject.activeSelf; }
+        }
+
+        /// <summary>붉은 테두리 빛이 켜져 있는지.</summary>
+        public bool OutlineVisible
+        {
+            get { return _outline != null && _outline.gameObject.activeSelf; }
         }
 
         /// <summary>공격할 칸으로 표시하거나 걷는다. 켜면 그 색을 그 진하기로 칸에 채운다.</summary>
@@ -247,9 +275,15 @@ namespace SlotHero.Combat.UI
                 _label.color = CombatVisualConfig.Scale(_baseColor, brightness);
             }
 
+            bool glowing = _charged || (_hovering && _interactable);
             if (_outline != null)
             {
-                _outline.gameObject.SetActive(_charged || (_hovering && _interactable));
+                _outline.gameObject.SetActive(glowing);
+            }
+
+            if (_line != null)
+            {
+                _line.gameObject.SetActive(!glowing);
             }
 
             float scale = _hovering && _interactable ? _hoverScale : 1f;

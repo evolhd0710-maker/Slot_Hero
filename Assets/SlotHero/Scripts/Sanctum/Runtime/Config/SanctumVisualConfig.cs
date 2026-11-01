@@ -58,5 +58,38 @@ namespace SlotHero.Sanctum
         [FormerlySerializedAs("CampUsedTint")]
         [SerializeField] private Color _campUsedTint = new Color(0.45f, 0.44f, 0.42f, 1f);
         public Color CampUsedTint { get { return _campUsedTint; } set { _campUsedTint = value; } }
+
+        [Header("유물 진열 새로고침 연출")]
+        [Tooltip("새 유물 한 칸이 암흑물질에서 형체를 갖추는 시간(초). 2026년 10월 31일 원재가 고른 연출이다.")]
+        [SerializeField, Min(0f)] private float _relicFormSeconds = 0.9f;
+        public float RelicFormSeconds { get { return _relicFormSeconds; } set { _relicFormSeconds = value; } }
+
+        [Tooltip("칸마다 늦게 시작하는 시간(초). 왼쪽 칸부터 차례로 생긴다.")]
+        [SerializeField, Min(0f)] private float _relicFormStagger = 0.12f;
+        public float RelicFormStagger { get { return _relicFormStagger; } set { _relicFormStagger = value; } }
+
+        [Tooltip("암흑물질 구름의 색. 보랏빛이 도는 검정이다.")]
+        [SerializeField] private Color _darkMatterColor = new Color(0.16f, 0.06f, 0.24f, 0.95f);
+        public Color DarkMatterColor { get { return _darkMatterColor; } set { _darkMatterColor = value; } }
+
+        [Header("야영 연출")]
+        [Tooltip("야영을 쓰면 화면이 어두워지는 시간(초). 가장 어두울 때 모닥불이 꺼진 그림으로 바뀐다(2026년 10월 31일 원재). " +
+                 "2026년 11월 1일 원재가 눈이 감기는 느낌으로 서서히 어두워지게 하며 0.4 에서 0.5 로 늘렸다. 처음과 끝이 느린 곡선이다.")]
+        [SerializeField, Min(0f)] private float _campDarkenSeconds = 0.5f;
+        public float CampDarkenSeconds { get { return _campDarkenSeconds; } set { _campDarkenSeconds = value; } }
+
+        [Tooltip("가장 어두운 뒤 회복과 함께 화면이 천천히 밝아지는 시간(초). " +
+                 "예전에는 회복 빛 0.9초 뒤 0.4초 동안 따로 밝아졌다. 2026년 11월 1일 원재가 회복과 함께 밝아지게 하며 둘을 합친 1.2초로 했다. 전체 길이는 1.7초 그대로다. " +
+                 "같은 날 원재가 초록 회복 빛과 빛 알갱이를 뺐다.")]
+        [SerializeField, Min(0f)] private float _campHealSeconds = 1.2f;
+        public float CampHealSeconds { get { return _campHealSeconds; } set { _campHealSeconds = value; } }
+
+        [Tooltip("밝아지는 시간 가운데 처음 이만큼(비율)은 어두운 채로 있다. 그 뒤 남은 시간 동안 처음과 끝이 느린 곡선으로 밝아진다.")]
+        [SerializeField, Range(0f, 0.9f)] private float _campBrightenDelay = 0.15f;
+        public float CampBrightenDelay { get { return _campBrightenDelay; } set { _campBrightenDelay = value; } }
+
+        [Tooltip("가장 어두울 때 화면을 덮는 검은 막의 진하기. 1 이면 완전히 검다(2026년 10월 31일 원재).")]
+        [SerializeField, Range(0f, 1f)] private float _campDarkness = 1f;
+        public float CampDarkness { get { return _campDarkness; } set { _campDarkness = value; } }
     }
 }

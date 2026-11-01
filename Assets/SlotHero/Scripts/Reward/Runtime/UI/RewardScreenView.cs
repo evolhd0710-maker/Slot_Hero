@@ -68,6 +68,11 @@ namespace SlotHero.Reward.UI
         private RewardOffer _offer;
         private IRewardIconSource _icons;
 
+        // 열릴 때의 연출. 골드 오르기, 오버킬 회복 등장, 카드 반짝임이 차례로 돈다.
+        private bool _revealing;
+        private float _revealTime;
+        private RewardRevealTimeline _timeline;
+
         /// <summary>카드를 눌렀다.</summary>
         public event Action<string> CardClicked;
 
@@ -97,6 +102,12 @@ namespace SlotHero.Reward.UI
             }
         }
 
+        private void OnDisable()
+        {
+            // 연출 도중 꺼지면 끝 모습으로 두고 건너뛰기 맡긴 것도 거둔다. 남겨 두면 화면 누르기를 계속 가로챈다.
+            StopReveal();
+        }
+
         private void OnDestroy()
         {
             if (_skipButton != null)
@@ -117,12 +128,180 @@ namespace SlotHero.Reward.UI
             ApplyLayout();
             ApplyStyle();
             Refresh();
+            StartReveal();
         }
 
         /// <summary>화면을 닫는다.</summary>
         public void Hide()
         {
+            StopReveal();
             gameObject.SetActive(false);
+        }
+
+        /// <summary>열릴 때의 연출이 도는 중인지.</summary>
+        public bool IsRevealing
+        {
+            get { return _revealing; }
+        }
+
+        /// <summary>
+        /// 열릴 때의 연출을 시작한다. 2026년 11월 1일 원재가 넷을 차례로 보이게 했다.
+        ///   1. 기본 보상 골드가 0 에서 받는 골드까지 오른다
+        ///   2. 오버킬 골드가 0 에서 받는 골드까지 오른다
+        ///   3. 오버킬 회복(하트와 회복량)이 숫자가 오르지 않고 팝업처럼 튀어나온다
+        ///   4. 세 카드가 함께 반짝인다. 반짝임은 예전의 세 배인 1.2초다
+        /// 없는 것(오버킬 골드 0, 회복 0)은 건너뛴다. 연출 중 화면을 누르면 끝 모습으로 넘긴다(`EffectSkip`).
+        /// 게임이 돌 때만 움직인다. 편집 모드 검사와 그림 뽑기는 바로 끝 모습이다.
+        /// </summary>
+        private void StartReveal()
+        {
+            if (!Application.isPlaying || _visual == null || !isActiveAndEnabled || _offer == null)
+            {
+                StopReveal();
+                return;
+            }
+
+            BeginReveal();
+        }
+
+        private void BeginReveal()
+        {
+            _revealing = true;
+            _revealTime = 0f;
+            _timeline = _visual.GetRevealTimeline(_offer.OverkillGold > 0, _offer.HasOverkillHeal);
+            EffectSkip.Begin(this, SkipReveal);
+            UpdateReveal();
+        }
+
+        /// <summary>화면을 눌러 연출을 건너뛰었다. 바로 끝 모습이 된다.</summary>
+        private void SkipReveal()
+        {
+            StopReveal();
+        }
+
+        private void StopReveal()
+        {
+            EffectSkip.End(this);
+            if (!_revealing)
+            {
+                return;
+            }
+
+            _revealing = false;
+            for (int i = 0; i < _cards.Count; i++)
+            {
+                if (_cards[i] != null)
+                {
+                    _cards[i].SetFlash(0f);
+                }
+            }
+
+            SetHealScale(1f);
+            Refresh();
+        }
+
+        private void Update()
+        {
+            if (!_revealing)
+            {
+                return;
+            }
+
+            _revealTime += Time.unscaledDeltaTime;
+            UpdateReveal();
+        }
+
+        private void UpdateReveal()
+        {
+            float flashSeconds = _visual.CardFlashSeconds;
+            float goldSeconds = _visual.GoldCountSeconds;
+
+            float flashTime = _revealTime - _timeline.CardFlashStart;
+            float flash = flashSeconds <= 0f || flashTime <= 0f
+                ? 0f
+                : Mathf.Sin(Mathf.Clamp01(flashTime / flashSeconds) * Mathf.PI);
+            for (int i = 0; i < _cards.Count; i++)
+            {
+                if (_cards[i] != null)
+                {
+                    _cards[i].SetFlash(flash);
+                }
+            }
+
+            if (_baseGoldValue != null)
+            {
+                _baseGoldValue.text = RewardText.Gold(RewardVisualConfig.GetCountedGold(
+                    _offer.BaseGold, _revealTime - _timeline.BaseGoldStart, goldSeconds));
+            }
+
+            if (_overkillGoldValue != null)
+            {
+                _overkillGoldValue.text = RewardText.Gold(RewardVisualConfig.GetCountedGold(
+                    _offer.OverkillGold, _revealTime - _timeline.OverkillGoldStart, goldSeconds));
+            }
+
+            if (_offer.HasOverkillHeal)
+            {
+                SetHealScale(RewardVisualConfig.GetPopScale(
+                    _revealTime - _timeline.HealPopStart, _visual.HealPopSeconds, _visual.HealPopPeakScale));
+            }
+
+            if (_revealTime >= _timeline.End)
+            {
+                StopReveal();
+            }
+        }
+
+        /// <summary>오버킬 회복(하트와 회복량)의 배율. 0 이면 아직 튀어나오지 않아 보이지 않는다.</summary>
+        private void SetHealScale(float scale)
+        {
+            Vector3 size = new Vector3(scale, scale, 1f);
+            if (_overkillHealIcon != null)
+            {
+                _overkillHealIcon.rectTransform.localScale = size;
+            }
+
+            if (_overkillHealValue != null)
+            {
+                _overkillHealValue.rectTransform.localScale = size;
+            }
+        }
+
+        /// <summary>오버킬 회복의 지금 배율. 튀어나오기 전은 0, 다 나오면 1 이다.</summary>
+        public float HealScale
+        {
+            get { return _overkillHealValue != null ? _overkillHealValue.rectTransform.localScale.x : 1f; }
+        }
+
+        /// <summary>연출 시각을 옮긴다. 검사가 연출 차례를 확인할 때 쓴다.</summary>
+        public void AdvanceReveal(float seconds)
+        {
+            if (!_revealing)
+            {
+                return;
+            }
+
+            _revealTime += seconds;
+            UpdateReveal();
+        }
+
+        /// <summary>보상 화면의 연출 차례. 검사가 쓴다.</summary>
+        public RewardRevealTimeline RevealTimeline
+        {
+            get { return _timeline; }
+        }
+
+        /// <summary>
+        /// 검사용. 편집 모드에서도 연출을 처음부터 시작한다. 게임에서는 열릴 때 저절로 시작한다.
+        /// </summary>
+        public void BeginRevealForCheck()
+        {
+            if (_visual == null || _offer == null)
+            {
+                return;
+            }
+
+            BeginReveal();
         }
 
         /// <summary>지금 값으로 글자를 다시 채운다.</summary>
@@ -159,6 +338,13 @@ namespace SlotHero.Reward.UI
 
             // 회복이 있으면 골드와 회복이 줄을 나눠 쓴다. 자리가 달라지니 다시 놓는다.
             PlaceOverkillRow();
+
+            // 연출 도중이면 최종 값 대신 지금 연출 시각의 모습으로 되돌린다.
+            // 그러지 않으면 골드가 잠깐 최종 값으로 튀었다 돌아간다(2026년 11월 1일 코덱스 검토).
+            if (_revealing)
+            {
+                UpdateReveal();
+            }
         }
 
         /// <summary>

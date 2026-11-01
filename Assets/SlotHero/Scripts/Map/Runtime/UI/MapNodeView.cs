@@ -41,6 +41,12 @@ namespace SlotHero.Map.UI
         private RectTransform _rectTransform;
         private Action<MapNodeView> _onClicked;
 
+        // 연출. 상태로 정한 아이콘 색을 기준으로 지금 방은 맥동하고 고른 방은 반짝인다(2026년 10월 31일 원재).
+        private MapVisualConfig _visual;
+        private Color _iconColor = Color.white;
+        private float _pulseTime;
+        private float _flash;
+
         /// <summary>이 표시가 담당하는 노드.</summary>
         public MapNode Node { get; private set; }
 
@@ -110,7 +116,11 @@ namespace SlotHero.Map.UI
                 }
 
                 Color baseColor = visual.UseRoomTypeColor ? roomVisual.Color : Color.white;
-                _icon.color = baseColor * GetStateTint(state, visual);
+                _iconColor = baseColor * GetStateTint(state, visual);
+                _visual = visual;
+                _pulseTime = 0f;
+                _flash = 0f;
+                _icon.color = _iconColor;
 
                 // 누르는 영역을 아이콘 모양 크기로 줄인다.
                 // 노드 칸은 아이콘 모양보다 넓어 이웃 칸끼리 조금 겹칠 수 있다. 겹친 자리를 누르면 엉뚱한 방이 골라진다.
@@ -153,6 +163,55 @@ namespace SlotHero.Map.UI
             }
 
             gameObject.name = string.Format("Node_{0}_{1}단계{2}줄", node.Id, node.Stage, node.Row);
+        }
+
+        /// <summary>
+        /// 고른 노드의 반짝임 세기를 정한다. 0 이면 상태 색 그대로, 1 이면 반짝임 색이다.
+        /// 맵 화면 조종기가 고른 노드에 0.3초 동안 넣는다.
+        /// </summary>
+        public void SetFlash(float amount)
+        {
+            _flash = Mathf.Clamp01(amount);
+            ApplyIconColor();
+        }
+
+        /// <summary>
+        /// 지금 방 노드는 2초 주기로 밝아졌다 어두워진다. 가장 밝을 때 30 퍼센트 밝다(2026년 10월 31일 원재).
+        /// 게임이 돌 때만 움직인다.
+        /// </summary>
+        private void Update()
+        {
+            if (State != MapNodeDisplayState.Current || _visual == null || !Application.isPlaying)
+            {
+                return;
+            }
+
+            _pulseTime += Time.unscaledDeltaTime;
+            ApplyIconColor();
+        }
+
+        private void ApplyIconColor()
+        {
+            if (_icon == null)
+            {
+                return;
+            }
+
+            Color color = _iconColor;
+
+            if (State == MapNodeDisplayState.Current && _visual != null)
+            {
+                float multiplier = MapVisualConfig.GetPulseMultiplier(
+                    _pulseTime, _visual.CurrentPulseSeconds, _visual.CurrentPulseBrightness);
+                color = new Color(color.r * multiplier, color.g * multiplier, color.b * multiplier, color.a);
+            }
+
+            if (_flash > 0f && _visual != null)
+            {
+                color = Color.Lerp(color, _visual.SelectFlashColor, _flash);
+            }
+
+            _icon.color = color;
         }
 
         /// <summary>노드 칸 각 변에서 누르는 영역을 안쪽으로 줄이는 거리.</summary>

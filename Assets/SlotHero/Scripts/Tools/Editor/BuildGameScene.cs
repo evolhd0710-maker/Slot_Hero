@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using SlotHero.Ui;
+using SlotHero.Audio;
 using SlotHero.Combat;
 using SlotHero.Combat.UI;
 using SlotHero.CurrentBuild;
@@ -105,6 +106,18 @@ namespace SlotHero.ToolsEditor
             SettingsScreenController settings = Take<SettingsScreenController>(canvas, "07 설정 화면");
             PopupPresenter popup = Take<PopupPresenter>(canvas, "08 화면 팝업");
 
+            // 화면이 바뀔 때 걷는 검은 막. 모든 것 위에 둔다(2026년 10월 31일 원재).
+            Image fadeImage = UiSceneBuilder.NewFlatImage("ScreenFade", canvas.transform, Color.black);
+            UiSceneBuilder.Stretch(fadeImage.rectTransform);
+            fadeImage.raycastTarget = false;
+            ScreenFade screenFade = fadeImage.gameObject.AddComponent<ScreenFade>();
+            screenFade.Setup(fadeImage.gameObject.AddComponent<CanvasGroup>());
+
+            // 연출 중 화면을 누르면 연출을 건너뛰게 받는 투명한 칸. 연출이 돌 때만 누르기를 받는다(2026년 11월 1일 원재).
+            Image skipImage = UiSceneBuilder.NewFlatImage("EffectSkipCatcher", canvas.transform, Color.clear);
+            UiSceneBuilder.Stretch(skipImage.rectTransform);
+            skipImage.gameObject.AddComponent<EffectSkipCatcher>().Setup(skipImage);
+
             // 흐름을 맡는 오브젝트. 저장과 전투 대역도 여기 붙인다.
             GameObject flowGo = new GameObject("GameFlow");
             SceneManager.MoveGameObjectToScene(flowGo, game);
@@ -123,9 +136,15 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(combat, "_relics",
                 UiSceneBuilder.LoadConfig<RelicConfig>("Combat", "RelicConfig"));
 
+            // 효과음. 소리 자리(AudioSource)는 처음 낼 때 이 오브젝트에 만든다. 듣는 쪽은 카메라의 AudioListener 다.
+            SoundPlayer sound = flowGo.AddComponent<SoundPlayer>();
+            UiSceneBuilder.SetField(sound, "_config",
+                UiSceneBuilder.LoadConfig<SoundConfig>("Audio", "SoundConfig"));
+
             GameFlowController flow = flowGo.AddComponent<GameFlowController>();
 
             UiSceneBuilder.SetField(flow, "_save", save);
+            UiSceneBuilder.SetField(flow, "_sound", sound);
             UiSceneBuilder.SetField(flow, "_title", title);
             UiSceneBuilder.SetField(flow, "_profileSelect", profile);
 
@@ -147,11 +166,28 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(flow, "_picker", picker);
             UiSceneBuilder.SetField(flow, "_topBar", topBar);
             UiSceneBuilder.SetField(flow, "_hud", hud);
+            UiSceneBuilder.SetField(flow, "_screenFade", screenFade);
             UiSceneBuilder.SetField(flow, "_combatEntryBehaviour", combat);
             UiSceneBuilder.SetField(flow, "_battleBackground", battleBackground != null ? battleBackground.gameObject : null);
 
+            // 전투 배경 후보 셋. 흐름이 전투를 열 때마다 하나를 고른다(2026년 10월 31일 원재).
+            List<Sprite> battleSprites = new List<Sprite>();
+            foreach (string battleName in new[] { "배경_전투_5", "배경_전투_2", "배경_전투_4" })
+            {
+                Sprite battleSprite = ImportArt.LoadItemArt(battleName);
+                if (battleSprite != null)
+                {
+                    battleSprites.Add(battleSprite);
+                }
+            }
+
+            UiSceneBuilder.SetArrayField(flow, "_battleBackgroundSprites", battleSprites.ToArray());
+            UiSceneBuilder.SetField(flow, "_battleBackgroundImage", battleBackground);
+
             UiSceneBuilder.SetField(flow, "_relics",
                 UiSceneBuilder.LoadConfig<RelicConfig>("Combat", "RelicConfig"));
+            UiSceneBuilder.SetField(flow, "_combatRules",
+                UiSceneBuilder.LoadConfig<CombatRuleConfig>("Combat", "CombatRuleConfig"));
             UiSceneBuilder.SetField(flow, "_catalogConfig",
                 UiSceneBuilder.LoadConfig<RunCatalogConfig>("Flow", "RunCatalogConfig"));
             UiSceneBuilder.SetField(flow, "_eventConfig",
@@ -463,7 +499,7 @@ namespace SlotHero.ToolsEditor
             {
                 Transform child = canvas.transform.GetChild(i);
 
-                if (child.name == "RunBackground")
+                if (IsAlwaysOn(child.name))
                 {
                     continue;
                 }
@@ -483,6 +519,16 @@ namespace SlotHero.ToolsEditor
 
                 child.gameObject.SetActive(false);
             }
+        }
+
+        /// <summary>
+        /// 화면이 아니라 늘 켜 두는 것들. 맨 뒤 배경, 화면 전환 막(`ScreenFade`), 연출 건너뛰기 칸(`EffectSkipCatcher`)이다.
+        /// 두 막은 스스로 매 장면 돌며 투명도와 누르기를 정하므로 꺼 두면 아무 일도 하지 않는다.
+        /// 2026년 11월 1일 원재가 야영 연출이 건너뛰어지지 않는다고 해 찾았다. 그때까지 두 막 모두 여기서 꺼지고 있었다.
+        /// </summary>
+        private static bool IsAlwaysOn(string name)
+        {
+            return name == "RunBackground" || name == "ScreenFade" || name == "EffectSkipCatcher";
         }
 
         /// 안쪽 칸을 조종기가 켜고 끄므로 껍데기는 늘 켜 둬야 하는 것들.

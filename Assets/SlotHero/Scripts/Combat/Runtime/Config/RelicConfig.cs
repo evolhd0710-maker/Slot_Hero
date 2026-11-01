@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SlotHero.Combat
 {
@@ -160,19 +161,91 @@ namespace SlotHero.Combat
     {
         public List<RelicDefinition> Relics = SheetRelics();
 
+        [Tooltip("시트에 없어 효과가 없던 세계관 유물 스무 개의 임시 효과. 설정의 \"임시 아이템 효과 적용\" 이 켜져 있을 때만 쓴다. " +
+                 "2026년 11월 1일 원재가 저마다 어울리는 태그의 가치 +2 로 정했다.")]
+        [FormerlySerializedAs("TemporaryRelics")]
+        [SerializeField] private List<RelicDefinition> _temporaryRelics = TemporaryRelicList();
+        public List<RelicDefinition> TemporaryRelics { get { return _temporaryRelics; } set { _temporaryRelics = value; } }
+
         /// <summary>그 식별자의 유물. 없으면 null 이다.</summary>
         public RelicDefinition Find(string id)
         {
-            for (int i = 0; i < Relics.Count; i++)
+            return Find(id, false);
+        }
+
+        /// <summary>
+        /// 그 식별자의 유물. 시트 유물을 먼저 찾고, withTemporary 면 임시 효과 유물에서도 찾는다. 없으면 null 이다.
+        /// </summary>
+        public RelicDefinition Find(string id, bool withTemporary)
+        {
+            RelicDefinition found = FindIn(Relics, id);
+            if (found == null && withTemporary)
             {
-                if (Relics[i] != null && Relics[i].Id == id)
+                found = FindIn(TemporaryRelics, id);
+            }
+
+            return found;
+        }
+
+        private static RelicDefinition FindIn(List<RelicDefinition> list, string id)
+        {
+            for (int i = 0; list != null && i < list.Count; i++)
+            {
+                if (list[i] != null && list[i].Id == id)
                 {
-                    return Relics[i];
+                    return list[i];
                 }
             }
 
             return null;
         }
+
+        /// <summary>
+        /// 세계관 유물 스무 개의 임시 효과(2026년 11월 1일 원재). 저마다 이름과 어울리는 태그 하나의 가치에 2 를 더한다.
+        /// 태그는 아홉 행성에 고르게 나눴고 화성과 지구에 하나씩 더 두었다. 희귀도는 물건 목록의 등급에 1 을 더한 값이다.
+        /// 기획서가 오면 이 목록을 걷고 시트 유물처럼 옮긴다.
+        /// </summary>
+        public static List<RelicDefinition> TemporaryRelicList()
+        {
+            List<RelicDefinition> list = new List<RelicDefinition>();
+            list.Add(MakeTemporary("relic_rusted_gladius", "녹슨 단검", 1, SymbolTagType.Mars, "화성"));
+            list.Add(MakeTemporary("relic_senate_ring", "원로원 인장 반지", 2, SymbolTagType.Jupiter, "목성"));
+            list.Add(MakeTemporary("relic_legion_eagle", "군단 독수리", 3, SymbolTagType.Jupiter, "목성"));
+            list.Add(MakeTemporary("relic_cracked_crown", "금 간 왕관", 4, SymbolTagType.Saturn, "토성"));
+            list.Add(MakeTemporary("relic_owl_lamp", "부엉이 등잔", 1, SymbolTagType.Mercury, "수성"));
+            list.Add(MakeTemporary("relic_marble_mask", "대리석 가면", 2, SymbolTagType.Venus, "금성"));
+            list.Add(MakeTemporary("relic_laurel_lyre", "월계수 리라", 3, SymbolTagType.Mercury, "수성"));
+            list.Add(MakeTemporary("relic_oracle_tripod", "신탁의 삼발이", 4, SymbolTagType.Uranus, "천왕성"));
+            list.Add(MakeTemporary("relic_sealed_amphora", "봉인된 암포라", 1, SymbolTagType.Earth, "지구"));
+            list.Add(MakeTemporary("relic_siren_shell", "세이렌의 소라", 2, SymbolTagType.Neptune, "해왕성"));
+            list.Add(MakeTemporary("relic_star_disc", "별자리 원반", 3, SymbolTagType.Uranus, "천왕성"));
+            list.Add(MakeTemporary("relic_bronze_trident", "청동 삼지창", 4, SymbolTagType.Neptune, "해왕성"));
+            list.Add(MakeTemporary("relic_canopic_jar", "카노푸스 단지", 1, SymbolTagType.Pluto, "명왕성"));
+            list.Add(MakeTemporary("relic_eye_pendant", "호루스의 눈 목걸이", 2, SymbolTagType.Mars, "화성"));
+            list.Add(MakeTemporary("relic_golden_scarab", "황금 스카라브", 3, SymbolTagType.Earth, "지구"));
+            list.Add(MakeTemporary("relic_ankh", "생명의 앙크", 4, SymbolTagType.Pluto, "명왕성"));
+            list.Add(MakeTemporary("relic_clay_tablet", "쐐기문자 점토판", 1, SymbolTagType.Earth, "지구"));
+            list.Add(MakeTemporary("relic_cylinder_seal", "원통 인장", 2, SymbolTagType.Saturn, "토성"));
+            list.Add(MakeTemporary("relic_lapis_harp", "청금석 하프", 3, SymbolTagType.Venus, "금성"));
+            list.Add(MakeTemporary("relic_lamassu_idol", "라마수 조각", 4, SymbolTagType.Mars, "화성"));
+            return list;
+        }
+
+        private static RelicDefinition MakeTemporary(string id, string name, int rarity, SymbolTagType tag, string tagName)
+        {
+            RelicDefinition relic = new RelicDefinition();
+            relic.Id = id;
+            relic.DisplayName = name;
+            relic.EnglishName = string.Empty;
+            relic.Rarity = rarity;
+            relic.Description = tagName + " 태그 가치 +" + TemporaryRelicTagValue;
+            relic.Flavor = string.Empty;
+            relic.Effects.Add(new RelicEffect(RelicEffectKind.TagValueAdd, TemporaryRelicTagValue, 0, 1f, tag));
+            return relic;
+        }
+
+        /// <summary>임시 효과 유물이 태그 가치에 더하는 값.</summary>
+        public const int TemporaryRelicTagValue = 2;
 
         /// <summary>시트의 유물 열 개.</summary>
         public static List<RelicDefinition> SheetRelics()

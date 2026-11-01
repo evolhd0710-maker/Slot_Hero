@@ -30,6 +30,17 @@ namespace SlotHero.Flow
         public static ItemDetailSpec Describe(
             string id, RunCatalogConfig config, CurrentBuildVisualConfig tagNames, RelicConfig relics, int relicStack)
         {
+            return Describe(id, config, tagNames, relics, relicStack, null, false);
+        }
+
+        /// <summary>
+        /// 코인 규칙이 있으면 코인의 소모 체력과 가중치도 적는다.
+        /// temporaryEffects 면 효과가 없던 유물과 코인의 임시 효과를 적는다(설정의 "임시 아이템 효과 적용", 2026년 11월 1일 원재).
+        /// </summary>
+        public static ItemDetailSpec Describe(
+            string id, RunCatalogConfig config, CurrentBuildVisualConfig tagNames, RelicConfig relics, int relicStack,
+            CombatRuleConfig coinRules, bool temporaryEffects)
+        {
             if (config == null || string.IsNullOrEmpty(id))
             {
                 return new ItemDetailSpec();
@@ -60,7 +71,8 @@ namespace SlotHero.Flow
             {
                 if (config.Coins[i].Id == id)
                 {
-                    return new ItemDetailSpec(config.Coins[i].DisplayName, GetRarityName(config.Coins[i].Rarity), "코인", string.Empty);
+                    string body = coinRules != null ? DescribeCoin(coinRules.GetCoinRule(id, temporaryEffects)) : "코인";
+                    return new ItemDetailSpec(config.Coins[i].DisplayName, GetRarityName(config.Coins[i].Rarity), body, string.Empty);
                 }
             }
 
@@ -68,7 +80,7 @@ namespace SlotHero.Flow
             {
                 if (config.Relics[i].Id == id)
                 {
-                    RelicDefinition relic = relics != null ? relics.Find(id) : null;
+                    RelicDefinition relic = relics != null ? relics.Find(id, temporaryEffects) : null;
                     string body = relic != null ? relic.GetDescription(relicStack) : "유물";
                     string flavor = relic != null ? relic.Flavor : string.Empty;
                     return new ItemDetailSpec(config.Relics[i].DisplayName, GetRarityName(config.Relics[i].Rarity), body, flavor);
@@ -92,6 +104,12 @@ namespace SlotHero.Flow
 
             string size = tagNames.DetailTagSizePercent.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
             return "<b><size=" + size + "%>" + tags + "</size></b>";
+        }
+
+        /// <summary>코인의 소모 체력과 가중치. 전투 화면 코인 설명과 같은 말을 쓴다.</summary>
+        public static string DescribeCoin(CoinRule rule)
+        {
+            return "소모 체력 " + rule.HealthCost + " · 가중치 +" + rule.Weight;
         }
 
         /// <summary>등급 이름. 성소 기획서 07 가격 의 표 이름이다.</summary>

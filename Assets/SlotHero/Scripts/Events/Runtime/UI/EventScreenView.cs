@@ -44,6 +44,34 @@ namespace SlotHero.Events.UI
         private readonly List<EventChoiceView> _shown = new List<EventChoiceView>();
         private readonly List<float> _heights = new List<float>();
 
+        // ---- 화면이 넘어가는 연출(2026년 10월 30일 원재) ----
+
+        private enum AnimationPhase
+        {
+            None,
+
+            /// <summary>고른 칸이 밝아지며 올라가고 나머지 칸이 사라지고 삽화가 어두워진다.</summary>
+            Rise,
+
+            /// <summary>다음 화면으로 바뀐 삽화가 밝아진다.</summary>
+            Brighten,
+
+            /// <summary>새 선택지가 위에서부터 하나씩 드러난다.</summary>
+            Reveal,
+        }
+
+        private AnimationPhase _phase;
+        private float _phaseTime;
+        private EventPage _pendingPage;
+        private IEventIllustrationSource _pendingIllustrations;
+        private EventChoiceView _rising;
+        private Vector2 _riseFrom;
+        private Vector2 _riseTo;
+        private Color _illustrationBase = Color.white;
+        private CanvasGroup _choiceGroup;
+        private readonly List<EventChoiceView> _fading = new List<EventChoiceView>();
+        private readonly List<EventChoiceView> _revealing = new List<EventChoiceView>();
+
         /// <summary>선택지를 눌렀을 때. 선택지 식별자를 넘긴다.</summary>
         public event Action<string> ChoiceClicked;
 
@@ -151,8 +179,375 @@ namespace SlotHero.Events.UI
             }
         }
 
-        /// <summary>페이지 하나를 그대로 그린다.</summary>
+        /// <summary>페이지 하나를 연출 없이 바로 그린다. 하던 연출이 있으면 끝낸다.</summary>
         public void Show(EventPage page, IEventIllustrationSource illustrations)
+        {
+            StopAnimation();
+            ShowNow(page, illustrations);
+        }
+
+        /// <summary>
+        /// 이벤트 첫 화면을 그린다. 선택지가 위에서부터 하나씩 드러난다(2026년 10월 30일 원재).
+        /// </summary>
+        public void ShowOpening(EventPage page, IEventIllustrationSource illustrations)
+        {
+            Show(page, illustrations);
+
+            // 연출을 건너뛸 때 삽화를 이 색으로 돌려 둔다. 그림 없는 이벤트는 옅은 바탕 칸 색이다.
+            // 예전에는 앞 페이지의 색이 남아 건너뛰면 바탕 칸이 흰색이나 앞 이벤트 색으로 바뀌었다(2026년 11월 1일 코덱스 검토).
+            _illustrationBase = _illustration != null ? _illustration.color : Color.white;
+
+            if (!CanAnimate())
+            {
+                return;
+            }
+
+            _revealing.Clear();
+            for (int i = 0; i < _choiceViews.Count; i++)
+            {
+                EventChoiceView view = _choiceViews[i];
+                if (view != null && view.gameObject.activeSelf)
+                {
+                    _revealing.Add(view);
+                    view.Alpha = 0f;
+                }
+            }
+
+            BeginPhase(AnimationPhase.Reveal);
+        }
+
+        /// <summary>
+        /// 선택지를 고른 뒤 다음 화면으로 넘어간다. 2026년 10월 30일 원재가 정한 연출이다.
+        ///
+        /// 1. 고른 칸이 밝아지며 맨 위 이력 자리로 올라가 쌓인다. 고르지 않은 칸은 사라지고 삽화가 어두워진다
+        /// 2. 다음 화면의 삽화와 본문으로 바뀌며 삽화가 다시 밝아진다
+        /// 3. 새 선택지가 위에서부터 하나씩 드러난다. 한 칸이 0.5초, 다 합쳐 1초다(하나면 0.5초)
+        ///
+        /// 연출은 플레이 중에만 돈다. 에디터의 배치 검사와 화면 캡처는 프레임이 돌지 않으므로 바로 다음 화면을 그린다.
+        /// 연출 동안에는 선택지를 누를 수 없다.
+        /// </summary>
+        public void ShowAdvance(EventPage page, IEventIllustrationSource illustrations, string chosenId)
+        {
+            StopAnimation();
+
+            EventChoiceView chosen = FindShownView(chosenId);
+            if (!CanAnimate() || chosen == null || _layout == null || page == null)
+            {
+                ShowOpeningOrNow(page, illustrations);
+                return;
+            }
+
+            // 고른 칸이 올라갈 자리. 새 페이지에서 고른 이력이 몇 칸인지 세어, 그 마지막 자리로 보낸다.
+            int historyCount = 0;
+            for (int i = 0; page.Choices != null && i < page.Choices.Count; i++)
+            {
+                if (page.Choices[i] != null && page.Choices[i].State == EventChoiceState.Chosen)
+                {
+                    historyCount++;
+                }
+            }
+
+            _heights.Clear();
+            _fading.Clear();
+            int keptHistory = 0;
+            for (int i = 0; i < _choiceViews.Count; i++)
+            {
+                EventChoiceView view = _choiceViews[i];
+                if (view == null || !view.gameObject.activeSelf || view == chosen)
+                {
+                    continue;
+                }
+
+                // 앞서 고른 이력 칸은 자리에 남는다. 나머지 칸은 사라진다.
+                if (view.Choice != null && view.Choice.State == EventChoiceState.Chosen && keptHistory < historyCount - 1)
+                {
+                    _heights.Add(view.Height > 0f ? view.Height : _layout.ChoiceSize.y);
+                    keptHistory++;
+                    continue;
+                }
+
+                _fading.Add(view);
+            }
+
+            _heights.Add(chosen.Height > 0f ? chosen.Height : _layout.ChoiceSize.y);
+
+            _rising = chosen;
+            _riseFrom = chosen.RectTransform.anchoredPosition;
+            _riseTo = _layout.GetChoicePosition(_heights, _heights.Count - 1);
+            _pendingPage = page;
+            _pendingIllustrations = illustrations;
+            _illustrationBase = _illustration != null ? _illustration.color : Color.white;
+
+            BeginPhase(AnimationPhase.Rise);
+        }
+
+        private void ShowOpeningOrNow(EventPage page, IEventIllustrationSource illustrations)
+        {
+            if (CanAnimate())
+            {
+                ShowOpening(page, illustrations);
+            }
+            else
+            {
+                Show(page, illustrations);
+            }
+        }
+
+        /// <summary>연출 중인지. 연출 동안에는 선택지를 누를 수 없다.</summary>
+        public bool IsAnimating
+        {
+            get { return _phase != AnimationPhase.None; }
+        }
+
+        private bool CanAnimate()
+        {
+            return Application.isPlaying && isActiveAndEnabled && _visual != null;
+        }
+
+        private EventChoiceView FindShownView(string choiceId)
+        {
+            if (string.IsNullOrEmpty(choiceId))
+            {
+                return null;
+            }
+
+            for (int i = 0; i < _choiceViews.Count; i++)
+            {
+                EventChoiceView view = _choiceViews[i];
+                if (view != null && view.gameObject.activeSelf && view.Choice != null && view.Choice.Id == choiceId)
+                {
+                    return view;
+                }
+            }
+
+            return null;
+        }
+
+        private void BeginPhase(AnimationPhase phase)
+        {
+            _phase = phase;
+            _phaseTime = 0f;
+            SetChoicesClickable(phase == AnimationPhase.None);
+
+            // 연출 중 화면을 누르면 남은 단계를 모두 건너뛰고 다음 화면의 끝 모습이 된다(2026년 11월 1일 원재).
+            if (phase == AnimationPhase.None)
+            {
+                EffectSkip.End(this);
+            }
+            else
+            {
+                EffectSkip.Begin(this, StopAnimation);
+            }
+        }
+
+        private void Update()
+        {
+            if (_phase == AnimationPhase.None || _visual == null)
+            {
+                return;
+            }
+
+            _phaseTime += Time.unscaledDeltaTime;
+
+            switch (_phase)
+            {
+                case AnimationPhase.Rise:
+                    UpdateRise();
+                    break;
+
+                case AnimationPhase.Brighten:
+                    UpdateBrighten();
+                    break;
+
+                case AnimationPhase.Reveal:
+                    UpdateReveal();
+                    break;
+            }
+        }
+
+        /// <summary>1 단계. 고른 칸이 밝아지며 올라가고, 나머지 칸이 사라지고, 삽화가 어두워진다.</summary>
+        private void UpdateRise()
+        {
+            float t = Progress(_visual.ChosenRiseSeconds);
+            float eased = 1f - (1f - t) * (1f - t);
+
+            if (_rising != null)
+            {
+                _rising.RectTransform.anchoredPosition = Vector2.Lerp(_riseFrom, _riseTo, eased);
+                // 가운데에서 가장 밝고 끝에는 고른 칸 색으로 가라앉는다.
+                _rising.ShowChosenFlash(1f - Mathf.Abs(t * 2f - 1f));
+            }
+
+            for (int i = 0; i < _fading.Count; i++)
+            {
+                if (_fading[i] != null)
+                {
+                    _fading[i].Alpha = 1f - t;
+                }
+            }
+
+            SetIllustrationDarkness(_illustrationBase, _visual.IllustrationDarkness * t);
+
+            if (t < 1f)
+            {
+                return;
+            }
+
+            // 다음 화면으로 갈아 끼운다. 새 삽화는 어두운 채로 시작해 밝아진다.
+            ShowNow(_pendingPage, _pendingIllustrations);
+            _pendingPage = null;
+            _pendingIllustrations = null;
+            _rising = null;
+            _fading.Clear();
+
+            _illustrationBase = _illustration != null ? _illustration.color : Color.white;
+            SetIllustrationDarkness(_illustrationBase, _visual.IllustrationDarkness);
+
+            // 고른 이력 칸은 그대로 보이고, 새 선택지만 숨겨 두었다가 차례로 드러낸다.
+            _revealing.Clear();
+            for (int i = 0; i < _choiceViews.Count; i++)
+            {
+                EventChoiceView view = _choiceViews[i];
+                if (view == null || !view.gameObject.activeSelf)
+                {
+                    continue;
+                }
+
+                if (view.Choice != null && view.Choice.State == EventChoiceState.Chosen)
+                {
+                    view.Alpha = 1f;
+                    continue;
+                }
+
+                view.Alpha = 0f;
+                _revealing.Add(view);
+            }
+
+            BeginPhase(AnimationPhase.Brighten);
+        }
+
+        /// <summary>2 단계. 새 삽화가 밝아진다.</summary>
+        private void UpdateBrighten()
+        {
+            float t = Progress(_visual.IllustrationBrightenSeconds);
+            SetIllustrationDarkness(_illustrationBase, _visual.IllustrationDarkness * (1f - t));
+
+            if (t >= 1f)
+            {
+                BeginPhase(AnimationPhase.Reveal);
+            }
+        }
+
+        /// <summary>3 단계. 새 선택지가 위에서부터 하나씩 0.5초 동안 드러난다.</summary>
+        private void UpdateReveal()
+        {
+            float fade = _visual.ChoiceFadeSeconds;
+            bool done = true;
+
+            for (int i = 0; i < _revealing.Count; i++)
+            {
+                if (_revealing[i] == null)
+                {
+                    continue;
+                }
+
+                float start = _visual.GetChoiceRevealStart(i, _revealing.Count);
+                float alpha = fade > 0f ? (_phaseTime - start) / fade : (_phaseTime >= start ? 1f : 0f);
+                _revealing[i].Alpha = alpha;
+                done &= alpha >= 1f;
+            }
+
+            if (done)
+            {
+                _revealing.Clear();
+                BeginPhase(AnimationPhase.None);
+            }
+        }
+
+        private float Progress(float seconds)
+        {
+            return seconds > 0f ? Mathf.Clamp01(_phaseTime / seconds) : 1f;
+        }
+
+        private void SetIllustrationDarkness(Color baseColor, float darkness)
+        {
+            if (_illustration == null)
+            {
+                return;
+            }
+
+            float keep = 1f - Mathf.Clamp01(darkness);
+            _illustration.color = new Color(baseColor.r * keep, baseColor.g * keep, baseColor.b * keep, baseColor.a);
+        }
+
+        /// <summary>
+        /// 하던 연출을 마지막 모습으로 끝낸다. 바꿔 끼울 페이지가 남아 있으면 그 페이지를 그린다.
+        /// 화면이 닫히거나 연출 중에 다른 페이지가 오면 부른다.
+        /// </summary>
+        private void StopAnimation()
+        {
+            if (_phase == AnimationPhase.None)
+            {
+                return;
+            }
+
+            if (_pendingPage != null)
+            {
+                ShowNow(_pendingPage, _pendingIllustrations);
+            }
+            else if (_illustration != null)
+            {
+                SetIllustrationDarkness(_illustrationBase, 0f);
+            }
+
+            _pendingPage = null;
+            _pendingIllustrations = null;
+            _rising = null;
+            _fading.Clear();
+            _revealing.Clear();
+
+            for (int i = 0; i < _choiceViews.Count; i++)
+            {
+                if (_choiceViews[i] != null)
+                {
+                    _choiceViews[i].Alpha = 1f;
+                }
+            }
+
+            BeginPhase(AnimationPhase.None);
+        }
+
+        private void OnDisable()
+        {
+            StopAnimation();
+        }
+
+        private void SetChoicesClickable(bool clickable)
+        {
+            if (_choiceLayer == null)
+            {
+                return;
+            }
+
+            if (_choiceGroup == null)
+            {
+                _choiceGroup = _choiceLayer.GetComponent<CanvasGroup>();
+                if (_choiceGroup == null)
+                {
+                    if (clickable)
+                    {
+                        return;
+                    }
+
+                    _choiceGroup = _choiceLayer.gameObject.AddComponent<CanvasGroup>();
+                }
+            }
+
+            _choiceGroup.blocksRaycasts = clickable;
+        }
+
+        /// <summary>페이지 하나를 그대로 그린다. 선택지 칸은 모두 보이게 둔다.</summary>
+        private void ShowNow(EventPage page, IEventIllustrationSource illustrations)
         {
             if (page == null)
             {
@@ -173,6 +568,14 @@ namespace SlotHero.Events.UI
             }
 
             BuildChoices(page);
+
+            for (int i = 0; i < _choiceViews.Count; i++)
+            {
+                if (_choiceViews[i] != null)
+                {
+                    _choiceViews[i].Alpha = 1f;
+                }
+            }
         }
 
         /// <summary>

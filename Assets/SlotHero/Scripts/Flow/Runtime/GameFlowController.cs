@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using SlotHero.Ui;
+using SlotHero.Audio;
 using SlotHero.Combat;
 using SlotHero.CurrentBuild;
 using SlotHero.CurrentBuild.UI;
@@ -75,11 +76,17 @@ namespace SlotHero.Flow
         [SerializeField] private TopBarController _topBar;
         [SerializeField] private RunHudController _hud;
 
+        [Tooltip("화면이 바뀔 때 걷는 검은 막. 0.2초 페이드 인이다(2026년 10월 31일 원재). 비워 두면 바로 바뀐다.")]
+        [SerializeField] private ScreenFade _screenFade;
+
         [Header("설정 에셋")]
         [SerializeField] private RunCatalogConfig _catalogConfig;
 
         [Tooltip("유물 소개문과 플레이버 텍스트. 아이템 상세에 적는다.")]
         [SerializeField] private RelicConfig _relics;
+
+        [Tooltip("코인의 소모 체력과 가중치. 아이템 상세에 적는다(2026년 11월 1일).")]
+        [SerializeField] private CombatRuleConfig _combatRules;
         [SerializeField] private RunEventConfig _eventConfig;
         [SerializeField] private EventIllustrationConfig _eventIllustrations;
         [SerializeField] private RewardRuleConfig _rewardRules;
@@ -87,12 +94,23 @@ namespace SlotHero.Flow
         [SerializeField] private CurrentBuildVisualConfig _buildVisual;
         [SerializeField] private RunResultVisualConfig _resultVisual;
 
+        [Header("소리")]
+        [Tooltip("효과음을 내는 곳. 행상 구매와 야영 소리를 낸다(`효과음과 이펙트 목록.md` S23, S24).")]
+        [SerializeField] private SoundPlayer _sound;
+
         [Header("전투")]
         [Tooltip("전투 창구. 전투 코드가 오기 전에는 대역을 붙인다.")]
         [SerializeField] private MonoBehaviour _combatEntryBehaviour;
 
-        [Tooltip("전투 방에서만 켜는 배경. 무너진 제국의 폐허 그림이다. 공용 배경 바로 위에 깔린다(2026년 10월 25일 원재).")]
+        [Tooltip("전투 방에서만 켜는 배경. 공용 배경 바로 위에 깔린다(2026년 10월 25일 원재).")]
         [SerializeField] private GameObject _battleBackground;
+
+        [Tooltip("전투 배경 그림 후보. 전투를 열 때마다 이 가운데 하나를 고른다. " +
+                 "팀원이 올린 전투 배경 5, 2, 4 다(2026년 10월 31일 원재). 비어 있으면 씬에 놓인 그림을 그대로 쓴다.")]
+        [SerializeField] private Sprite[] _battleBackgroundSprites = new Sprite[0];
+
+        [Tooltip("전투 배경 그림. 고른 후보를 여기에 그린다. 전투 배경과 같은 오브젝트다.")]
+        [SerializeField] private UnityEngine.UI.Image _battleBackgroundImage;
 
         [Header("수치")]
         [Tooltip("타이틀 화면에 적는 빌드 번호.")]
@@ -110,6 +128,9 @@ namespace SlotHero.Flow
 
         private RunCatalog _catalog;
         private ICombatEntry _combat;
+
+        // 설정의 "임시 아이템 효과 적용". 아이템 상세에 임시 효과를 적을지도 이것으로 정한다.
+        private bool _temporaryItemEffects = TemporaryItemEffectsDefault;
 
         // 2026년 10월 8일에 책임 다섯을 떼어 냈다. 외부 검토가 셋을 권했고 원재가 하라고 했으며,
         // 원재가 지도 버튼과 팝업 처리도 나누라고 했다. 여기는 화면을 넘기고 다섯을 잇는 일만 한다.
@@ -170,6 +191,7 @@ namespace SlotHero.Flow
             _catalog = new RunCatalog(_catalogConfig);
             _catalog.TagVisuals = _buildVisual;
             _session = new RunSession(_save, _catalog, RefreshTopBar);
+            _session.HealthLost += PlayHitSound;
             _rewards = new RoomRewardFlow(_rewardRules, _catalogConfig, _save);
             _events = new EventRoomFlow(_eventConfig, _catalogConfig, _buildVisual);
             _popups = new FlowPopups(_popup);
@@ -210,6 +232,7 @@ namespace SlotHero.Flow
         private void Start()
         {
             CloseAll();
+            ApplySoundSettings();
 
             if (_save == null)
             {
@@ -242,6 +265,9 @@ namespace SlotHero.Flow
         /// </summary>
         private void EnterStartingProfile(bool waitAtTitle)
         {
+            // 설정 파일을 기다렸다 읽었으면 소리 크기가 바뀌었을 수 있다.
+            ApplySoundSettings();
+
             int profile = _save.PickStartingProfile();
 
             if (profile >= 0 && _save.SelectProfile(profile))
@@ -386,7 +412,7 @@ namespace SlotHero.Flow
         public void GoToProfileSelect()
         {
             CloseAll();
-            _screen = GameScreen.ProfileSelect;
+            SetScreen(GameScreen.ProfileSelect);
 
             if (_profileSelect != null && _save != null)
             {
@@ -407,7 +433,7 @@ namespace SlotHero.Flow
         private void GoToTitle(bool continueWhenReadable, bool waitIfUnreadable)
         {
             CloseAll();
-            _screen = GameScreen.Title;
+            SetScreen(GameScreen.Title);
             StopRunTimer();
 
             RefreshTitle();
@@ -551,7 +577,7 @@ namespace SlotHero.Flow
         /// </summary>
         public void GoToMap()
         {
-            _screen = GameScreen.Map;
+            SetScreen(GameScreen.Map);
             _mapPeek.Forget();
 
             CloseRoomScreens();
@@ -593,7 +619,7 @@ namespace SlotHero.Flow
 
             CloseAll();
             ResetRunScreens();
-            _screen = GameScreen.Map;
+            SetScreen(GameScreen.Map);
 
             if (_map != null)
             {
@@ -635,7 +661,7 @@ namespace SlotHero.Flow
 
             CloseAll();
             ResetRunScreens();
-            _screen = GameScreen.Map;
+            SetScreen(GameScreen.Map);
 
             if (_map != null)
             {
@@ -725,7 +751,7 @@ namespace SlotHero.Flow
             StopRunTimer();
 
             CloseAll();
-            _screen = GameScreen.RunResult;
+            SetScreen(GameScreen.RunResult);
 
             if (_runResult != null)
             {
@@ -804,7 +830,7 @@ namespace SlotHero.Flow
         /// </summary>
         private void OpenSanctum(MapNode node)
         {
-            _screen = GameScreen.Sanctum;
+            SetScreen(GameScreen.Sanctum);
 
             if (_sanctum == null)
             {
@@ -835,7 +861,7 @@ namespace SlotHero.Flow
         /// </summary>
         private void OpenEvent(MapNode node)
         {
-            _screen = GameScreen.Event;
+            SetScreen(GameScreen.Event);
 
             if (_event == null)
             {
@@ -860,7 +886,7 @@ namespace SlotHero.Flow
         /// </summary>
         private void OpenCombat(MapNode node, CombatOptions options)
         {
-            _screen = GameScreen.Combat;
+            SetScreen(GameScreen.Combat);
 
             if (_combat == null)
             {
@@ -868,8 +894,44 @@ namespace SlotHero.Flow
                 return;
             }
 
+            ChooseBattleBackground(node);
             ShowBattleBackground(true);
             _combat.Enter(Context, node, options, HandleCombatFinished);
+        }
+
+        /// <summary>
+        /// 이번 전투의 배경을 후보 가운데서 고른다(2026년 10월 31일 원재). 런 시드와 방 번호로 뽑으므로
+        /// 같은 런의 같은 방은 이어하기 뒤에도 같은 배경이 나온다.
+        /// </summary>
+        private void ChooseBattleBackground(MapNode node)
+        {
+            UnityEngine.UI.Image image = _battleBackgroundImage;
+            if (image == null || _battleBackgroundSprites == null || _battleBackgroundSprites.Length == 0)
+            {
+                return;
+            }
+
+            int seed = Context != null ? Context.Run.Seed : 0;
+            Sprite chosen = _battleBackgroundSprites[PickBattleBackground(seed, RoomKey(node), _battleBackgroundSprites.Length)];
+            if (chosen != null)
+            {
+                image.sprite = chosen;
+            }
+        }
+
+        /// <summary>런 시드와 방 번호로 전투 배경 후보 하나를 고른다. 같은 값이면 어느 기기에서든 같은 번호다.</summary>
+        public static int PickBattleBackground(int runSeed, int roomKey, int count)
+        {
+            if (count <= 1)
+            {
+                return 0;
+            }
+
+            unchecked
+            {
+                MapRandom random = new MapRandom(runSeed ^ (roomKey * 48271) ^ 0x2B7E1516);
+                return random.Range(0, count);
+            }
         }
 
         /// <summary>전투 배경을 켜고 끈다. 전투를 열 때 켜고, 전투가 끝나거나 전투 창구를 닫을 때 끈다.</summary>
@@ -931,7 +993,7 @@ namespace SlotHero.Flow
                 EventStep step = _events.ResumeAfterCombat(out choiceId);
 
                 // 전투 화면을 걷고 닫아 둔 이벤트 화면을 다시 연다.
-                _screen = GameScreen.Event;
+                SetScreen(GameScreen.Event);
                 if (_combat != null)
                 {
                     _combat.Leave();
@@ -971,7 +1033,7 @@ namespace SlotHero.Flow
                 _map.StartNewStage(run.Seed, run.StageIndex);
             }
 
-            _screen = GameScreen.Map;
+            SetScreen(GameScreen.Map);
 
             if (_combat != null)
             {
@@ -1071,7 +1133,7 @@ namespace SlotHero.Flow
             // 방 화면을 남겨 두면 그 뒤로 비쳐 보인다.
             CloseRoomScreens();
 
-            _screen = GameScreen.Reward;
+            SetScreen(GameScreen.Reward);
             _reward.Open(offer, _catalog);
 
             // 화면이 열렸으면 다음으로 넘기는 것은 화면이 닫힐 때(HandleRewardClosed) 한다.
@@ -1116,7 +1178,12 @@ namespace SlotHero.Flow
             _screenBehindOverlay = _screen;
 
             // 설정 파일을 읽지 못한 채 시작했으면 열기 전에 다시 읽어 본다. 읽히면 저장해 둔 값으로 연다.
-            _save.TryRecoverSettings();
+            // 읽힌 값은 바로 적용한다. 예전에는 화면에만 보여 주고 아무것도 바꾸지 않고 닫으면 적용되지 않았다(2026년 11월 1일 코덱스 검토).
+            if (_save.TryRecoverSettings())
+            {
+                ApplySoundSettings();
+            }
+
             _settings.Open(_save.Settings.Values);
         }
 
@@ -1199,7 +1266,8 @@ namespace SlotHero.Flow
                 return;
             }
 
-            ItemDetailSpec spec = ItemDetailTexts.Describe(id, _catalogConfig, _buildVisual, _relics, GetRelicStack(id));
+            ItemDetailSpec spec = ItemDetailTexts.Describe(
+                id, _catalogConfig, _buildVisual, _relics, GetRelicStack(id), _combatRules, _temporaryItemEffects);
             if (!spec.IsValid)
             {
                 _itemDetail.Hide();
@@ -1265,6 +1333,7 @@ namespace SlotHero.Flow
             if (_map != null)
             {
                 _map.RoomEntered += EnterRoom;
+                _map.NodeChosen += PlayNodeSound;
             }
 
             if (_sanctum != null)
@@ -1276,6 +1345,10 @@ namespace SlotHero.Flow
                 // `ActionFailed` 는 받지 않는다. 성소 기획서 06 골드 는 "모자라면 소모 불가" 와 붉은 가격까지만 정했다.
                 // 예전에는 "골드가 모자랍니다" 팝업을 띄웠는데 기획서에도 요청에도 없던 것이라 2026년 10월 6일에 뺐다.
                 _sanctum.ItemDetailRequested += HandleMerchantDetail;
+
+                // 소리만 낸다. 산 물건과 진열은 성소가 이미 바꿨다.
+                _sanctum.ItemPurchased += PlayPurchaseSound;
+                _sanctum.CampUsed += PlayCampSound;
             }
 
             if (_event != null)
@@ -1403,6 +1476,7 @@ namespace SlotHero.Flow
             if (_map != null)
             {
                 _map.RoomEntered -= EnterRoom;
+                _map.NodeChosen -= PlayNodeSound;
             }
 
             if (_sanctum != null)
@@ -1412,6 +1486,8 @@ namespace SlotHero.Flow
                 _sanctum.RoomNeeded -= HandleSanctumRoomNeeded;
                 _sanctum.SymbolChanged -= HandleSymbolChanged;
                 _sanctum.ItemDetailRequested -= HandleMerchantDetail;
+                _sanctum.ItemPurchased -= PlayPurchaseSound;
+                _sanctum.CampUsed -= PlayCampSound;
             }
 
             if (_event != null)
@@ -1846,11 +1922,12 @@ namespace SlotHero.Flow
                 CurrentBuildSnapshot build = Context.BuildSnapshot();
                 ItemPickRequest request = new ItemPickRequest();
                 request.Kind = ItemPickKind.Symbol;
-                request.Title = "바꿀 문양 선택";
+                // 제목은 "변환할 문양 선택" 이고 아래 줄 칸은 두지 않는다(2026년 10월 31일 원재).
+                request.Title = "변환할 문양 선택";
                 request.Candidates = OwnedSymbolEntries(build);
                 request.Build = build;
                 request.ShowCount = true;
-                request.ResultFormat = "[{0}] 을 무작위 문양으로 바꾼다";
+                request.ShowResult = false;
                 request.ConfirmText = "바꾸기";
 
                 OpenPicker(request, HandleSymbolChangePicked, CancelSymbolChange);
@@ -2119,6 +2196,26 @@ namespace SlotHero.Flow
                     _settings.SelectTab(_settings.TabIndex);
                 }
             }
+
+            ApplySoundSettings();
+            NotifyNextCombatSetting(definition);
+        }
+
+        /// <summary>
+        /// 전투 중에 다음 전투부터 적용되는 설정을 바꾸면 그렇다고 알린다(2026년 11월 1일 원재).
+        /// 지금 그런 설정은 "임시 아이템 효과 적용" 하나다. 소리 크기와 자동 저장은 바로 적용된다.
+        /// </summary>
+        private void NotifyNextCombatSetting(SettingDefinition definition)
+        {
+            if (definition == null || definition.Id != TemporaryItemEffectsSettingId)
+            {
+                return;
+            }
+
+            if (_screen == GameScreen.Combat || _screenBehindOverlay == GameScreen.Combat)
+            {
+                _popups.NotifyAppliesNextCombat(definition.DisplayName);
+            }
         }
 
         /// <summary>
@@ -2172,6 +2269,108 @@ namespace SlotHero.Flow
             if (_save != null && _settings != null)
             {
                 _save.OnSettingsApplied(_settings.Values);
+            }
+
+            ApplySoundSettings();
+        }
+
+        /// <summary>
+        /// 저장된 설정의 소리 크기를 효과음에 적용한다. 인게임 화면 기획서 07 설정 화면의 사운드 탭이다.
+        /// 식별자는 `SettingsCatalogConfig` 의 사운드 탭 항목이고, 음소거는 식별자 뒤에 `Mute` 를 붙인 값이다.
+        /// 배경음과 환경음은 아직 내는 곳이 없어 전체와 효과음만 읽는다.
+        /// </summary>
+        private void ApplySoundSettings()
+        {
+            // 설정을 읽어 들이는 자리가 소리와 같아 임시 아이템 효과도 여기서 함께 넘긴다.
+            ApplyItemEffectSettings();
+
+            if (_sound == null || _save == null || _save.Settings == null || _save.Settings.Values == null)
+            {
+                return;
+            }
+
+            SettingsValues values = _save.Settings.Values;
+            _sound.SetVolume(
+                values.GetRaw("masterVolume", 100f), values.GetBool("masterVolumeMute", false),
+                values.GetRaw("sfxVolume", 100f), values.GetBool("sfxVolumeMute", false));
+
+            // 전투의 레이저 발사음은 전투 화면이 따로 낸다. 같은 크기를 넘긴다(2026년 10월 31일 원재).
+            if (_combat != null)
+            {
+                _combat.SetSoundVolume(_sound.Volume);
+            }
+        }
+
+        /// <summary>
+        /// 설정의 "임시 아이템 효과 적용" 을 전투와 아이템 상세에 넘긴다(2026년 11월 1일 원재).
+        /// 켜면 효과가 없던 유물 스무 개와 코인 서른 개가 임시 효과를 쓰고, 상세 팝업에도 그 효과가 적힌다.
+        /// </summary>
+        private void ApplyItemEffectSettings()
+        {
+            if (_save == null || _save.Settings == null || _save.Settings.Values == null)
+            {
+                return;
+            }
+
+            _temporaryItemEffects = _save.Settings.Values.GetBool(
+                TemporaryItemEffectsSettingId, TemporaryItemEffectsDefault);
+            if (_combat != null)
+            {
+                _combat.SetTemporaryItemEffects(_temporaryItemEffects);
+            }
+        }
+
+        /// <summary>임시 아이템 효과를 쓰는지. 설정에서 읽은 값이다.</summary>
+        public bool TemporaryItemEffects
+        {
+            get { return _temporaryItemEffects; }
+        }
+
+        /// <summary>설정 목록(`SettingsCatalogConfig`)의 "임시 아이템 효과 적용" 식별자.</summary>
+        public const string TemporaryItemEffectsSettingId = "temporaryItemEffects";
+
+        /// <summary>설정 값이 아직 없을 때. 설정 목록의 기본값과 같이 켜져 있다.</summary>
+        public const bool TemporaryItemEffectsDefault = true;
+
+        /// <summary>
+        /// 행상에서 물건을 샀다. S23 행상 구매 소리를 낸다(2026년 10월 29일 원재).
+        /// 치른 골드가 많을수록 큰 동전 소리를 낸다(2026년 10월 31일 원재).
+        /// </summary>
+        private void PlayPurchaseSound(MerchantItem item, int price)
+        {
+            if (_sound != null)
+            {
+                _sound.PlayPurchase(price);
+            }
+        }
+
+        /// <summary>야영을 썼다. S24 야영 소리를 낸다(2026년 10월 29일 원재).</summary>
+        private void PlayCampSound(int healed)
+        {
+            if (_sound != null)
+            {
+                _sound.Play(SoundCue.Camp);
+            }
+        }
+
+        /// <summary>
+        /// 체력이 줄었다. S12 체력 잃음(피격음)을 낸다.
+        /// 전투에서 맞을 때와 이벤트에서 체력이나 최대 체력을 잃을 때 같은 소리를 쓴다(2026년 10월 30일 원재).
+        /// </summary>
+        private void PlayHitSound(int lost)
+        {
+            if (_sound != null)
+            {
+                _sound.Play(SoundCue.HealthLost);
+            }
+        }
+
+        /// <summary>맵에서 다음 방 노드를 눌렀다. S07 노드 고르기를 낸다(2026년 10월 31일 원재).</summary>
+        private void PlayNodeSound(MapNode node)
+        {
+            if (_sound != null)
+            {
+                _sound.Play(SoundCue.NodeSelect);
             }
         }
 
@@ -2391,6 +2590,21 @@ namespace SlotHero.Flow
             }
 
             ShowBattleBackground(false);
+        }
+
+        /// <summary>
+        /// 지금 화면을 바꾼다. 다른 화면으로 바뀌면 검은 막을 걷으며 새 화면을 드러낸다(0.2초, 2026년 10월 31일 원재).
+        /// 같은 화면을 다시 열 때는 막을 씌우지 않는다.
+        /// </summary>
+        private void SetScreen(GameScreen screen)
+        {
+            bool changed = screen != _screen;
+            _screen = screen;
+
+            if (changed && _screenFade != null)
+            {
+                _screenFade.Play();
+            }
         }
 
         /// <summary>런 중에만 보이는 상단 표시줄과 현재 빌드 버튼을 켜고 끈다.</summary>

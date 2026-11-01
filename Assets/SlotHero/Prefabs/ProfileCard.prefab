@@ -275,6 +275,7 @@ MonoBehaviour:
   _maxGrow: 24
   _target: {fileID: 0}
   _selectable: {fileID: 0}
+  _pressRatio: 0.95
 --- !u!1 &3079349619601631935
 GameObject:
   m_ObjectHideFlags: 0
@@ -1120,6 +1121,7 @@ MonoBehaviour:
   _maxGrow: 24
   _target: {fileID: 0}
   _selectable: {fileID: 0}
+  _pressRatio: 0.95
 --- !u!1 &5807746627127293709
 GameObject:
   m_ObjectHideFlags: 0

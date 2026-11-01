@@ -101,6 +101,7 @@ MonoBehaviour:
   _maxGrow: 24
   _target: {fileID: 0}
   _selectable: {fileID: 0}
+  _pressRatio: 0.95
 --- !u!222 &4030168956401179949
 CanvasRenderer:
   m_ObjectHideFlags: 0

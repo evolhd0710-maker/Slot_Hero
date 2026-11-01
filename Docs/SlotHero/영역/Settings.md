@@ -101,6 +101,7 @@ SettingDefinition.Volume("bgmVolume", "배경음", 100f);
 | 일반 | 창 모드 | 창 / 전체 화면 / 테두리 없는 창. 기본 전체 화면. **기본값 복원에서 빠진다** |
 | 일반 | 자동 저장 | 꺼짐 / 켜짐. 기본 켜짐 |
 | 일반 | 연출 속도 | 보통 / 빠름 / 스킵. 기본 보통 |
+| 일반 | 임시 아이템 효과 적용 | 꺼짐 / 켜짐. 기본 켜짐. 효과가 없던 유물 스무 개와 코인 서른 개의 임시 효과를 켜고 끈다(2026년 11월 1일 원재). 흐름이 전투와 아이템 상세에 넘긴다 |
 | 사운드 | 전체, 배경음, 환경음, 효과음 | 0 ~ 100 막대와 음소거 버튼. 기본 100, 음소거 꺼짐 |
 
 그래픽과 조작 탭은 비어 있다.
@@ -164,7 +165,7 @@ SettingsScreen             SettingsScreenController, 화면 루트
   TabPanel                 Image
     TabLayer               빈 RectTransform. 탭이 여기 아래에 만들어진다
   ListPanel                Image
-    ListScroll             ScrollRect · 세로만 켠다
+    ListScroll             WheelOnlyScrollRect · 세로만 켠다. 휠과 스크롤 바로만 움직이고 마우스로 끌어도 밀리지 않는다
       ListViewport         Mask 또는 RectMask2D
         ListContent        항목이 여기 아래에 만들어진다
   RestorePanel             Image + Button

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using SlotHero.CurrentBuild;
 using SlotHero.Events;
@@ -61,6 +61,9 @@ namespace SlotHero.ToolsEditor
             // 받아 둔 원본이 없으면 복사만 건너뛰고 옮겨 둔 그림으로 잇는다.
             CopyFolder(Path.Combine(RepoRoot, @"Assets\SymbolImage"), ArtFolder + "/Symbols");
 
+            // UI 재질. 셰이더는 그림이 아니지만 코드 옮기기가 .cs 만 옮겨 여기서 함께 옮긴다.
+            CopyShaders(Path.Combine(SourceRoot, @"Ui\Shaders"), ShaderFolder);
+
             AssetDatabase.Refresh();
 
             MakeSprites(ArtFolder + "/Map", true);
@@ -82,9 +85,81 @@ namespace SlotHero.ToolsEditor
             LinkTagIcons();
             LinkCatalogIcons();
             LinkEventIllustrations();
+            LinkGrayMaterial();
+            LinkEnemyArt();
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        /// <summary>셰이더를 두는 자리.</summary>
+        private const string ShaderFolder = ArtFolder + "/Shaders";
+
+        /// <summary>무채색 UI 재질의 자리. 셰이더 `SlotHero/UI Grayscale` 로 만든다.</summary>
+        public const string GrayMaterialPath = ShaderFolder + "/UI 무채.mat";
+
+        /// <summary>폴더의 셰이더를 프로젝트로 옮긴다.</summary>
+        private static void CopyShaders(string source, string target)
+        {
+            if (!Directory.Exists(source))
+            {
+                return;
+            }
+
+            UiSceneBuilder.EnsureFolder(target);
+
+            string[] files = Directory.GetFiles(source, "*.shader");
+            for (int i = 0; i < files.Length; i++)
+            {
+                File.Copy(files[i], Path.Combine(target, Path.GetFileName(files[i])), true);
+            }
+        }
+
+        /// <summary>
+        /// 무채색 UI 재질을 만들어 전투 표시 설정의 릴 칸 테두리 재질에 물린다(2026년 10월 31일 원재).
+        /// 재질이 이미 있으면 그것을 쓴다. 설정에 다른 재질을 넣어 두었으면 건드리지 않도록 설정 칸이 비어 있을 때만 물린다.
+        /// </summary>
+        private static void LinkGrayMaterial()
+        {
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(GrayMaterialPath);
+            if (material == null)
+            {
+                Shader shader = Shader.Find("SlotHero/UI Grayscale");
+                if (shader == null)
+                {
+                    Debug.LogWarning("무채색 UI 셰이더를 찾지 못했다. Ui/Shaders 를 확인한다.");
+                    return;
+                }
+
+                material = new Material(shader);
+                material.SetFloat("_Saturation", 0f);
+                AssetDatabase.CreateAsset(material, GrayMaterialPath);
+            }
+
+            CombatVisualConfig visual = UiSceneBuilder.LoadConfig<CombatVisualConfig>("Combat", "CombatVisualConfig");
+            if (visual != null && visual.ReelFrameMaterial == null)
+            {
+                visual.ReelFrameMaterial = material;
+                EditorUtility.SetDirty(visual);
+            }
+        }
+
+        /// <summary>
+        /// 몬스터 그림을 전투 표시 설정에 물린다. 팀원이 올린 그림 셋이다(2026년 10월 31일 `c887667`).
+        /// 일반 덤은 `Dur`, 엘리트 더머는 `Dummy`, 보스 더스트는 `Dum` 을 `몬스터_이름.png` 로 옮겨 두었다.
+        /// </summary>
+        private static void LinkEnemyArt()
+        {
+            CombatVisualConfig visual = UiSceneBuilder.LoadConfig<CombatVisualConfig>("Combat", "CombatVisualConfig");
+            if (visual == null)
+            {
+                return;
+            }
+
+            visual.NormalEnemyArt = LoadCombat("몬스터_덤");
+            visual.EliteEnemyArt = LoadCombat("몬스터_더머");
+            visual.BossEnemyArt = LoadCombat("몬스터_더스트");
+            EditorUtility.SetDirty(visual);
         }
 
         /// <summary>폴더의 PNG 를 프로젝트로 옮긴다.</summary>

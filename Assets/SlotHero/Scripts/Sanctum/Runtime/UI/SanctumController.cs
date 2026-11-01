@@ -43,8 +43,8 @@ namespace SlotHero.Sanctum.UI
         /// <summary>야영을 썼을 때. 실제로 회복한 체력을 넘긴다. 04 야영 의 사용 피드백에 쓴다.</summary>
         public event Action<int> CampUsed;
 
-        /// <summary>물건을 샀을 때.</summary>
-        public event Action<MerchantItem> ItemPurchased;
+        /// <summary>물건을 샀을 때. 산 물건과 치른 골드를 넘긴다. 치른 골드는 구매 소리를 고르는 데 쓴다.</summary>
+        public event Action<MerchantItem, int> ItemPurchased;
 
         /// <summary>문양을 바꿨을 때. 바꾸기 전 문양의 식별자와 새로 받은 문양을 넘긴다.</summary>
         public event Action<string, MerchantItem> SymbolChanged;
@@ -303,6 +303,12 @@ namespace SlotHero.Sanctum.UI
 
             Refresh();
 
+            // 새 유물이 암흑물질에서 형체를 갖추며 나타난다(2026년 10월 31일 원재).
+            if (_merchantView != null)
+            {
+                _merchantView.PlayRelicForming();
+            }
+
             if (RelicsRefreshed != null)
             {
                 RelicsRefreshed();
@@ -460,7 +466,7 @@ namespace SlotHero.Sanctum.UI
 
             if (ItemPurchased != null)
             {
-                ItemPurchased(item);
+                ItemPurchased(item, slot.Price);
             }
         }
 

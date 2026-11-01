@@ -38,3 +38,10 @@ MonoBehaviour:
   _confirmText: "\uBCF4\uC0C1 \uBC1B\uAE30"
   _hoverBrightness: 1.1
   _pressedBrightness: 0.9
+  _cardFlashSeconds: 1.2
+  _cardFlashDelaySeconds: 0.3
+  _revealStepGapSeconds: 0.15
+  _healPopSeconds: 0.3
+  _healPopPeakScale: 1.35
+  _cardFlashColor: {r: 1, g: 0.93, b: 0.72, a: 1}
+  _goldCountSeconds: 0.3

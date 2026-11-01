@@ -34,9 +34,6 @@ namespace SlotHero.Combat
         [Tooltip("릴 모서리에 놓는 태그 그림. 초안 08 의 태그 이미지 자리다.")]
         public float ReelTagSize = UiScale.Px(46f);
 
-        [Tooltip("강조 테두리 두께.")]
-        public float ReelHighlightThickness = UiScale.Px(8f);
-
         [Tooltip("릴 틀 그림 안쪽으로 바탕을 들이는 거리. 틀 가장자리의 깨진 부분 밖으로 바탕이 비치지 않게 한다.")]
         [SerializeField] private float _reelBackInset = UiScale.Px(8f);
         public float ReelBackInset { get { return _reelBackInset; } set { _reelBackInset = value; } }
@@ -60,8 +57,8 @@ namespace SlotHero.Combat
         [SerializeField] private float _relicIconInset = UiScale.Px(16f);
         public float RelicIconInset { get { return _relicIconInset; } set { _relicIconInset = value; } }
 
-        [Tooltip("유물 정보 팝업. 유물 목록 오른쪽, 그 칸 높이에 뜬다.")]
-        public Vector2 RelicPopupSize = UiScale.V(340f, 220f);
+        [Tooltip("유물 정보 팝업. 유물 목록 오른쪽, 그 칸 높이에 뜬다. 코인 정보 팝업의 풍선 그림을 늘려 쓴다.")]
+        public Vector2 RelicPopupSize = UiScale.V(340f, 200f);
 
         public float RelicPopupGap = UiScale.Px(12f);
 
@@ -204,8 +201,10 @@ namespace SlotHero.Combat
         [SerializeField] private Vector2 _tagMedalSize = UiScale.V(231f, 208f);
         public Vector2 TagMedalSize { get { return _tagMedalSize; } set { _tagMedalSize = value; } }
 
-        [Tooltip("메달 그림 가운데를 원판 가운데에서 옮기는 거리. y 는 아래가 + 다. 메달의 둥근 판이 그림 가운데보다 아래에 있다.")]
-        [SerializeField] private Vector2 _tagMedalOffset = UiScale.V(-2f, -10f);
+        [Tooltip("메달 그림 가운데를 원판 가운데에서 옮기는 거리. y 는 아래가 + 다. " +
+                 "메달 그림의 둥근 판은 그림 가운데에서 오른쪽으로 1.7, 아래로 0.2 비켜 있어 그만큼 거꾸로 옮겨 원판과 같은 가운데에 둔다. " +
+                 "예전 값 (-2, -10) 은 메달이 10 위로 떠 동심원이 맞지 않았다(2026년 10월 31일 원재).")]
+        [SerializeField] private Vector2 _tagMedalOffset = UiScale.V(-1.7f, -0.2f);
         public Vector2 TagMedalOffset { get { return _tagMedalOffset; } set { _tagMedalOffset = value; } }
 
         [Tooltip("메달 위에 놓는 고른 코인의 지름. 메달 판(지름 119)을 덮는다.")]
@@ -263,21 +262,43 @@ namespace SlotHero.Combat
         [SerializeField] private Rect _coinPopupIconArea = new Rect(UiScale.Px(24f), UiScale.Px(53f), UiScale.Px(78f), UiScale.Px(78f));
         public Rect CoinPopupIconArea { get { return _coinPopupIconArea; } set { _coinPopupIconArea = value; } }
 
+        // 오른쪽 글 묶음은 피그마 값보다 12 올렸다. 글이 그림보다 낮아 보였다(2026년 10월 31일 원재).
         [Tooltip("코인 이름. 피그마 \"공격의 코인\" 자리.")]
-        [SerializeField] private Rect _coinPopupNameArea = new Rect(UiScale.Px(117f), UiScale.Px(48f), UiScale.Px(180f), UiScale.Px(28f));
+        [SerializeField] private Rect _coinPopupNameArea = new Rect(UiScale.Px(117f), UiScale.Px(36f), UiScale.Px(180f), UiScale.Px(28f));
         public Rect CoinPopupNameArea { get { return _coinPopupNameArea; } set { _coinPopupNameArea = value; } }
 
         [Tooltip("이름 아래 구분선.")]
-        [SerializeField] private Rect _coinPopupLineArea = new Rect(UiScale.Px(117f), UiScale.Px(79f), UiScale.Px(165f), UiScale.Px(1.5f));
+        [SerializeField] private Rect _coinPopupLineArea = new Rect(UiScale.Px(117f), UiScale.Px(67f), UiScale.Px(165f), UiScale.Px(1.5f));
         public Rect CoinPopupLineArea { get { return _coinPopupLineArea; } set { _coinPopupLineArea = value; } }
 
         [Tooltip("소모 체력과 가중치.")]
-        [SerializeField] private Rect _coinPopupStatsArea = new Rect(UiScale.Px(117f), UiScale.Px(84f), UiScale.Px(180f), UiScale.Px(38f));
+        [SerializeField] private Rect _coinPopupStatsArea = new Rect(UiScale.Px(117f), UiScale.Px(72f), UiScale.Px(180f), UiScale.Px(38f));
         public Rect CoinPopupStatsArea { get { return _coinPopupStatsArea; } set { _coinPopupStatsArea = value; } }
 
         [Tooltip("코인 설명. 체력이 모자라면 한 줄이 더 붙어 글자를 줄여 넣는다.")]
-        [SerializeField] private Rect _coinPopupBodyArea = new Rect(UiScale.Px(117f), UiScale.Px(122f), UiScale.Px(180f), UiScale.Px(42f));
+        [SerializeField] private Rect _coinPopupBodyArea = new Rect(UiScale.Px(117f), UiScale.Px(110f), UiScale.Px(180f), UiScale.Px(48f));
         public Rect CoinPopupBodyArea { get { return _coinPopupBodyArea; } set { _coinPopupBodyArea = value; } }
+
+        [Header("유물 정보 팝업 안")]
+        [Tooltip("유물 그림. 코인 정보 팝업과 같은 풍선 그림을 쓰고 자리도 같은 꼴로 둔다(2026년 10월 31일 원재). 풍선 왼쪽 위에서 잰 값이다.")]
+        [SerializeField] private Rect _relicPopupIconArea = new Rect(UiScale.Px(24f), UiScale.Px(61f), UiScale.Px(78f), UiScale.Px(78f));
+        public Rect RelicPopupIconArea { get { return _relicPopupIconArea; } set { _relicPopupIconArea = value; } }
+
+        [Tooltip("유물 이름.")]
+        [SerializeField] private Rect _relicPopupNameArea = new Rect(UiScale.Px(117f), UiScale.Px(36f), UiScale.Px(200f), UiScale.Px(28f));
+        public Rect RelicPopupNameArea { get { return _relicPopupNameArea; } set { _relicPopupNameArea = value; } }
+
+        [Tooltip("이름 아래 구분선.")]
+        [SerializeField] private Rect _relicPopupLineArea = new Rect(UiScale.Px(117f), UiScale.Px(67f), UiScale.Px(195f), UiScale.Px(1.5f));
+        public Rect RelicPopupLineArea { get { return _relicPopupLineArea; } set { _relicPopupLineArea = value; } }
+
+        [Tooltip("지금 값을 채운 소개문.")]
+        [SerializeField] private Rect _relicPopupBodyArea = new Rect(UiScale.Px(117f), UiScale.Px(74f), UiScale.Px(200f), UiScale.Px(74f));
+        public Rect RelicPopupBodyArea { get { return _relicPopupBodyArea; } set { _relicPopupBodyArea = value; } }
+
+        [Tooltip("플레이버 텍스트.")]
+        [SerializeField] private Rect _relicPopupFlavorArea = new Rect(UiScale.Px(117f), UiScale.Px(148f), UiScale.Px(200f), UiScale.Px(30f));
+        public Rect RelicPopupFlavorArea { get { return _relicPopupFlavorArea; } set { _relicPopupFlavorArea = value; } }
 
         [Tooltip("공격 레이저의 굵기. 원판 가운데에서 적 가운데까지 뻗는다(2026년 10월 30일, 구슬을 레이저로 바꿈).")]
         public float LaserThickness = UiScale.Px(90f);

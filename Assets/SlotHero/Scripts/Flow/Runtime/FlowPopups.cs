@@ -237,6 +237,15 @@ namespace SlotHero.Flow
         // ---- 설정과 저장 ----
 
         /// <summary>
+        /// 전투 중에 바꾼 설정이 다음 전투부터 적용된다고 알린다(2026년 11월 1일 원재). 버튼은 확인 하나다.
+        /// </summary>
+        public void NotifyAppliesNextCombat(string settingName)
+        {
+            Show(PopupSpec.Notice("다음 전투부터 적용됩니다",
+                settingName + " 은 지금 전투에는 바뀌지 않고 다음 전투부터 적용됩니다.", "확인"));
+        }
+
+        /// <summary>
         /// 07 설정 화면 의 "기본값 복원 확인 팝업". 되돌리기를 누르면 onConfirm 을 부른다.
         /// 해상도와 창 모드처럼 되돌리지 않는 항목은 본문 끝에 이름을 적는다(kept).
         /// 버튼 글은 08 화면 팝업 의 "기본값 복원 확인 · 취소 / 되돌리기" 다.

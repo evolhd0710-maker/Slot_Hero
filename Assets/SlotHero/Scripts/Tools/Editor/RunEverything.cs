@@ -31,6 +31,12 @@ namespace SlotHero.ToolsEditor
             // 방 종류 아이콘과 태그 그림이 비므로 바로 다시 이어 준다.
             Step("그림 가져오기", ImportArt.Import);
 
+            // 효과음 파일. 게임 씬이 효과음 설정을 물기 전에 소리를 이어 둔다(2026년 10월 29일).
+            Step("소리 가져오기", ImportSounds.Import);
+
+            // 태그별 공격 이펙트와 소리. 전투 화면이 설정을 물기 전에 프리팹과 소리를 이어 둔다(2026년 11월 1일).
+            Step("태그 공격 이펙트 가져오기", ImportTagAttack.Import);
+
             Step("UI 스킨 만들기", MakeUiSkin.Make);
             Step("확인용 씬 만들기", BuildPreviewScenes.BuildAll);
             Step("게임 씬 만들기", BuildGameScene.Build);

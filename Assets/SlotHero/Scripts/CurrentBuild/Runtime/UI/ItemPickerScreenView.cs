@@ -319,6 +319,8 @@ namespace SlotHero.CurrentBuild.UI
                 _cancelLabel.text = string.IsNullOrEmpty(request.CancelText) ? _visual.PickCancelText : request.CancelText;
             }
 
+            SetActive(_resultPanel != null ? _resultPanel.gameObject : null, request.ShowResult);
+
             // 반드시 골라야 하는 요청이면 취소 칸을 감춘다.
             SetActive(_cancelPanel != null ? _cancelPanel.gameObject : null, request.Cancellable);
 

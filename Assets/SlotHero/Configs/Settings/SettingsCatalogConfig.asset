@@ -70,6 +70,19 @@ MonoBehaviour:
       _valueFormat: '{0:0}'
       _muteId: 
       _keepOnRestore: 0
+    - _id: temporaryItemEffects
+      _displayName: "\uC784\uC2DC \uC544\uC774\uD15C \uD6A8\uACFC \uC801\uC6A9"
+      _kind: 0
+      _options:
+      - "\uAEBC\uC9D0"
+      - "\uCF1C\uC9D0"
+      _defaultValue: 1
+      _min: 0
+      _max: 1
+      _step: 1
+      _valueFormat: '{0:0}'
+      _muteId: 
+      _keepOnRestore: 0
   - _id: graphics
     _displayName: "\uADF8\uB798\uD53D"
     _items: []

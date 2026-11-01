@@ -20,3 +20,10 @@ MonoBehaviour:
   _hideSoldSlots: 1
   _campAvailableTint: {r: 1, g: 1, b: 1, a: 1}
   _campUsedTint: {r: 0.45, g: 0.44, b: 0.42, a: 1}
+  _relicFormSeconds: 0.9
+  _relicFormStagger: 0.12
+  _darkMatterColor: {r: 0.16, g: 0.06, b: 0.24, a: 0.95}
+  _campDarkenSeconds: 0.5
+  _campHealSeconds: 1.2
+  _campBrightenDelay: 0.15
+  _campDarkness: 1

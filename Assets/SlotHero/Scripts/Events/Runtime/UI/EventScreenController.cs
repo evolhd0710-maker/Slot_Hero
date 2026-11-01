@@ -104,7 +104,12 @@ namespace SlotHero.Events.UI
             }
 
             SetActive(true);
-            Refresh();
+
+            // 첫 화면은 선택지가 위에서부터 하나씩 드러난다(2026년 10월 30일 원재).
+            if (_view != null)
+            {
+                _view.ShowOpening(_page, _illustrations);
+            }
         }
 
         /// <summary>
@@ -131,7 +136,11 @@ namespace SlotHero.Events.UI
                 return;
             }
 
-            Refresh();
+            // 고른 칸이 위로 쌓이고, 삽화가 어두워졌다 밝아지며 다음 화면이 되고, 새 선택지가 차례로 드러난다(2026년 10월 30일 원재).
+            if (_view != null)
+            {
+                _view.ShowAdvance(_page, _illustrations, copy.ChosenChoiceId);
+            }
 
             if (copy.HasNextChoices)
             {

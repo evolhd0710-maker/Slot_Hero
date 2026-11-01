@@ -252,6 +252,19 @@ namespace SlotHero.Map.UI
             return reachable;
         }
 
+        /// <summary>그 노드의 반짝임 세기를 정한다. 고른 노드를 반짝일 때 맵 화면 조종기가 부른다.</summary>
+        public void SetNodeFlash(MapNode node, float amount)
+        {
+            for (int i = 0; i < _nodeViews.Count; i++)
+            {
+                if (_nodeViews[i] != null && _nodeViews[i].Node == node)
+                {
+                    _nodeViews[i].SetFlash(amount);
+                    return;
+                }
+            }
+        }
+
         private void HandleNodeClicked(MapNodeView view)
         {
             if (view == null || view.Node == null)

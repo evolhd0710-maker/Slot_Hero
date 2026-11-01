@@ -315,9 +315,9 @@ namespace SlotHero.ToolsEditor
             Report("맨 위 칸은 소용돌이", !TagDialView.TryGetTag(0, out _));
 
             SymbolTagType tag;
-            Report("다음 칸은 금성", TagDialView.TryGetTag(1, out tag) && tag == SymbolTagType.Venus);
-            Report("마지막 칸은 수성", TagDialView.TryGetTag(9, out tag) && tag == SymbolTagType.Mercury);
-            Report("태그 칸 자리를 거꾸로 찾는다", TagDialView.GetSectorIndex(SymbolTagType.Neptune), 7);
+            Report("다음 칸은 수성", TagDialView.TryGetTag(1, out tag) && tag == SymbolTagType.Mercury);
+            Report("마지막 칸은 명왕성", TagDialView.TryGetTag(9, out tag) && tag == SymbolTagType.Pluto);
+            Report("태그 칸 자리를 거꾸로 찾는다", TagDialView.GetSectorIndex(SymbolTagType.Neptune), 8);
 
             GameObject go = new GameObject("SectorCheck", typeof(RectTransform));
             TagSectorView top = go.AddComponent<TagSectorView>();
@@ -744,11 +744,14 @@ namespace SlotHero.ToolsEditor
         private static void CheckMonsterRules(CombatRuleConfig rules)
         {
             CombatEnemy normal = rules.MakeEnemy(CombatEnemyKind.Normal, 1);
-            Report("일반 방은 검투사", normal.Monster == MonsterKind.Gladiator && normal.Name == "검투사");
+            // 이름은 2026년 10월 31일 팀원 몬스터 그림에 맞춰 덤, 더머, 더스트로 바꿨다. 패턴은 그대로다.
+            Report("일반 방은 검투사 패턴의 덤", normal.Monster == MonsterKind.Gladiator && normal.Name == "덤");
+            Report("일반 방 몬스터는 방 종류를 안다", normal.Kind == CombatEnemyKind.Normal);
             Report("검투사 체력 30", normal.MaxHealth, 30);
 
             CombatEnemy elite = rules.MakeEnemy(CombatEnemyKind.Elite, 1);
-            Report("엘리트 방은 장군", elite.Monster == MonsterKind.General && elite.Name == "장군");
+            Report("엘리트 방은 장군 패턴의 더머", elite.Monster == MonsterKind.General && elite.Name == "더머");
+            Report("보스 방은 더스트", rules.MakeEnemy(CombatEnemyKind.Boss, 1).Name == "더스트");
             Report("장군 체력 80", elite.MaxHealth, 80);
 
             Report("스테이지가 오르면 패턴 피해에 더한다", rules.MakeEnemy(CombatEnemyKind.Normal, 2).AttackBonus, rules.EnemyAttackGrowthPerStage);
@@ -868,6 +871,12 @@ namespace SlotHero.ToolsEditor
 
             Report("흐름이 진짜 전투에 물려 있다", GetField<MonoBehaviour>(flow, "_combatEntryBehaviour") == entry);
             Report("창구가 전투 화면에 물려 있다", entry.Screen == screen);
+
+            // 설정의 소리 크기가 레이저 발사음까지 간다(2026년 10월 31일 원재).
+            entry.SetSoundVolume(0.25f);
+            Report("창구가 넘긴 소리 크기가 전투 화면에 간다",
+                screen.View != null && Mathf.Approximately(screen.View.SoundVolume, 0.25f));
+            entry.SetSoundVolume(1f);
             Report("창구에 규칙이 있다", GetField<CombatRuleConfig>(entry, "_rules") != null);
             Report("창구에 물건 목록이 있다", GetField<RunCatalogConfig>(entry, "_catalog") != null);
             Report("전투 화면은 꺼진 채로 시작한다", !screen.gameObject.activeSelf);
@@ -906,6 +915,9 @@ namespace SlotHero.ToolsEditor
             // 12개의 금화를 들고 들어간다. 쌓인 횟수가 런에 다시 적히는지 본다.
             run.Owned.AddRelic(RelicConfig.IdFor(12003));
 
+            // 임시 아이템 효과(2026년 11월 1일 원재). 켜면 시트에 없던 유물과 코인도 효과를 갖고, 끄면 예전처럼 없다.
+            CheckTemporaryItemEffects(entry, context, node);
+
             CombatSetup setup = entry.MakeSetup(context, node);
             Report("유물이 효과와 함께 넘어간다", setup.Relics.Count == 1 && setup.Relics[0].Definition != null);
             Report("모든 문양이 망치와 끌의 풀로 넘어간다", setup.SymbolPool.Count, catalogConfig.Symbols.Count);
@@ -927,6 +939,16 @@ namespace SlotHero.ToolsEditor
             Report("들어가면 코인을 고른다", screen.Battle != null && screen.Battle.Phase == CombatPhase.ChoosingCoin);
             Report("꺼낸 코인은 마우스를 받는다", CoinReceivesPointer(screen, 0));
 
+            // 몬스터 그림(2026년 10월 31일 팀원 `c887667`). 일반 방은 덤이고 그림이 일러스트 자리에 그려진다.
+            CombatVisualConfig enemyVisual = screen.View != null ? screen.View.Visual : null;
+            Report("일반 방 몬스터 이름은 덤", screen.Battle != null && screen.Battle.Enemy.Name == "덤");
+            Report("몬스터 그림 셋이 표시 설정에 물려 있다", enemyVisual != null
+                && enemyVisual.NormalEnemyArt != null && enemyVisual.EliteEnemyArt != null && enemyVisual.BossEnemyArt != null);
+            Report("일반 방 몬스터 자리에 덤 그림을 그린다", enemyVisual != null && screen.View.EnemySprite != null
+                && screen.View.EnemySprite == enemyVisual.NormalEnemyArt);
+            // 9조각 늘여 그리기면 비율이 무시돼 세로로 늘어났다(2026년 11월 1일 원재).
+            Report("몬스터 그림이 늘지 않고 제 비율로 그려진다", screen.View != null && screen.View.EnemyArtKeepsAspect);
+
             int healthBefore = context.Health;
             int turns = 0;
 
@@ -941,6 +963,11 @@ namespace SlotHero.ToolsEditor
                 else
                 {
                     screen.ChooseWithoutCoin();
+                }
+
+                if (turns == 0)
+                {
+                    CheckTagPhaseHighlights(screen, battle);
                 }
 
                 screen.ChooseTag(FirstUsableTag(battle));
@@ -967,6 +994,189 @@ namespace SlotHero.ToolsEditor
             Report("새 런이면 전투 진행을 비운다", screen.Battle == null);
             Report("새 런이면 릴 그림을 비운다", !AnyReelIconShown(screen));
             Report("새 런이면 전투 화면이 닫혀 있다", !screen.gameObject.activeSelf);
+        }
+
+        /// <summary>
+        /// 태그를 고르는 동안의 강조 셋(2026년 10월 31일 원재).
+        /// 태그에 마우스를 올리면 그 태그 문양 릴의 무채색 틀에 태그 색을 입힌다. 바깥 사각 테두리는 없다.
+        /// 마우스를 올린 칸은 제 회색 바퀴 선을 감추고 붉은 테두리만 보인다.
+        /// 가운데 코인에 마우스를 올리면 코인 둘레가 붉게 빛난다.
+        /// </summary>
+        private static void CheckTagPhaseHighlights(CombatScreenController screen, CombatBattle battle)
+        {
+            CombatScreenView view = screen.View;
+            TagDialView dial = view != null ? view.TagDial : null;
+            Report("태그 고르기 단계다", battle.Phase == CombatPhase.ChoosingTag);
+            if (dial == null || battle.Phase != CombatPhase.ChoosingTag)
+            {
+                return;
+            }
+
+            Report("릴에 바깥 사각 강조 테두리가 없다", view.Reels.Count > 0 && view.Reels[0].transform.Find("Highlight") == null);
+
+            SymbolTagType tag = FirstUsableTag(battle);
+            int index = TagDialView.GetSectorIndex(tag);
+            TagSectorView sector = dial.Sectors[index];
+            IList<int> reels = battle.FindReels(tag);
+            Color tagColor = view.GetTagVisual(tag).BarColor;
+
+            sector.OnPointerEnter(null);
+            InvokePrivate(screen, "HandleTagHover", tag, true);
+
+            bool tinted = reels.Count > 0;
+            bool othersPlain = true;
+            for (int i = 0; i < view.Reels.Count; i++)
+            {
+                Color frame = view.Reels[i].FrameColor;
+                if (reels.Contains(i))
+                {
+                    tinted &= Mathf.Approximately(frame.r, tagColor.r) && Mathf.Approximately(frame.g, tagColor.g)
+                        && Mathf.Approximately(frame.b, tagColor.b);
+                }
+                else
+                {
+                    othersPlain &= frame == view.Reels[i].IdleFrameColor && !view.Reels[i].GlowVisible && !view.Reels[i].ShineVisible;
+                }
+            }
+
+            Report("태그에 마우스를 올리면 그 태그 문양 릴의 틀이 태그 색이다", tinted, reels.Count);
+            Report("다른 릴의 틀은 기본 틀 색 그대로이고 빛이 없다", othersPlain);
+
+            // 기본 틀은 흰색보다 어둡고, 강조한 틀 둘레의 빛은 태그 색으로 밝기가 오르내린다(2026년 11월 1일 원재).
+            CombatVisualConfig frameVisual = view.Visual;
+            Report("기본 릴 틀은 흰색보다 어둡다", frameVisual != null && frameVisual.ReelFrameIdleColor.r < 1f
+                && view.Reels[0].IdleFrameColor == frameVisual.ReelFrameIdleColor);
+            if (reels.Count > 0 && frameVisual != null)
+            {
+                CombatReelView lit = view.Reels[reels[0]];
+                Color glowNow = lit.GlowColor;
+                Color bright = frameVisual.GetReelGlowColor(tagColor);
+                Report("강조한 릴 틀 둘레에 태그 색을 밝힌 빛이 켜진다", lit.GlowVisible
+                    && Mathf.Approximately(glowNow.r, bright.r) && Mathf.Approximately(glowNow.g, bright.g)
+                    && Mathf.Approximately(glowNow.b, bright.b));
+                Report("강조 빛 색은 태그 색보다 밝다", bright.r + bright.g + bright.b > tagColor.r + tagColor.g + tagColor.b);
+                Report("강조한 릴 틀 위에 밝은 덧칠이 켜진다", lit.ShineVisible);
+                float brightest = glowNow.a;
+                lit.AdvanceGlow(frameVisual.ReelGlowPulseSeconds * 0.5f);
+                float dimmest = lit.GlowColor.a;
+                Report("강조 빛이 밝아졌다 어두워지며 반짝인다",
+                    Mathf.Approximately(brightest, frameVisual.ReelGlowMaxAlpha)
+                    && Mathf.Approximately(dimmest, frameVisual.ReelGlowMinAlpha), (int)(dimmest * 100f));
+            }
+            Report("마우스를 올린 칸은 붉은 테두리가 켜진다", sector.OutlineVisible);
+            Report("마우스를 올린 칸은 회색 바퀴 선을 감춘다", !sector.LineVisible);
+
+            TagSectorView neighbour = dial.Sectors[(index + 1) % dial.Sectors.Count];
+            Report("이웃 칸의 회색 바퀴 선은 그대로 보인다", neighbour.LineVisible);
+
+            sector.OnPointerExit(null);
+            InvokePrivate(screen, "HandleTagHover", tag, false);
+            Report("마우스가 벗어나면 회색 바퀴 선이 돌아온다", sector.LineVisible && !sector.OutlineVisible);
+            Report("마우스가 벗어나면 릴 틀이 기본 색으로 돌아오고 빛이 꺼진다", reels.Count == 0
+                || (view.Reels[reels[0]].FrameColor == view.Reels[reels[0]].IdleFrameColor && !view.Reels[reels[0]].GlowVisible
+                    && !view.Reels[reels[0]].ShineVisible));
+            Report("릴 틀 여섯이 모두 같은 그림이다", SameReelFrames(view));
+            // 같은 그림인지만 보면 엉뚱한 그림 여섯도 통과한다. 그림 이름까지 본다(2026년 11월 1일 코덱스 검토).
+            Report("릴 틀 그림은 회색 릴틀_3, 빛은 릴틀_빛, 덧칠은 릴틀_흰이다", ReelArtNamed(view));
+
+            InvokePrivate(dial, "HandleCenterHover", true);
+            Report("가운데 코인에 마우스를 올리면 붉게 빛난다", dial.CenterGlowVisible);
+            InvokePrivate(dial, "HandleCenterHover", false);
+            Report("가운데 코인에서 마우스가 벗어나면 빛이 꺼진다", !dial.CenterGlowVisible);
+        }
+
+        /// <summary>
+        /// 임시 아이템 효과를 켜고 끄며 전투 준비물을 만들어 본다. 녹슨 단검은 화성 가치 +2, 늑대 동전은 소모 5 · 가중치 1 이다.
+        /// 런에 넣은 것은 다시 뺀다.
+        /// </summary>
+        private static void CheckTemporaryItemEffects(CombatEntry entry, RunContext context, MapNode node)
+        {
+            RunSaveData run = context.Run;
+            int coinsBefore = run.Owned.CoinIds.Count;
+            run.Owned.AddRelic("relic_rusted_gladius");
+            run.Owned.CoinIds.Add("coin_bronze_wolf");
+
+            entry.SetTemporaryItemEffects(true);
+            CombatSetup on = entry.MakeSetup(context, node);
+            CombatRelic gladius = on.Relics.Find(r => r.Id == "relic_rusted_gladius");
+            int wolfIndex = on.Coins.FindIndex(c => c.Id == "coin_bronze_wolf");
+            CombatCoin wolf = wolfIndex >= 0 ? on.Coins[wolfIndex] : default(CombatCoin);
+            Report("임시 효과를 켜면 녹슨 단검이 화성 가치 +2 효과를 갖는다", gladius != null && gladius.Definition != null
+                && gladius.Definition.Effects.Count == 1 && gladius.Definition.Effects[0].Kind == RelicEffectKind.TagValueAdd
+                && gladius.Definition.Effects[0].Amount == 2 && gladius.Definition.Effects[0].Targets(SymbolTagType.Mars));
+            Report("임시 효과를 켜면 늑대 동전은 소모 5 · 가중치 1", wolfIndex >= 0 && wolf.HealthCost == 5 && wolf.Weight == 1);
+
+            entry.SetTemporaryItemEffects(false);
+            CombatSetup off = entry.MakeSetup(context, node);
+            CombatRelic plain = off.Relics.Find(r => r.Id == "relic_rusted_gladius");
+            int plainIndex = off.Coins.FindIndex(c => c.Id == "coin_bronze_wolf");
+            CombatRuleConfig rules = GetField<CombatRuleConfig>(entry, "_rules");
+            Report("임시 효과를 끄면 녹슨 단검은 효과가 없다", plain != null && plain.Definition == null);
+            Report("임시 효과를 끄면 늑대 동전은 기본 소모값이다",
+                plainIndex >= 0 && rules != null && off.Coins[plainIndex].HealthCost == rules.DefaultCoinCost);
+
+            entry.SetTemporaryItemEffects(true);
+            run.Owned.RemoveRelic("relic_rusted_gladius");
+            run.Owned.CoinIds.RemoveAt(run.Owned.CoinIds.Count - 1);
+            Report("임시 효과 검사가 넣은 물건을 다시 뺀다", run.Owned.CoinIds.Count == coinsBefore
+                && !run.Owned.Relics.Exists(r => r.RelicId == "relic_rusted_gladius"));
+        }
+
+        /// <summary>릴 틀이 모두 같은 한 장의 그림인지. 여섯 색 그림을 2026년 11월 1일 회색 한 장으로 모았다.</summary>
+        private static bool SameReelFrames(CombatScreenView view)
+        {
+            if (view.Reels.Count == 0 || view.Reels[0].FrameSprite == null)
+            {
+                return false;
+            }
+
+            for (int i = 1; i < view.Reels.Count; i++)
+            {
+                if (view.Reels[i].FrameSprite != view.Reels[0].FrameSprite)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>릴마다 틀, 빛, 덧칠에 정한 그림이 물려 있는지.</summary>
+        private static bool ReelArtNamed(CombatScreenView view)
+        {
+            if (view.Reels.Count == 0)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < view.Reels.Count; i++)
+            {
+                CombatReelView reel = view.Reels[i];
+                if (!HasSprite(reel.Frame, "릴틀_3") || !HasSprite(reel.Glow, "릴틀_빛") || !HasSprite(reel.Shine, "릴틀_흰"))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool HasSprite(Image image, string spriteName)
+        {
+            return image != null && image.sprite != null && image.sprite.name == spriteName;
+        }
+
+        private static void InvokePrivate(object target, string method, params object[] arguments)
+        {
+            System.Reflection.MethodInfo info = target.GetType().GetMethod(
+                method, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            if (info == null)
+            {
+                Report("처리기가 있다: " + target.GetType().Name + "." + method, false);
+                return;
+            }
+
+            info.Invoke(target, arguments);
         }
 
         /// <summary>릴 가운데 그림이 켜진 칸이 있는지. 새 런으로 비웠으면 하나도 없어야 한다.</summary>

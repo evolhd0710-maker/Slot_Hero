@@ -51,6 +51,12 @@ namespace SlotHero.CurrentBuild
         /// </summary>
         public string ResultFormat = "[{0}]";
 
+        /// <summary>
+        /// 아래 줄 칸을 보일지. 끄면 고른 것은 칸 테두리로만 보인다.
+        /// 성소 문양 변경은 끈다(2026년 10월 31일 원재).
+        /// </summary>
+        public bool ShowResult = true;
+
         /// <summary>확인 버튼 글. 비우면 설정의 기본 글을 쓴다.</summary>
         public string ConfirmText = string.Empty;
 

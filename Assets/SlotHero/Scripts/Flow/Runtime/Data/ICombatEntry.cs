@@ -28,6 +28,19 @@ namespace SlotHero.Flow
         /// 다음 전투를 열 때 앞 런의 릴, 코인, 유물, 체력이 잠깐이라도 보이지 않게 한다.
         /// </summary>
         void ResetForNewRun();
+
+        /// <summary>
+        /// 설정의 소리 크기(전체 × 효과음, 0 ~ 1)를 넘긴다. 전투가 따로 내는 소리에 곱한다.
+        /// 인게임 화면 기획서 07 설정 화면의 사운드 탭이다(2026년 10월 31일 원재).
+        /// </summary>
+        void SetSoundVolume(float volume);
+
+        /// <summary>
+        /// 설정의 "임시 아이템 효과 적용" 을 넘긴다(2026년 11월 1일 원재).
+        /// 켜면 효과가 없던 유물과 코인이 임시 효과(`RelicConfig.TemporaryRelics`, `CombatRuleConfig.TemporaryCoins`)를 쓴다.
+        /// 다음에 여는 전투부터 적용된다.
+        /// </summary>
+        void SetTemporaryItemEffects(bool enabled);
     }
 
     /// <summary>

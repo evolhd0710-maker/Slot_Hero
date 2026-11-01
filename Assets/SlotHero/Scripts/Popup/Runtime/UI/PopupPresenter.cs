@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SlotHero.Ui;
 using UnityEngine;
 
 namespace SlotHero.Popup.UI
@@ -18,7 +19,13 @@ namespace SlotHero.Popup.UI
         [SerializeField] private GameObject _popupRoot;
         [SerializeField] private PopupView _view;
 
+        [Tooltip("열고 닫을 때 살짝 커지고 작아지는 연출. 비워 두면 바로 켜고 끈다(2026년 10월 31일 원재).")]
+        [SerializeField] private PopAnimation _animation;
+
         private Action<string> _onClosed;
+
+        // 팝업이 떠 있다고 보는지. 닫히는 연출이 도는 동안에는 뿌리가 켜져 있어도 닫힌 것으로 본다.
+        private bool _open;
 
         /// 앞 팝업이 떠 있는 동안 들어온 팝업. 앞 팝업이 닫히면 차례로 띄운다.
         private readonly List<PendingPopup> _pending = new List<PendingPopup>();
@@ -39,7 +46,7 @@ namespace SlotHero.Popup.UI
             // 팝업 뿌리가 화면 오브젝트의 자식이라 화면이 통째로 꺼져도 뿌리는 켜진 채로 남는다.
             // 그때 activeSelf 로 보면 팝업이 늘 떠 있는 것으로 읽혀
             // 팝업 때문에 멈추는 것들이 영영 멈춰 있는다.
-            get { return _popupRoot != null && _popupRoot.activeInHierarchy; }
+            get { return _open && _popupRoot != null && _popupRoot.activeInHierarchy; }
         }
 
         /// <summary>지금 떠 있는 팝업의 내용.</summary>
@@ -52,7 +59,12 @@ namespace SlotHero.Popup.UI
                 _view.ButtonClicked += HandleButtonClicked;
             }
 
-            SetActive(false);
+            // 처음에는 닫히는 연출 없이 바로 끈다.
+            _open = false;
+            if (_popupRoot != null)
+            {
+                _popupRoot.SetActive(false);
+            }
         }
 
         private void OnDestroy()
@@ -176,11 +188,53 @@ namespace SlotHero.Popup.UI
             }
         }
 
+        /// <summary>
+        /// 팝업 뿌리를 켜고 끈다. 연출이 있으면 켤 때 커지며 나타나고, 끌 때 작아지며 사라진 뒤 꺼진다.
+        /// 닫히는 동안 새 팝업이 열리면 닫힘을 버리고 바로 연다.
+        /// </summary>
         private void SetActive(bool value)
         {
-            if (_popupRoot != null && _popupRoot.activeSelf != value)
+            _open = value;
+
+            if (_popupRoot == null)
             {
-                _popupRoot.SetActive(value);
+                return;
+            }
+
+            if (value)
+            {
+                if (!_popupRoot.activeSelf)
+                {
+                    _popupRoot.SetActive(true);
+                }
+
+                if (_animation != null)
+                {
+                    _animation.PlayOpen();
+                }
+
+                return;
+            }
+
+            if (!_popupRoot.activeSelf)
+            {
+                return;
+            }
+
+            if (_animation == null)
+            {
+                _popupRoot.SetActive(false);
+                return;
+            }
+
+            _animation.PlayClose(HideRootIfClosed);
+        }
+
+        private void HideRootIfClosed()
+        {
+            if (!_open && _popupRoot != null)
+            {
+                _popupRoot.SetActive(false);
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -215,10 +215,15 @@ namespace SlotHero.ToolsEditor
             return plate;
         }
 
-        /// <summary>스크롤을 붙이고 휠 거리를 맞춘다.</summary>
-        public static ScrollRect AddScroll(RectTransform viewport, RectTransform content)
+        /// <summary>
+        /// 스크롤을 붙이고 휠 거리를 맞춘다.
+        /// wheelOnly 이면 마우스로 내용을 끌어도 움직이지 않는 `WheelOnlyScrollRect` 를 붙인다. 설정 화면이 쓴다.
+        /// </summary>
+        public static ScrollRect AddScroll(RectTransform viewport, RectTransform content, bool wheelOnly = false)
         {
-            ScrollRect scroll = viewport.gameObject.AddComponent<ScrollRect>();
+            ScrollRect scroll = wheelOnly
+                ? viewport.gameObject.AddComponent<WheelOnlyScrollRect>()
+                : viewport.gameObject.AddComponent<ScrollRect>();
             scroll.viewport = viewport;
             scroll.content = content;
             scroll.horizontal = false;
@@ -615,12 +620,46 @@ namespace SlotHero.ToolsEditor
         public const float BattleBackdropShade = 0.25f;
 
         /// <summary>
-        /// 전투 방의 배경. 무너진 제국의 폐허 그림(`배경_전투`)이다(2026년 10월 25일 원재가 코덱스로 그리게 했다).
+        /// 배경 그림이 비율을 지킨 채 1920 × 1080 화면을 가득 덮게 한다. 남는 쪽은 화면 밖으로 잘린다.
+        /// 팀원 배경(2026년 10월 31일 `c887667`)은 원래 1846 × 852 였다. 쓰는 넷은 바깥을 그려 1920 × 1080 으로 넓혀 그대로 맞는다.
+        /// 16:9 가 아닌 그림이 다시 들어와도 늘어나지 않고 덮도록 남겨 둔다.
+        /// 펼친 칸에 크기를 넣으면 구조 감사가 잡으므로 가운데에 고정 크기로 둔다. 화면은 1920 × 1080 고정이다.
+        /// </summary>
+        public static void CoverParent(Image image)
+        {
+            if (image == null || image.sprite == null)
+            {
+                return;
+            }
+
+            Rect art = image.sprite.rect;
+            Vector2 screen = UiScale.V(1920f, 1080f);
+            float aspect = art.height > 0f ? art.width / art.height : screen.x / screen.y;
+            Vector2 size = aspect > screen.x / screen.y
+                ? new Vector2(screen.y * aspect, screen.y)
+                : new Vector2(screen.x, screen.x / aspect);
+
+            RectTransform rect = image.rectTransform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = size;
+            rect.anchoredPosition = Vector2.zero;
+        }
+
+        /// <summary>
+        /// 전투 방의 배경. 팀원이 올린 `전투 배경 5`(`배경_전투_5`)다(2026년 10월 31일 `c887667`).
+        /// 그 그림이 없으면 예전 폐허 그림(`배경_전투`, 2026년 10월 25일 원재가 코덱스로 그리게 했다)을 쓴다.
         /// 공용 배경 바로 위에 깔고 흐름이 전투 방에서만 켠다. 그림이 없으면 만들지 않고 null 을 돌려준다.
         /// </summary>
         public static Image NewBattleBackdrop(string name, Transform parent)
         {
-            Sprite battle = ImportArt.LoadItemArt("배경_전투");
+            Sprite battle = ImportArt.LoadItemArt("배경_전투_5");
+            if (battle == null)
+            {
+                battle = ImportArt.LoadItemArt("배경_전투");
+            }
+
             if (battle == null)
             {
                 return null;
@@ -632,6 +671,7 @@ namespace SlotHero.ToolsEditor
             image.sprite = battle;
             image.type = Image.Type.Simple;
             image.preserveAspect = false;
+            CoverParent(image);
 
             Image shade = NewFlatImage("Shade", image.transform, new Color(0f, 0f, 0f, BattleBackdropShade));
             Stretch(shade.rectTransform);
@@ -644,8 +684,8 @@ namespace SlotHero.ToolsEditor
         /// 런 중 화면 뒤에 까는 돌벽.
         ///
         /// 와이어프레임 `10 맵 화면`, `12 이벤트`, `13 런 종료 결과` 가 모두
-        /// `배경 · 돌벽.png (임시)` 위에 `배경 · 검정 50%` 를 얹어 쓴다. 그것을 그대로 짓는다.
-        /// **임시 그림이다.** 배경 요청 기획서의 1스테이지 전투 배경이 오면 갈아 끼운다.
+        /// `배경 · 돌벽.png (임시)` 위에 `배경 · 검정 50%` 를 얹어 쓴다. 그 짜임을 그대로 짓는다.
+        /// 그림은 팀원이 올린 `지도 배경 1`(`배경_지도`)이다(2026년 10월 31일 `c887667`). 없으면 돌벽을 쓴다.
         ///
         /// 게임 씬은 이것을 맨 뒤에 하나만 깔고, 확인용 씬은 화면마다 `BehindScreen` 으로 깐다.
         /// 확인용 씬의 것은 게임 씬으로 옮길 때 지워진다.
@@ -657,15 +697,18 @@ namespace SlotHero.ToolsEditor
             Stretch(wall.rectTransform);
             wall.raycastTarget = false;
 
-            Sprite stone = ImportArt.LoadItemArt("배경_돌벽");
+            Sprite stone = ImportArt.LoadItemArt("배경_지도");
+            if (stone == null)
+            {
+                stone = ImportArt.LoadItemArt("배경_돌벽");
+            }
 
             if (stone != null)
             {
                 wall.sprite = stone;
                 wall.type = Image.Type.Simple;
-
-                // 그림이 16:9 라 늘려도 비율이 깨지지 않는다.
                 wall.preserveAspect = false;
+                CoverParent(wall);
             }
             else
             {

@@ -17,7 +17,7 @@ MonoBehaviour:
   _campSize: {x: 850, y: 560}
   _merchantPosition: {x: 1060, y: 320}
   _merchantSize: {x: 780, y: 530}
-  _exitPosition: {x: 1310, y: 900}
+  _exitPosition: {x: 1310, y: 830}
   _exitSize: {x: 340, y: 160}
   _exitFontSize: 44
   _exitArrowHeadWidth: 90

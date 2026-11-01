@@ -32,6 +32,14 @@ namespace SlotHero.Sanctum.UI
         [SerializeField] private GameObject _priceRoot;
         [SerializeField] private TMP_Text _priceLabel;
 
+        [Tooltip("유물 진열을 새로 고칠 때 물건 그림 뒤에서 뭉치는 암흑물질 구름. 문양과 코인 칸에서는 쓰지 않는다.")]
+        [SerializeField] private Image _darkMatter;
+
+        // 암흑물질에서 형체가 생기는 연출(2026년 10월 31일 원재). 늦게 시작하는 시간과 지난 시간.
+        private bool _forming;
+        private float _formTime;
+        private float _formDelay;
+
         private SanctumVisualConfig _visual;
         private Action<MerchantSlotView> _onClicked;
         private Action<MerchantSlotView, bool> _onHoverChanged;
@@ -62,6 +70,128 @@ namespace SlotHero.Sanctum.UI
             {
                 _button.onClick.RemoveListener(HandleClick);
             }
+        }
+
+        /// <summary>
+        /// 새 물건이 암흑물질에서 형체를 갖추는 연출을 시작한다. 유물 진열을 새로 고칠 때 부른다(2026년 10월 31일 원재).
+        /// ① 보랏빛 검은 구름이 크게 번지며 뭉치고 ② 그 안에서 검은 그림자가 줄어들며 또렷해지고
+        /// ③ 그림자에 색이 돌아오면서 구름이 흩어진다. order 번째 칸은 칸마다 늦는 시간 × order 만큼 늦게 시작한다.
+        /// 게임이 돌 때만 움직인다.
+        /// </summary>
+        public void PlayForming(int order)
+        {
+            if (!Application.isPlaying || _visual == null || !isActiveAndEnabled || Slot == null || Slot.Sold)
+            {
+                return;
+            }
+
+            _forming = true;
+            _formTime = 0f;
+            _formDelay = Mathf.Max(0f, _visual.RelicFormStagger * order);
+            ApplyForming(0f);
+
+            // 연출 중 화면을 누르면 바로 다 생긴 모습이 된다(2026년 11월 1일 원재).
+            EffectSkip.Begin(this, StopForming);
+        }
+
+        /// <summary>연출이 도는 중인지.</summary>
+        public bool Forming
+        {
+            get { return _forming; }
+        }
+
+        private void Update()
+        {
+            if (!_forming)
+            {
+                return;
+            }
+
+            _formTime += Time.unscaledDeltaTime;
+            float seconds = _visual != null ? _visual.RelicFormSeconds : 0f;
+            float t = seconds <= 0f ? 1f : Mathf.Clamp01((_formTime - _formDelay) / seconds);
+            ApplyForming(t);
+
+            if (t >= 1f)
+            {
+                StopForming();
+            }
+        }
+
+        private void StopForming()
+        {
+            EffectSkip.End(this);
+            _forming = false;
+
+            if (_darkMatter != null)
+            {
+                _darkMatter.gameObject.SetActive(false);
+            }
+
+            if (_icon != null)
+            {
+                _icon.rectTransform.localScale = Vector3.one;
+                _icon.color = GetTint(Slot != null && Slot.Sold);
+            }
+        }
+
+        private void ApplyForming(float t)
+        {
+            FormState state = GetFormState(t);
+
+            if (_darkMatter != null && _visual != null)
+            {
+                Color cloud = _visual.DarkMatterColor;
+                _darkMatter.gameObject.SetActive(state.CloudAlpha > 0f);
+                _darkMatter.color = new Color(cloud.r, cloud.g, cloud.b, cloud.a * state.CloudAlpha);
+                _darkMatter.rectTransform.localScale = new Vector3(state.CloudScale, state.CloudScale, 1f);
+                _darkMatter.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -120f * t);
+            }
+
+            if (_icon != null)
+            {
+                Color tint = GetTint(false);
+                Color shown = Color.Lerp(new Color(0f, 0f, 0f, tint.a), tint, state.ColorAmount);
+                shown.a *= state.IconAlpha;
+                _icon.color = shown;
+                _icon.rectTransform.localScale = new Vector3(state.IconScale, state.IconScale, 1f);
+            }
+        }
+
+        /// <summary>형체가 생기는 연출의 한 순간.</summary>
+        public struct FormState
+        {
+            public float CloudAlpha;
+            public float CloudScale;
+            public float IconAlpha;
+            public float IconScale;
+
+            /// <summary>0 이면 검은 그림자, 1 이면 원래 색이다.</summary>
+            public float ColorAmount;
+        }
+
+        /// <summary>
+        /// t(0 ~ 1) 때의 모습.
+        /// 구름은 0 ~ 0.35 에 1.6 배에서 1 배로 뭉치며 짙어지고, 0.6 ~ 1 에 0.7 배로 줄며 흩어진다.
+        /// 그림자는 0.25 ~ 0.65 에 1.25 배에서 1 배로 줄며 또렷해지고, 0.6 ~ 1 에 색이 돌아온다.
+        /// </summary>
+        public static FormState GetFormState(float t)
+        {
+            float clamped = Mathf.Clamp01(t);
+            FormState state = new FormState();
+
+            float gather = Mathf.Clamp01(clamped / 0.35f);
+            float fade = Mathf.Clamp01((clamped - 0.6f) / 0.4f);
+            state.CloudAlpha = gather * (1f - fade);
+            state.CloudScale = clamped < 0.6f
+                ? Mathf.Lerp(1.6f, 1f, 1f - (1f - gather) * (1f - gather))
+                : Mathf.Lerp(1f, 0.7f, fade);
+
+            float shape = Mathf.Clamp01((clamped - 0.25f) / 0.4f);
+            state.IconAlpha = shape;
+            state.IconScale = Mathf.Lerp(1.25f, 1f, 1f - (1f - shape) * (1f - shape));
+            state.ColorAmount = fade;
+            return state;
         }
 
         /// <summary>자리의 내용과 지금 골드를 반영한다.</summary>
@@ -180,10 +310,14 @@ namespace SlotHero.Sanctum.UI
             EndHover();
         }
 
-        /// <summary>화면이 닫혀 자리가 꺼질 때도 벗어남이 오지 않는다. 띄워 둔 상세가 남지 않게 알린다.</summary>
+        /// <summary>
+        /// 화면이 닫혀 자리가 꺼질 때도 벗어남이 오지 않는다. 띄워 둔 상세가 남지 않게 알린다.
+        /// 형체가 생기는 연출 도중이면 끝 모습으로 둔다.
+        /// </summary>
         private void OnDisable()
         {
             EndHover();
+            StopForming();
         }
 
         private void EndHover()

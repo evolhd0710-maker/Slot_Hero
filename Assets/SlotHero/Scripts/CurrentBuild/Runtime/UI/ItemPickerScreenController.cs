@@ -17,15 +17,16 @@ namespace SlotHero.CurrentBuild.UI
         [SerializeField] private GameObject _screenRoot;
         [SerializeField] private ItemPickerScreenView _view;
 
-        [Tooltip("정렬 칸을 누를 때 넘어가는 차례. 현재 빌드 화면과 같다.")]
-        [SerializeField] private BuildSortOrder[] _sortCycle = { BuildSortOrder.Count, BuildSortOrder.Tag, BuildSortOrder.Name };
+        [Tooltip("정렬 칸을 누를 때 넘어가는 차례. 현재 빌드 화면과 같이 태그 순 → 개수 순 → 이름 순이다(2026년 11월 1일 원재).")]
+        [SerializeField] private BuildSortOrder[] _sortCycle = { BuildSortOrder.Tag, BuildSortOrder.Count, BuildSortOrder.Name };
 
         [Tooltip("이 키로 취소한다.")]
         [SerializeField] private KeyCode[] _cancelKeys = { KeyCode.Escape };
 
         private ItemPickRequest _request;
         private IBuildIconSource _icons;
-        private BuildSortOrder _sortOrder = BuildSortOrder.Count;
+        // 처음 정렬은 태그 순이다(2026년 11월 1일 원재).
+        private BuildSortOrder _sortOrder = BuildSortOrder.Tag;
         private string _selectedId = string.Empty;
 
         /// <summary>확인을 눌렀을 때. 고른 것을 넘긴다.</summary>

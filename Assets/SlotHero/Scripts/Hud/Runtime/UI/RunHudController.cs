@@ -75,12 +75,9 @@ namespace SlotHero.Hud.UI
                 return;
             }
 
-            if (!_layout.AutoSaveNoticeFitsUnderButton())
+            if (!_layout.AutoSaveNoticeFitsBesideButton())
             {
-                Debug.LogWarning(
-                    "고정 자리 설정에서 자동 저장 표시가 현재 빌드 버튼 아래에 들어가지 않는다. " +
-                    "기획서 기준은 모서리 여백 70 = 간격 15 + 표시 높이 40 + 간격 15 이다.",
-                    this);
+                Debug.LogWarning("고정 자리 설정에서 자동 저장 표시가 현재 빌드 버튼 옆에 들어가지 않는다.", this);
             }
 
             if (_currentBuildButton != null)

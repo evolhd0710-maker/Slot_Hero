@@ -183,3 +183,18 @@ reward.Open(offer, iconSource);
 - **아이템 상세 팝업.** `CardHoverChanged` 로 알리기만 한다.
   띄우는 것은 `Popup` 영역의 `ItemDetailView` 가 할 일이다
 - **오버킬.** 화면에 적을 자리만 있다. 얼마가 되는지는 전투 시스템이 정한다
+
+## 연출 (2026년 10월 31일, 11월 1일 원재)
+
+보상 화면이 열리면 넷이 차례로 나온다(2026년 11월 1일 원재).
+
+1. 기본 보상 골드가 0.3초 동안 0 에서 받는 골드까지 오른다
+2. 0.15초 쉬고 오버킬 골드가 0.3초 동안 오른다
+3. 0.15초 쉬고 오버킬 회복(하트와 회복량)이 숫자가 오르지 않고 0.3초 동안 팝업처럼 튀어나온다. 1.35배까지 커졌다가 제 크기로 앉는다
+4. 0.3초 쉬고 세 카드가 함께 1.2초 반짝인다. 예전 0.4초의 세 배다
+
+오버킬 골드나 회복이 없으면 그 차례를 건너뛰고 다음이 이어진다.
+연출 중 화면 아무 곳이나 누르면 끝 모습으로 넘어간다(`Ui/EffectSkip`). 그 누르기로 카드가 함께 골라지지 않는다.
+`RewardScreenView.StartReveal`, `RewardCardView.SetFlash`, `RewardVisualConfig.GetRevealTimeline`, `GetPopScale`, `RevealStepGapSeconds`, `HealPopSeconds`, `HealPopPeakScale`, `CardFlashDelaySeconds`, `CardFlashSeconds`, `CardFlashColor`, `GoldCountSeconds`, `GetCountedGold` 이다.
+반짝임은 카드 바탕색을 반짝임 색 쪽으로 보냈다 되돌린다. 게임이 돌 때만 움직인다.
+카드를 받을 때의 빛과 현재 빌드 버튼으로 날아가는 연출은 이펙트와 효과음을 고른 뒤 만든다.

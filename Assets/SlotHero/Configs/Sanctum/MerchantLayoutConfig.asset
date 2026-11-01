@@ -17,18 +17,18 @@ MonoBehaviour:
   _leftMatSize: {x: 710, y: 790}
   _rightMatPosition: {x: 1020, y: 120}
   _rightMatSize: {x: 690, y: 770}
-  _symbolFirstPosition: {x: 350, y: 210}
+  _symbolFirstPosition: {x: 355, y: 180}
   _symbolSlotSize: {x: 170, y: 170}
-  _symbolSpacing: {x: 210, y: 230}
+  _symbolSpacing: {x: 230, y: 230}
   _symbolColumns: 2
-  _coinFirstPosition: {x: 360, y: 670}
+  _coinFirstPosition: {x: 365, y: 640}
   _coinSlotSize: {x: 150, y: 150}
-  _coinSpacing: 200
-  _relicFirstPosition: {x: 1210, y: 560}
-  _relicSlotSize: {x: 90, y: 108}
-  _relicSpacing: 110
-  _relicBoardPosition: {x: 1170, y: 380}
-  _relicBoardSize: {x: 390, y: 480}
+  _coinSpacing: 230
+  _relicFirstPosition: {x: 1139, y: 525}
+  _relicSlotSize: {x: 144, y: 173}
+  _relicSpacing: 154
+  _relicBoardPosition: {x: 1113, y: 430}
+  _relicBoardSize: {x: 504, y: 400}
   _symbolChangePosition: {x: 1250, y: 135}
   _symbolChangeSize: {x: 230, y: 240}
   _refreshPosition: {x: 1320, y: 345}

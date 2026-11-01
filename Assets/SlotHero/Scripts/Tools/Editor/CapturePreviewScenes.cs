@@ -69,12 +69,17 @@ namespace SlotHero.ToolsEditor
             CallPrivate(view.CoinDial, "HandleCoinHover", 0, false);
             CallPrivate(screen, "HandleCoinHover", 0, false);
 
+            // 첫 유물 칸에 마우스를 올린 모습. 유물 설명이 유물 목록 오른쪽에 뜬다.
+            CallPrivate(view, "HandleRelicHover", 0, true);
+            Shoot(BuildPreviewScenes.CombatSceneName + " 유물 설명", folder);
+            CallPrivate(view, "HandleRelicHover", 0, false);
+
             // Frame 3. 코인을 골라 태그 UI 로 바뀐 모습.
             screen.ChooseCoin(0);
             Shoot(BuildPreviewScenes.CombatSceneName + " 태그", folder);
 
             // Frame 4. 태그 칸 하나에 마우스를 올린 모습. 고를 수 있는 첫 태그 칸을 쓴다(소용돌이는 건너뛴다).
-            // 그 태그 문양이 있는 릴에 강조 테두리가 둘러지도록 조종기의 호버 처리기도 부른다.
+            // 그 태그 문양이 있는 릴의 틀에 태그 색이 입혀지도록 조종기의 호버 처리기도 부른다.
             SlotHero.Combat.UI.TagSectorView hovered = null;
             SlotHero.Combat.SymbolTagType tag = SlotHero.Combat.SymbolTagType.Mercury;
             int hoveredIndex = -1;

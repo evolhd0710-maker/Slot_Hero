@@ -100,6 +100,7 @@ MonoBehaviour:
   _maxGrow: 24
   _target: {fileID: 0}
   _selectable: {fileID: 0}
+  _pressRatio: 0.95
 --- !u!114 &5197308068224437379
 MonoBehaviour:
   m_ObjectHideFlags: 0

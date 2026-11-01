@@ -28,12 +28,18 @@ namespace SlotHero.Ui
     /// 양옆으로 30 가까이 튀어나와 너무 커 보였다. 원재가 2026년 10월 5일에 짚었다.
     /// 그래서 긴 변이 늘어나는 길이를 <see cref="DefaultMaxGrow"/> 로 막는다.
     /// 폭 480 보다 작은 칸은 그대로 5퍼센트다.
+    ///
+    /// **누르는 동안에는 살짝 작아진다**(2026년 10월 31일 원재). 버튼을 눌렀다는 것이 손에 느껴지게 한다.
+    /// 마우스 왼쪽 단추를 누르면 지금 크기에 <see cref="DefaultPressRatio"/> 를 곱하고, 떼거나 칸을 벗어나면 되돌린다.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
-    public class HoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class HoverScale : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         /// <summary>기본 확대 비율. 행상 진열의 커서 확대와 같은 값이다.</summary>
         public const float DefaultRatio = 1.05f;
+
+        /// <summary>누르는 동안 곱하는 크기.</summary>
+        public const float DefaultPressRatio = 0.95f;
 
         /// <summary>긴 변이 늘어날 수 있는 가장 긴 길이. 1920 × 1080 기준 24 픽셀이다.</summary>
         public static readonly float DefaultMaxGrow = UiScale.Px(24f);
@@ -52,8 +58,13 @@ namespace SlotHero.Ui
         [Tooltip("누를 수 없는 동안에는 키우지 않는다. 비워 두면 같은 칸의 버튼을 찾는다.")]
         [SerializeField] private Selectable _selectable;
 
+        [Tooltip("누르는 동안 곱하는 크기. 1 이면 작아지지 않는다.")]
+        [Range(0.8f, 1f)]
+        [SerializeField] private float _pressRatio = DefaultPressRatio;
+
         private Vector3 _baseScale = Vector3.one;
         private bool _hovering;
+        private bool _pressed;
 
         // 가운데를 제자리에 두려고 옮긴 거리와, 옮긴 직후의 자리.
         private Vector2 _shift = Vector2.zero;
@@ -77,6 +88,19 @@ namespace SlotHero.Ui
         public bool Hovering
         {
             get { return _hovering; }
+        }
+
+        /// <summary>누르는 동안 곱하는 크기.</summary>
+        public float PressRatio
+        {
+            get { return _pressRatio; }
+            set { _pressRatio = Mathf.Clamp(value, 0.5f, 1f); }
+        }
+
+        /// <summary>지금 누르고 있는지.</summary>
+        public bool Pressed
+        {
+            get { return _pressed; }
         }
 
         private void Awake()
@@ -103,6 +127,7 @@ namespace SlotHero.Ui
         private void OnDisable()
         {
             _hovering = false;
+            _pressed = false;
             Apply();
         }
 
@@ -123,6 +148,30 @@ namespace SlotHero.Ui
         public void OnPointerExit(PointerEventData eventData)
         {
             _hovering = false;
+            _pressed = false;
+            Apply();
+        }
+
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (eventData != null && eventData.button != PointerEventData.InputButton.Left)
+            {
+                return;
+            }
+
+            // 마우스가 올라가지 않은 채 눌리는 일(터치)도 있어 그때도 지금 크기를 기준으로 삼는다.
+            if (!_hovering && !_pressed && _target != null)
+            {
+                _baseScale = _target.localScale;
+            }
+
+            _pressed = true;
+            Apply();
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            _pressed = false;
             Apply();
         }
 
@@ -141,10 +190,10 @@ namespace SlotHero.Ui
             }
 
             Vector2 basePosition = _target.anchoredPosition - _shift;
-            bool grow = ShouldGrow();
             Vector2 size = new Vector2(_target.rect.width, _target.rect.height);
-            float ratio = CapRatio(_ratio, size, _baseScale, _maxGrow);
-            _target.localScale = grow ? _baseScale * ratio : _baseScale;
+            float ratio = TargetRatio(ShouldGrow(), ShouldPress(), CapRatio(_ratio, size, _baseScale, _maxGrow), _pressRatio);
+            bool grow = ratio != 1f;
+            _target.localScale = _baseScale * ratio;
 
             Vector2 shift = Vector2.zero;
             if (grow)
@@ -187,6 +236,26 @@ namespace SlotHero.Ui
             }
 
             return Mathf.Min(ratio, 1f + maxGrow / longest);
+        }
+
+        /// <summary>
+        /// 원래 크기에 곱할 비율. 커진 상태에서 누르면 커진 크기에 누름 비율을 곱한다.
+        /// </summary>
+        public static float TargetRatio(bool grow, bool press, float growRatio, float pressRatio)
+        {
+            float ratio = grow ? growRatio : 1f;
+            return press ? ratio * pressRatio : ratio;
+        }
+
+        /// <summary>지금 작아져야 하는지. 누를 수 없는 버튼은 작아지지 않는다.</summary>
+        public bool ShouldPress()
+        {
+            if (!_pressed)
+            {
+                return false;
+            }
+
+            return _selectable == null || _selectable.interactable;
         }
 
         /// <summary>지금 커져야 하는지. 누를 수 없는 버튼은 커지지 않는다.</summary>
