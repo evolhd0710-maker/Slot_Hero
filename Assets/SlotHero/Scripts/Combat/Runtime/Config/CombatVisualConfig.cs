@@ -230,9 +230,10 @@ namespace SlotHero.Combat
         public float DamageFontSize = UiScale.Px(64f);
 
         [Header("레이저 발사음")]
-        [Tooltip("레이저 발사음 크기. 레이저가 원판에서 뻗기 시작할 때 난다. 소리는 Art/Combat/LaserSound(Unity AI 로 만듦, \"지잉\")다.")]
+        [Tooltip("레이저 발사음 크기. 레이저가 원판에서 뻗기 시작할 때 난다. 소리는 Art/Combat/LaserSound(Unity AI 로 만듦, \"지잉\")다. " +
+                 "2026년 11월 3일 원재가 전투 효과음이 크다고 해 0.7 에서 0.35 로 줄였다.")]
         [Range(0f, 1f)]
-        public float LaserSoundVolume = 0.7f;
+        public float LaserSoundVolume = 0.35f;
 
         [Tooltip("코인 정보 팝업의 이름. 피그마 \"공격의 코인\".")]
         [SerializeField] private float _coinPopupNameFontSize = UiScale.Px(17f);

@@ -10,10 +10,10 @@
 | 금성 | 금속 | Vefects `Impact_01` 3배 | Free Pack `Metal Impact 7` 첫 0.3초 |
 | 지구 | 생명 | VFX Fantasy `FX_NotificationPulse_White` 초록 | A.M.P. `AMP_Buff_04` 앞 0.7초 |
 | 화성 | 불 | Vefects 불꽃 셋(앞 하나, 뒤에 조금 높게 둘). 1.5배, 두 배 느리게 | Vefects `Fire_Burst_01` |
-| 목성 | 나무, 묶고 조이기 | Unity AI 뿌리 그림. 발밑에서 0.4초 솟고 0.8초 동안 가로 80% 까지 조인 뒤 0.4초에 흐려진다 | 나무 삐걱임 + 찢김 |
+| 목성 | 나무, 묶고 조이기 | 고목 뿌리 일곱이 몬스터 가운데에서 0 ~ 0.05초 안에 거의 동시에 솟고, 0.58초에 밑동을 축으로 가로 0.82 배로 조인 뒤 1.2초부터 땅으로 거둬져 1.5초에 끝난다(2026년 11월 9일 원재) | 나무 삐걱임 + 0.5초 늦은 찢김 |
 | 토성 | 흙, 황사 | Vefects 흙먼지 둘을 누런 흙색 2배로 원판 쪽에서 몰아친다. 1초에서 자른다 | 바람 + 흙 터짐, 1초 |
 | 천왕성 | 바람 | VFX Fantasy 베기 빛 하늘색 | Free Pack `Magic Spell_Simple Swoosh_6` |
-| 해왕성 | 바다, 파도 | 큰 물 튀김 넷(짙은 파랑 2.2배)이 원판 쪽에서 차례로 덮치고 VFX Fantasy 물살 줄기 셋(1.6배)이 지난다 | 해일 소리 2.5초 |
+| 해왕성 | 바다, 파도 | 파도 시도 6. 반투명한 평면 색 파도가 0.75초 동안 몬스터 오른쪽에서 왼쪽으로 덮치고 물보라와 거품이 1.5초까지 남는다(2026년 11월 8일 원재) | 해일의 가장 큰 부분 1.5초 |
 | 명왕성 | 검은색, 죽음 | Vefects 피 구름 보라 1.5배 + VFX Fantasy 줄기 보라. 둘 다 두 배 느리게 | A.M.P. `AMP_DeBuff_09` 앞 1.5초 |
 
 ## 파일 구성
@@ -29,17 +29,25 @@ TagAttack/
       TagAttackFxPlayer.cs    이펙트를 적 자리에 터뜨리고 소리를 낸다
   Art/
     Sound/태그공격_*.wav      고른 구간만 잘라 구운 소리 아홉
-    목성_뿌리.png             Unity AI(Gemini 3.0 Pro)로 만든 뿌리 그림
+  이전 그림/목성_뿌리.png    Unity AI(Gemini 3.0 Pro)로 만든 옛 목성 뿌리 그림. 게임에 쓰지 않고 원본만 남겼다
   소리 굽기.py                받아 둔 묶음의 원본 소리를 잘라 Art/Sound 를 다시 굽는다
 ```
 
 `Slot Hero/태그 공격 이펙트 가져오기`(`Tools/Editor/ImportTagAttack.cs`)가 셋을 한다.
 
-1. `Art` 의 소리와 그림을 `Assets/SlotHero/Art/TagAttack` 으로 옮긴다
+1. `Art` 의 소리를 `Assets/SlotHero/Art/TagAttack` 으로 옮긴다
 2. 받아 둔 묶음(유니티 프로젝트 `Assets` 맨 위의 Vefects, VFX Fantasy DEMO)에서 고른 파티클을 태그마다 프리팹 하나(`태그공격_수성.prefab` 등)로 묶는다.
    자리, 크기, 뒤집기, 빠르기, 늦음을 파티클에 굳히고, 재질과 그림과 셰이더를 `Assets/SlotHero/Art/TagAttack` 아래로 복사한다.
    그래서 묶음을 지워도 이펙트는 그대로 돈다. 묶음이 없는 컴퓨터에서는 이 단계를 건너뛰고 이미 만든 프리팹을 쓴다
-3. 설정의 태그마다 프리팹, 소리, 그림을 물린다
+3. 설정의 태그마다 프리팹과 소리를 물린다. 그림 칸(`Sprite`)은 비운다
+
+해왕성은 2에서 조립하지 않는다. 손으로 만든 파도 프리팹 `Assets/SlotHero/Art/TagAttack/태그공격_해왕성.prefab` 을 그대로 물린다.
+그 그림과 재질(파도 시트, 거품, 물방울, 물줄기)은 같은 폴더의 `해왕성` 에 있고 유니티 프로젝트에만 있다.
+Unity AI 가 만든 파도 그림을 내가 평면 색 셋으로 줄인 것이라 다시 만드는 도구가 없다. 지우면 되살릴 수 없다.
+
+목성도 2에서 조립하지 않는다. 손으로 만든 고목 뿌리 프리팹 `Assets/SlotHero/Art/TagAttack/태그공격_목성.prefab` 을 그대로 물린다.
+그 그림과 재질(뻗는 뿌리 시트, 나무 조각, 흙먼지)은 같은 폴더의 `목성` 에 있고 유니티 프로젝트에만 있다.
+뿌리 그림은 내가 코드로 그렸고, 그리는 스크립트(`RootArt.cs`, `RootArt4.cs`, `draw4.ps1`)와 프리팹을 조립한 임시 에디터 스크립트(`JupiterTrial4.cs.txt`)는 유니티 프로젝트의 `이펙트 시험 원본/목성 뿌리` 에 있다.
 
 한 바퀴 다 돌리기가 소리 가져오기 바로 뒤에 이것을 부른다.
 
@@ -48,6 +56,7 @@ TagAttack/
 - `CombatScreenView.FireLaser(color, target, tag)` 가 레이저가 다 뻗은 순간 `TagAttackFxPlayer.Play` 를 부른다
 - 태그 소리가 있으면 레이저 발사음(`LaserSound`)은 내지 않는다
 - 소리 크기는 설정의 효과음 크기(전체 × 효과음)에 태그별 크기와 설정 전체 크기를 곱한다
+- 2026년 11월 3일 원재가 전투 효과음이 크다고 해 절반으로 줄였다. 태그 소리 전체 크기는 1 에서 0.5, 레이저 발사음(`CombatVisualConfig.LaserSoundVolume`)은 0.7 에서 0.35 다
 - 재생기는 전투 화면의 효과음 자리(`AudioSource`)를 함께 쓴다. 확인용 씬 도구(`BuildPreviewScenes.Combat`)가 붙이고 게임 씬이 그대로 가져간다
 
 ## 내가 정한 것

@@ -67,7 +67,7 @@ MonoBehaviour:
   TagSymbolFontSize: 40
   CoinLabelFontSize: 22
   DamageFontSize: 64
-  LaserSoundVolume: 0.7
+  LaserSoundVolume: 0.35
   _coinPopupNameFontSize: 17
   _coinPopupBodyFontSize: 14
   _damageNoteFontSize: 26

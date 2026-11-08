@@ -1,0 +1,1440 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a583538b0467d34084ed0af09981c6c, type: 3}
+  m_Name: LocalizationConfig
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Localization.LocalizationConfig
+  _english:
+  - _korean: "\uD55C\uAD6D\uC5B4"
+    _english: =
+  - _korean: "\uAC80\uC0AC"
+    _english: Check
+  - _korean: "\uB118\uCE68_\uB098"
+    _english: =
+  - _korean: "\uD655\uC778\uC6A9\u200B"
+    _english: =
+  - _korean: "\uCCB4\uB825 {hp}"
+    _english: =
+  - _korean: "\uCD5C\uB300 \uCCB4\uB825 {hp}"
+    _english: =
+  - _korean: "\uCD5C\uB300 \uCCB4\uB825 {hpCost}"
+    _english: =
+  - _korean: "\uC131\uC18C"
+    _english: Sanctum
+  - _korean: "\uC57C\uC601"
+    _english: Camp
+  - _korean: "\uD589\uC0C1"
+    _english: Merchant
+  - _korean: "\uD589\uC0C1\uC778"
+    _english: Merchant
+  - _korean: "\uBB38\uC591"
+    _english: Symbols
+  - _korean: "\uD0DC\uADF8"
+    _english: Tag
+  - _korean: "\uC720\uBB3C"
+    _english: Relics
+  - _korean: "\uCF54\uC778"
+    _english: Coins
+  - _korean: "\uACE8\uB4DC"
+    _english: Gold
+  - _korean: "\uCCB4\uB825"
+    _english: HP
+  - _korean: "\uCD5C\uB300 \uCCB4\uB825"
+    _english: Max HP
+  - _korean: "\uBCF4\uC0C1"
+    _english: Reward
+  - _korean: "\uC774\uBCA4\uD2B8"
+    _english: Event
+  - _korean: "\uC5D8\uB9AC\uD2B8"
+    _english: Elite
+  - _korean: "\uBCF4\uC2A4"
+    _english: Boss
+  - _korean: "\uAE30\uD0C0"
+    _english: Other
+  - _korean: "\uC804\uD22C"
+    _english: Battle
+  - _korean: "\uC801"
+    _english: Enemy
+  - _korean: "\uC77C\uBC18"
+    _english: Common
+  - _korean: "\uACE0\uAE09"
+    _english: Uncommon
+  - _korean: "\uD76C\uADC0"
+    _english: Rare
+  - _korean: "\uD2B9\uAE09"
+    _english: Epic
+  - _korean: "\uC804\uC124"
+    _english: Legendary
+  - _korean: "\uC77C\uBC18 \uBC29"
+    _english: Normal Room
+  - _korean: "\uC5D8\uB9AC\uD2B8 \uBC29"
+    _english: Elite Room
+  - _korean: "\uC131\uC18C \uBC29"
+    _english: Sanctum Room
+  - _korean: "\uC774\uBCA4\uD2B8 \uBC29"
+    _english: Event Room
+  - _korean: "\uBCF4\uC2A4 \uBC29"
+    _english: Boss Room
+  - _korean: "\uC218\uC131"
+    _english: Mercury
+  - _korean: "\uAE08\uC131"
+    _english: Venus
+  - _korean: "\uC9C0\uAD6C"
+    _english: Earth
+  - _korean: "\uD654\uC131"
+    _english: Mars
+  - _korean: "\uBAA9\uC131"
+    _english: Jupiter
+  - _korean: "\uD1A0\uC131"
+    _english: Saturn
+  - _korean: "\uCC9C\uC655\uC131"
+    _english: Uranus
+  - _korean: "\uD574\uC655\uC131"
+    _english: Neptune
+  - _korean: "\uBA85\uC655\uC131"
+    _english: Pluto
+  - _korean: "{0} \uD0DC\uADF8 \uAC00\uCE58 +{1}"
+    _english: '{0} tag value +{1}'
+  - _korean: "\uC0C8 \uAC8C\uC784"
+    _english: New Game
+  - _korean: "\uC774\uC5B4\uD558\uAE30"
+    _english: Continue
+  - _korean: "\uC885\uB8CC"
+    _english: Quit
+  - _korean: "\uBA54\uB274"
+    _english: Menu
+  - _korean: "\uBAA8\uD5D8\uAC00"
+    _english: Adventurer
+  - _korean: "\uD504\uB85C\uD544"
+    _english: Profile
+  - _korean: "\uD504\uB85C\uD544{0}"
+    _english: Profile {0}
+  - _korean: "{0}\uBC88 \uD504\uB85C\uD544"
+    _english: Profile {0}
+  - _korean: "\uD504\uB85C\uD544 \uC120\uD0DD"
+    _english: Select Profile
+  - _korean: "\uD504\uB85C\uD544 \uC5C6\uC74C"
+    _english: No profile
+  - _korean: "\uBE44\uC5B4 \uC788\uC74C"
+    _english: Empty
+  - _korean: "\uC218\uC815"
+    _english: Edit
+  - _korean: "\uC0AD\uC81C"
+    _english: Delete
+  - _korean: "\uB4A4\uB85C"
+    _english: Back
+  - _korean: "\uC774\uB984"
+    _english: Name
+  - _korean: "\uC774\uB984\uC744 \uC785\uB825\uD558\uC138\uC694"
+    _english: Enter a name
+  - _korean: "\uD50C\uB808\uC774 \uC2DC\uAC04"
+    _english: Play Time
+  - _korean: "\uD50C\uB808\uC774 \uC2DC\uAC04 {0}\uC2DC\uAC04 {1}\uBD84"
+    _english: Play time {0}h {1}m
+  - _korean: "\uB9C8\uC9C0\uB9C9 \uD50C\uB808\uC774"
+    _english: Last Played
+  - _korean: "\uB9C8\uC9C0\uB9C9 \uD50C\uB808\uC774 {0}"
+    _english: Last played {0}
+  - _korean: "\uB9C8\uC9C0\uB9C9 \uD50C\uB808\uC774 \uC5C6\uC74C"
+    _english: Never played
+  - _korean: "\uC5C6\uC74C"
+    _english: None
+  - _korean: "\uBD88\uB7EC\uC62C \uC218 \uC5C6\uC74C"
+    _english: Cannot load
+  - _korean: "\uC800\uC7A5\uB41C \uB7F0\uC774 \uC5C6\uC2B5\uB2C8\uB2E4"
+    _english: There is no saved run
+  - _korean: "\uC800\uC7A5\uB41C \uB7F0\uC744 \uBD88\uB7EC\uC62C \uC218 \uC5C6\uC2B5\uB2C8\uB2E4"
+    _english: The saved run cannot be loaded
+  - _korean: "\uC800\uC7A5\uB41C \uB7F0\uC744 \uC9C0\uAE08 \uC77D\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uC7A0\uC2DC \uB4A4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694"
+    _english: The saved run cannot be read right now. Please try again shortly
+  - _korean: "\uC9C0\uB3C4"
+    _english: Map
+  - _korean: "\uC124\uC815"
+    _english: Settings
+  - _korean: "\uB7F0 \uC885\uB8CC"
+    _english: End Run
+  - _korean: "\uD604\uC7AC \uBE4C\uB4DC"
+    _english: Current Build
+  - _korean: "\uD604\uC7AC \uBE4C\uB4DC \uD654\uBA74\uC744 \uBCF4\uACE0 \uC788\uB2E4"
+    _english: Viewing the Current Build screen
+  - _korean: "\uC790\uB3D9 \uC800\uC7A5\uC911..."
+    _english: Autosaving...
+  - _korean: "\uC2A4\uD14C\uC774\uC9C0 {0}"
+    _english: Stage {0}
+  - _korean: "{0}\uBC88\uC9F8 \uBC29"
+    _english: Room {0}
+  - _korean: "{0}\uB2E8\uACC4"
+    _english: Step {0}
+  - _korean: "\uC124\uC815 \uD0ED|\uC77C\uBC18"
+    _english: General
+  - _korean: "\uADF8\uB798\uD53D"
+    _english: Graphics
+  - _korean: "\uC0AC\uC6B4\uB4DC"
+    _english: Sound
+  - _korean: "\uC870\uC791"
+    _english: Controls
+  - _korean: "\uBD84\uB958"
+    _english: Category
+  - _korean: "\uD56D\uBAA9"
+    _english: Option
+  - _korean: "\uAC12"
+    _english: Value
+  - _korean: "\uC5B8\uC5B4"
+    _english: Language
+  - _korean: "\uCC3D \uBAA8\uB4DC"
+    _english: Window Mode
+  - _korean: "\uCC3D"
+    _english: Windowed
+  - _korean: "\uC804\uCCB4 \uD654\uBA74"
+    _english: Fullscreen
+  - _korean: "\uD14C\uB450\uB9AC \uC5C6\uB294 \uCC3D"
+    _english: Borderless
+  - _korean: "\uC790\uB3D9 \uC800\uC7A5"
+    _english: Autosave
+  - _korean: "\uAEBC\uC9D0"
+    _english: Off
+  - _korean: "\uCF1C\uC9D0"
+    _english: On
+  - _korean: "\uC5F0\uCD9C \uC18D\uB3C4"
+    _english: Animation Speed
+  - _korean: "\uBCF4\uD1B5"
+    _english: Normal
+  - _korean: "\uBE60\uB984"
+    _english: Fast
+  - _korean: "\uC2A4\uD0B5"
+    _english: Skip
+  - _korean: "\uC784\uC2DC \uC544\uC774\uD15C \uD6A8\uACFC \uC801\uC6A9"
+    _english: Use Temporary Item Effects
+  - _korean: "\uC804\uCCB4"
+    _english: Master
+  - _korean: "\uBC30\uACBD\uC74C"
+    _english: Music
+  - _korean: "\uD658\uACBD\uC74C"
+    _english: Ambience
+  - _korean: "\uD6A8\uACFC\uC74C"
+    _english: Sound Effects
+  - _korean: "\uC74C\uC18C\uAC70"
+    _english: Mute
+  - _korean: "{0} \uC74C\uC18C\uAC70"
+    _english: Mute {0}
+  - _korean: "\uAE30\uBCF8\uAC12 \uBCF5\uC6D0"
+    _english: Restore Defaults
+  - _korean: "\uB2EB\uAE30"
+    _english: Close
+  - _korean: "{0}  \u25BC"
+    _english: "{0}  \u25BC"
+  - _korean: "\uD655\uC778"
+    _english: OK
+  - _korean: "\uCDE8\uC18C"
+    _english: Cancel
+  - _korean: "\uB3CC\uC544\uAC00\uAE30"
+    _english: Go Back
+  - _korean: "\uADF8\uB9CC\uB450\uAE30"
+    _english: Stop
+  - _korean: "\uB418\uB3CC\uB9AC\uAE30"
+    _english: Restore
+  - _korean: "\uC800\uC7A5"
+    _english: Save
+  - _korean: "\uBC84\uD2BC"
+    _english: Button
+  - _korean: "\uD558\uB098"
+    _english: One
+  - _korean: "\uB458"
+    _english: Two
+  - _korean: "\uC14B"
+    _english: Three
+  - _korean: "\uD504\uB85C\uD544\uC744 \uC0AD\uC81C\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"
+    _english: Delete this profile?
+  - _korean: "{0} \uC758 \uAE30\uB85D\uC774 \uBAA8\uB450 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4. \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
+    _english: All records of {0} will be erased. This cannot be undone.
+  - _korean: "\uC800\uC7A5 \uB370\uC774\uD130 \uC624\uB958"
+    _english: Save Data Error
+  - _korean: "\uC774 \uD504\uB85C\uD544\uC758 \uC800\uC7A5 \uD30C\uC77C\uC744 \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4.\n\uC0AD\uC81C\uD55C \uB4A4 \uC0C8\uB85C \uB9CC\uB4E4 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    _english: 'Could not read this profile''s save file.
+
+      You can delete it and create a new one.'
+  - _korean: "\uC800\uC7A5 \uD30C\uC77C\uC744 \uAE30\uB2E4\uB9AC\uB294 \uC911"
+    _english: Waiting for Save File
+  - _korean: "\uB2E4\uB978 \uD504\uB85C\uADF8\uB7A8\uC774 \uC800\uC7A5 \uD30C\uC77C\uC744 \uC4F0\uACE0 \uC788\uC5B4 \uC9C0\uAE08 \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4."
+    _english: Another program is writing to the save file, so it could not be read right now.
+  - _korean: "\uBC31\uC2E0 \uAC80\uC0AC\uB098 \uB3D9\uAE30\uD654\uAC00 \uB05D\uB098\uAE30\uB97C \uAE30\uB2E4\uB838\uB2E4\uAC00 \uC790\uB3D9\uC73C\uB85C \uB2E4\uC2DC \uC77D\uC2B5\uB2C8\uB2E4."
+    _english: It will be read again automatically once the virus scan or sync finishes.
+  - _korean: "\uC800\uC7A5 \uD30C\uC77C\uC744 \uC77D\uC9C0 \uBABB\uD568"
+    _english: Save File Read Error
+  - _korean: "\uC800\uC7A5 \uD30C\uC77C\uC744 \uC9C0\uAE08 \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4."
+    _english: Could not read the save file right now.
+  - _korean: "\uB2E4\uB978 \uD504\uB85C\uADF8\uB7A8\uC774 \uD30C\uC77C\uC744 \uC4F0\uACE0 \uC788\uB294\uC9C0 \uD655\uC778\uD55C \uB4A4 \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694."
+    _english: Check whether another program is writing to the file, then try again.
+  - _korean: "\uC800\uC7A5 \uD30C\uC77C\uC744 \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4."
+    _english: Could not read the save file.
+  - _korean: "\uC0C8 \uAC8C\uC784\uC744 \uC2DC\uC791\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"
+    _english: Start a new game?
+  - _korean: "\uC9C4\uD589 \uC911\uC778 \uB7F0\uC774 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4. \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
+    _english: The run in progress will be lost. This cannot be undone.
+  - _korean: "\uC0C8 \uAC8C\uC784 \uC2DC\uC791"
+    _english: Start New Game
+  - _korean: "\uAC8C\uC784\uC744 \uC885\uB8CC\uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"
+    _english: Quit the game?
+  - _korean: "\uB7F0 \uB370\uC774\uD130 \uC190\uC0C1"
+    _english: Run Data Corrupted
+  - _korean: "\uC9C4\uD589 \uC911\uC774\uB358 \uB7F0\uC744 \uBD88\uB7EC\uC624\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4."
+    _english: Could not load the run in progress.
+  - _korean: "\uC0C8 \uAC8C\uC784\uC73C\uB85C \uC2DC\uC791\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    _english: You can start a new game.
+  - _korean: "\uB7F0\uC744 \uB05D\uB0B4\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"
+    _english: End this run?
+  - _korean: "\uC9C0\uAE08\uAE4C\uC9C0\uC758 \uC9C4\uD589\uC774 \uAE30\uB85D\uB429\uB2C8\uB2E4."
+    _english: Your progress so far will be recorded.
+  - _korean: "\uB7F0 \uD3EC\uAE30"
+    _english: Abandon Run
+  - _korean: "\uC800\uC7A5\uD558\uACE0 \uB098\uAC00\uAE30"
+    _english: Save and Quit
+  - _korean: "\uBB38\uC591\uC744 \uBC14\uAFB8\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"
+    _english: Change a symbol?
+  - _korean: "{0} \uC744 \uB2E4\uB978 \uBB38\uC591\uC73C\uB85C \uBC14\uAFC9\uB2C8\uB2E4."
+    _english: '{0} will become a different symbol.'
+  - _korean: "\uBB34\uC5C7\uC73C\uB85C \uBC14\uB014\uC9C0\uB294 \uBC14\uAFB8\uACE0 \uB098\uC11C \uC54C \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    _english: You will see what it becomes after the change.
+  - _korean: "\uBC14\uAFC0 \uBB38\uC591\uC744 \uACE0\uB974\uB294 \uD654\uBA74\uC740 \uC544\uC9C1 \uC5C6\uC2B5\uB2C8\uB2E4. \uC9C0\uAE08\uC740 \uBB34\uC791\uC704\uB85C \uD558\uB098 \uACE0\uB985\uB2C8\uB2E4."
+    _english: There is no screen to pick the symbol yet. One is chosen at random for now.
+  - _korean: "\uBC14\uAFB8\uAE30"
+    _english: Change
+  - _korean: "\uBB38\uC591\uC744 \uBC14\uAFE8\uC2B5\uB2C8\uB2E4"
+    _english: Symbol Changed
+  - _korean: "{0} \uC744 \uBC1B\uC558\uC2B5\uB2C8\uB2E4."
+    _english: Received {0}.
+  - _korean: "\uB2E4\uC74C \uC804\uD22C\uBD80\uD130 \uC801\uC6A9\uB429\uB2C8\uB2E4"
+    _english: Takes Effect Next Battle
+  - _korean: "{0} \uC740 \uC9C0\uAE08 \uC804\uD22C\uC5D0\uB294 \uBC14\uB00C\uC9C0 \uC54A\uACE0 \uB2E4\uC74C \uC804\uD22C\uBD80\uD130 \uC801\uC6A9\uB429\uB2C8\uB2E4."
+    _english: Changes to {0} take effect next battle.
+  - _korean: "\uC9C0\uAE08 \uD0ED\uC758 \uC124\uC815\uC774 \uCC98\uC74C \uAC12\uC73C\uB85C \uB3CC\uC544\uAC11\uB2C8\uB2E4."
+    _english: The settings on this tab will return to their defaults.
+  - _korean: "\uBAA8\uB4E0 \uC124\uC815\uC774 \uCC98\uC74C \uAC12\uC73C\uB85C \uB3CC\uC544\uAC11\uB2C8\uB2E4."
+    _english: All settings will return to their defaults.
+  - _korean: "\uADF8\uB300\uB85C \uB450\uB294 \uD56D\uBAA9: {0}"
+    _english: 'Unchanged: {0}'
+  - _korean: "\uAE30\uBCF8\uAC12\uC73C\uB85C \uB418\uB3CC\uB9AC\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"
+    _english: Restore the defaults?
+  - _korean: "\uB7F0 \uB370\uC774\uD130 \uC0AD\uC81C"
+    _english: Run Data Deleted
+  - _korean: "\uC800\uC7A5 \uB370\uC774\uD130\uAC00 \uC190\uC0C1\uB418\uC5B4 \uBC31\uC5C5\uC73C\uB85C \uB418\uB3CC\uB838\uC2B5\uB2C8\uB2E4."
+    _english: The save data was corrupted and has been restored from a backup.
+  - _korean: "\uC800\uC7A5 \uB370\uC774\uD130\uC640 \uBC31\uC5C5\uC774 \uBAA8\uB450 \uC190\uC0C1\uB418\uC5B4 \uD504\uB85C\uD544\uC744 \uCD08\uAE30\uD654\uD588\uC2B5\uB2C8\uB2E4."
+    _english: Both the save data and the backup were corrupted, so the profile was reset.
+  - _korean: "\uC9C4\uD589 \uC911\uC774\uB358 \uB7F0 \uB370\uC774\uD130\uAC00 \uC190\uC0C1\uB418\uC5B4 \uC0AD\uC81C\uD588\uC2B5\uB2C8\uB2E4."
+    _english: The data for the run in progress was corrupted and has been deleted.
+  - _korean: "\uAC8C\uC784\uC774 \uC5C5\uB370\uC774\uD2B8\uB418\uC5B4 \uC9C4\uD589 \uC911\uC774\uB358 \uB7F0\uC744 \uC774\uC5B4 \uD560 \uC218 \uC5C6\uC5B4 \uC0AD\uC81C\uD588\uC2B5\uB2C8\uB2E4."
+    _english: The game was updated, so the run in progress could not be continued and has been deleted.
+  - _korean: "\uC9C4\uD589 \uC911\uC774\uB358 \uB7F0 \uB370\uC774\uD130\uB97C \uCC3E\uC744 \uC218 \uC5C6\uC5B4 \uAE30\uB85D\uC744 \uC815\uB9AC\uD588\uC2B5\uB2C8\uB2E4."
+    _english: The data for the run in progress could not be found, so the records were cleaned up.
+  - _korean: "\uC800\uC7A5\uC5D0 \uC2E4\uD328\uD588\uC2B5\uB2C8\uB2E4. \uC800\uC7A5 \uACF5\uAC04\uACFC \uAD8C\uD55C\uC744 \uD655\uC778\uD574 \uC8FC\uC138\uC694."
+    _english: Saving failed. Please check the storage space and permissions.
+  - _korean: "\uC720\uBB3C {0}\uAC1C"
+    _english: '{0|relic|relics}'
+  - _korean: "\uCF54\uC778 {0}\uAC1C"
+    _english: '{0|coin|coins}'
+  - _korean: "\uBB38\uC591 {0}\uC7A5"
+    _english: '{0|symbol|symbols}'
+  - _korean: "{0}\uC7A5"
+    _english: '{0}'
+  - _korean: "\uBB38\uC591 {0}\uC7A5 \uC720\uC9C0"
+    _english: Keep {0|symbol|symbols}
+  - _korean: "\uAC80\uC0AC\uC6A9 \uD558\uB098"
+    _english: 'Check: One'
+  - _korean: "\uAC80\uC0AC\uC6A9 \uC14B"
+    _english: 'Check: Three'
+  - _korean: "\uAC80\uC0AC\uC6A9 \uAE34 \uBCF8\uBB38"
+    _english: 'Check: Long Body'
+  - _korean: "\uC55E \uD31D\uC5C5"
+    _english: Front Popup
+  - _korean: "\uB4A4 \uD31D\uC5C5"
+    _english: Back Popup
+  - _korean: "\uBA3C\uC800 \uB72C\uB2E4."
+    _english: Opens first.
+  - _korean: "\uB098\uC911\uC5D0 \uB72C\uB2E4."
+    _english: Opens later.
+  - _korean: "\uBC84\uD2BC \uD558\uB098\uB97C \uB744\uC6B4\uB2E4."
+    _english: Shows one button.
+  - _korean: "\uBC84\uD2BC \uC14B\uC744 \uB744\uC6B4\uB2E4."
+    _english: Shows three buttons.
+  - _korean: "\uC2DC\uACC4 \uAC80\uC0AC"
+    _english: Clock Check
+  - _korean: "{0}\uBC88\uC9F8 \uC904. \uBCF8\uBB38\uC774 \uAE38\uBA74 \uCE78 \uC548\uC5D0\uC11C\uB9CC \uAD74\uB7EC\uAC00\uC57C \uD55C\uB2E4."
+    _english: Line {0}. A long body must scroll only inside its box.
+  - _korean: "\uC804\uD22C \uCF54\uB4DC\uAC00 \uC544\uC9C1 \uBD99\uC9C0 \uC54A\uC558\uB2E4."
+    _english: Battle code is not connected yet.
+  - _korean: "\uD750\uB984\uC744 \uD655\uC778\uD558\uB824\uACE0 \uACB0\uACFC\uB97C \uC9C1\uC811 \uACE0\uB978\uB2E4."
+    _english: Pick the result directly to check the flow.
+  - _korean: "\uBD80\uC815 \uD6A8\uACFC {0}"
+    _english: Penalty {0}
+  - _korean: "{0} \uBC29"
+    _english: '{0} Room'
+  - _korean: "\uD328\uBC30\uB85C \uCC98\uB9AC"
+    _english: Count as Defeat
+  - _korean: "\uC2B9\uB9AC\uB85C \uCC98\uB9AC"
+    _english: Count as Victory
+  - _korean: "\uD655\uC778\uC6A9"
+    _english: Check
+  - _korean: "\uAE30\uBCF8 \uBCF4\uC0C1"
+    _english: Base Reward
+  - _korean: "\uC624\uBC84\uD0AC \uBCF4\uC0C1"
+    _english: Overkill
+  - _korean: "\uC544\uC774\uD15C \uC120\uD0DD \uAC74\uB108\uB6F0\uAE30"
+    _english: Skip Item Choice
+  - _korean: "\uBCF4\uC0C1 \uBC1B\uAE30"
+    _english: Claim Reward
+  - _korean: "\uD0DC\uADF8 \uBE44\uC911"
+    _english: Tag Share
+  - _korean: "\uC815\uB82C"
+    _english: Sort
+  - _korean: "\uD0DC\uADF8 \uC21C"
+    _english: By Tag
+  - _korean: "\uAC1C\uC218 \uC21C"
+    _english: By Count
+  - _korean: "\uC774\uB984 \uC21C"
+    _english: By Name
+  - _korean: "\uC120\uD0DD"
+    _english: Select
+  - _korean: "\uACE0\uB97C \uCE78\uC744 \uB204\uB978\uB2E4"
+    _english: Click a slot to choose
+  - _korean: "\uBC1B\uC744 \uBB38\uC591 \uC120\uD0DD"
+    _english: Symbol to Receive
+  - _korean: "\uBCC0\uD658\uD560 \uBB38\uC591 \uC120\uD0DD"
+    _english: Symbol to Transform
+  - _korean: "\uBC84\uB9B4 \uC720\uBB3C \uC120\uD0DD"
+    _english: Relic to Discard
+  - _korean: "\uBC84\uB9B4 \uCF54\uC778 \uC120\uD0DD"
+    _english: Coin to Discard
+  - _korean: "\uBC84\uB9B4 {0} \uC120\uD0DD"
+    _english: '{0} to Discard'
+  - _korean: "\uCF54\uC778 \uC120\uD0DD"
+    _english: Choose a Coin
+  - _korean: "\uC720\uBB3C \uC120\uD0DD"
+    _english: Choose a Relic
+  - _korean: "\uBB38\uC591 \uC120\uD0DD"
+    _english: Choose a Symbol
+  - _korean: "\uBC1B\uAE30"
+    _english: Receive
+  - _korean: "\uBC84\uB9AC\uAE30"
+    _english: Discard
+  - _korean: "\uBC84\uB9AC\uACE0 \uBC1B\uAE30"
+    _english: Discard and Receive
+  - _korean: "\uD3EC\uAE30"
+    _english: Give Up
+  - _korean: "\uC0C8 \uCF54\uC778"
+    _english: New Coin
+  - _korean: "\uC0C8 \uC720\uBB3C"
+    _english: New Relic
+  - _korean: '[{0}]'
+    _english: '[{0}]'
+  - _korean: "[{0}] \uC744 \uBC1B\uB294\uB2E4"
+    _english: 'Receive [{0}]'
+  - _korean: "[{0}] \uC744 \uBC84\uB9AC\uACE0 [{1}] \uC744 \uBC1B\uB294\uB2E4"
+    _english: 'Discard [{0}] and receive [{1}]'
+  - _korean: "[{0}] \uC744 \uBC84\uB9B0\uB2E4. \uCD5C\uB300 {1} \uC218\uAC00 \uC904\uC5C8\uB2E4"
+    _english: Discard [{0}]. Capacity for {1} is reduced.
+  - _korean: "\uAC00\uCE58"
+    _english: Value
+  - _korean: "\uB0B4\uC6A9"
+    _english: Description
+  - _korean: "\uD50C\uB808\uC774\uBC84"
+    _english: Flavor
+  - _korean: "\uC18C\uBAA8 \uCCB4\uB825"
+    _english: HP Cost
+  - _korean: "\uAC00\uC911\uCE58"
+    _english: Weight
+  - _korean: "\uC608\uCE21 \uC131\uACF5 \uC2DC {0}"
+    _english: '{0} on a correct prediction'
+  - _korean: "\uAC74 \uD0DC\uADF8\uC758 \uBC30\uC218 +{0}"
+    _english: Multiplier for the tag you bet on +{0}
+  - _korean: "\uAC74 \uD0DC\uADF8\uC758 \uBC30\uC218\uC5D0 {0} \uB97C \uB354\uD55C\uB2E4."
+    _english: Adds {0} to the multiplier of the tag you bet on.
+  - _korean: "\uB098\uAC00\uAE30"
+    _english: Leave
+  - _korean: "\uBB38\uC591\n\uBB34\uC791\uC704 \uBCC0\uACBD"
+    _english: 'Random
+
+      Symbol Change'
+  - _korean: "\uC0C8\uB85C\uACE0\uCE68"
+    _english: Refresh
+  - _korean: "\uC120\uD0DD\uC9C0"
+    _english: Choice
+  - _korean: "\uB5A0\uB09C\uB2E4"
+    _english: Leave
+  - _korean: "\uC55E \uD654\uBA74\uC5D0\uC11C \uACE0\uB978 \uC120\uD0DD\uC9C0"
+    _english: Choice made on the previous screen
+  - _korean: "\uCCB4\uB825 \uBD80\uC871"
+    _english: Not enough HP
+  - _korean: "\uCD5C\uB300 \uCCB4\uB825 \uBD80\uC871"
+    _english: Not enough Max HP
+  - _korean: "{0} \uD639\uC740 {1}"
+    _english: '{0} or {1}'
+  - _korean: "\uACE8\uB4DC {0} \uD544\uC694"
+    _english: Needs {0} Gold
+  - _korean: "\uACE8\uB4DC \uC5C6\uC74C"
+    _english: No Gold
+  - _korean: "\uBB38\uC591 \uC5C6\uC74C"
+    _english: No symbols
+  - _korean: "\uCF54\uC778 \uC5C6\uC74C"
+    _english: No coins
+  - _korean: "{0} \uC774\uC0C1 \uCF54\uC778 \uC5C6\uC74C"
+    _english: No {0} or rarer coins
+  - _korean: "\uBC1B\uC744 \uC720\uBB3C \uC5C6\uC74C"
+    _english: No relics to receive
+  - _korean: "\uBC1B\uC744 \uC720\uBB3C \uBD80\uC871"
+    _english: Not enough relics to receive
+  - _korean: "\uC720\uBB3C \uC5C6\uC74C"
+    _english: No relics
+  - _korean: "\uBC14\uAFD4 \uBC1B\uC744 \uC720\uBB3C \uC5C6\uC74C"
+    _english: No relics to trade for
+  - _korean: "{0} \uC744 \uCE58\uB800\uB2E4."
+    _english: Paid {0}.
+  - _korean: "{0} \uC744 \uBC1B\uC558\uB2E4."
+    _english: Received {0}.
+  - _korean: "{0} \uC744 \uC5BB\uC5C8\uB2E4."
+    _english: Gained {0}.
+  - _korean: "{0} \uC744 \uC783\uC5C8\uB2E4."
+    _english: Lost {0}.
+  - _korean: "{0} \uC744 \uD68C\uBCF5\uD588\uB2E4."
+    _english: Recovered {0}.
+  - _korean: "{0} \uC774 \uB298\uC5C8\uB2E4."
+    _english: '{0} increased.'
+  - _korean: "{0} \uC774 \uC904\uC5C8\uB2E4."
+    _english: '{0} decreased.'
+  - _korean: "{0} \uC774 {1} \uC774 \uB418\uC5C8\uB2E4."
+    _english: '{0} became {1}.'
+  - _korean: "{0} \uC774 \uBAA8\uB450 {1} \uC73C\uB85C \uB4A4\uBC14\uB00C\uC5C8\uB2E4."
+    _english: All {0} turned into {1}.
+  - _korean: "{0} \uC774 {1} \uC73C\uB85C \uBC14\uB00C\uC5C8\uB2E4."
+    _english: '{0} changed into {1}.'
+  - _korean: "{0} \uC744 \uB0B4\uC8FC\uACE0 {1} \uC744 \uBC1B\uC558\uB2E4."
+    _english: Gave {0} and received {1}.
+  - _korean: "{0} \uC744 \uD314\uC544 {1} \uC744 \uBC1B\uC558\uB2E4."
+    _english: Sold {0} and received {1}.
+  - _korean: "{0} \uC640 {1}"
+    _english: '{0} and {1}'
+  - _korean: "\uCD5C\uB300 {0} \uC218 {1}"
+    _english: Capacity for {0} ({1})
+  - _korean: "\uCD5C\uB300 {0} \uC218\uAC00 \uADF8\uB300\uB85C\uB2E4."
+    _english: Capacity for {0} stays the same.
+  - _korean: "\uCD5C\uB300 \uCCB4\uB825\uACFC \uCCB4\uB825 {0}"
+    _english: Max HP and HP {0}
+  - _korean: "\uCD5C\uB300 \uCCB4\uB825\uC774 \uADF8\uB300\uB85C\uB2E4."
+    _english: Max HP stays the same.
+  - _korean: "\uB0B4\uC904 \uACE8\uB4DC\uAC00 \uC5C6\uC5C8\uB2E4."
+    _english: There was no Gold to give.
+  - _korean: "\uB354 \uD68C\uBCF5\uD560 \uCCB4\uB825\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There was no HP left to recover.
+  - _korean: "\uBB38\uC591\uC744 {0}\uC7A5 \uC544\uB798\uB85C \uC904\uC77C \uC218 \uC5C6\uC5C8\uB2E4."
+    _english: The symbol count could not fall below {0}.
+  - _korean: "\uC783\uC744 \uBB38\uC591\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no symbols to lose.
+  - _korean: "\uBC14\uAFC0 \uBB38\uC591\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no symbols to change.
+  - _korean: "\uBB34\uC791\uC704 \uBB38\uC591"
+    _english: random symbols
+  - _korean: "\uB2E4\uB978 \uBB38\uC591"
+    _english: other symbols
+  - _korean: "\uBC14\uB014 \uBAA8\uC2B5\uC744 \uCC3E\uC9C0 \uBABB\uD588\uB2E4."
+    _english: No new form could be found.
+  - _korean: "\uC9C0\uC6B8 \uD0DC\uADF8\uB97C \uCC3E\uC9C0 \uBABB\uD588\uB2E4."
+    _english: No removable tag could be found.
+  - _korean: "{0} \uC744 \uAC00\uC9C4 \uBB38\uC591\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no symbols with {0}.
+  - _korean: "{0} \uC744 \uAC00\uC9C4 \uBB38\uC591 {1}\uC7A5"
+    _english: '{1|symbol|symbols} with {0}'
+  - _korean: "\uC720\uBB3C\uC744 \uB354 \uAC00\uC9C8 \uC790\uB9AC\uAC00 \uC5C6\uC5B4 \uBC1B\uC9C0 \uBABB\uD588\uB2E4."
+    _english: There was no room for another relic, so none was received.
+  - _korean: "\uB354 \uAC00\uC9C8 \uC720\uBB3C\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no more relics to take.
+  - _korean: "\uBC14\uAFC0 \uC720\uBB3C\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no relics to trade.
+  - _korean: "\uBC14\uAFD4 \uBC1B\uC744 \uC720\uBB3C\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no relics to trade for.
+  - _korean: "\uCF54\uC778\uC744 \uB354 \uAC00\uC9C8 \uC790\uB9AC\uAC00 \uC5C6\uC5B4 \uBC1B\uC9C0 \uBABB\uD588\uB2E4."
+    _english: There was no room for another coin, so none was received.
+  - _korean: "\uC783\uC744 \uCF54\uC778\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no coins to lose.
+  - _korean: "\uBC14\uAFC0 \uCF54\uC778\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no coins to change.
+  - _korean: "\uBC14\uAFC0 \uC218 \uC5C6\uC5C8\uB2E4."
+    _english: It could not be changed.
+  - _korean: "\uD314 \uCF54\uC778\uC774 \uC5C6\uC5C8\uB2E4."
+    _english: There were no coins to sell.
+  - _korean: "\uD074\uB9AC\uC5B4"
+    _english: Clear
+  - _korean: "\uD328\uBC30"
+    _english: Defeat
+  - _korean: "\uC2B9\uB9AC"
+    _english: Victory
+  - _korean: "\uD0C0\uC774\uD2C0\uB85C"
+    _english: Title Screen
+  - _korean: "\uD0DC\uADF8 \uC815\uBCF4"
+    _english: Tag Info
+  - _korean: "\uC4F0\uB7EC\uC9D0"
+    _english: Fallen
+  - _korean: "{0}\uC5D0\uAC8C \uC4F0\uB7EC\uC9D0"
+    _english: Fell to {0}
+  - _korean: "\uBCF4\uC2A4 \uACA9\uD30C"
+    _english: Boss Defeated
+  - _korean: "\uD50C\uB808\uC774 \uC2DC\uAC04 {0}\uBD84 {1}\uCD08"
+    _english: Play time {0}m {1}s
+  - _korean: "\uC9C0\uB098\uC628 \uBC29 {0}\uAC1C"
+    _english: 'Rooms passed: {0}'
+  - _korean: "\uCC98\uCE58\uD55C \uBAAC\uC2A4\uD130 {0}\uB9C8\uB9AC"
+    _english: 'Monsters defeated: {0}'
+  - _korean: "\uC5D8\uB9AC\uD2B8 {0}\uB9C8\uB9AC"
+    _english: 'Elites: {0}'
+  - _korean: "\uD68D\uB4DD\uD55C \uACE8\uB4DC {0}"
+    _english: 'Gold earned: {0}'
+  - _korean: "\uC18C\uBAA8\uD55C \uACE8\uB4DC {0}"
+    _english: 'Gold spent: {0}'
+  - _korean: "\uD55C \uBC88\uC5D0 \uC900 \uAC00\uC7A5 \uD070 \uD53C\uD574 {0}"
+    _english: 'Biggest single hit: {0}'
+  - _korean: "\uAC00\uC7A5 \uB9CE\uC774 \uBAA8\uC740 \uD0DC\uADF8 - {0}"
+    _english: Most collected tags - {0}
+  - _korean: "\uB204\uC801 \uB7F0 {0}\uD68C"
+    _english: 'Total runs: {0}'
+  - _korean: "\uAC00\uC7A5 \uBA40\uB9AC \uAC04 \uC2A4\uD14C\uC774\uC9C0 {0}"
+    _english: 'Furthest stage: {0}'
+  - _korean: "\uC0C8\uB85C \uD574\uAE08 \xB7 \uC720\uBB3C {0}"
+    _english: "New unlock \xB7 Relic {0}"
+  - _korean: "\uC0C8\uB85C \uD574\uAE08"
+    _english: New unlock
+  - _korean: "\uB3C4\uC804\uACFC\uC81C"
+    _english: Achievement
+  - _korean: "\uC5D8\uB9AC\uD2B8 {0}\uB9C8\uB9AC \uCC98\uCE58 ({1})"
+    _english: Defeat {0|elite|elites} ({1})
+  - _korean: "\uBB38\uC591 {0}\uC7A5 \uBAA8\uC73C\uAE30 ({1})"
+    _english: Collect {0|symbol|symbols} ({1})
+  - _korean: "\uCF54\uC778\uC744 \uACE0\uB974\uC138\uC694"
+    _english: Choose a coin
+  - _korean: "\uCF54\uC778\uC744 \uAC78 \uD0DC\uADF8\uB97C \uACE0\uB974\uC138\uC694"
+    _english: Choose a tag to bet on
+  - _korean: "\uCF54\uC778\n\uC5C6\uC774"
+    _english: 'No
+
+      Coin'
+  - _korean: "\uCF54\uC778 \uC5C6\uC774 \uD0DC\uADF8\uB97C \uACE0\uB985\uB2C8\uB2E4"
+    _english: Choosing a tag without a coin
+  - _korean: "\uCCB4\uB825\uC774 \uBAA8\uC790\uB78D\uB2C8\uB2E4"
+    _english: Not enough HP
+  - _korean: "\uACF5\uACA9\uB825"
+    _english: Attack
+  - _korean: "\uBC29\uC5B4\uB3C4"
+    _english: Block
+  - _korean: "\uAE30\uC138"
+    _english: Momentum
+  - _korean: "\uC9C0\uB09C \uD589\uB3D9"
+    _english: Last Action
+  - _korean: "\uB2E4\uC74C \uD589\uB3D9"
+    _english: Next Action
+  - _korean: "\uB9C9\uC74C"
+    _english: Blocked
+  - _korean: "\uC544\uC9C1 \uD6A8\uACFC\uAC00 \uC5C6\uB294 \uCE78\uC785\uB2C8\uB2E4"
+    _english: This slot has no effect yet
+  - _korean: "\uC0AC\uAC74\uC758 \uC9C0\uD3C9\uC120 \xB7 \uAC00\uC7A5 \uB9CE\uC740 \uD0DC\uADF8\uB85C \uACF5\uACA9\uD569\uB2C8\uB2E4"
+    _english: "Event Horizon \xB7 Attacks with the most common tag"
+  - _korean: "\uD074\uB9AD \uB610\uB294 \uC2A4\uD398\uC774\uC2A4\uBC14\uB85C \uAC74\uB108\uB6F0\uAE30"
+    _english: Click or press Space to skip
+  - _korean: "\uBC1B\uB294 \uD53C\uD574"
+    _english: Damage taken
+  - _korean: "\uCF54\uC778 \uAC00\uCE58"
+    _english: Coin value
+  - _korean: "\uBC29\uD328\uBCD1\uC774 \uD53C\uD574"
+    _english: Shieldbearer reduction
+  - _korean: "\uBC29\uD328\uBCD1 \uC18C\uD658 ({0})"
+    _english: Summon Shieldbearers ({0})
+  - _korean: "{0} \uBB38\uC591 {1}\uC7A5 \uCD94\uAC00"
+    _english: '{0}: +{1|symbol|symbols}'
+  - _korean: "\uBC29\uC5B4"
+    _english: Defend
+  - _korean: "\uD568\uC131"
+    _english: War Cry
+  - _korean: "\uD0C0\uACA9"
+    _english: Strike
+  - _korean: "\uC9C4\uD615 \uD615\uC131"
+    _english: Form Ranks
+  - _korean: "\uBC29\uD328 \uC9C4\uD615"
+    _english: Shield Wall
+  - _korean: "\uCD1D\uACF5\uC138"
+    _english: All-Out Assault
+  - _korean: "\uB3CC\uACA9"
+    _english: Charge
+  - _korean: "\uACF5\uACA9"
+    _english: Attack
+  - _korean: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4."
+    _english: Deals {0} damage to the hero.
+  - _korean: "{0} \xD7 (\uBC29\uD328\uBCD1 {1} + 1)"
+    _english: "{0} \xD7 (Shieldbearers {1} + 1)"
+  - _korean: "{0} \xD7 \uBC29\uD328\uBCD1 {1}"
+    _english: "{0} \xD7 Shieldbearers {1}"
+  - _korean: "\uBC29\uC5B4\uB3C4 {0} \uC744 \uC5BB\uB294\uB2E4. \uBC29\uC5B4\uB3C4\uB294 \uC601\uC6C5\uC758 \uB2E4\uC74C \uACF5\uACA9\uC744 \uBA3C\uC800 \uB9C9\uB294\uB2E4."
+    _english: Gains {0} Block. Block absorbs damage from the hero's next attack before HP.
+  - _korean: "\uAE30\uC138 {0} \uC744 \uC313\uB294\uB2E4. \uAE30\uC138 1 \uB2F9 \uC8FC\uB294 \uD53C\uD574\uAC00 1% \uB298\uC5B4\uB09C\uB2E4."
+    _english: Builds {0} Momentum. Each point of Momentum raises damage dealt by 1%.
+  - _korean: "\uBC29\uD328\uBCD1 {0} \uAE30\uB97C \uC18C\uD658\uD55C\uB2E4. \uCD5C\uB300 {1} \uAE30\uB2E4."
+    _english: 'Summons {0|Shieldbearer|Shieldbearers}. Maximum Shieldbearers: {1}.'
+  - _korean: "\uB9E4 \uD134 \uC2DC\uC791\uC2DC \uBC29\uD328\uBCD1\uC744 {0} \uC18C\uD658\uD569\uB2C8\uB2E4"
+    _english: Summons {0|Shieldbearer|Shieldbearers} at the start of each turn
+  - _korean: "(\uD604\uC7AC \uBC29\uD328\uBCD1 \uC218:{0})"
+    _english: '(Current Shieldbearers: {0})'
+  - _korean: "({0}) \uC774\uC0C1 \uB370\uBBF8\uC9C0\uB97C \uBC1B\uC744 \uB54C\uB9C8\uB2E4 \uB370\uBBF8\uC9C0\uB97C ({1}) \uAC10\uC18C\uC2DC\uD0A4\uACE0 \uBC29\uD328\uBCD1\uC774 1\uAE30 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4"
+    _english: Each hit of ({0}) or more damage is reduced by ({1}) and one Shieldbearer is lost
+  - _korean: "\uB9E4 \uD134 \uC2DC\uC791\uC2DC \uBC29\uD328\uBCD1\uC744 {0} \uC18C\uD658\uD569\uB2C8\uB2E4\n(\uD604\uC7AC \uBC29\uD328\uBCD1 \uC218:{1})\n({2}) \uC774\uC0C1 \uB370\uBBF8\uC9C0\uB97C \uBC1B\uC744 \uB54C\uB9C8\uB2E4 \uB370\uBBF8\uC9C0\uB97C ({3}) \uAC10\uC18C\uC2DC\uD0A4\uACE0 \uBC29\uD328\uBCD1\uC774 1\uAE30 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4"
+    _english: 'Summons {0|Shieldbearer|Shieldbearers} at the start of each turn
+
+      (Current Shieldbearers: {1})
+
+      Each hit of ({2}) or more damage is reduced by ({3}) and one Shieldbearer is lost'
+  - _korean: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4.\n{1} \xD7 (\uBC29\uD328\uBCD1 {2} + 1)"
+    _english: "Deals {0} damage to the hero.\n{1} \xD7 (Shieldbearers {2} + 1)"
+  - _korean: "\uC601\uC6C5\uC5D0\uAC8C {0} \uD53C\uD574\uB97C \uC900\uB2E4.\n{1} \xD7 \uBC29\uD328\uBCD1 {2}"
+    _english: "Deals {0} damage to the hero.\n{1} \xD7 Shieldbearers {2}"
+  - _korean: "\uB364"
+    _english: Dum
+  - _korean: "\uB354\uBA38"
+    _english: Dummer
+  - _korean: "\uB354\uC2A4\uD2B8"
+    _english: Dust
+  - _korean: "\uACF5\uACA9 \xB7 \uBC29\uC5B4 \xB7 \uBC84\uD504\uB97C \uACE0\uB8E8 \uC4F4\uB2E4. \uD568\uC131\uC73C\uB85C \uC5BB\uB294 \uAE30\uC138\uB85C \uD134\uC774 \uC9C0\uB0A0\uC218\uB85D \uAC15\uD574\uC9C4\uB2E4."
+    _english: Uses a mix of attacks, defense, and buffs. Grows stronger as turns pass with Momentum gained from War Cry.
+  - _korean: "\uB9E4 \uD134 \uBC29\uD328\uBCD1\uC744 \uC18C\uD658\uD558\uACE0, \uBC29\uD328\uBCD1 \uC218\uC5D0 \uB530\uB77C \uB3CC\uACA9 \xB7 \uBC29\uD328 \uC9C4\uD615 \xB7 \uCD1D\uACF5\uC138\uB97C \uC4F4\uB2E4."
+    _english: Summons Shieldbearers every turn and uses Charge, Shield Wall or All-Out Assault depending on their number.
+  - _korean: "\uCF5C\uB85C\uC138\uC6C0\uC744 \uC9C0\uBC30\uD558\uB294 \uC790."
+    _english: Ruler of the Colosseum.
+  - _korean: "\uC218\uC740"
+    _english: Quicksilver
+  - _korean: "\uBB3C\uACE0\uAE30"
+    _english: Fish
+  - _korean: "\uAC04\uD5D0\uCC9C"
+    _english: Geyser
+  - _korean: "\uC5F0\uAF43"
+    _english: Lotus
+  - _korean: "\uC9C4\uD759"
+    _english: Mud
+  - _korean: "\uBA39\uAD6C\uB984"
+    _english: Dark Cloud
+  - _korean: "\uD574\uC77C"
+    _english: Tidal Wave
+  - _korean: "\uC2A4\uD2F1\uC2A4\uAC15"
+    _english: River Styx
+  - _korean: "\uC804\uCC28"
+    _english: Chariot
+  - _korean: "\uC6A9\uAD11\uB85C"
+    _english: Furnace
+  - _korean: "\uAE08\uC6D4\uACC4\uAD00"
+    _english: Golden Laurel Wreath
+  - _korean: "\uBCF4\uC11D"
+    _english: Gem
+  - _korean: "\uC6B4\uC11D"
+    _english: Meteor
+  - _korean: "\uB2FB"
+    _english: Anchor
+  - _korean: "\uB0AB"
+    _english: Scythe
+  - _korean: "\uBD88\uC0AC\uC870"
+    _english: Phoenix
+  - _korean: "\uB4DC\uB8E8\uC774\uB4DC"
+    _english: Druid
+  - _korean: "\uACE8\uB818"
+    _english: Golem
+  - _korean: "\uC0C8"
+    _english: Bird
+  - _korean: "\uACE0\uB798"
+    _english: Whale
+  - _korean: "\uAE4C\uB9C8\uADC0"
+    _english: Crow
+  - _korean: "\uBD88\uC758 \uAF43"
+    _english: Fire Flower
+  - _korean: "\uD654\uC0B0"
+    _english: Volcano
+  - _korean: "\uC77C\uCD9C"
+    _english: Sunrise
+  - _korean: "\uB4F1\uB300"
+    _english: Lighthouse
+  - _korean: "\uB9CC\uC6D4"
+    _english: Full Moon
+  - _korean: "\uC232"
+    _english: Forest
+  - _korean: "\uC138\uACC4\uC218"
+    _english: World Tree
+  - _korean: "\uC0B0\uD638"
+    _english: Coral
+  - _korean: "\uAD00"
+    _english: Coffin
+  - _korean: "\uC0AC\uB9C9"
+    _english: Desert
+  - _korean: "\uC12C"
+    _english: Island
+  - _korean: "\uBB34\uB364"
+    _english: Grave
+  - _korean: "\uC6B0\uBC15"
+    _english: Hail
+  - _korean: "\uBC24\uD558\uB298"
+    _english: Night Sky
+  - _korean: "\uB09C\uD30C\uC120"
+    _english: Shipwreck
+  - _korean: "\uBD88\uAF43"
+    _english: Flame
+  - _korean: "\uD3ED\uD48D"
+    _english: Storm
+  - _korean: "\uBCBC\uB77D"
+    _english: Thunderbolt
+  - _korean: "\uAE08\uD654"
+    _english: Gold Coin
+  - _korean: "\uC740\uD654"
+    _english: Silver Coin
+  - _korean: "\uD669\uC81C \uAE08\uD654"
+    _english: Emperor's Gold Coin
+  - _korean: "\uAC1C\uC120\uBB38 \uAE08\uD654"
+    _english: Triumphal Arch Gold Coin
+  - _korean: "\uC544\uD14C\uB098 \uAE08\uD654"
+    _english: Athena Gold Coin
+  - _korean: "\uD0DC\uC591 \uC804\uCC28 \uAE08\uD654"
+    _english: Sun Chariot Gold Coin
+  - _korean: "\uD3EC\uC138\uC774\uB3C8 \uAE08\uD654"
+    _english: Poseidon Gold Coin
+  - _korean: "\uD669\uAE08 \uD568\uC120 \uAE08\uD654"
+    _english: Golden Ship Gold Coin
+  - _korean: "\uD0DC\uC591 \uC6D0\uBC18 \uAE08\uD654"
+    _english: Sun Disc Gold Coin
+  - _korean: "\uD30C\uB77C\uC624 \uAE08\uD654"
+    _english: Pharaoh Gold Coin
+  - _korean: "\uC774\uC288\uD0C0\uB974 \uAE08\uD654"
+    _english: Ishtar Gold Coin
+  - _korean: "\uB77C\uB9C8\uC218 \uAE08\uD654"
+    _english: Lamassu Gold Coin
+  - _korean: "\uB3C5\uC218\uB9AC \uC740\uD654"
+    _english: Eagle Silver Coin
+  - _korean: "\uC6D4\uACC4\uAD00 \uC740\uD654"
+    _english: Laurel Silver Coin
+  - _korean: "\uBD80\uC5C9\uC774 \uC740\uD654"
+    _english: Owl Silver Coin
+  - _korean: "\uC2E0\uC804 \uAE30\uB465 \uC740\uD654"
+    _english: Temple Pillar Silver Coin
+  - _korean: "\uB3CC\uACE0\uB798 \uC740\uD654"
+    _english: Dolphin Silver Coin
+  - _korean: "\uC0BC\uB2E8\uB178\uC120 \uC740\uD654"
+    _english: Trireme Silver Coin
+  - _korean: "\uC2A4\uCE74\uB77C\uBE0C \uC740\uD654"
+    _english: Scarab Silver Coin
+  - _korean: "\uCD08\uC2B9\uB2EC \uC740\uD654"
+    _english: Crescent Silver Coin
+  - _korean: "\uC410\uAE30\uBB38\uC790 \uC740\uD654"
+    _english: Cuneiform Silver Coin
+  - _korean: "\uC9C0\uAD6C\uB77C\uD2B8 \uC740\uD654"
+    _english: Ziggurat Silver Coin
+  - _korean: "\uBC14\uB2E4 \uC740\uD654"
+    _english: Sea Silver Coin
+  - _korean: "\uB291\uB300 \uB3D9\uC804"
+    _english: Wolf Coin
+  - _korean: "\uBC29\uD328 \uB3D9\uC804"
+    _english: Shield Coin
+  - _korean: "\uB9AC\uB77C \uB3D9\uC804"
+    _english: Lyre Coin
+  - _korean: "\uC554\uD3EC\uB77C \uB3D9\uC804"
+    _english: Amphora Coin
+  - _korean: "\uBB38\uC5B4 \uB3D9\uC804"
+    _english: Octopus Coin
+  - _korean: "\uB2FB \uB3D9\uC804"
+    _english: Anchor Coin
+  - _korean: "\uD53C\uB77C\uBBF8\uB4DC \uB3D9\uC804"
+    _english: Pyramid Coin
+  - _korean: "\uC0AC\uC790 \uB3D9\uC804"
+    _english: Lion Coin
+  - _korean: "\uB300\uCD94\uC57C\uC790 \uB3D9\uC804"
+    _english: Date Palm Coin
+  - _korean: "\uB099\uD0C0 \uB3D9\uC804"
+    _english: Camel Coin
+  - _korean: "\uAC00\uC8FD \uC6D0\uBC18"
+    _english: Leather Disc
+  - _korean: "\"\uC740\uC740 \uD30C\uB3C4\uC5D0\uB3C4 \uC27D\uAC8C \uB179\uC2AC\uC9C0 \uC54A\uB294\uB2E4.\""
+    _english: '"Silver does not rust easily, even in the waves."'
+  - _korean: "\uC740\uC740 \uD30C\uB3C4\uC5D0\uB3C4 \uC27D\uAC8C \uB179\uC2AC\uC9C0 \uC54A\uB294\uB2E4."
+    _english: Silver does not rust easily, even in the waves.
+  - _korean: "\uC81C\uAD6D \uAD70\uAE30"
+    _english: Aquila
+  - _korean: "\uD654\uC131 \uD0DC\uADF8 \uAC00\uCE58 +5"
+    _english: Mars tag value +5
+  - _korean: "\uC81C\uAD6D\uC758 \uAC74\uAD6D\uC790\uB294 \uB9C8\uB974\uC2A4\uC758 \uC544\uB4E4\uC774\uB2C8."
+    _english: For the founder of the empire was a son of Mars.
+  - _korean: "\"\uC81C\uAD6D\uC758 \uAC74\uAD6D\uC790\uB294 \uB9C8\uB974\uC2A4\uC758 \uC544\uB4E4\uC774\uB2C8.\""
+    _english: '"For the founder of the empire was a son of Mars."'
+  - _korean: "\uD751\uC694\uC11D \uB2E8\uAC80"
+    _english: Obsidian Dagger
+  - _korean: "\uCF54\uC778 \uC18C\uBAA8\uAC12 +10, \uCF54\uC778 \uAC00\uCE58 +3"
+    _english: Coin cost +10, coin value +3
+  - _korean: "\uB208\uC5D0\uB294 \uB208, \uC774\uC5D0\uB294 \uC774, \uD76C\uC0DD\uC5D0\uB294 \uD76C\uC0DD"
+    _english: An eye for an eye, a tooth for a tooth, a sacrifice for a sacrifice
+  - _korean: "12\uAC1C\uC758 \uAE08\uD654"
+    _english: Twelve Gold Coins
+  - _korean: "\uCF54\uC778 \uAC00\uCE58 {0}, \uB3D9\uC77C \uD0DC\uADF8\uB97C \uC9C0\uB2CC \uBB38\uC591\uC774 3\uAC1C \uB4F1\uC7A5\uD560\uB54C\uB9C8\uB2E4 \uC601\uAD6C\uD788 +1"
+    _english: Coin value {0}. Increases permanently by 1 whenever 3 symbols sharing a tag appear.
+  - _korean: "\uC601\uC6C5\uC758 \uC704\uB300\uD55C \uC5F4\uB450\uACFC\uC5C5\uC744 \uAE30\uB150\uD558\uB294 \uC8FC\uD654"
+    _english: A coin commemorating the hero's twelve great labors
+  - _korean: "\uB9DD\uCE58\uC640 \uB04C"
+    _english: Hammer and Chisel
+  - _korean: "\uCCAB \uD134 \uCD5C\uB2E4 \uD0DC\uADF8 \uBB38\uC591 3\uAC1C \uCD94\uAC00"
+    _english: On the first turn, add 3 symbols of the most common tag
+  - _korean: "\uBAA8\uB4E0 \uB9D0\uB4E4\uC744 \uD070 \uD68C\uC11D\uC5D0 \uC0C8\uAE30\uB77C"
+    _english: Carve every word into the great stone
+  - _korean: "\uCCA0\uC81C \uBC29\uD328"
+    _english: Iron Shield
+  - _korean: "10 \uC774\uC0C1\uC758 \uB370\uBBF8\uC9C0\uB97C \uBC1B\uC744 \uB54C, \uD574\uB2F9 \uB370\uBBF8\uC9C0\uC5D0 -5"
+    _english: When taking 10 or more damage, reduce it by 5
+  - _korean: "\uC0AC\uAC74\uC758 \uC9C0\uD3C9\uC120"
+    _english: Event Horizon
+  - _korean: "\uBE14\uB799\uD640\uC774 \uC0AC\uC6A9\uB418\uC5C8\uC744 \uB54C, \uAC00\uC7A5 \uB9CE\uC740 \uD0DC\uADF8\uB85C \uACF5\uACA9"
+    _english: When the Black Hole is used, attack with the most common tag
+  - _korean: "\uBCC4\uC758 \uC800\uD3B8"
+    _english: Beyond the Stars
+  - _korean: "\uCC9C\uC655\uC131, \uD574\uC655\uC131, \uBA85\uC655\uC131 \uD0DC\uADF8\uAC00 2\uD68C \uC0AC\uC6A9"
+    _english: Uranus, Neptune and Pluto tags are used twice
+  - _korean: "\uC77C\uC2DD"
+    _english: Eclipse
+  - _korean: "\uB0B4\uD589\uC131\uC758 \uAC00\uCE58 -3, \uC678\uD589\uC131\uC758 \uAC00\uCE58 +3"
+    _english: Inner planet value -3, outer planet value +3
+  - _korean: "\uACF0 \uAC00\uC8FD \uB9DD\uD1A0"
+    _english: Bearskin Cloak
+  - _korean: "\uCCB4\uB825 50% \uC774\uD558\uC77C \uB54C \uBAA8\uB4E0 \uD0DC\uADF8\uC758 \uB370\uBBF8\uC9C0 1.2\uBC30"
+    _english: "At 50% HP or less, all tags deal 1.2\xD7 damage"
+  - _korean: "\uC18D\uC784\uC218 \uC8FC\uC0AC\uC704"
+    _english: Loaded Dice
+  - _korean: "\uAC00\uC7A5 \uC88C\uCE21\uC758 \uBB38\uC591 1\uD68C \uC7AC\uC0AC\uC6A9"
+    _english: Reuse the leftmost symbol once
+  - _korean: "\uB179\uC2A8 \uB2E8\uAC80"
+    _english: Rusted Gladius
+  - _korean: "\uC6D0\uB85C\uC6D0 \uC778\uC7A5 \uBC18\uC9C0"
+    _english: Senate Signet Ring
+  - _korean: "\uAD70\uB2E8 \uB3C5\uC218\uB9AC"
+    _english: Legion Eagle
+  - _korean: "\uAE08 \uAC04 \uC655\uAD00"
+    _english: Cracked Crown
+  - _korean: "\uBD80\uC5C9\uC774 \uB4F1\uC794"
+    _english: Owl Lamp
+  - _korean: "\uB300\uB9AC\uC11D \uAC00\uBA74"
+    _english: Marble Mask
+  - _korean: "\uC6D4\uACC4\uC218 \uB9AC\uB77C"
+    _english: Laurel Lyre
+  - _korean: "\uC2E0\uD0C1\uC758 \uC0BC\uBC1C\uC774"
+    _english: Oracle's Tripod
+  - _korean: "\uBD09\uC778\uB41C \uC554\uD3EC\uB77C"
+    _english: Sealed Amphora
+  - _korean: "\uC138\uC774\uB80C\uC758 \uC18C\uB77C"
+    _english: Siren's Shell
+  - _korean: "\uBCC4\uC790\uB9AC \uC6D0\uBC18"
+    _english: Star Disc
+  - _korean: "\uCCAD\uB3D9 \uC0BC\uC9C0\uCC3D"
+    _english: Bronze Trident
+  - _korean: "\uCE74\uB178\uD478\uC2A4 \uB2E8\uC9C0"
+    _english: Canopic Jar
+  - _korean: "\uD638\uB8E8\uC2A4\uC758 \uB208 \uBAA9\uAC78\uC774"
+    _english: Eye of Horus Pendant
+  - _korean: "\uD669\uAE08 \uC2A4\uCE74\uB77C\uBE0C"
+    _english: Golden Scarab
+  - _korean: "\uC0DD\uBA85\uC758 \uC559\uD06C"
+    _english: Ankh of Life
+  - _korean: "\uC410\uAE30\uBB38\uC790 \uC810\uD1A0\uD310"
+    _english: Cuneiform Tablet
+  - _korean: "\uC6D0\uD1B5 \uC778\uC7A5"
+    _english: Cylinder Seal
+  - _korean: "\uCCAD\uAE08\uC11D \uD558\uD504"
+    _english: Lapis Lazuli Harp
+  - _korean: "\uB77C\uB9C8\uC218 \uC870\uAC01"
+    _english: Lamassu Idol
+  - _korean: "\uB0A1\uC740 \uCC45"
+    _english: Old Book
+  - _korean: "\uB0A0\uAC1C"
+    _english: Wings
+  - _korean: "\uACE1\uAD2D\uC774"
+    _english: Pickaxe
+  - _korean: "\uC218\uC0C1\uD55C \uAE30\uC6B4"
+    _english: Ominous Aura
+  - _korean: "\uD798\uC744 \uC0C8\uAE30\uB294 \uAC83"
+    _english: Carving Power
+  - _korean: "\uD310\uB3C4\uB77C\uC758 \uC0C1\uC790"
+    _english: Pandora's Box
+  - _korean: "\uB2EE\uC740 \uBAA8\uC2B5"
+    _english: Reflection
+  - _korean: "\uC815\uD654"
+    _english: Purification
+  - _korean: "\uBB38\uC591 \uAC70\uB798"
+    _english: Symbol Trade
+  - _korean: "\uD53C\uC758 \uAC70\uB798"
+    _english: Blood Deal
+  - _korean: "\uBD80\uC2DD"
+    _english: Corrosion
+  - _korean: "\uC815\uC2E0 \uBD95\uAD34"
+    _english: Mental Collapse
+  - _korean: "\uC7A0\uB4E0 \uBCF4\uBB3C"
+    _english: Sleeping Treasure
+  - _korean: "\uC720\uBB3C \uAD50\uD658"
+    _english: Relic Trade
+  - _korean: "\uC8FC\uC778 \uC5C6\uB294 \uC720\uBB3C"
+    _english: Ownerless Relic
+  - _korean: "\uB450 \uAC1C\uC758 \uC0C1\uC790"
+    _english: Two Boxes
+  - _korean: "\uD658\uC804"
+    _english: Coin Exchange
+  - _korean: "\uCF54\uC778 \uB9E4\uAC01"
+    _english: Coin Sale
+  - _korean: "\uBBF8\uCE58\uAD11\uC774 \uB300\uC7A5\uC7A5\uC774"
+    _english: Mad Smith
+  - _korean: "\uBC18\uC9DD\uC774\uB294 \uAC83"
+    _english: Something Shiny
+  - _korean: "\uCD95\uBCF5"
+    _english: Blessing
+  - _korean: "\uD68C\uBCF5"
+    _english: Recovery
+  - _korean: "\uC0DD\uBA85\uB825 \uAC70\uB798"
+    _english: Vitality Trade
+  - _korean: "\uC57D\uD0C8"
+    _english: Plunder
+  - _korean: "\uCE68\uC2DD"
+    _english: Erosion
+  - _korean: "\uB0A8\uACA8\uC9C4 \uAC83"
+    _english: Left Behind
+  - _korean: "\uB3C4\uBC15"
+    _english: Gamble
+  - _korean: "\uB3C4\uC804\uC790"
+    _english: Challenger
+  - _korean: "\uB9E4\uBCF5"
+    _english: Ambush
+  - _korean: "\uD0D0\uC0C9\uD55C\uB2E4"
+    _english: Investigate
+  - _korean: "\uACC4\uC18D\uD55C\uB2E4"
+    _english: Continue
+  - _korean: "\uC5F0\uB2E4"
+    _english: Open it
+  - _korean: "\uB2E4\uAC00\uAC04\uB2E4"
+    _english: Approach
+  - _korean: "\uAC74\uB4DC\uB9AC\uC9C0 \uC54A\uB294\uB2E4"
+    _english: Leave it alone
+  - _korean: "\uAC70\uC808\uD55C\uB2E4"
+    _english: Refuse
+  - _korean: "\uAC70\uB798\uD55C\uB2E4"
+    _english: Trade
+  - _korean: "\uB9C8\uC74C\uC744 \uBC14\uAFBC\uB2E4"
+    _english: Change your mind
+  - _korean: "\uBB38\uC591\uC744 \uACE0\uB978\uB2E4"
+    _english: Choose a symbol
+  - _korean: "\uCCB4\uB825\uC73C\uB85C \uCE58\uB978\uB2E4"
+    _english: Pay with HP
+  - _korean: "\uCCB4\uB825\uC744 \uC783\uB294\uB2E4"
+    _english: Lose HP
+  - _korean: "\uACE8\uB4DC\uB97C \uC783\uB294\uB2E4"
+    _english: Lose Gold
+  - _korean: "\uB458 \uB2E4 \uAC00\uC9C4\uB2E4"
+    _english: Take both
+  - _korean: "\uAD50\uD658\uD55C\uB2E4"
+    _english: Trade
+  - _korean: "\uC774\uC57C\uAE30\uB97C \uB4E3\uB294\uB2E4"
+    _english: Listen
+  - _korean: "\uCC59\uAE34\uB2E4"
+    _english: Take it
+  - _korean: "\uCCAB \uBC88\uC9F8\uB97C \uC5F0\uB2E4"
+    _english: Open the first
+  - _korean: "\uB450 \uBC88\uC9F8\uB97C \uC5F0\uB2E4"
+    _english: Open the second
+  - _korean: "\uBC84\uD2F4\uB2E4"
+    _english: Hold on
+  - _korean: "\uBC1B\uC544\uB4E4\uC778\uB2E4"
+    _english: Accept
+  - _korean: "\uC0B4\uD3B4\uBCF8\uB2E4"
+    _english: Take a look
+  - _korean: "\uD68C\uBCF5\uD55C\uB2E4"
+    _english: Rest
+  - _korean: "\uBA39\uB294\uB2E4"
+    _english: Eat it
+  - _korean: "\uB3CC\uC544\uAC04\uB2E4"
+    _english: Turn back
+  - _korean: "\uCCB4\uB825 {0} \uC744 \uB0B4\uC900\uB2E4"
+    _english: Give up {0} HP
+  - _korean: "\uD604\uC7AC \uCCB4\uB825\uC744 \uC783\uB294\uB2E4"
+    _english: Lose current HP
+  - _korean: "\uCD5C\uB300 \uCCB4\uB825\uC744 \uC783\uB294\uB2E4"
+    _english: Lose Max HP
+  - _korean: "\uACE8\uB4DC\uB97C \uB0B4\uC900\uB2E4"
+    _english: Hand over Gold
+  - _korean: "\uC2F8\uC6B4\uB2E4"
+    _english: Fight
+  - _korean: "\uBD80\uC815 \uD6A8\uACFC\uB97C \uBC1B\uB294\uB2E4"
+    _english: Accept a penalty
+  - _korean: "\uBD80\uC815 \uD6A8\uACFC A\uB97C \uBC1B\uB294\uB2E4"
+    _english: Accept penalty A
+  - _korean: "\uBD80\uC815 \uD6A8\uACFC B\uB97C \uBC1B\uB294\uB2E4"
+    _english: Accept penalty B
+  - _korean: "\uB3C4\uB9DD\uCE5C\uB2E4"
+    _english: Flee
+  - _korean: "{0}G\uB97C \uAC74\uB2E4"
+    _english: Bet {0}G
+  - _korean: "\uCC28\uAC00\uC6B4 \uC5F0\uAE30\uAC00 \uB098\uB294 \uD1B5\uB85C"
+    _english: Cold Smoke Passage
+  - _korean: "\uB728\uAC70\uC6B4 \uC5F0\uAE30\uAC00 \uB098\uB294 \uD1B5\uB85C"
+    _english: Hot Smoke Passage
+  - _korean: "\uC624\uC9C1 \uC5B4\uB460\uB9CC\uC774 \uC874\uC7AC\uD558\uB294 \uD1B5\uB85C"
+    _english: Pitch-Dark Passage
+  - _korean: "\uC758 \uD0DC\uADF8 \uD558\uB098\uAC00 \uBC14\uB010\uB2E4"
+    _english: has one tag changed
+  - _korean: "\uBC14\uB010 \uBB38\uC591"
+    _english: Changed symbol
+  - _korean: "\uC744 \uBC1B\uB294\uB2E4"
+    _english: is received
+  - _korean: "\uC744 \uBC84\uB9B0\uB2E4"
+    _english: is discarded
+  - _korean: "\uBB38\uC591 [{0}]"
+    _english: 'Symbol [{0}]'
+  - _korean: "\uBC14\uB010 \uBB38\uC591 [{0}]"
+    _english: 'Changed symbol [{0}]'
+  - _korean: "[{0}] \uC758 \uD0DC\uADF8 \uD558\uB098\uAC00 \uBC14\uB010\uB2E4"
+    _english: One tag of [{0}] changes
+  - _korean: "\uBCF4\uC720 \uBB38\uC591 \uC804\uBD80"
+    _english: All owned symbols
+  - _korean: "\uAC19\uC740 \uC7A5\uC218\uC758 \uBB34\uC791\uC704 \uBB38\uC591"
+    _english: The same number of random symbols
+  - _korean: "\uC774 \uD0DC\uADF8\uC640 \uB2E4\uC74C \uCE74\uB4DC \uD0DC\uADF8\uB97C \uD568\uAED8 \uAC00\uC9C4 \uBB38\uC591"
+    _english: A symbol with this tag and the next card's tag
+  - _korean: "\uC774 \uD0DC\uADF8\uB97C \uBC84\uB9B0\uB2E4"
+    _english: Discard this tag
+  - _korean: "\uC774 \uD0DC\uADF8 \uBB38\uC591 \uC804\uBD80"
+    _english: All symbols with this tag
+  - _korean: "\uC774 \uD0DC\uADF8 \uC5C6\uB294 \uBB34\uC791\uC704 \uBB38\uC591"
+    _english: Random symbols without this tag
+  - _korean: "\uC6D0\uD558\uB294 \uBB38\uC591"
+    _english: A symbol of your choice
+  - _korean: "\uC6D0\uD558\uB294 \uBB38\uC591\uC744 \uACE0\uB978\uB2E4"
+    _english: Choose any symbol
+  - _korean: "\uCCB4\uB825 \uC190\uC2E4"
+    _english: HP loss
+  - _korean: "\uACE0\uAE09 \uC774\uC0C1 \uBCF4\uC720 \uCF54\uC778 \uD558\uB098\uAC00 \uD55C \uB4F1\uAE09 \uC544\uB798 \uBB34\uC791\uC704 \uCF54\uC778\uC73C\uB85C \uBC14\uB010\uB2E4"
+    _english: An Uncommon or rarer coin you own becomes a random coin one rarity tier lower.
+  - _korean: "\uD55C \uB4F1\uAE09 \uC704 \uBB34\uC791\uC704 \uCF54\uC778"
+    _english: A random coin one rarity tier higher
+  - _korean: "\uBD80\uC815 \uD6A8\uACFC \uD558\uB098\uB97C \uC548\uACE0 \uC804\uD22C"
+    _english: Fight with one penalty
+  - _korean: "\uC55E\uC5D0\uC11C \uBC1B\uC740 \uBD80\uC815 \uD6A8\uACFC\uB97C \uC548\uACE0 \uC804\uD22C"
+    _english: Fight with the penalty you accepted earlier
+  - _korean: "\uC774\uAE30\uBA74 \uBCF4\uC0C1 \uB450 \uBC30"
+    _english: Double reward if you win
+  - _korean: "\uC774\uAE30\uBA74 \uACE8\uB4DC {0}"
+    _english: '{0} Gold if you win'
+  - _korean: "\uC8FC\uB294 \uD53C\uD574\uAC00 \uAC10\uC18C\uD55C\uB2E4"
+    _english: Damage dealt is reduced
+  - _korean: "\uC801\uC758 \uCCB4\uB825\uC774 \uC99D\uAC00\uD55C\uB2E4"
+    _english: Enemy HP is increased
+  - _korean: "\uCF54\uC778\uC758 \uBE44\uC6A9\uC774 \uC99D\uAC00\uD55C\uB2E4"
+    _english: Coin costs are increased
+  - _korean: "\uBC1B\uB294 \uD53C\uD574\uAC00 \uC99D\uAC00\uD55C\uB2E4"
+    _english: Damage taken is increased
+  - _korean: "\uBB34\uC791\uC704 \uC720\uBB3C\uC774 \uC774\uBC88 \uC804\uD22C \uB3D9\uC548 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4"
+    _english: A random relic is disabled for this battle
+  - _korean: "\uBB34\uC791\uC704 \uCF54\uC778\uC774 \uC774\uBC88 \uC804\uD22C \uB3D9\uC548 \uBE44\uD65C\uC131\uD654\uB41C\uB2E4"
+    _english: A random coin is disabled for this battle
+  - _korean: "\uD0D0\uD5D8 \uC911 \uB369\uAD74 \uC18D\uC5D0\uC11C \uD76C\uBBF8\uD55C \uBE5B\uC774 \uC0C8\uC5B4 \uB098\uC628\uB2E4.\n\uBD88\uAE38\uD55C \uC608\uAC10\uC774 \uB4E4\uC9C0\uB9CC, \uC5B4\uCA4C\uBA74 \uC774 \uBAA8\uB4E0 \uAC83\uC740 \uC2E0\uC758 \uB73B.\n\uC6B4\uC5D0 \uB9E1\uACA8\uBCFC \uAC83\uC778\uAC00, \uC608\uAC10\uC744 \uBBFF\uC5B4\uBCFC \uAC83\uC778\uAC00."
+    _english: 'As you explore, faint light seeps through the vines.
+
+      You sense danger, but perhaps this is the will of the gods.
+
+      Will you trust your luck or your instinct?'
+  - _korean: "\uB369\uAD74 \uC18D\uC73C\uB85C \uB4E4\uC5B4\uAC00\uBCF4\uB2C8 \uC138 \uAC08\uB798\uC758 \uD1B5\uB85C\uAC00 \uC788\uB2E4."
+    _english: Pushing into the vines, you find three passages.
+  - _korean: "\uC5BB\uC740 \uBB38\uC591\uC73C\uB85C\uBD80\uD130 \uD53C\uC5B4\uC624\uB978 \uC5F0\uAE30\uAC00 \uC628 \uBAB8\uC744 \uAC10\uC2FC\uB2E4. \uBB38\uC591\uC758 \uD798\uC774 \uB290\uAEF4\uC9C4\uB2E4."
+    _english: Smoke rising from the symbol wraps around your whole body. You can feel its power.
+  - _korean: "\uAE38\uC744 \uC9C0\uB098\uAC00\uB2E4 \uC810\uC7C1\uC774\uB97C \uB9C8\uC8FC\uD55C\uB2E4.\n\"\uD798\uC774 \uD544\uC694\uD558\uC9C0 \uC54A\uB294\uAC00?\"\n\uD3C9\uC18C\uB77C\uBA74 \uC9C0\uB098\uCCE4\uACA0\uC9C0\uB9CC, \uC5B4\uCA50\uC9C0 \uADF8 \uB0A0\uC740 \uAC78\uC74C\uC744 \uBA48\uCD94\uAC8C \uB41C\uB2E4.\n\"\uCE74\uB4DC\uB97C \uBF51\uC544\uBD10. \uD798\uC774 \uAE43\uB4E4 \uAC83\uC774\uC57C.\"\n\uBC94\uC0C1\uCE58 \uC54A\uC740 \uB290\uB08C\uC758 \uCE74\uB4DC\uAC00 \uB208 \uC55E\uC5D0\uC11C \uC544\uB978\uAC70\uB9B0\uB2E4. \uBB34\uC2A8 \uCE74\uB4DC\uB97C \uBF51\uC744\uAE4C. \uC120\uD0DD\uC744 \uC8FC\uC800\uD55C\uB2E4."
+    _english: 'On the road you meet a fortune teller.
+
+      "Don''t you need power?"
+
+      You would usually walk past, but somehow today you stop.
+
+      "Draw a card. Power will dwell in it."
+
+      Uncanny cards flicker before your eyes. Which one will you draw? You hesitate.'
+  - _korean: "\uCE74\uB4DC 5\uC7A5\uC744 \uACE0\uB974\uACE0, \uB4A4\uC9D1\uC744 \uCE74\uB4DC 1\uC7A5\uC744 \uACE0\uB978\uB2E4."
+    _english: Choose 5 cards, then choose 1 card to flip.
+  - _korean: "\uB2E4\uC2DC \uCE74\uB4DC 5\uC7A5\uC744 \uACE0\uB974\uACE0, \uB4A4\uC9D1\uC744 \uCE74\uB4DC 1\uC7A5\uC744 \uACE0\uB978\uB2E4."
+    _english: Choose 5 cards again, then choose 1 card to flip.
+  - _korean: "\uCE74\uB4DC\uB97C \uBCF8 \uC810\uC7C1\uC774\uAC00 \uAE30\uAD34\uD558\uAC8C \uC6C3\uC73C\uBA70 \uC0AC\uD0D5 \uD55C \uC54C\uC744 \uAC74\uB128\uB2E4. \uC544\uAE4C \uACE0\uB978 \uCE74\uB4DC \uB450 \uC7A5\uC758 \uBB38\uC591\uC774 \uBAA8\uB450 \uC0C8\uACA8\uC838 \uC788\uB294 \uC0AC\uD0D5\uC774\uB2E4. \uC0AC\uD0D5\uC744 \uC0BC\uD0A4\uB2C8 \uC54C \uC218 \uC5C6\uB294 \uD798\uC774 \uB290\uAEF4\uC9C4\uB2E4.\n\uB4A4\uB97C \uB3CC\uC544\uBCF4\uB2C8 \uD754\uC801\uB3C4 \uC5C6\uC774 \uC0AC\uB77C\uC838 \uC788\uB294 \uC810\uC7C1\uC774. \uB0A8\uC544\uC788\uB294 \uAC83\uC740 \uC785 \uC548\uC758 \uAE30\uBB18\uD55C \uB9DB \uBFD0\uC774\uB2E4. \uC5B4\uC9F8\uC120\uC9C0 \uCC1C\uCC1C\uD558\uC9C0\uB9CC \uAC00\uC57C\uD560 \uAE38\uC774 \uBA40\uB2E4."
+    _english: 'Seeing the cards, the fortune teller laughs eerily and hands you a piece of candy bearing the symbols from both cards you chose. You swallow it, and a strange power stirs within you.
+
+      You turn around. The fortune teller is gone without a trace. Only an odd taste remains in your mouth. You feel uneasy, but the road ahead is long.'
+  - _korean: "\uBE68\uAC04 \uBCF4\uC11D\uC73C\uB85C \uC7A5\uC2DD\uB41C \uC0C1\uC790\uAC00 \uBCF4\uC778\uB2E4. \uB9C8\uCE58 \uBC40\uC758 \uB208\uC744 \uC5F0\uC0C1\uC2DC\uD0A4\uB294 \uBCF4\uC11D\uC774\uB2E4.\n\uC5F4\uC5B4\uBCF4\uACE0 \uC2F6\uC740 \uC695\uB9DD\uC5D0 \uD729\uC2F8\uC774\uC9C0\uB9CC, \uACB0\uACFC\uB294 \uAC10\uD788 \uC608\uCE21\uD560 \uC218 \uC5C6\uB2E4."
+    _english: 'You see a box adorned with red gems, like the eyes of a snake.
+
+      You are seized by the urge to open it, but the outcome is impossible to predict.'
+  - _korean: "\uBE68\uAC04 \uBCF4\uC11D\uC740 \uD589\uC6B4\uC758 \uBCF4\uC11D\uC774\uC5C8\uC744\uAE4C, \uBD88\uD589\uC758 \uBCF4\uC11D\uC774\uC5C8\uC744\uAE4C.\n\uBBFF\uC744 \uC218 \uC5C6\uB294 \uACB0\uACFC\uC5D0 \uC5EC\uB7EC \uBC88 \uB208\uC744 \uAE5C\uBE61\uC5EC\uBCF8\uB2E4."
+    _english: 'Were the red gems a blessing or a curse?
+
+      You blink again and again at the unbelievable result.'
+  - _korean: "\uCC38\uC744 \uC218 \uC5C6\uB294 \uAC08\uC99D\uC5D0 \uC232\uC18D \uC6B0\uBB3C\uC5D0 \uAC00\uAE4C\uC774 \uAC04\uB2E4. \uAE09\uD558\uAC8C \uBB3C\uC744 \uB5A0\uBA39\uACE0 \uB098\uB2C8, \uC6B0\uBB3C\uC5D0\uB294 \uC0C8\uB85C\uC6B4 \uC778\uC0C1\uC758 \uB0B4\uAC00 \uBE44\uCDB0\uC9C4\uB2E4.\n\uC5B4\uC9F8\uC120\uC9C0 \uD655\uC2E0\uC5D0 \uCC2C \uD45C\uC815. \uC800\uB7F0 \uB098\uB77C\uBA74 \uC774 \uBAA8\uB4E0\uAC78 \uD574\uB0BC \uC218 \uC788\uC9C0 \uC54A\uC744\uAE4C.\n\uC6B0\uBB3C \uC18D\uC73C\uB85C \uC190\uC744 \uBED7\uACE0 \uC2F6\uC740 \uC695\uB9DD\uC5D0 \uD729\uC2F8\uC778\uB2E4."
+    _english: 'Overcome by thirst, you approach a well in the forest. You gulp down the water, then see a changed reflection in the well.
+
+      A face full of conviction. Could you accomplish all this if you were like that?
+
+      You feel the urge to reach into the well.'
+  - _korean: "\uC6B0\uBB3C\uC744 \uD718\uC813\uC790 \uAE30\uBB18\uD55C \uBD84\uC704\uAE30\uC758 \uB3CC\uC774 \uB5A0\uC624\uB978\uB2E4. \uD558\uB098\uB97C \uB09A\uC544\uCC44\uBA74, \uD558\uB098\uB294 \uAE08\uBC29 \uAC00\uB77C\uC549\uC744 \uAC83 \uAC19\uB2E4. \uBB34\uC5C7\uC744 \uACE8\uB77C\uC57C\uD560\uAE4C."
+    _english: As you stir the well, strange stones float up. If you grab one, the other looks like it will sink at once. Which should you choose?
+  - _korean: "\uB3CC\uC774 \uC138 \uAC1C \uB5A0\uC624\uB978\uB2E4. \uC544\uAE4C\uCC98\uB7FC \uAE30\uBB18\uD55C \uBD84\uC704\uAE30\uC758 \uB3CC\uC774\uB2E4. \uD558\uB098\uB97C \uACE8\uB77C\uC57C\uB9CC \uD560 \uAC83 \uAC19\uB2E4."
+    _english: Three stones float up, as strange as before. It seems you must choose one.
+  - _korean: "\uB2E4\uC2DC \uC6B0\uBB3C\uC5D0 \uC790\uC2E0\uC744 \uBE44\uCDB0\uBCF4\uC790, \uCC98\uC74C\uC5D0 \uBCF4\uC558\uB358 \uC790\uC2E0\uAC10\uC5D0 \uAC00\uB4DD \uCC2C \uC5BC\uAD74\uC774 \uBE44\uCDB0\uC9C4\uB2E4.\n\uBBF8\uC18C\uB97C \uC9C0\uC740 \uCC44, \uC774\uB9CC \uC790\uB9AC\uC5D0\uC11C \uC77C\uC5B4\uB09C\uB2E4."
+    _english: 'Looking into the well again, you see the confident face from before.
+
+      With a smile, you get up and go.'
+  - _korean: "\uC774\uC0C1\uD55C \uB290\uB08C\uC5D0 \uC7A0\uC5D0\uC11C \uAE68\uC790 \uB3C4\uAE68\uBE44\uBD88\uC774 \uB208 \uC55E\uC5D0\uC11C \uC544\uB978\uAC70\uB9B0\uB2E4. \uBB34\uC2DC\uD558\uACE0 \uC7A0\uC744 \uC790\uB824 \uD574\uBCF4\uC544\uB3C4 \uC77C\uBD80\uB7EC \uB208 \uC55E\uC73C\uB85C \uC640 \uC7A0\uC744 \uAE68\uC6B4\uB2E4.\n\uBB34\uC2DC\uD560\uAE4C, \uBCF8\uBCF4\uAE30\uB85C \uD558\uB098\uB97C \uC7A1\uC544\uBCFC\uAE4C."
+    _english: 'You wake with a strange feeling. Will-o''-wisps flicker before your eyes. You try to ignore them and sleep, but they keep drifting into your face, keeping you awake.
+
+      Ignore them, or seize one to make an example of it?'
+  - _korean: "\uC720\uB3C5 3\uAC1C\uC758 \uBD88\uC774 \uC7A5\uB09C\uB07C\uAC00 \uB9CE\uC740 \uB4EF \uD558\uB2E4. \uC790\uC138\uD788 \uAD00\uCC30\uD574\uBCF4\uB2C8 \uD558\uB098\uB294 \uC544\uC8FC \uBC1D\uAC8C \uD0C0\uC624\uB974\uACE0 \uC788\uACE0, \uD558\uB098\uB294 \uD0C0\uC624\uB974\uB2E4\uAC00 \uAEBC\uC84C\uB2E4\uAC00 \uD558\uBA70 \uB180\uB798\uD0A4\uACE4 \uD55C\uB2E4. \uD558\uB098\uB294 \uD76C\uBBF8\uD55C \uBD88\uC774\uC9C0\uB9CC \uAC00\uAE4C\uC774\uC11C \uB9F4\uB3CC\uACE4 \uD55C\uB2E4.\n\uBB34\uC5C7\uC744 \uC7A1\uC544\uBCFC\uAE4C."
+    _english: 'Three flames seem especially mischievous. You look closer. One burns brightly. Another flares up and goes out, startling you. The third glows faintly but hovers close.
+
+      Which will you catch?'
+  - _korean: "\uC5B5\uC13C \uC190\uAE38\uB85C \uD558\uB098\uB97C \uC7A1\uC544 \uB4A4\uD754\uB4DC\uB2C8 \uBD88\uB4E4\uC774 \uC6C0\uCC14\uAC70\uB9AC\uBA70 \uC0AC\uADF8\uB77C\uB4E0\uB2E4.\n\uC774\uC81C\uC57C \uC7A0\uC5D0 \uB4E4 \uC218 \uC788\uC744 \uAC83 \uAC19\uB2E4."
+    _english: 'You grab one firmly and shake it, and the flames flinch and die down.
+
+      Now, at last, you can sleep.'
+  - _korean: "\uC5BC\uB9C8 \uB0A8\uC9C0 \uC54A\uC740 \uC2DD\uB7C9\uC774\uB2E4. \uBE44\uC7A5\uD55C \uB9C8\uC74C\uC73C\uB85C \uC785\uC5D0 \uC464\uC154\uB123\uB358 \uB3C4\uC911, \uAE30\uBB18\uD55C \uBD84\uC704\uAE30\uC758 \uC544\uC774\uAC00 \uC2DD\uB7C9\uC744 \uCCD0\uB2E4\uBCF8\uB2E4. \uBB34\uC2DC\uD558\uB824 \uD588\uAC74\uB9CC, \uC190\uAE4C\uC9C0 \uB0B4\uBBFC\uB2E4. \uD558\uC9C0\uB9CC \uB0B4\uAC8C\uB3C4 \uC18C\uC911\uD55C \uC2DD\uB7C9\uC774\uB2E4.\n\"\uBA39\uC744 \uAC83\uC744 \uC8FC\uC2DC\uBA74, \uC81C\uAC8C\uB3C4 \uC911\uC694\uD55C\uAC78 \uAC74\uB124\uB4DC\uB9B4\uAC8C\uC694. \uC815\uB9D0, \uBC30\uACE0\uD30C\uC694.\"\n\uC9C0\uAE08 \uC2DD\uB7C9\uC744 \uBA39\uC9C0 \uC54A\uC73C\uBA74 \uC5B8\uC81C \uC2DD\uB7C9\uC744 \uC5BB\uC5B4\uC11C \uBA39\uC744 \uC218 \uC788\uC744\uC9C0 \uBAA8\uB978\uB2E4. \uBB34\uC2DC\uD560\uAE4C, \uAC70\uB798\uD560\uAE4C."
+    _english: 'Your food is almost gone. As you grimly stuff it into your mouth, a strange child stares at it. You try to ignore them, but they hold out a hand. Still, this food is precious to you too.
+
+      "If you give me something to eat, I''ll give you something precious to me. I''m so hungry."
+
+      If you don''t eat now, who knows when you will eat again? Ignore them, or trade?'
+  - _korean: "\"\uD589\uC6B4\uC11D\uC774\uC5D0\uC694. ...\uC138\uC0C1\uC774 \uC774\uB807\uAC8C \uB418\uAE30 \uC804, \uAC12\uC774 \uAF64 \uB098\uAC14\uB358 \uB3CC\uC774\uC5D0\uC694. \uB178\uD30C\uD55C\uD14C \uD314\uBA74 \uC2DD\uB7C9\uC744 \uC5BB\uC744 \uC218 \uC788\uC744\uD150\uB370, \uC9C0\uAE08 \uB108\uBB34 \uBC30\uAC00 \uACE0\uD30C\uC11C...\"\n\uD558\uB098\uB294 \uD53C\uCC98\uB7FC \uBD89\uACE0, \uD558\uB098\uB294 \uBC14\uB2E4\uCC98\uB7FC \uD30C\uB797\uB2E4. \uD558\uB098\uB294 \uAD6C\uB984\uCC98\uB7FC \uD76C\uB2E4. \uC544\uC774\uB97C \uC790\uC138\uD788 \uBCF4\uB2C8 \uBF08\uB9CC \uB4DC\uB7EC\uB098\uC788\uB2E4. \uACE0\uB974\uB354\uB77C\uB3C4 \uD558\uB098\uB9CC \uACE0\uB974\uB3C4\uB85D \uD560\uAE4C."
+    _english: '"These are luck stones. ...Before the world became like this, they were worth a lot. I could sell them to the old woman for food, but I''m just too hungry..."
+
+      One is red as blood, one blue as the sea, one white as a cloud. Looking closely, the child is nothing but skin and bones. Perhaps you should take only one.'
+  - _korean: "\"...!\uAC10\uC0AC\uD574\uC694.\"\n\uC544\uC774\uAC00 \uC2DD\uB7C9\uC744 \uD5C8\uAC81\uC9C0\uAC81 \uBA39\uB294\uB2E4.\n\uB098\uB294 \uC6C3\uC73C\uBA70 \uD589\uC6B4\uC11D\uC744 \uC190\uC5D0 \uAF2D \uC954\uB2E4. \uC5B4\uC9F8\uC120\uC9C0 \uBC1C\uAC78\uC74C\uC774 \uAC00\uBCBC\uC6B4 \uB4EF\uD55C \uB290\uB08C\uC774\uB2E4."
+    _english: '"...! Thank you."
+
+      The child wolfs down the food.
+
+      Smiling, you hold the luck stone tight. Somehow your steps feel lighter.'
+  - _korean: "\uBD93\uC744 \uB4E0 \uAE30\uBB18\uD55C \uB178\uC778\uACFC \uB208\uC744 \uB9C8\uC8FC\uCE5C\uB2E4. \uB208\uC744 \uD53C\uD558\uB824 \uD588\uAC74\uB9CC. \uC9D1\uC694\uD558\uAC8C \uB530\uB77C\uC628\uB2E4.\n\"\uC800 \uC9D0\uC744 \uC774 \uC9C0\uAC8C\uC5D0 \uC62C\uB824\uC8FC\uBA74, \uC6D0\uD558\uB294 \uD798\uC744 \uC0C8\uACA8\uC8FC\uACA0\uB124.\"\n\uC9D0\uC774, \uC5B4\uB9C8\uBB34\uC2DC\uD558\uAC8C \uBB34\uAC70\uC6CC\uBCF4\uC778\uB2E4. \uD53C\uACE4\uD560\uB300\uB85C \uD53C\uACE4\uD55C\uB370 \uC9C0\uB098\uCE60\uAE4C, \uB178\uC778\uC758 \uB9D0\uC744 \uBBFF\uC5B4\uBCFC\uAE4C."
+    _english: 'You lock eyes with a strange old man holding a brush. You try to look away, but he follows you relentlessly.
+
+      "Load that baggage onto this carrying frame, and I will inscribe whatever power you desire."
+
+      The baggage looks terribly heavy. You are exhausted. Walk past, or trust the old man?'
+  - _korean: "\"\uC774\uAC78 \uD574\uB0B4\uB2E4\uB2C8. \uC6D0\uD558\uB294 \uD798\uC744 \uB9D0\uD574\uBCF4\uAC8C. \uBAB8\uC5D0 \uC0C8\uACA8\uC904\uD14C\uB2C8.\""
+    _english: '"You actually did it. Name the power you want. I''ll carve it into your body."'
+  - _korean: "\uC815\uB9D0\uB85C \uD798\uC774 \uAE43\uB4E0 \uB4EF \uD558\uB2E4. \uB4A4\uB97C \uB3CC\uC544\uBCF4\uB2C8 \uB178\uC778\uC740 \uD754\uC801\uB3C4 \uC5C6\uC774 \uC0AC\uB77C\uC838 \uC788\uB2E4. \uC815\uCCB4\uAC00 \uBB50\uC600\uC744\uAE4C."
+    _english: Power truly seems to dwell in you. You turn around, and the old man has vanished without a trace. Who was he?
+  - _korean: "\uC9C0\uB098\uAC00\uB358 \uC911 \uC9C4\uD759\uD0D5\uC5D0 \uBE60\uC84C\uB2E4. \uBC1C\uBC84\uB465\uCE58\uB358 \uC911 \uC9C0\uB098\uAC00\uB358 \uC0C1\uC778\uACFC \uB208\uC774 \uB9C8\uC8FC\uCE5C\uB2E4.\n\"\uB3C8\uC744 \uC8FC\uBA74 \uAD6C\uD574\uC8FC\uC9C0.\"\n\uD63C\uC790 \uBE60\uC838\uB098\uAC00\uB824\uACE0 \uC2DC\uB3C4\uD574\uBCFC\uAE4C, \uB3C8\uC744 \uC8FC\uACE0 \uB098\uC62C\uAE4C."
+    _english: 'You fall into a mud pit. As you struggle, you lock eyes with a passing merchant.
+
+      "Pay me and I''ll pull you out."
+
+      Try to get out on your own, or pay to be rescued?'
+  - _korean: "\uC783\uC5B4\uBC84\uB9B0 \uAC83\uC774 \uC788\uC5B4\uB3C4, \uC0B6\uC740 \uACC4\uC18D\uB418\uB294 \uBC95. \uB2E4\uC2DC \uBC1C\uAC78\uC74C\uC744 \uC62E\uAE34\uB2E4."
+    _english: Even if something is lost, life goes on. You set off again.
+  - _korean: "\uC545\uBABD. \uD544\uC2DC, \uC545\uBABD\uC774\uB2E4. \uAE4A\uC740 \uC5B4\uB460\uB9CC\uC774 \uB208 \uC55E\uC5D0 \uC790\uC6B1\uD558\uB2E4.\n\uBB34\uC5C7\uC774\uB77C\uB3C4 \uC7A1\uC544\uC57C\uD55C\uB2E4. \uC190\uC744 \uD718\uC800\uC73C\uB2C8 \uC774\uC804\uC5D0 \uBAA8\uC544\uB454 \uAC12\uC9C4 \uB3CC\uB4E4\uC774 \uB9CC\uC838\uC9C4\uB2E4.\n\uBB34\uC5C7\uC744 \uC7A1\uC744\uAE4C."
+    _english: 'A nightmare. Surely a nightmare. Deep darkness fills your vision.
+
+      You must grab something. You flail about and feel the precious stones you gathered before.
+
+      Which will you grab?'
+  - _korean: "\uB108\uBB34 \uD798\uC744 \uC900 \uB098\uBA38\uC9C0 \uB3CC\uC774 \uAE68\uC838\uBC84\uB9B0 \uAC83\uC744 \uB9C8\uC8FC\uD55C\uB2E4.\n\uC774\uACF3\uC740 \uC601 \uAFC8\uC790\uB9AC\uAC00 \uC88B\uC9C0 \uC54A\uAD70, \uB2E4\uC2DC \uAE38\uC744 \uB5A0\uB09C\uB2E4."
+    _english: 'You grip the stone too hard. It shatters in your hand.
+
+      This is no place for good dreams. You set off again.'
+  - _korean: "\uB3D9\uAD74 \uD0D0\uD5D8 \uC911 \uAC70\uB300\uD55C \uC0C1\uC790\uB97C \uBC1C\uACAC\uD55C\uB2E4.\n\uAF64\uB098 \uACE0\uAE09\uC2A4\uB7EC\uC6CC \uBCF4\uC774\uB294 \uC0C1\uC790\uC9C0\uB9CC, \uC5B4\uC9F8\uC120\uC9C0 \uC218\uC0C1\uD55C \uB08C\uC0C8\uC774\uB2E4. \uC5F4\uC5B4\uBCFC\uAE4C, \uADF8\uB0E5 \uB5A0\uB0A0\uAE4C."
+    _english: 'Exploring a cave, you find a huge chest.
+
+      It looks quite luxurious, but something feels off. Open it, or just leave?'
+  - _korean: "\uC0C1\uC790\uB294 \uAF64\uB098 \uD06C\uACE0 \uAE4A\uC5C8\uB2E4. \uB458 \uB2E4 \uB2E4\uB978 \uBC29\uD5A5\uC73C\uB85C \uAE4A\uC774 \uC788\uC5B4 \uAEBC\uB0B4\uAE30 \uC27D\uC9C0 \uC54A\uC544\uBCF4\uC778\uB2E4.\n\uC5B4\uB5A4 \uAC78 \uAEBC\uB0B4\uC57C\uD560\uAE4C."
+    _english: 'The chest is large and deep. Two items lie deep inside, each in a different direction. Neither looks easy to reach.
+
+      Which will you take?'
+  - _korean: "\uAF64 \uC720\uC6A9\uD560 \uB4EF \uD558\uB2E4. \uC55E\uC73C\uB85C\uC758 \uC5EC\uC815\uC774 \uAE30\uB300\uB41C\uB2E4."
+    _english: It looks quite useful. You look forward to the journey ahead.
+  - _korean: "...\uC774\uB807\uAC8C\uAE4C\uC9C0 \uD544\uC694\uD55C \uAC83\uC740 \uC544\uB2C8\uC5C8\uB294\uB370.\n\uC5B4\uC9F8\uC120\uC9C0 \uD55C\uC228\uC774 \uC808\uB85C \uB098\uC628\uB2E4. \uBC1C\uAC78\uC74C\uC774 \uBB34\uAC81\uB2E4."
+    _english: '...You don''t need it this badly.
+
+      A sigh escapes you. Your steps feel heavy.'
+  - _korean: "\uC9D0\uC744 \uC815\uB9AC\uD558\uB358 \uC911 \uD589\uC0C1\uC778\uC774 \uB208\uC744 \uBE5B\uB0B4\uBA70 \uB2E4\uAC00\uC628\uB2E4. \uADF8\uB3D9\uC548 \uBAA8\uC740 \uC720\uBB3C\uC5D0 \uAD00\uC2EC\uC744 \uBCF4\uC774\uB294 \uB4EF \uD558\uB2E4.\n\"\uC800\uAE30...\""
+    _english: 'As you sort your belongings, a merchant approaches with gleaming eyes. He seems interested in the relics you have gathered.
+
+      "Excuse me..."'
+  - _korean: "\"\uD6CC\uB96D\uD55C \uAC83\uB4E4\uC744 \uBAA8\uC73C\uC168\uAD70\uC694. \uB098\uC774\uB3C4 \uBCF4\uC544\uD558\uB2C8 \uC80A\uC5B4\uBCF4\uC774\uB294\uB370, \uB300\uB2E8\uD569\uB2C8\uB2E4. \uB0B4 \uAC83\uACFC \uBC14\uAFB8\uACA0\uC2B5\uB2C8\uAE4C?\n\uC800\uB3C4 \uC548\uBAA9\uC774 \uAF64\uB098 \uD6CC\uB96D\uD558\uB2F5\uB2C8\uB2E4. \uC80A\uC740\uC774\uD55C\uD14C \uC88B\uC740 \uAD50\uD658\uC774 \uB420\uAC81\uB2C8\uB2E4.\""
+    _english: '"You''ve gathered some fine things. And so young, too. Impressive. Would you trade with me?
+
+      I have quite a good eye myself. It will be a good trade for you, young one."'
+  - _korean: "\uC218\uC0C1\uD55C \uBD84\uC704\uAE30\uC640\uB294 \uB2E4\uB974\uAC8C \uADF8\uC758 \uB9D0\uCC98\uB7FC \uAF64 \uAD1C\uCC2E\uC740 \uC720\uBB3C\uC774\uB2E4. \uB9C8\uC800 \uAE38\uC744 \uB5A0\uB098\uBCFC\uAE4C."
+    _english: Despite his suspicious air, it is a fine relic, just as he said. Time to continue on.
+  - _korean: "\uB098\uBB34 \uC544\uB798\uC5D0 \uC720\uBB3C\uC774 \uBCF4\uC778\uB2E4. \uC124\uB9C8, \uB204\uAD70\uAC00 \uD758\uB9AC\uACE0 \uAC04 \uC720\uBB3C\uC77C\uAE4C."
+    _english: You see a relic beneath a tree. Could someone have dropped it?
+  - _korean: "\uD55C \uCABD\uC5D0 \uC190\uC744 \uB300\uC790 \uD55C \uCABD\uC740 \uB545 \uC18D\uC73C\uB85C \uD30C\uACE0\uB4E0\uB2E4. \uC720\uBB3C\uC758 \uD798\uC744 \uB545\uC774 \uD761\uC218\uD558\uB824\uB294 \uB4EF \uD558\uB2E4.\n\uBB34\uC5C7\uC744 \uC120\uD0DD\uD574\uC57C \uC88B\uC744\uAE4C."
+    _english: 'When you touch one, the other sinks into the ground, as if the earth wants to absorb its power.
+
+      Which should you choose?'
+  - _korean: "\uC720\uBB3C\uC744 \uC544\uBB34 \uB300\uAC00 \uC5C6\uC774 \uC5BB\uB2E4\uB2C8, \uC624\uB298\uC740 \uC6B4\uC774 \uC815\uB9D0 \uC88B\uC740 \uAC83 \uAC19\uB2E4. \uC660\uC9C0, \uC608\uAC10\uC774 \uC88B\uB2E4."
+    _english: A relic at no cost. Today is truly a lucky day. You have a good feeling about this.
+  - _korean: "\uAE38\uC744 \uAC00\uB358 \uC911 \uC6EC \uB178\uD30C\uAC00 \uBD88\uB7EC\uC138\uC6B4\uB2E4.\n\"\uC790\uB124, \uD589\uC6B4\uC744 \uC2DC\uD5D8\uD574\uBCF4\uC9C0 \uC54A\uACA0\uB294\uAC00?\"\n\uB178\uD30C\uAC00 \uBE44\uB9BF\uD55C \uC6C3\uC74C\uC744 \uC9C0\uC73C\uBA70 \uB450 \uC0C1\uC790\uB97C \uAC00\uB9AC\uD0A8\uB2E4. \uAF64\uB098 \uD070 \uD06C\uAE30\uC758 \uC0C1\uC790\uB2E4.\n\"\uD558\uB098\uB294 \uD568\uC815\uC774\uACE0, \uD558\uB098\uB294 \uADC0\uD55C \uBCF4\uBB3C\uC77C\uC138. \uC80A\uC740\uC774\uB294 \uC6B4\uC774 \uAF64 \uC88B\uC744 \uAC83 \uAC19\uC740\uB370 \uB9D0\uC774\uC57C.\"\n\uB178\uD30C\uC758 \uB9D0\uC774 \uB9DE\uC744\uAE4C?"
+    _english: 'On the road, an old woman calls out to you.
+
+      "You there, won''t you test your luck?"
+
+      With a sly smile, she points at two large boxes.
+
+      "One is a trap, the other a precious treasure. You look rather lucky, young one."
+
+      Is she telling the truth?'
+  - _korean: "...\uB2E4\uD589\uD788\uB3C4 \uACB0\uACFC\uB294, \uBCF4\uBB3C \uC0C1\uC790\uC600\uB2E4. \uB73B\uD558\uC9C0 \uC54A\uC740 \uD589\uC6B4\uC5D0 \uC785\uAF2C\uB9AC\uAC00 \uACC4\uC18D\uD574\uC11C \uC62C\uB77C\uAC04\uB2E4.\n\uB178\uD30C\uB294 \uC5B4\uC9F8\uC120\uC9C0 \uC544\uC26C\uC6B4 \uB4EF\uD55C \uD45C\uC815\uC774\uB2E4."
+    _english: '...To your relief, you find treasure. You can''t stop smiling at the unexpected fortune.
+
+      The old woman looks oddly disappointed.'
+  - _korean: "\uC0C1\uC790\uC5D0 \uBAB8\uC758 \uC808\uBC18\uC774 \uBE60\uC9C4\uB2E4. \uC544\uBB34\uB9AC \uC560\uB97C \uC368\uB3C4 \uBE60\uC838\uB098\uAC00\uC9C0\uC9C8 \uC54A\uB294\uB2E4.\n\uB178\uD30C\uAC00 \uAE54\uAE54\uAC70\uB9AC\uBA70 \uC6C3\uB294\uB2E4.\n\"\uD589\uC6B4 \uB530\uC708 \uB204\uAD6C\uC5D0\uAC8C\uB3C4 \uC5C6\uB2E8\uB2E4, \uC560\uC1A1\uC544!\"\n\uC5BC\uB9C8 \uC9C0\uB098\uC9C0 \uC54A\uC544 \uB178\uD30C\uC758 \uAE30\uCC99\uC774 \uC0AC\uB77C\uC9C4\uB2E4. \uC124\uB9C8 \uBC84\uB9AC\uACE0 \uAC04\uAC78\uAE4C, \uADF8\uB807\uACA0\uC9C0. \uD55C\uC228\uBD80\uD130 \uC808\uB85C \uB098\uC628\uB2E4."
+    _english: 'You fall halfway into the box. No matter how hard you struggle, you can''t get out.
+
+      The old woman cackles.
+
+      "There''s no such thing as luck, whelp!"
+
+      Soon her presence fades. Has she abandoned you? Of course she has. You let out a sigh.'
+  - _korean: "\uADF8 \uB178\uD30C \uB355\uC5D0 \uC624\uB298\uC758 \uD589\uC6B4\uC744 \uD655\uC2E4\uD788 \uC54C \uC218 \uC788\uC5C8\uB2E4.\n\uACB0\uACFC\uAC00 \uC5B4\uCC0C\uB410\uB4E0, \uAC00\uC57C\uD560 \uAE38\uC744 \uAC00\uC57C\uACA0\uC9C0."
+    _english: 'Thanks to that old woman, you know exactly how much luck you have today.
+
+      Whatever the outcome, you must press on.'
+  - _korean: "\uC9C0\uB098\uAC00\uB358 \uC911 \uC0C1\uC778 \uBB34\uB9AC\uB97C \uB9CC\uB0AC\uB2E4.\n\uC0C1\uC778\uC740 \uCF54\uC778\uC744 \uBB34\uC791\uC704\uB85C \uBC14\uAFD4\uC8FC\uACA0\uB2E4\uACE0 \uC81C\uC548\uD55C\uB2E4."
+    _english: 'You meet a group of merchants on the road.
+
+      They offer to exchange one of your coins for a random one.'
+  - _korean: "\uB098\uC758 \uBB18\uD55C \uD45C\uC815\uC744 \uBCF4\uC790 \uC606\uC5D0 \uC788\uB358 \uADF8\uC758 \uCE5C\uAD6C\uAC00 \uC790\uC2E0\uB3C4 \uBC14\uAFD4\uC8FC\uACA0\uB2E4\uBA70 \uC81C\uC548\uD55C\uB2E4."
+    _english: At your puzzled look, one merchant's friend beside him offers to make an exchange too.
+  - _korean: "\uC0C1\uC778 \uBB34\uB9AC\uAC00 \uC720\uC720\uD788 \uB5A0\uB098\uAC04\uB2E4. \uB098\uB3C4 \uAC00\uC57C\uD560 \uAE38\uC744 \uAC00\uC57C\uACA0\uC9C0."
+    _english: The merchants leave at their leisure. You should be on your way too.
+  - _korean: "...\uC815\uB9D0\uC774\uC9C0, \uAE30\uBB18\uD55C \uCC28\uB9BC\uC758 \uB0A8\uC790\uB2E4. \uCC28\uB9BC\uC740 \uD589\uC0C1\uC778\uC774 \uBD84\uBA85\uD55C\uB370, \uC9D0\uC740 \uAC00\uBCBC\uC6CC\uBCF4\uC778\uB2E4.\n\uADF8\uB97C \uCCD0\uB2E4\uBCF4\uB358 \uB3C4\uC911 \uB208\uC774 \uB9C8\uC8FC\uCE5C\uB2E4. \uADF8\uAC00 \uBC18\uAC11\uAC8C \uC6C3\uC73C\uBA70 \uB2E4\uAC00\uC628\uB2E4."
+    _english: '...What an oddly dressed man. He is clearly dressed as a merchant, yet his pack looks light.
+
+      As you stare, your eyes meet. He smiles warmly and approaches.'
+  - _korean: "\"\uB0B4\uAC8C \uBB3C\uAC74\uC744 \uD314\uAC8C. \uADF8\uB7EC\uBA74, \uACE8\uB4DC\uB97C \uC8FC\uACA0\uB124. \uC815\uC9C1\uD55C \uAC12\uC73C\uB85C \uC8FC\uB3C4\uB85D \uD558\uC9C0.\"\n\uADF8\uC758 \uB9D0\uC744 \uBBFF\uC5B4\uB3C4 \uB418\uB294\uAC78\uAE4C. \uC77C\uB2E8 \uACE8\uB4DC\uAC00 \uB4E4\uC5B4\uC788\uB294 \uC8FC\uBA38\uB2C8\uB97C \uC810\uAC80\uD574\uBCF4\uB3C4\uB85D \uD558\uC790. \uB3C8\uC774 \uBD80\uC871\uD55C \uC0C1\uD669\uC774\uC5C8\uB098?"
+    _english: '"Sell me your goods, and I''ll give you Gold. A fair price."
+
+      Can you trust him? You check your Gold pouch. Are you short on money?'
+  - _korean: "\uB450\uB451\uD574\uC9C4 \uC8FC\uBA38\uB2C8\uAC00 \uC5B4\uC9F8\uC120\uC9C0 \uAE30\uBD84\uC774 \uC88B\uB2E4. \uAC00\uBCBC\uC6B4 \uBC1C\uAC78\uC74C\uC73C\uB85C \uAE38\uC744 \uB5A0\uB09C\uB2E4."
+    _english: Your heavier pouch puts you in a good mood. You set off with light steps.
+  - _korean: "\uC6EC \uB178\uC778\uC774 \uC790\uC2E0\uC744 \uB300\uC7A5\uC7A5\uC774\uB77C\uACE0 \uD558\uBA70, \uCF54\uC778\uC744 \uB354 \uD76C\uADC0\uD558\uAC8C \uB9CC\uB4E4\uC5B4\uC8FC\uACA0\uB2E4\uACE0 \uD55C\uB2E4.\n\uAC70\uC808\uD558\uB824 \uD588\uC9C0\uB9CC \uBE7C\uC557\uAE30\uACE0 \uB9CC\uB2E4."
+    _english: 'An old man claims to be a smith and says he will make your coin rarer.
+
+      You try to refuse, but he snatches it away.'
+  - _korean: "\uCF54\uC778\uC774 \uB354 \uD754\uD574\uC9C0\uACE0 \uB9D0\uC558\uB2E4. \uB300\uC7A5\uC7A5\uC774\uAC00 \uBA4B\uCA4D\uAC8C \uC6C3\uC73C\uBA70 \uB3C4\uB9DD\uCE5C\uB2E4.\n\uD55C\uC228\uC774 \uC808\uB85C \uB098\uC628\uB2E4. \uAC08 \uAE38\uC774 \uBA40\uAC8C\uB9CC \uB290\uAEF4\uC9C4\uB2E4."
+    _english: 'Your coin becomes more common. The smith laughs awkwardly and runs off.
+
+      You sigh. The road ahead feels endless.'
+  - _korean: "\uCEE4\uB2E4\uB780 \uBC14\uC704 \uC544\uB798\uB85C \uBC18\uC9DD\uC774\uB294 \uAC83\uB4E4\uC774 \uBCF4\uC778\uB2E4. \uB2E4\uAC00\uAC00\uBCFC\uAE4C?"
+    _english: Something glitters beneath a large rock. Take a closer look?
+  - _korean: "\uC790\uC138\uD788 \uBCF4\uB2C8 \uBCF4\uC11D \uC138 \uAC1C\uAC00 \uBC15\uD600\uC788\uB2E4. \uBAA8\uB450 \uCC59\uACA8\uAC00\uACE0 \uC2F6\uC9C0\uB9CC, \uD558\uB098\uC5D0 \uC190\uC744 \uB300\uBA74 \uB098\uBA38\uC9C0 \uB450 \uAC1C\uC758 \uBCF4\uC11D\uC758 \uBE5B\uC774 \uAEBC\uC9C0\uACE0 \uB9CC\uB2E4.\n\uC5B4\uCA54 \uC218 \uC5C6\uC774 \uD558\uB098\uB9CC \uACE8\uB77C\uC57C\uD560 \uB4EF \uD558\uB2E4."
+    _english: 'A closer look reveals three gems embedded in the rock. You want them all, but touching one makes the other two go dark.
+
+      You have no choice but to take just one.'
+  - _korean: "\uBCF4\uC11D\uC774 \uD654\uB824\uD558\uAC8C \uBE5B\uC774 \uB09C\uB2E4. \uAE30\uBD84\uC88B\uAC8C \uBCF4\uC11D\uC744 \uAC00\uBC29\uC5D0 \uB123\uACE0 \uB2E4\uC2DC \uAE38\uC744 \uB5A0\uB09C\uB2E4."
+    _english: The gem shines brilliantly. You happily put it in your bag and set off again.
+  - _korean: "\uC9C0\uB098\uAC00\uB2E4 \uC131\uC9C1\uC790\uC640 \uB9C8\uC8FC\uCE5C\uB2E4. \uADF8\uB294 \uC774\uB7F0 \uC138\uC0C1\uC5D0\uC11C\uB3C4 \uBD84\uBA85 \uC2E0\uC774 \uC138\uC0C1\uC744 \uAD6C\uC6D0\uD574\uC904 \uAC83\uC774\uB77C \uD558\uC600\uB2E4.\n\"\uC790, \uB2E4\uD568\uAED8 \uAE30\uB3C4\uD569\uC2DC\uB2E4.\"\n\uD568\uAED8 \uAE30\uB3C4\uB97C \uD558\uC790 \uC131\uC9C1\uC790\uB294 \uAC10\uACA9\uD558\uC5EC \uCD95\uBCF5\uC744 \uB0B4\uB824\uC8FC\uACA0\uB2E4\uACE0 \uD55C\uB2E4."
+    _english: 'You meet a priest on the road. He says that even in a world like this, the gods will surely save it.
+
+      "Come, let us pray together."
+
+      When you pray with him, the priest is so moved that he offers you a blessing.'
+  - _korean: "\uB530\uB73B\uD568\uC774 \uC628 \uBAB8\uC744 \uB9F4\uB3C4\uB294 \uB4EF\uD558\uB2E4. \uC628\uAE30\uB97C \uB290\uB07C\uBA70 \uB2E4\uC2DC \uAE38\uC744 \uB5A0\uB09C\uB2E4."
+    _english: Warmth seems to flow through your whole body. Feeling it, you set off again.
+  - _korean: "\uB05D\uC744 \uC54C \uC218 \uC5C6\uB294 \uC5EC\uC815\uC5D0 \uBAB8\uC774 \uC9C0\uCE60\uB300\uB85C \uC9C0\uCE5C \uC0C1\uD0DC. \uADF8\uB54C, \uD587\uBE5B\uC774 \uB4E4\uC5B4\uC624\uB294 \uC791\uC740 \uAC15\uC744 \uB9CC\uB09C\uB2E4.\n\uBB3C \uC628\uB3C4\uB3C4 \uADF8\uB2E5 \uCC28\uAC11\uC9C0 \uC54A\uACE0, \uBD84\uC704\uAE30\uB3C4 \uD3C9\uD654\uB86D\uB2E4. \uC624\uB79C\uB9CC\uC5D0 \uD53C\uB85C\uB97C \uD480\uACE0 \uAC08\uAE4C."
+    _english: 'Your body is worn out from an endless journey. You come upon a small, sunlit river.
+
+      The water is not too cold. All is peaceful. Will you finally take a moment to rest?'
+  - _korean: "\uC790\uC138\uD788 \uC0B4\uD3B4\uBCF4\uB2C8 \uAC15\uAC00\uC5D0 \uCEE4\uB2E4\uB780 \uC5F4\uB9E4\uAC00 \uC788\uB2E4. \uC800\uAC78 \uBA39\uC73C\uBA74 \uCCB4\uB825\uC774 \uAE08\uBC29 \uD68C\uBCF5\uB420 \uB4EF \uD558\uB2E4."
+    _english: Looking around, you find a large fruit by the river. Eating it would surely restore your strength quickly.
+  - _korean: "\uAC00\uBCBC\uC6CC\uC9C4 \uBAB8\uC73C\uB85C \uB2E4\uC2DC \uAE38\uC744 \uB5A0\uB09C\uB2E4."
+    _english: Feeling lighter, you set off again.
+  - _korean: "\uD589\uC0C1\uC778\uC774\uB77C\uAE30\uC5D4 \uCC28\uB9BC\uC774 \uD5D0\uAC70\uC6B4 \uB0A8\uC131\uC774 \uB2E4\uAC00\uC628\uB2E4.\n\uB300\uD654\uB97C \uD558\uACE0\uC790 \uD558\uB294 \uB4EF\uD55C\uB370... \uC598\uAE30\uB97C \uB4E4\uC5B4\uBCFC\uAE4C."
+    _english: 'A man too shabbily dressed to be a merchant approaches.
+
+      He seems to want to talk... Will you hear him out?'
+  - _korean: "\uADF8\uAC00 \uC704\uD5D8\uD55C \uC81C\uC548\uC744 \uD574\uC628\uB2E4.\n\"\uB0B4\uAC90 \uC80A\uC74C\uC774 \uD544\uC694\uD574. \uB300\uC2E0 \uACE8\uB4DC\uB97C \uC8FC\uACA0\uC5B4. \uC5B4\uB5BB\uAC8C \uD558\uACA0\uB098?\""
+    _english: 'He makes a dangerous offer.
+
+      "I need youth. I''ll give you Gold for it. What do you say?"'
+  - _korean: "\uC2DC\uC57C\uAC00 \uD750\uB824\uC9C4\uB2E4. \uC815\uC2E0\uC744 \uBD99\uC7A1\uACE0, \uB2E4\uC2DC \uAE38\uC744 \uB098\uC120\uB2E4."
+    _english: Your vision blurs. You pull yourself together and set off again.
+  - _korean: "\uC7A0\uC5D0\uC11C \uAE68\uC790\uB9C8\uC790, \uBAA9\uC5D0 \uCE7C\uB0A0\uC774 \uB290\uAEF4\uC9C4\uB2E4. \uB3C4\uC801\uC774\uB2E4.\n\"\uB09C \uC0DD\uAC01\uBCF4\uB2E4 \uC790\uBE44\uB85C\uC6B4 \uB3C4\uC801\uC774\uB77C\uC11C, \uACE8\uB4DC\uB97C \uB0B4\uC5B4\uC8FC\uBA74 \uC0B4\uB824\uC904\uAC8C. \uC544\uB2C8\uBA74 \uB098\uB791 \uC2F8\uC6CC\uC57C\uACA0\uC9C0.\""
+    _english: 'The moment you wake, you feel a blade at your throat. A bandit.
+
+      "I''m a more merciful bandit than you''d think. Hand over your Gold and I''ll let you live. Otherwise, you''ll have to fight me."'
+  - _korean: "\uCE7C\uC774 \uC788\uAE30\uC57C \uD574\uC11C \uC5B4\uB5BB\uAC8C\uB4E0 \uC2F8\uC6B8 \uC218\uB294 \uC788\uACA0\uC9C0\uB9CC, \uD53C\uB85C\uAC00 \uB204\uC801\uB41C \uBAB8\uC774\uB77C \uC27D\uC9C0 \uC54A\uC544\uBCF4\uC778\uB2E4.\n\uACE8\uB4DC\uB97C \uB0B4\uC5B4\uC8FC\uACE0 \uC21C\uC21C\uD788 \uBB3C\uB7EC\uAC08\uAE4C, \uC2F8\uC6CC\uBCFC\uAE4C."
+    _english: 'You have a sword. You could put up a fight, but exhaustion weighs on you.
+
+      Hand over the Gold and back down, or fight?'
+  - _korean: "\uC5B4\uB5A4 \uC120\uD0DD\uC774\uC5C8\uB4E0, \uC190\uD574\uB294 \uC788\uC5C8\uC744 \uAC83\uC774\uB77C\uBA70 \uC2A4\uC2A4\uB85C\uB97C \uB2E4\uB3C5\uC778\uB2E4."
+    _english: 'You console yourself: either choice would have cost you something.'
+  - _korean: "\uB3C4\uAE68\uBE44\uBD88\uC774 \uBAB8\uC5D0 \uC2A4\uBA70\uB4E0\uB2E4. \uBA48\uCDB0\uBCF4\uB824 \uD558\uC9C0\uB9CC, \uC774\uBBF8 \uB2A6\uC740 \uC0C1\uD669."
+    _english: A will-o'-wisp seeps into your body. You try to stop it, but it is already too late.
+  - _korean: "\"\uB09C \uC7A5\uB09C\uC774 \uC88B\uC544, \uB09C \uC7A5\uB09C\uC774 \uC88B\uC544! \uB108\uC5D0\uAC8C \uB450\uAC00\uC9C0 \uC120\uD0DD\uC9C0\uB97C \uC8FC\uACA0\uC5B4. \uBB34\uC5C7\uC744 \uC120\uD0DD\uD560\uB798?\"\n\uAE30\uAD34\uD55C \uBAA9\uC18C\uB9AC\uAC00 \uB4E4\uB72C \uB4EF\uC774 \uC2E0\uB098\uAC8C \uBB3C\uC5B4\uBCF8\uB2E4."
+    _english: '"I love pranks, I love pranks! I''ll give you two choices. Which will you pick?"
+
+      An eerie voice asks, giddy with excitement.'
+  - _korean: "\uBD88\uAE38\uD55C \uAE30\uC6B4\uC774 \uBAB8\uC744 \uB9F4\uB3CC\uC9C0\uB9CC \uB5A8\uCCD0\uB0B8\uB2E4. \uAC08 \uAE38\uC774 \uBA40\uB2E4."
+    _english: An ominous aura lingers around you, but you shake it off. The road is long.
+  - _korean: "\uBAA8\uB2E5\uBD88 \uC794\uD574... \uC544\uC9C1 \uC628\uAE30\uAC00 \uB0A8\uC544\uC788\uB2E4. \uB204\uAD70\uAC00 \uAE09\uD788 \uB5A0\uB098\uAC04 \uAC83\uC77C\uAE4C?"
+    _english: The remains of a campfire... still warm. Did someone leave in a hurry?
+  - _korean: "\uC8FC\uC704\uB97C \uD0D0\uC0C9\uD558\uB2C8 \uACE8\uB4DC\uAC00 \uB0A8\uACA8\uC838 \uC788\uC5C8\uB2E4. \uC2E0\uB098\uAC8C \uACE8\uB4DC\uB97C \uC8FC\uBA38\uB2C8 \uC548\uC5D0 \uB123\uB294\uB2E4."
+    _english: Searching around, you find some Gold left behind. You happily stuff it into your pouch.
+  - _korean: "\uBB34\uAC70\uC6CC\uC9C4 \uC8FC\uBA38\uB2C8, \uAC00\uBCBC\uC6B4 \uBC1C\uAC78\uC74C. \uC815\uB9D0\uC774\uC9C0 \uC88B\uC740 \uC870\uD569\uC774\uB2E4."
+    _english: A heavier pouch and lighter steps. A fine combination indeed.
+  - _korean: "\uB3D9\uAD74 \uC548\uC5D0 \uB4E4\uC5B4\uAC00\uC790 \uB178\uD30C\uB4E4\uB07C\uB9AC\uC758 \uC791\uC740 \uB3C4\uBC15\uC7A5\uC774 \uBCF4\uC778\uB2E4. \uD55C \uB178\uD30C\uAC00 \uC2AC\uADF8\uBA38\uB2C8 \uB2E4\uAC00\uC628\uB2E4."
+    _english: Inside the cave, you find a small gathering of old women gambling. One of them sidles up to you.
+  - _korean: "\"\uC790\uB124\uB3C4 \uAC78\uC5B4\uBD10! \uC80A\uC74C\uC740 \uD589\uC6B4\uC758 \uC5EC\uC2E0\uC758 \uC99D\uD45C\uC9C0.\"\n\uADF8\uB0A0\uB530\uB77C \uC5B4\uC9F8\uC120\uC9C0 \uC194\uAE43\uD558\uB2E4.\n\"\uC800\uCABD \uD560\uBA48\uD55C\uD14C \uAC78\uB798, \uC774\uCABD \uD560\uBA48\uC5D0\uAC8C \uAC78\uB798?\""
+    _english: '"Place a bet! Youth is a sign of Lady Luck''s favor."
+
+      For some reason, you are tempted today.
+
+      "Will you bet on that old woman, or this one?"'
+  - _korean: "\"\uC5ED\uC2DC, \uC80A\uC740 \uC0AC\uB78C\uB4E4\uC774 \uAC10\uC774 \uC88B\uC544.\"\n\uB3C4\uBC15\uC7A5\uC5D0\uC11C \uAC16\uAC00\uC9C0 \uD0C4\uC131\uACFC \uD0C4\uC2DD\uC774 \uBAA8\uB450 \uD758\uB7EC\uB098\uC628\uB2E4. \uB098\uB294 \uBA38\uC4F1\uD558\uAC8C \uC6C3\uC73C\uBA70 \uACE8\uB4DC\uB97C \uCC59\uAE34\uB2E4."
+    _english: '"Young people really do have good instincts."
+
+      Cheers and groans fill the den. You smile sheepishly and collect your Gold.'
+  - _korean: "\"\uD558\uD558, \uC80A\uC740\uC774. \uD070 \uCF54 \uB2E4\uCCE4\uAD6C\uB9CC.\"\n\uC774\uAE34 \uCABD\uC758 \uB178\uD30C\uAC00 \uC2E0\uB098\uAC8C \uC6C3\uB294\uB2E4. \uB2F4\uBC30\uC5F0\uAE30\uAC00 \uC5B4\uC9F8\uC120\uC9C0 \uB9E4\uCE90\uD558\uAC8C \uB290\uAEF4\uC9C4\uB2E4. \uC18D\uC774 \uC4F0\uB9AC\uB2E4."
+    _english: '"Ha! You''ve learned a hard lesson, young one."
+
+      The winning old woman laughs merrily. The tobacco smoke seems especially acrid. The loss leaves a bitter taste.'
+  - _korean: "\uD589\uC6B4\uC758 \uC5EC\uC2E0\uC774 \uB2F9\uC2E0\uAED8 \uAE43\uB4E4\uAE38.\n\uD55C \uB178\uD30C\uC758 \uAE30\uB3C4\uB97C \uB4A4\uB85C \uD558\uACE0 \uAE38\uC744 \uB5A0\uB09C\uB2E4."
+    _english: 'May Lady Luck be with you.
+
+      Leaving an old woman''s prayer behind, you set off.'
+  - _korean: "\uB3D9\uAD74 \uC548\uCABD\uC5D0\uC11C \uD568\uC131\uC774 \uB4E4\uB9B0\uB2E4.\n\uC54C\uACE0\uBCF4\uB2C8 \uBAB8\uC2F8\uC6C0\uC758 \uC2B9\uBD80\uC5D0 \uB3C8\uC744 \uAC70\uB294 \uB3C4\uBC15\uC7A5\uC758 \uC77C\uC885\uC774\uC5C8\uB2E4."
+    _english: 'Shouts echo from deep in the cave.
+
+      It turns out to be a kind of gambling den where people bet on brawls.'
+  - _korean: "\"\uC790\uB124\uB3C4 \uD574\uBCF4\uACA0\uB294\uAC00? \uAF64 \uC798\uD560 \uAC83 \uAC19\uC740\uB370.\"\n\uACE0\uAC1C\uB97C \uB044\uB355\uC774\uC790 \uACE7\uBC14\uB85C \uC0C1\uB300\uAC00 \uC900\uBE44\uB418\uC5C8\uB2E4.\n\"\uC2DC\uC791!\"\n\uC0C1\uB300\uAC00 \uCC3D\uC744 \uD718\uB450\uB978\uB2E4."
+    _english: '"Want to try? You look like you''d be good."
+
+      As soon as you nod, an opponent is ready.
+
+      "Begin!"
+
+      Your opponent swings a spear.'
+  - _korean: "\uAE30\uD569\uC744 \uC9C0\uB974\uBA70 \uAC80\uC73C\uB85C \uC0C1\uB300\uB97C \uAC00\uB978\uB2E4."
+    _english: With a shout, you cut down your opponent with your sword.
+  - _korean: "\"\uC5ED\uC2DC, \uC798 \uC2F8\uC6B8 \uC904 \uC54C\uC558\uB2E4\uB2C8\uAE4C.\"\n\uC190\uC5D0 \uB450\uB451\uD55C \uBCF4\uC0C1\uC774 \uB2F4\uAE34\uB2E4. \uAE30\uBD84\uC88B\uAC8C \uB3D9\uAD74\uC744 \uB5A0\uB09C\uB2E4."
+    _english: '"I knew you could fight."
+
+      A generous reward lands in your hands. You leave the cave in high spirits.'
+  - _korean: "\uC544\uCC28! \uD568\uC815\uC5D0 \uBE60\uC84C\uB2E4. \uB3C4\uC801\uB4E4\uC774 \uB9E4\uBCF5\uD558\uACE0 \uC788\uC5C8\uB2E4.\n\uCE7C\uC744 \uBE7C\uB4E4\uACE0 \uC2F8\uC6CC\uBCFC\uAE4C, \uC544\uB2C8\uBA74 \uB3C4\uB9DD\uCCD0\uBCFC\uAE4C."
+    _english: 'A trap. Bandits lie in ambush.
+
+      Draw your sword and fight, or flee?'
+  - _korean: "\uACA8\uC6B0 \uD3EC\uC704\uB97C \uBC97\uC5B4\uB0AC\uB2E4. \uC228\uC774 \uD131\uB05D\uAE4C\uC9C0 \uCC2C\uB2E4. \uAC00\uC57C\uD560 \uAE38\uC774 \uBA3C\uB370\uB3C4..."
+    _english: You barely break free of the encirclement. You gasp for breath. The road ahead is still long...
+  - _korean: "\uAE38\uAC00\uC5D0 \uB0A1\uC740 \uC0C1\uC790\uAC00 \uB193\uC5EC \uC788\uB2E4.\n\uC790\uBB3C\uC1E0\uB294 \uC624\uB798\uC804\uC5D0 \uC0AD\uC558\uACE0 \uB69C\uAED1 \uD2C8\uC73C\uB85C \uBB34\uC5B8\uAC00 \uBC18\uC9DD\uC778\uB2E4.\n\n\uC5F4\uC5B4 \uBCFC \uC218\uB3C4, \uADF8\uB0E5 \uC9C0\uB098\uCE60 \uC218\uB3C4 \uC788\uB2E4."
+    _english: 'An old chest sits by the road.
+
+      The lock rusted away long ago, and something glints through the gap in the lid.
+
+
+      You can open it, or just walk past.'

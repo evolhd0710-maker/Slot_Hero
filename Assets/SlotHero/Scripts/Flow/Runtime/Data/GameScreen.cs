@@ -28,7 +28,7 @@ namespace SlotHero.Flow
         /// <summary>11 이벤트 화면.</summary>
         Event = 5,
 
-        /// <summary>전투. 아직 코드가 없어 대역이 대신 선다.</summary>
+        /// <summary>전투. `Combat` 의 전투 화면이다.</summary>
         Combat = 6,
 
         /// <summary>10 보상 화면. 방을 깨고 나면 뜬다.</summary>

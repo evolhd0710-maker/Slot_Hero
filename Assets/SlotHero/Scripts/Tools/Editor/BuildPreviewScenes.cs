@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using SlotHero.CurrentBuild;
 using SlotHero.CurrentBuild.UI;
 using SlotHero.Events;
@@ -29,6 +29,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using SlotHero.Ui;
+using SlotHero.Localization.UI;
 using SlotHero.Combat;
 
 namespace SlotHero.ToolsEditor
@@ -1103,6 +1104,9 @@ namespace SlotHero.ToolsEditor
             TMP_Text titleLabel = UiSceneBuilder.NewText(
                 "TitleLabel", content, "문양 선택", visual.SectionFontSize,
                 visual.TextColor, TextAlignmentOptions.Left, true);
+
+            // 영어 제목("Choose a Symbol to Transform")은 칸보다 길어 두 줄로 넘쳤다(2026년 11월 8일).
+            UiSceneBuilder.ShrinkToFit(titleLabel);
             RectTransform slotLayer = UiSceneBuilder.NewRect("SlotLayer", content);
             UiSceneBuilder.Stretch(slotLayer);
 
@@ -2303,6 +2307,9 @@ namespace SlotHero.ToolsEditor
                 visual.TabTextColor, TextAlignmentOptions.Center, true);
             UiSceneBuilder.Stretch(label.rectTransform);
 
+            // 탭 이름 "일반" 은 아이템 등급의 "일반" 과 영어가 달라 맥락을 붙인다(2026년 11월 8일 원재).
+            label.GetComponent<TextLocalizer>().Context = "설정 탭";
+
             SettingsTabView view = go.AddComponent<SettingsTabView>();
             UiSceneBuilder.SetField(view, "_button", go.GetComponent<Button>());
             UiSceneBuilder.SetField(view, "_background", background);
@@ -2503,6 +2510,7 @@ namespace SlotHero.ToolsEditor
                 "EditLabel", editPanel.transform, visual.EditText, visual.ActionFontSize,
                 visual.EditTextColor, TextAlignmentOptions.Center);
             UiSceneBuilder.Stretch(editLabel.rectTransform);
+            UiSceneBuilder.ShrinkToFit(editLabel, 0.6f, UiScale.Px(4f));
 
             Image deletePanel = UiSceneBuilder.NewButtonImage("DeletePanel", content, visual.ActionButtonColor);
             UiSceneBuilder.AddButton(deletePanel.gameObject);
@@ -2510,6 +2518,9 @@ namespace SlotHero.ToolsEditor
                 "DeleteLabel", deletePanel.transform, visual.DeleteText, visual.ActionFontSize,
                 visual.DeleteTextColor, TextAlignmentOptions.Center);
             UiSceneBuilder.Stretch(deleteLabel.rectTransform);
+
+            // 영어 "Delete" 가 작은 버튼을 넘쳐 칸에 맞춰 줄인다(2026년 11월 8일).
+            UiSceneBuilder.ShrinkToFit(deleteLabel, 0.6f, UiScale.Px(4f));
 
             // 이름을 치는 칸. 빈 자리를 누르면 이것이 켜진다.
             // 이게 없으면 프로필을 만들 수가 없어 게임을 시작할 길이 막힌다.

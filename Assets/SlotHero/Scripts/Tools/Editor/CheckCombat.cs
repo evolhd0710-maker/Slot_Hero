@@ -1423,6 +1423,7 @@ namespace SlotHero.ToolsEditor
         private static void Report(string title, bool passed, int actual)
         {
             _checked++;
+            LocalizationAudit.ScanOpenScenes();
 
             if (passed)
             {

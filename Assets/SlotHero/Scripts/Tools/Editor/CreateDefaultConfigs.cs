@@ -5,6 +5,7 @@ using SlotHero.CurrentBuild;
 using SlotHero.Events;
 using SlotHero.Flow;
 using SlotHero.Hud;
+using SlotHero.Localization;
 using SlotHero.Map;
 using SlotHero.Popup;
 using SlotHero.Profile;
@@ -93,6 +94,9 @@ namespace SlotHero.ToolsEditor
 
             // 태그별 공격 이펙트와 소리. 프리팹과 소리는 `태그 공격 이펙트 가져오기` 가 물린다(2026년 11월 1일).
             made += Make<TagAttackFxConfig>("TagAttack", "TagAttackFxConfig");
+
+            // 영어 번역표. 줄은 `번역 가져오기` 가 TSV 에서 채운다(2026년 11월 8일 원재).
+            made += Make<LocalizationConfig>("Localization", "LocalizationConfig");
 
             // 여러 화면이 함께 쓰는 스크롤 휠 거리와 스크롤 바 생김새(2026년 10월 25일 원재).
             made += Make<ScrollVisualConfig>("Ui", "ScrollVisualConfig");

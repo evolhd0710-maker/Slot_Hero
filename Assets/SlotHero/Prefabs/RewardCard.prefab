@@ -760,6 +760,7 @@ GameObject:
   - component: {fileID: 910315819699539625}
   - component: {fileID: 8795036827166345223}
   - component: {fileID: 8160482517897210453}
+  - component: {fileID: 6684355672106769554}
   m_Layer: 0
   m_Name: TagLabel
   m_TagString: Untagged
@@ -886,6 +887,20 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6684355672106769554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7905432508777286568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a02a449eb958be4e91672f4955da0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Localization.UI.TextLocalizer
+  _text: {fileID: 8160482517897210453}
+  _context: 
 --- !u!1 &8913592218034328742
 GameObject:
   m_ObjectHideFlags: 0
@@ -972,6 +987,7 @@ GameObject:
   - component: {fileID: 6305666283093863632}
   - component: {fileID: 7366073732771446104}
   - component: {fileID: 2394086568807512279}
+  - component: {fileID: 8632808368390367287}
   m_Layer: 0
   m_Name: NameLabel
   m_TagString: Untagged
@@ -1098,3 +1114,17 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &8632808368390367287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9004984288329734526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a02a449eb958be4e91672f4955da0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Localization.UI.TextLocalizer
+  _text: {fileID: 2394086568807512279}
+  _context: 

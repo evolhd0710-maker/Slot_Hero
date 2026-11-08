@@ -14,11 +14,13 @@ namespace SlotHero.ToolsEditor
     /// 원재가 확인용 씬(`Scenes/태그 공격 확인`)에서 고른 것이다(2026년 11월 1일). 고른 내용은 `효과음과 이펙트 목록.md` 7장에 있다.
     ///
     /// 하는 일은 셋이다.
-    /// 1. 소리와 그림: `코드/TagAttack/Art` 의 구운 소리(`Sound/태그공격_*.wav`)와 목성 뿌리 그림을 `Assets/SlotHero/Art/TagAttack` 으로 옮긴다
+    /// 1. 소리: `코드/TagAttack/Art` 의 구운 소리(`Sound/태그공격_*.wav`)를 `Assets/SlotHero/Art/TagAttack` 으로 옮긴다
     /// 2. 이펙트: 받아 둔 묶음(Assets 맨 위의 Vefects, VFX Fantasy DEMO)에서 고른 파티클을 태그마다 프리팹 하나로 묶는다.
     ///    재질, 그림, 셰이더를 `Assets/SlotHero/Art/TagAttack` 아래로 복사해 묶음을 지워도 그대로 돈다.
-    ///    Vefects 셰이더는 2D 렌더러가 그리는 단계가 없어 단계 이름을 `Universal2D` 로 바꾼 사본을 쓴다
-    /// 3. 설정(`TagAttackFxConfig`)의 태그마다 프리팹, 소리, 그림을 물린다
+    ///    Vefects 셰이더는 2D 렌더러가 그리는 단계가 없어 단계 이름을 `Universal2D` 로 바꾼 사본을 쓴다.
+    ///    해왕성과 목성은 조립하지 않고 손으로 만든 프리팹을 쓴다. 해왕성은 파도(`태그공격_해왕성.prefab`, 그림과 재질은 `해왕성` 폴더),
+    ///    목성은 고목 뿌리(`태그공격_목성.prefab`, 그림과 재질은 `목성` 폴더)다
+    /// 3. 설정(`TagAttackFxConfig`)의 태그마다 프리팹과 소리를 물린다
     ///
     /// 묶음이 없는 컴퓨터에서는 2를 건너뛰고 이미 만든 프리팹을 그대로 물린다.
     /// </summary>
@@ -30,7 +32,6 @@ namespace SlotHero.ToolsEditor
         private const string TextureFolder = Folder + "/Textures";
         private const string ShaderFolder = Folder + "/Shaders";
         private const string MeshFolder = Folder + "/Meshes";
-        private const string RootsSprite = Folder + "/목성_뿌리.png";
 
         private const string Vefects = "Assets/Vefects/Flipbook VFX Bundle Lite URP/Flipbook VFX URP/_ Lite/Prefabs/";
         private const string Fantasy = "Assets/VFXFantasyPackDEMO/Content/URP/Prefabs/";
@@ -65,7 +66,8 @@ namespace SlotHero.ToolsEditor
 
         /// <summary>
         /// 태그마다 고른 이펙트. 확인용 씬의 안을 원재가 고치라고 한 대로 옮겼다(2026년 11월 1일).
-        /// 목성은 그림 이펙트(뿌리)만 쓴다.
+        /// 해왕성은 묶음에서 조립하지 않는다. 파도 시도 6 을 손으로 만든 프리팹(`태그공격_해왕성.prefab`)을 그대로 쓴다(2026년 11월 8일 원재).
+        /// 목성도 묶음에서 조립하지 않는다. 고목 뿌리를 손으로 만든 프리팹(`태그공격_목성.prefab`)을 그대로 쓴다(2026년 11월 9일 원재).
         /// </summary>
         private static Dictionary<SymbolTagType, Part[]> Parts()
         {
@@ -91,24 +93,6 @@ namespace SlotHero.ToolsEditor
             saturnB.Angle = 90f;
             saturnB.Delay = 0.06f;
 
-            // 해왕성. 확인용 씬 안 3(2026년 11월 1일 원재). 큰 물 튀김 넷이 원판 쪽에서 차례로 덮치고 그 위로 물살 줄기 셋이 지난다.
-            List<Part> neptune = new List<Part>();
-            for (int i = 0; i < 4; i++)
-            {
-                Part splash = P(Vefects + "Lite_VFX_Water_Ground_Splash_01.prefab", new Color(0.3f, 0.5f, 1f, 1f), 2.2f, 0.8f,
-                    new Vector2(260f - 150f * i, -60f + 15f * i));
-                splash.FlipX = true;
-                splash.Delay = 0.07f * i;
-                neptune.Add(splash);
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                Part rush = P(Fantasy + "Projectile/FX_Projectile_Blue.prefab", NoTint, 1.6f, 1f, new Vector2(300f, -80f + 80f * i));
-                rush.Delay = 0.04f * i;
-                neptune.Add(rush);
-            }
-
             // 명왕성. 보라 구름 1.5배와 보라 줄기. 둘 다 두 배 느리게 해 연출을 길게 늘인다.
             return new Dictionary<SymbolTagType, Part[]>
             {
@@ -118,7 +102,6 @@ namespace SlotHero.ToolsEditor
                 { SymbolTagType.Mars, new[] { marsLeft, marsRight, marsFront } },
                 { SymbolTagType.Saturn, new[] { saturnA, saturnB } },
                 { SymbolTagType.Uranus, new[] { P(Fantasy + "Slash/FX_SlashLight_White.prefab", air, 1f, 1f, Vector2.zero) } },
-                { SymbolTagType.Neptune, neptune.ToArray() },
                 {
                     SymbolTagType.Pluto, new[]
                     {
@@ -148,9 +131,7 @@ namespace SlotHero.ToolsEditor
         {
             UiSceneBuilder.EnsureFolder(SoundFolder);
             CopyFiles(Path.Combine(ImportArt.SourceRoot, @"TagAttack\Art\Sound"), SoundFolder, "*.wav");
-            CopyFiles(Path.Combine(ImportArt.SourceRoot, @"TagAttack\Art"), Folder, "*.png");
             AssetDatabase.Refresh();
-            MakeSprite(RootsSprite);
 
             Dictionary<SymbolTagType, Part[]> parts = Parts();
             foreach (KeyValuePair<SymbolTagType, Part[]> pair in parts)
@@ -175,11 +156,11 @@ namespace SlotHero.ToolsEditor
                     config.Entries.Add(entry);
                 }
 
-                entry.Effect = parts.ContainsKey(pair.Key)
-                    ? AssetDatabase.LoadAssetAtPath<GameObject>(Folder + "/태그공격_" + pair.Value + ".prefab")
-                    : null;
+                // 조립한 프리팹과 손으로 만든 프리팹(해왕성, 목성)을 같은 이름으로 찾는다.
+                entry.Effect = AssetDatabase.LoadAssetAtPath<GameObject>(Folder + "/태그공격_" + pair.Value + ".prefab");
                 entry.Sound = AssetDatabase.LoadAssetAtPath<AudioClip>(SoundFolder + "/태그공격_" + pair.Value + ".wav");
-                entry.Sprite = pair.Key == SymbolTagType.Jupiter ? AssetDatabase.LoadAssetAtPath<Sprite>(RootsSprite) : null;
+                // 그림 한 장으로 띄우는 이펙트를 쓰는 태그는 이제 없다. 목성의 옛 뿌리 그림도 프리팹으로 바꿨다(2026년 11월 9일 원재).
+                entry.Sprite = null;
 
                 if (entry.Sound != null)
                 {
@@ -205,17 +186,6 @@ namespace SlotHero.ToolsEditor
             for (int i = 0; i < files.Length; i++)
             {
                 File.Copy(files[i], Path.Combine(target, Path.GetFileName(files[i])), true);
-            }
-        }
-
-        private static void MakeSprite(string path)
-        {
-            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (importer != null && importer.textureType != TextureImporterType.Sprite)
-            {
-                importer.textureType = TextureImporterType.Sprite;
-                importer.alphaIsTransparency = true;
-                importer.SaveAndReimport();
             }
         }
 

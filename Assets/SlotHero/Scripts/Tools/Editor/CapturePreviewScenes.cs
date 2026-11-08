@@ -1,9 +1,11 @@
-﻿using System.IO;
+using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using SlotHero.Ui;
 using UnityEngine.SceneManagement;
+using SlotHero.Localization;
+using SlotHero.Localization.UI;
 using UnityEngine.UI;
 
 namespace SlotHero.ToolsEditor
@@ -37,6 +39,51 @@ namespace SlotHero.ToolsEditor
             CaptureCombatStates(folder);
 
             Debug.Log("씬 " + guids.Length + "개를 그림으로 뽑았다: " + folder);
+        }
+
+        /// <summary>
+        /// 확인용 씬을 영어로 바꿔 `화면 확인/English` 에 뽑는다(2026년 11월 8일 원재).
+        /// 영어 글이 길어 칸을 넘치는 곳을 눈으로 찾으려는 것이다. 끝나면 한국어로 되돌린다.
+        /// 편집 모드라 글상자의 Awake 가 돌지 않아 번역 전처리를 직접 건다.
+        /// </summary>
+        [MenuItem("Slot Hero/확인용 씬 영어 그림으로 뽑기")]
+        public static void CaptureAllEnglish()
+        {
+            LocalizationConfig config = UiSceneBuilder.LoadConfig<LocalizationConfig>("Localization", "LocalizationConfig");
+            Loc.SetTable(config != null ? config.English : null);
+            Loc.SetLanguage(GameLanguage.English);
+
+            try
+            {
+                string folder = Path.Combine(Directory.GetCurrentDirectory(), OutputFolder, "English");
+                Directory.CreateDirectory(folder);
+
+                string[] guids = AssetDatabase.FindAssets("t:Scene", new[] { UiSceneBuilder.SceneFolder });
+                for (int i = 0; i < guids.Length; i++)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                    EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+                    HookTranslations();
+                    Shoot(Path.GetFileNameWithoutExtension(path), folder);
+                }
+
+                Debug.Log("씬 " + guids.Length + "개를 영어 그림으로 뽑았다: " + folder);
+            }
+            finally
+            {
+                Loc.SetLanguage(GameLanguage.Korean);
+            }
+        }
+
+        /// <summary>열린 씬의 모든 글상자에 번역 전처리를 걸고 다시 그리게 한다.</summary>
+        private static void HookTranslations()
+        {
+            TextLocalizer[] localizers = Object.FindObjectsByType<TextLocalizer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < localizers.Length; i++)
+            {
+                localizers[i].Hook();
+                localizers[i].Refresh();
+            }
         }
 
         /// <summary>

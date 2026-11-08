@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using SlotHero.Ui;
+using SlotHero.Localization.UI;
 
 namespace SlotHero.ToolsEditor
 {
@@ -442,6 +443,19 @@ namespace SlotHero.ToolsEditor
         }
 
         /// <summary>
+        /// 글이 칸보다 길 때만 글자를 줄인다(2026년 11월 8일 원재). 영어처럼 글이 길어지는 언어에서 좁은 칸이 넘치지 않게 한다.
+        /// 지금 크기가 가장 큰 크기라 한국어처럼 칸에 들어가는 글은 그대로다.
+        /// sidePadding 은 좌우 여백이다. 작은 버튼은 글이 테두리에 닿기 전에 줄도록 여백을 둔다.
+        /// </summary>
+        public static void ShrinkToFit(TMP_Text label, float minimumRatio = 0.6f, float sidePadding = 0f)
+        {
+            label.enableAutoSizing = true;
+            label.fontSizeMax = label.fontSize;
+            label.fontSizeMin = label.fontSize * minimumRatio;
+            label.margin = new Vector4(sidePadding, 0f, sidePadding, 0f);
+        }
+
+        /// <summary>
         /// 글상자 하나를 만든다. 한글 글꼴을 함께 물린다.
         /// 04 화면 공통 규칙 의 텍스트 표가 크기와 굵기를 짝으로 정하므로 굵기도 함께 받는다.
         /// </summary>
@@ -484,6 +498,10 @@ namespace SlotHero.ToolsEditor
                 label.font = Font;
             }
 
+            // 설정의 언어가 English 면 그리기 직전에 영어로 바꾼다(2026년 11월 8일 원재).
+            TextLocalizer localizer = go.AddComponent<TextLocalizer>();
+            localizer.Text = label;
+
             return label;
         }
 
@@ -514,6 +532,9 @@ namespace SlotHero.ToolsEditor
             TMP_Text text = NewText(
                 "Text", area, string.Empty, fontSize, color, TextAlignmentOptions.Left);
             Stretch(text.rectTransform);
+
+            // 사람이 치는 글은 번역하지 않는다. 바꿔 그리면 입력 커서 자리가 글과 어긋난다(2026년 11월 8일).
+            Object.DestroyImmediate(text.GetComponent<TextLocalizer>());
 
             TMP_InputField field = background.gameObject.AddComponent<TMP_InputField>();
             field.textViewport = area;

@@ -9,6 +9,7 @@ using SlotHero.CurrentBuild.UI;
 using SlotHero.Events;
 using SlotHero.Events.UI;
 using SlotHero.Hud.UI;
+using SlotHero.Localization;
 using SlotHero.Map;
 using SlotHero.Map.UI;
 using SlotHero.Popup;
@@ -87,6 +88,9 @@ namespace SlotHero.Flow
 
         [Tooltip("코인의 소모 체력과 가중치. 아이템 상세에 적는다(2026년 11월 1일).")]
         [SerializeField] private CombatRuleConfig _combatRules;
+
+        [Tooltip("영어 번역표. 설정의 언어가 English 면 화면 글자를 이 표로 바꾼다(2026년 11월 8일 원재).")]
+        [SerializeField] private LocalizationConfig _localization;
         [SerializeField] private RunEventConfig _eventConfig;
         [SerializeField] private EventIllustrationConfig _eventIllustrations;
         [SerializeField] private RewardRuleConfig _rewardRules;
@@ -99,7 +103,7 @@ namespace SlotHero.Flow
         [SerializeField] private SoundPlayer _sound;
 
         [Header("전투")]
-        [Tooltip("전투 창구. 전투 코드가 오기 전에는 대역을 붙인다.")]
+        [Tooltip("전투 창구. 게임 씬에는 진짜 전투(CombatEntry)를 붙이고, 게임 씬 검사는 대역을 잠깐 갈아 끼운다.")]
         [SerializeField] private MonoBehaviour _combatEntryBehaviour;
 
         [Tooltip("전투 방에서만 켜는 배경. 공용 배경 바로 위에 깔린다(2026년 10월 25일 원재).")]
@@ -175,6 +179,7 @@ namespace SlotHero.Flow
         private void Awake()
         {
             EnsureParts();
+            Loc.SetTable(_localization != null ? _localization.English : null);
         }
 
         /// <summary>
@@ -2281,8 +2286,9 @@ namespace SlotHero.Flow
         /// </summary>
         private void ApplySoundSettings()
         {
-            // 설정을 읽어 들이는 자리가 소리와 같아 임시 아이템 효과도 여기서 함께 넘긴다.
+            // 설정을 읽어 들이는 자리가 소리와 같아 임시 아이템 효과와 언어도 여기서 함께 넘긴다.
             ApplyItemEffectSettings();
+            ApplyLanguageSetting();
 
             if (_sound == null || _save == null || _save.Settings == null || _save.Settings.Values == null)
             {
@@ -2291,7 +2297,7 @@ namespace SlotHero.Flow
 
             SettingsValues values = _save.Settings.Values;
             _sound.SetVolume(
-                values.GetRaw("masterVolume", 100f), values.GetBool("masterVolumeMute", false),
+                values.GetRaw("masterVolume", 50f), values.GetBool("masterVolumeMute", false),
                 values.GetRaw("sfxVolume", 100f), values.GetBool("sfxVolumeMute", false));
 
             // 전투의 레이저 발사음은 전투 화면이 따로 낸다. 같은 크기를 넘긴다(2026년 10월 31일 원재).
@@ -2319,6 +2325,22 @@ namespace SlotHero.Flow
                 _combat.SetTemporaryItemEffects(_temporaryItemEffects);
             }
         }
+
+        /// <summary>
+        /// 설정의 언어를 화면 글자에 적용한다(2026년 11월 8일 원재). 바꾸면 떠 있는 화면 글자까지 그 자리에서 바뀐다.
+        /// </summary>
+        private void ApplyLanguageSetting()
+        {
+            if (_save == null || _save.Settings == null || _save.Settings.Values == null)
+            {
+                return;
+            }
+
+            Loc.SetLanguage(Loc.FromSettingIndex(_save.Settings.Values.GetRaw(LanguageSettingId, 0f)));
+        }
+
+        /// <summary>설정 목록(`SettingsCatalogConfig`)의 언어 식별자.</summary>
+        public const string LanguageSettingId = "language";
 
         /// <summary>임시 아이템 효과를 쓰는지. 설정에서 읽은 값이다.</summary>
         public bool TemporaryItemEffects
