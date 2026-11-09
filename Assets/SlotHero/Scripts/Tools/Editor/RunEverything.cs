@@ -37,13 +37,21 @@ namespace SlotHero.ToolsEditor
             // 태그별 공격 이펙트와 소리. 전투 화면이 설정을 물기 전에 프리팹과 소리를 이어 둔다(2026년 11월 1일).
             Step("태그 공격 이펙트 가져오기", ImportTagAttack.Import);
 
+            // 영어 번역표. 게임 씬이 번역표를 물기 전에 TSV 에서 채운다(2026년 11월 8일).
+            Step("번역 가져오기", ImportTranslations.Import);
+
             Step("UI 스킨 만들기", MakeUiSkin.Make);
             Step("확인용 씬 만들기", BuildPreviewScenes.BuildAll);
             Step("게임 씬 만들기", BuildGameScene.Build);
             Step("확인용 씬 눌러 보기", CheckPreviewScenes.CheckAll);
+
+            // 게임 씬 검사와 전투 검사가 띄운 화면의 글자를 모아 영어 번역이 빠진 것을 찾는다(2026년 11월 8일).
+            Step("번역 검사 준비", LocalizationAudit.Begin);
             Step("게임 씬 굴려 보기", CheckGameScene.Check);
             Step("전투 검사", CheckCombat.Check);
+            Step("번역 빠진 글자 찾기", LocalizationAudit.Finish);
             Step("그림으로 뽑기", CapturePreviewScenes.CaptureAll);
+            Step("영어 그림으로 뽑기", CapturePreviewScenes.CaptureAllEnglish);
 
             Debug.Log("=== 한 바퀴 끝 ===");
         }

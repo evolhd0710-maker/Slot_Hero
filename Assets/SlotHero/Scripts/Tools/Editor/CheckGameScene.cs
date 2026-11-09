@@ -16,6 +16,8 @@ using SlotHero.Events.UI;
 using SlotHero.Flow;
 using SlotHero.Hud;
 using SlotHero.Hud.UI;
+using SlotHero.Localization;
+using SlotHero.Localization.UI;
 using SlotHero.Map;
 using SlotHero.Map.UI;
 using SlotHero.Popup;
@@ -96,6 +98,7 @@ namespace SlotHero.ToolsEditor
             CheckCatalogItems(GetField<RunCatalogConfig>(flow, "_catalogConfig"));
             CheckBackdrops();
             CheckSoundWiring(flow);
+            CheckLocalizationWiring(flow);
 
             // 게임 씬이 모든 화면을 끈 상태에서 구조를 본다.
             // 켜도 안 보이는 칸과 따로 노는 어두운 막을 찾는다.
@@ -556,6 +559,10 @@ namespace SlotHero.ToolsEditor
             PressPopupButton(popup, "cancel");
             Report("취소를 누르면 아무것도 안 바뀐다",
                 settings.Values.GetRaw("presentationSpeed", -1f) == 2f && settings.Values.GetRaw("language", -1f) == 1f);
+
+            // 앞 검사가 언어를 English 로 골랐다. 흐름이 그 값을 게임 언어로 넘겼는지 본다(2026년 11월 8일 원재).
+            Report("설정에서 English 를 고르면 게임 언어가 영어다", Loc.Language == GameLanguage.English);
+            Report("영어로 보면 설정 화면 제목이 Settings 다", Loc.T("설정") == "Settings");
             Report("취소 뒤에도 설정 화면은 열려 있다", settings.IsOpen);
 
             Invoke(flow, "RefreshSettingsInput");
@@ -5181,6 +5188,59 @@ namespace SlotHero.ToolsEditor
         /// 효과음이 씬에 물려 있는지. 흐름에 소리 창구가, 소리 창구에 효과음 설정이, 설정에 고른 소리 파일이 있어야 한다.
         /// 파일은 `효과음과 이펙트 목록.md` 6.0 받은 것 의 넷이다.
         /// </summary>
+        /// <summary>
+        /// 영어 설정(2026년 11월 8일 원재). 흐름에 번역표가 물려 있고, 글상자마다 번역 전처리가 붙어 있는지 본다.
+        /// 이름 입력칸의 글은 사람이 친 글이라 번역하지 않는다.
+        /// </summary>
+        private static void CheckLocalizationWiring(GameFlowController flow)
+        {
+            LocalizationConfig config = GetField<LocalizationConfig>(flow, "_localization");
+            Report("흐름에 영어 번역표가 물려 있다", config != null);
+            Report("번역표에 줄이 있다", config != null && config.English.Count > 500, config != null ? config.English.Count : 0);
+
+            // 편집 모드라 흐름의 Awake 가 번역표를 넣지 않았을 수 있다. 뒤의 언어 검사가 쓰도록 넣어 둔다.
+            Loc.SetTable(config != null ? config.English : null);
+
+            // 이름 입력칸은 프로필 카드 프리팹 안에 있다. 게임 씬에는 카드를 띄울 때 생긴다.
+            HashSet<TMP_Text> typed = new HashSet<TMP_Text>();
+            List<TMP_InputField> fields = new List<TMP_InputField>(
+                Object.FindObjectsByType<TMP_InputField>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+            GameObject card = AssetDatabase.LoadAssetAtPath<GameObject>(UiSceneBuilder.PrefabFolder + "/ProfileCard.prefab");
+            if (card != null)
+            {
+                fields.AddRange(card.GetComponentsInChildren<TMP_InputField>(true));
+            }
+
+            for (int i = 0; i < fields.Count; i++)
+            {
+                if (fields[i].textComponent != null)
+                {
+                    typed.Add(fields[i].textComponent);
+                }
+            }
+
+            int missing = 0;
+            string first = "";
+            int typedLocalized = 0;
+            foreach (TMP_Text field in typed)
+            {
+                typedLocalized += field.GetComponent<TextLocalizer>() != null ? 1 : 0;
+            }
+
+            TMP_Text[] texts = Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < texts.Length; i++)
+            {
+                if (!typed.Contains(texts[i]) && texts[i].GetComponent<TextLocalizer>() == null)
+                {
+                    missing++;
+                    first = first.Length == 0 ? texts[i].name : first;
+                }
+            }
+
+            Report("게임 씬의 글상자마다 번역 전처리가 붙어 있다", missing == 0, first);
+            Report("이름 입력칸의 글은 번역하지 않는다", typed.Count > 0 && typedLocalized == 0, typedLocalized);
+        }
+
         private static void CheckSoundWiring(GameFlowController flow)
         {
             SoundPlayer sound = GetField<SoundPlayer>(flow, "_sound");
@@ -6260,6 +6320,8 @@ namespace SlotHero.ToolsEditor
         private static void Report(string title, bool passed, int actual)
         {
             _checked++;
+            // 화면이 바뀔 때마다 떠 있는 글자의 영어 번역이 있는지 함께 본다(2026년 11월 8일 원재).
+            LocalizationAudit.ScanOpenScenes();
 
             if (passed)
             {
@@ -6275,6 +6337,8 @@ namespace SlotHero.ToolsEditor
         private static void Report(string title, bool passed, string actual)
         {
             _checked++;
+            // 화면이 바뀔 때마다 떠 있는 글자의 영어 번역이 있는지 함께 본다(2026년 11월 8일 원재).
+            LocalizationAudit.ScanOpenScenes();
 
             if (passed)
             {
@@ -6294,6 +6358,9 @@ namespace SlotHero.ToolsEditor
                 Report("검사가 진짜 저장 폴더를 건드리지 않았다", after == _realSaveBefore, after);
                 _realSaveFolder = null;
             }
+
+            // 검사가 영어로 바꿔 둔 게임 언어를 한국어로 되돌린다.
+            Loc.SetLanguage(GameLanguage.Korean);
 
             Debug.Log("게임 씬 검사 " + _checked + "건, 실패 " + _failed + "건");
         }

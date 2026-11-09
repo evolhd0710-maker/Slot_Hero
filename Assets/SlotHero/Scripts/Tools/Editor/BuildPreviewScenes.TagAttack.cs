@@ -46,13 +46,16 @@ namespace SlotHero.ToolsEditor
         private const string LifePulse = FantasyPrefabs + "UI/FX_NotificationPulse_White.prefab";
         private const string Slash = FantasyPrefabs + "Slash/FX_SlashLight_White.prefab";
         private const string Shoot = FantasyPrefabs + "Cast/FX_Shoot_White.prefab";
-        private const string BlueRush = FantasyPrefabs + "Projectile/FX_Projectile_Blue.prefab";
-        private const string WaterSpray =
-            "Assets/Vefects/Flipbook VFX Bundle Lite URP/Combat Flipbook VFX URP/_ Lite/Particles/Lite_VFX_Hit_05_Directional_Bunch_Loop_01.prefab";
 
-        /// Unity AI 로 만든 그림 이펙트를 두는 곳. 만들 때마다 지우는 TagFx 와 따로 둔다.
-        private const string TagFxArtFolder = "Assets/SlotHero/Art/TagFxArt";
-        private const string RootsSprite = TagFxArtFolder + "/목성_뿌리.png";
+        /// 해왕성 파도 시도 6. 2026년 11월 8일 원재가 골라 게임에 붙였다. 확인용 씬도 게임의 프리팹을 그대로 쓴다.
+        /// Unity AI 가 만든 파도 그림을 평면 색 셋으로 단순화했다. 반투명한 파도(가로 7.56, 세로 11)가 0.75초 동안 몬스터 오른쪽에서 왼쪽으로 지나가며 덮치고,
+        /// 거품은 1.5초까지 남는다.
+        private const string NeptuneWave = "Assets/SlotHero/Art/TagAttack/태그공격_해왕성.prefab";
+
+        /// 목성 고목 뿌리 묶기. 2026년 11월 9일 원재가 골라 게임에 붙였다. 확인용 씬도 게임의 프리팹을 그대로 쓴다.
+        /// 내가 평면 색으로 그린 고목 뿌리 일곱이 몬스터 가운데(-1.62 ~ 1.62)에서 0 ~ 0.05초 안에 거의 동시에 솟고,
+        /// 0.58초에 밑동을 축으로 가로 0.82 배로 조였다가 0.9 배로 돌아오고, 1.2초부터 땅으로 거둬져 1.5초에 끝난다.
+        private const string JupiterRootsTree = "Assets/SlotHero/Art/TagAttack/태그공격_목성.prefab";
 
         /// 그림으로 뽑을 때 파티클이 시작한 뒤 미리 돌리는 시간. 수명이 0.1 ~ 0.5초로 짧은 것이 많아 터진 직후를 찍는다.
         private const float TagAttackCaptureSeconds = 0.12f;
@@ -234,9 +237,7 @@ namespace SlotHero.ToolsEditor
         /// </summary>
         private static TagAttackCandidates[] GetTagAttackCandidates()
         {
-            Color deepBlue = new Color(0.3f, 0.5f, 1f, 1f);
             Color life = new Color(0.45f, 1f, 0.45f, 1f);
-            Color vine = new Color(0.42f, 0.62f, 0.22f, 1f);
             Color yellowDust = new Color(0.86f, 0.7f, 0.42f, 1f);
             Color air = new Color(0.75f, 0.95f, 1f, 1f);
             Color death = new Color(0.35f, 0.12f, 0.45f, 1f);
@@ -250,14 +251,8 @@ namespace SlotHero.ToolsEditor
             // 화성. 불꽃의 밑이 아니라 가운데가 레이저가 닿는 자리에 오게 내린다.
             FxSpec[] mars = { Fx(FlameBurst, NoTint, 1.5f, false, 0.5f).Row(1, new Vector2(0f, -160f), Vector2.zero, 0f, 0f) };
 
-            // 목성. Unity AI 로 만든 뿌리 그림이 발밑에서 솟아 적을 감고 조인다. 먼지는 뺐다(2026년 11월 1일 원재).
-            // 그림이 오기 전에는 베기 빛 셋을 120도씩 돌려 휘감는 대역을 쓴다.
-            FxSpec[] jupiter = { Fx(Slash, vine, 1.1f).Row(3, Vector2.zero, Vector2.zero, 120f, 0.08f) };
-            FxSpec[] jupiterSlow = { Fx(Slash, vine, 1.1f, false, 0.6f).Row(3, Vector2.zero, Vector2.zero, 120f, 0.12f) };
-            SpriteSpec roots = SpriteFx(RootsSprite, new Vector2(460f, 520f), new Vector2(0.5f, 0f),
-                new Vector2(0f, -240f), new Vector2(0f, -240f), new Vector2(1f, 0f), Vector2.one, 0.15f, 0.25f, 0.5f, 0.3f);
-            SpriteSpec rootsSlow = SpriteFx(RootsSprite, new Vector2(460f, 520f), new Vector2(0.5f, 0f),
-                new Vector2(0f, -240f), new Vector2(0f, -240f), new Vector2(1f, 0f), Vector2.one, 0.2f, 0.4f, 0.8f, 0.4f);
+            // 목성. 고목처럼 갈라지는 뿌리 일곱이 발밑에서 솟아 몬스터를 덮고 조인다(2026년 11월 9일 원재).
+            FxSpec[] jupiterRootsTree = { Fx(JupiterRootsTree, NoTint) };
 
             // 토성. 흙먼지를 원판 쪽(오른쪽)에서 왼쪽으로 눕혀 몰아친다. 위아래 줄을 빼고 가운데 둘만 남겼다(다섯에서 둘).
             FxSpec[] saturn =
@@ -267,18 +262,8 @@ namespace SlotHero.ToolsEditor
 
             FxSpec[] uranus = { Fx(Slash, air) };
 
-            // 해왕성. Unity AI 로 만든 파도 그림이 원판 쪽에서 밀려와 적을 덮친다.
-            // 그림이 오기 전에는 물 튀김을 크게 키워 차례로 덮치게 하고 물살 줄기를 겹친 대역을 쓴다.
-            FxSpec[] neptune =
-            {
-                Fx(WaterSplash, deepBlue, 2.2f, true, 0.8f).Row(4, new Vector2(260f, -60f), new Vector2(-150f, 15f), 0f, 0.07f),
-                Fx(BlueRush, NoTint, 1.6f).Row(3, new Vector2(300f, -80f), new Vector2(0f, 80f), 0f, 0.04f),
-            };
-
-
-            // 해왕성 다른 안. Unity AI 파도 그림을 빼고 받아 둔 묶음의 다른 물 이펙트로 바꾼다(2026년 11월 1일 원재).
-            FxSpec[] neptuneRush = { Fx(BlueRush, NoTint, 2f).Row(3, new Vector2(320f, -120f), new Vector2(0f, 110f), 0f, 0.05f) };
-            FxSpec[] neptuneSpray = { Fx(WaterSpray, deepBlue, 2f).Row(2, new Vector2(60f, 0f), new Vector2(-120f, 30f), 0f, 0.08f) };
+            // 해왕성. 게임에 붙인 파도 시도 6(2026년 11월 8일 원재). 파도 시트를 한 장으로 넘기고 물보라와 거품을 얹은 파티클 프리팹이다.
+            FxSpec[] neptuneWave = { Fx(NeptuneWave, NoTint) };
 
             FxSpec[] pluto = { Fx(DarkCloud, death, 1.5f), Fx(Shoot, death) };
 
@@ -294,12 +279,10 @@ namespace SlotHero.ToolsEditor
                 Tag(SymbolTagType.Mars, "불",
                     Plan("불꽃 1.5배 · 두 배 느리게 + Fire_Burst_01", mars, Snd("Vefects_SFX_Fire_Burst_01.wav"))),
                 Tag(SymbolTagType.Jupiter, "나무, 묶고 조이기",
-                    Plan("뿌리 조이기 + 나무 삐걱 · 찢김", jupiter,
+                    // 소리는 게임과 같은 삐걱과 찢김이고, 찢김은 조이는 0.58초에 맞춰 0.5초 늦게 낸다.
+                    Plan("가운데로 모인 고목 가지 + 나무 삐걱 · 찢김", jupiterRootsTree,
                         Snd("Gregor Quendel - Designed Plastic - Elements - Creaking 04.wav", 0.15f, 1.2f),
-                        Snd("Gregor Quendel - Designed Plastic - Elements - Ripping 03.wav", 0f, 0.8f, 0.6f)).WithSprite(roots),
-                    Plan("느린 뿌리 조이기 + 돌로 굳기 · 삐걱", jupiterSlow,
-                        Snd("Magic Spell - Turn to stone.wav", 1.8f, 1.5f),
-                        Snd("Gregor Quendel - Designed Plastic - Elements - Creaking 04.wav", 0.15f, 1.2f, 0.8f)).WithSprite(rootsSlow)),
+                        Snd("Gregor Quendel - Designed Plastic - Elements - Ripping 03.wav", 0f, 0.8f, 0.6f, 0.5f))),
                 Tag(SymbolTagType.Saturn, "흙, 황사",
                     Plan("황사 둘 + 바람 · 흙 터짐", saturn,
                         Snd("Gregor Quendel - Designed Atmospheres - Wind - 001 - II.wav", 0.8f, 2f),
@@ -307,9 +290,9 @@ namespace SlotHero.ToolsEditor
                 Tag(SymbolTagType.Uranus, "바람",
                     Plan("바람 베기 + Simple Swoosh_6 (크고 긴 휙)", uranus, Snd("Magic Spell_Simple Swoosh_6.wav"))),
                 Tag(SymbolTagType.Neptune, "바다, 파도",
-                    Plan("물살 줄기 돌진 + 해일 2.5초", neptuneRush, Snd("Tsunami hitting a Large City.wav", 11.9f, 2.5f)),
-                    Plan("사방 물보라 + 해일 2.5초", neptuneSpray, Snd("Tsunami hitting a Large City.wav", 11.9f, 2.5f)),
-                    Plan("큰 물 튀김 벽 + 해일 2.5초", neptune, Snd("Tsunami hitting a Large City.wav", 11.9f, 2.5f))),
+                    // 해일 소리는 점점 커지는 소리다. 가장 큰 부분(13.55초 ~ 14.4초)이 파도가 몬스터에 닿는 0.24초 무렵에 오게 13.3초부터 1.5초를 틀고,
+                    // 마지막 0.4초를 줄여 거품이 사라지는 1.5초에 함께 끝낸다.
+                    Plan("시도 6 · 파도 0.75초, 거품 1.5초 + 해일 절정 1.5초", neptuneWave, Snd("Tsunami hitting a Large City.wav", 13.3f, 1.5f).FadeOut(0.4f))),
                 Tag(SymbolTagType.Pluto, "검은색, 죽음",
                     Plan("보라 구름 1.5배와 보라 줄기 + AMP_DeBuff_09", pluto, Snd("AMP_DeBuff_09.wav"))),
             };
@@ -420,13 +403,14 @@ namespace SlotHero.ToolsEditor
             so.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(preview);
 
-            // 안마다 공격, 이펙트만, 소리만 버튼 셋을 왼쪽에 늘어놓는다.
+            // 안마다 공격, 이펙트만, 소리만 버튼 셋을 왼쪽에 늘어놓는다. 이펙트만과 소리만은 한 줄에 나란히 두어 안 여섯 개까지 화면에 들어가게 한다.
             float y = 180f;
             for (int i = 0; i < plans.Length; i++)
             {
-                NewPreviewButton(root, "Attack" + (i + 1), "안 " + (i + 1) + " · " + plans[i].Name, ref y, preview.Attack, i, true);
-                NewPreviewButton(root, "Effects" + (i + 1), "    이펙트만", ref y, preview.PlayEffects, i, false);
-                NewPreviewButton(root, "Sounds" + (i + 1), "    소리만", ref y, preview.PlaySounds, i, false);
+                NewPreviewButton(root, "Attack" + (i + 1), "안 " + (i + 1) + " · " + plans[i].Name, ref y, preview.Attack, i, true, 60f);
+                float row = y;
+                NewPreviewButton(root, "Effects" + (i + 1), "    이펙트만", ref row, preview.PlayEffects, i, false, 60f);
+                NewPreviewButton(root, "Sounds" + (i + 1), "    소리만", ref y, preview.PlaySounds, i, false, 376f);
                 y += 16f;
             }
 
@@ -714,12 +698,12 @@ namespace SlotHero.ToolsEditor
         }
 
         private static void NewPreviewButton(
-            RectTransform root, string name, string label, ref float y, UnityAction<int> action, int argument, bool strong)
+            RectTransform root, string name, string label, ref float y, UnityAction<int> action, int argument, bool strong, float x)
         {
             Color color = strong ? new Color(0.545f, 0.412f, 0.212f, 1f) : new Color(0.290f, 0.227f, 0.157f, 1f);
             float height = strong ? 60f : 46f;
             Image image = UiSceneBuilder.NewButtonImage(name, root, color);
-            UiSceneBuilder.PlaceTopLeft(image.rectTransform, new Vector2(60f, y), new Vector2(strong ? 700f : 300f, height));
+            UiSceneBuilder.PlaceTopLeft(image.rectTransform, new Vector2(x, y), new Vector2(strong ? 700f : 300f, height));
 
             Button button = UiSceneBuilder.AddButton(image.gameObject);
             UnityEventTools.AddIntPersistentListener(button.onClick, action, argument);

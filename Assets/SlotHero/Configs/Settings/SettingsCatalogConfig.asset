@@ -93,7 +93,7 @@ MonoBehaviour:
       _displayName: "\uC804\uCCB4"
       _kind: 1
       _options: []
-      _defaultValue: 100
+      _defaultValue: 50
       _min: 0
       _max: 100
       _step: 1

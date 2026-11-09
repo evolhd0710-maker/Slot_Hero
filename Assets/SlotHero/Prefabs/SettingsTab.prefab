@@ -202,6 +202,7 @@ GameObject:
   - component: {fileID: 5469453780064622846}
   - component: {fileID: 3638763325693752876}
   - component: {fileID: 5269115499020936660}
+  - component: {fileID: 6586280137957876584}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -328,3 +329,17 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6586280137957876584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766512054358478410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a02a449eb958be4e91672f4955da0e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Localization.UI.TextLocalizer
+  _text: {fileID: 5269115499020936660}
+  _context: "\uC124\uC815 \uD0ED"

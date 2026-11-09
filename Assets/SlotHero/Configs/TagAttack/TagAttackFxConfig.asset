@@ -70,11 +70,11 @@ MonoBehaviour:
     _spriteHoldSeconds: 0.5
     _spriteOutSeconds: 0.3
   - _tag: 4
-    _effect: {fileID: 0}
+    _effect: {fileID: 7629800788161243745, guid: fee6daf26e62e72499766d7358f1ec24, type: 3}
     _effectSeconds: 0
     _sound: {fileID: 8300000, guid: 5e7186e69f9681e46ac8ba40de28317b, type: 3}
     _volume: 1
-    _sprite: {fileID: 5686282174936954878, guid: 6174328dcd2abef409a65ae12b76c27f, type: 3}
+    _sprite: {fileID: 0}
     _spriteSize: {x: 460, y: 520}
     _spritePivot: {x: 0.5, y: 0}
     _spriteOffset: {x: 0, y: -240}
@@ -112,7 +112,7 @@ MonoBehaviour:
     _spriteHoldSeconds: 0.5
     _spriteOutSeconds: 0.3
   - _tag: 7
-    _effect: {fileID: 8647942759380570412, guid: 68d2dab45d6f3b0498f8a26b76532578, type: 3}
+    _effect: {fileID: 1127469912105411117, guid: 3444862bd6f61f04aa4e6ebf38ac1b84, type: 3}
     _effectSeconds: 0
     _sound: {fileID: 8300000, guid: de3e8a68edd2bcb438d54d2ec3243e26, type: 3}
     _volume: 1
@@ -139,5 +139,5 @@ MonoBehaviour:
     _spriteInSeconds: 0.25
     _spriteHoldSeconds: 0.5
     _spriteOutSeconds: 0.3
-  _soundVolume: 1
+  _soundVolume: 0.5
   _sortingOffset: 10

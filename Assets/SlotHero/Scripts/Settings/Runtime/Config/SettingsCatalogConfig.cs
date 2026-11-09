@@ -101,11 +101,12 @@ namespace SlotHero.Settings
         /// <summary>
         /// 사운드 탭. 전체, 배경음, 환경음, 효과음을 0 ~ 100 막대로 고르고 오른쪽에 음소거 버튼을 둔다.
         /// 2026년 10월 5일에 원재가 정했다. 기본값은 기획서에 없어 모두 100 으로 두었다.
+        /// 2026년 11월 3일 원재가 전체 기본값을 50 으로 내렸다.
         /// </summary>
         private static SettingsTab MakeSoundTab()
         {
             SettingsTab tab = new SettingsTab("sound", "사운드");
-            tab.Items.Add(SettingDefinition.Volume("masterVolume", "전체", 100f));
+            tab.Items.Add(SettingDefinition.Volume("masterVolume", "전체", 50f));
             tab.Items.Add(SettingDefinition.Volume("bgmVolume", "배경음", 100f));
             tab.Items.Add(SettingDefinition.Volume("ambienceVolume", "환경음", 100f));
             tab.Items.Add(SettingDefinition.Volume("sfxVolume", "효과음", 100f));

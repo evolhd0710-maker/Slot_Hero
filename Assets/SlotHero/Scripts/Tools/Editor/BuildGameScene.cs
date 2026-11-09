@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -16,6 +16,7 @@ using SlotHero.Events.UI;
 using SlotHero.Flow;
 using SlotHero.Hud;
 using SlotHero.Hud.UI;
+using SlotHero.Localization;
 using SlotHero.Map;
 using SlotHero.Map.UI;
 using SlotHero.Popup.UI;
@@ -188,6 +189,8 @@ namespace SlotHero.ToolsEditor
                 UiSceneBuilder.LoadConfig<RelicConfig>("Combat", "RelicConfig"));
             UiSceneBuilder.SetField(flow, "_combatRules",
                 UiSceneBuilder.LoadConfig<CombatRuleConfig>("Combat", "CombatRuleConfig"));
+            UiSceneBuilder.SetField(flow, "_localization",
+                UiSceneBuilder.LoadConfig<LocalizationConfig>("Localization", "LocalizationConfig"));
             UiSceneBuilder.SetField(flow, "_catalogConfig",
                 UiSceneBuilder.LoadConfig<RunCatalogConfig>("Flow", "RunCatalogConfig"));
             UiSceneBuilder.SetField(flow, "_eventConfig",
