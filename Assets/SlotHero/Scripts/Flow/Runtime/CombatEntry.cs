@@ -68,6 +68,7 @@ namespace SlotHero.Flow
 
             Unsubscribe();
             _screen.PlayerHealthLost += HandleHealthLost;
+            _screen.PlayerHealthPaid += HandleHealthPaid;
             _screen.Finished += HandleFinished;
             _screen.RelicStackChanged += HandleRelicStackChanged;
             _screen.Open(MakeSetup(context, node), this);
@@ -261,6 +262,15 @@ namespace SlotHero.Flow
             }
         }
 
+        /// <summary>코인 소모값. 체력은 깎되 피격음은 내지 않는다(2026년 11월 13일 원재).</summary>
+        private void HandleHealthPaid(int amount)
+        {
+            if (_context != null)
+            {
+                _context.PayHealth(amount);
+            }
+        }
+
         private void HandleFinished(CombatOutcome outcome)
         {
             Unsubscribe();
@@ -299,6 +309,7 @@ namespace SlotHero.Flow
             if (_screen != null)
             {
                 _screen.PlayerHealthLost -= HandleHealthLost;
+                _screen.PlayerHealthPaid -= HandleHealthPaid;
                 _screen.Finished -= HandleFinished;
                 _screen.RelicStackChanged -= HandleRelicStackChanged;
             }

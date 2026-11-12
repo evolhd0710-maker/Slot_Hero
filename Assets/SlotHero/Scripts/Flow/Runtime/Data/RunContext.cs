@@ -100,6 +100,21 @@ namespace SlotHero.Flow
             NotifyHealthLost(before - _run.Status.Health);
         }
 
+        /// <summary>
+        /// 체력을 낸다. 전투에서 코인 소모값을 치를 때다. 깎는 것은 `TakeDamage` 와 같고, 맞은 것이 아니라 피격음(`HealthLost`)을 알리지 않는다.
+        /// 몬스터를 공격할 때는 공격 효과음이 이미 있다(2026년 11월 13일 원재).
+        /// </summary>
+        public void PayHealth(int amount)
+        {
+            if (_run == null)
+            {
+                return;
+            }
+
+            _run.Status.TakeDamage(amount);
+            Notify();
+        }
+
         private void NotifyHealthLost(int lost)
         {
             if (lost > 0 && HealthLost != null)

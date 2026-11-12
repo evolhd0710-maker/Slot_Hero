@@ -5497,6 +5497,16 @@ namespace SlotHero.ToolsEditor
             Report("런에 들어가면 S19 런 시작을 고른다", sound.LastChosen == SoundCue.RunStart);
             sound.AdvanceClock(1f);
 
+            // 코인 소모값으로 체력을 내는 것은 몬스터를 공격하는 때라 피격음을 내지 않는다(2026년 11월 13일 원재).
+            if (context.Health > 1)
+            {
+                context.PayHealth(1);
+                Report("코인 소모값으로 체력을 내면 피격음을 청하지 않는다", arbiter != null && !arbiter.HasPending);
+                context.Heal(1);
+                sound.Flush();
+                sound.AdvanceClock(1f);
+            }
+
             // 설정의 막대를 한 단계 올렸다 내린다. 값은 처음대로 돌아온다.
             SlotHero.Settings.UI.SettingsScreenController settings =
                 GetField<SlotHero.Settings.UI.SettingsScreenController>(flow, "_settings");
