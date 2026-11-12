@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using SlotHero.CurrentBuild;
 using SlotHero.TagAttack.UI;
 using SlotHero.Ui;
+using Spine.Unity;
 
 namespace SlotHero.Combat.UI
 {
@@ -72,6 +73,12 @@ namespace SlotHero.Combat.UI
         [SerializeField] private Image _enemyArt;
         [SerializeField] private TMP_Text _enemyArtLabel;
         private Sprite _enemySprite;
+
+        [Tooltip("몬스터 스파인을 그리는 자리. 몬스터 그림 칸의 자식이라 앞으로 나오는 공격 연출을 함께 탄다(2026년 11월 13일 원재).")]
+        [SerializeField] private SkeletonGraphic _enemySpine;
+        [Tooltip("몬스터 스파인을 움직이는 쪽. 스파인 4.3 은 그리는 것과 움직이는 것이 따로다.")]
+        [SerializeField] private SkeletonAnimation _enemySpineMotion;
+        private SkeletonDataAsset _enemySpineData;
         [SerializeField] private Image _enemyInfo;
         [SerializeField] private TMP_Text _enemyNameLabel;
         [SerializeField] private TMP_Text _enemyInfoLabel;
@@ -621,9 +628,115 @@ namespace SlotHero.Combat.UI
             _enemyArt.sprite = _enemySprite;
             _enemyArt.type = Image.Type.Simple;
             _enemyArt.preserveAspect = true;
-            _enemyArt.color = _enemySprite != null
-                ? Color.white
-                : (_visual != null ? _visual.EnemyArtStandIn : _enemyArt.color);
+            // 스파인을 그릴 때는 그림 칸을 비워 두고 자리와 공격 연출만 쓴다.
+            _enemyArt.color = _enemySpineData != null
+                ? Color.clear
+                : (_enemySprite != null
+                    ? Color.white
+                    : (_visual != null ? _visual.EnemyArtStandIn : _enemyArt.color));
+        }
+
+        /// <summary>지금 몬스터 자리에서 움직이는 스파인 자료. 그림을 그리면 null 이다.</summary>
+        public SkeletonDataAsset EnemySpineData
+        {
+            get { return _enemySpineData; }
+        }
+
+        /// <summary>몬스터 스파인을 그리는 쪽. 검사가 켜졌는지 본다.</summary>
+        public SkeletonGraphic EnemySpine
+        {
+            get { return _enemySpine; }
+        }
+
+        /// <summary>지금 되풀이하는 몬스터 스파인 애니메이션 이름. 없으면 빈 글이다.</summary>
+        public string EnemySpineAnimationName
+        {
+            get
+            {
+                if (_enemySpineData == null || _enemySpineMotion == null || _enemySpineMotion.AnimationState == null)
+                {
+                    return string.Empty;
+                }
+
+                Spine.TrackEntry entry = _enemySpineMotion.AnimationState.GetTrack(0);
+                return entry != null && entry.Animation != null ? entry.Animation.Name : string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// 몬스터 스파인을 켜거나 끈다. 자료가 있으면 그 몬스터로 바꾸고 설정의 애니메이션을 되풀이한다.
+        /// 덤과 더머는 팀원이 Spine 4.3 으로 만들었다(2026년 11월 13일 원재). 자료가 없으면 그림을 그린다.
+        /// </summary>
+        private void ShowEnemySpine(SkeletonDataAsset data)
+        {
+            if (_enemySpine == null || _enemySpineMotion == null || data == null)
+            {
+                _enemySpineData = null;
+                if (_enemySpine != null)
+                {
+                    _enemySpine.gameObject.SetActive(false);
+                }
+
+                return;
+            }
+
+            _enemySpine.gameObject.SetActive(true);
+            bool rebuilt = false;
+            if (_enemySpine.skeletonDataAsset != data || !_enemySpine.IsValid || _enemySpineMotion.AnimationState == null)
+            {
+                _enemySpine.skeletonDataAsset = data;
+                _enemySpineMotion.Initialize(true);
+                rebuilt = true;
+            }
+
+            if (!_enemySpine.IsValid || _enemySpineMotion.AnimationState == null)
+            {
+                _enemySpine.gameObject.SetActive(false);
+                _enemySpineData = null;
+                return;
+            }
+
+            _enemySpineData = data;
+            string animationName = _visual != null ? _visual.EnemySpineAnimation : "animation";
+            Spine.SkeletonData skeletonData = data.GetSkeletonData(true);
+            // 몬스터 정보는 턴마다 다시 그린다. 같은 몬스터에 같은 애니메이션이 돌고 있으면 처음부터 다시 틀지 않는다(2026년 11월 13일 코덱스 점검).
+            Spine.TrackEntry current = _enemySpineMotion.AnimationState.GetTrack(0);
+            bool playing = !rebuilt && current != null && current.Animation != null && current.Animation.Name == animationName;
+            if (!playing && skeletonData != null && skeletonData.FindAnimation(animationName) != null)
+            {
+                _enemySpineMotion.AnimationState.SetAnimation(0, animationName, true);
+            }
+
+            FitEnemySpine(skeletonData);
+        }
+
+        /// <summary>
+        /// 스파인의 기본 자세 상자(내보낸 파일의 skeleton x, y, width, height)를 몬스터 자리 가운데에 비율을 지켜 맞춘다.
+        /// 그림 칸의 비율 지키기와 같은 방식이다. 숨 쉬듯 커지는 움직임이 자리를 넘지 않게 설정의 비율만큼 줄인다.
+        /// </summary>
+        private void FitEnemySpine(Spine.SkeletonData skeletonData)
+        {
+            if (skeletonData == null || skeletonData.Width <= 0f || skeletonData.Height <= 0f || _layout == null)
+            {
+                return;
+            }
+
+            // 스파인 좌표 1 이 화면 좌표로 얼마인지. 자료 배율에 캔버스의 기준 픽셀을 곱한 것이 스파인의 메시 배율이다.
+            float unit = _enemySpineData.scale * (_enemySpine.canvas != null ? _enemySpine.canvas.referencePixelsPerUnit : 100f);
+            float width = skeletonData.Width * unit;
+            float height = skeletonData.Height * unit;
+            float fit = _visual != null ? _visual.EnemySpineFit : 0.9f;
+            float scale = Mathf.Min(_layout.EnemyArtSize.x / width, _layout.EnemyArtSize.y / height) * fit;
+
+            RectTransform rect = _enemySpine.rectTransform;
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = Vector2.zero;
+            rect.localScale = new Vector3(scale, scale, 1f);
+            float centerX = (skeletonData.X + skeletonData.Width * 0.5f) * unit;
+            float centerY = (skeletonData.Y + skeletonData.Height * 0.5f) * unit;
+            rect.anchoredPosition = new Vector2(-centerX * scale, -centerY * scale);
         }
 
         /// <summary>지금 몬스터 일러스트 자리에 그린 그림. 없으면 null 이다.</summary>
@@ -648,8 +761,9 @@ namespace SlotHero.Combat.UI
 
             // 몬스터 그림이 있으면 그림을, 없으면 색 칸에 이름을 적는다(2026년 10월 31일 팀원 그림 `c887667`).
             _enemySprite = _visual != null ? _visual.GetEnemyArt(enemy.Kind) : null;
+            ShowEnemySpine(_visual != null ? _visual.GetEnemySpine(enemy.Kind) as SkeletonDataAsset : null);
             PaintEnemyArt();
-            SetText(_enemyArtLabel, _enemySprite != null ? string.Empty : enemy.Name);
+            SetText(_enemyArtLabel, _enemySprite != null || _enemySpineData != null ? string.Empty : enemy.Name);
             // 정보 칸은 적 이름과 설명 대신 다음 턴 행동을 보인다(2026년 10월 29일).
             SetText(_enemyNameLabel, _visual != null ? _visual.NextActionTitle : "다음 행동");
             SetText(_enemyInfoLabel, DescribeEnemy(enemy, true));
@@ -1015,6 +1129,7 @@ namespace SlotHero.Combat.UI
 
                 _enemyDamageNumber.RectTransform.anchoredPosition = at;
                 _enemyDamageNumber.Show(damage - blocked, note);
+                KeepAboveEffects(_enemyDamageNumber.gameObject);
                 yield return PopNumber(_enemyDamageNumber, scale);
 
                 if (shaking != null)
@@ -1036,6 +1151,11 @@ namespace SlotHero.Combat.UI
                 string blockedText = _visual != null ? _visual.BlockedText : "막음";
                 Color blockColor = _visual != null ? _visual.BlockColor : Color.white;
                 text += "\n<size=45%>" + Colored(blockedText + " " + blocked, blockColor) + "</size>";
+            }
+
+            if (_enemyDamageLabel != null)
+            {
+                KeepAboveEffects(_enemyDamageLabel.gameObject);
             }
 
             yield return Pop(_enemyDamageLabel, text, Color.white, scale);
@@ -1158,6 +1278,48 @@ namespace SlotHero.Combat.UI
         }
 
         /// <summary>숫자 그림 피해 숫자를 글자 피해 숫자(`Pop`)와 같은 움직임으로 띄운다.</summary>
+        /// <summary>
+        /// 몬스터 피해 숫자를 태그 공격 이펙트 위에 그린다(2026년 11월 13일 원재).
+        /// 파티클 이펙트는 캔버스보다 앞 차례로 그려져 캔버스 안의 피해 숫자를 덮었다.
+        /// 피해 숫자에 제 캔버스를 달아 차례를 따로 두고, 바깥 캔버스 차례에 설정의 차례(`DamageSortingOffset`)를 더한다.
+        /// 게임 씬은 전투 화면을 다른 캔버스로 옮기므로 띄울 때마다 바깥 캔버스를 다시 찾는다.
+        /// </summary>
+        private void KeepAboveEffects(GameObject target)
+        {
+            if (target == null || target.transform.parent == null)
+            {
+                return;
+            }
+
+            Canvas outer = target.transform.parent.GetComponentInParent<Canvas>();
+            Canvas root = outer != null ? outer.rootCanvas : null;
+            if (root == null)
+            {
+                return;
+            }
+
+            Canvas own = target.GetComponent<Canvas>();
+            if (own == null)
+            {
+                own = target.AddComponent<Canvas>();
+            }
+
+            own.overrideSorting = true;
+            own.sortingLayerID = root.sortingLayerID;
+            own.sortingOrder = root.sortingOrder + (_visual != null ? _visual.DamageSortingOffset : 50);
+        }
+
+        /// <summary>몬스터 피해 숫자가 그려지는 차례. 제 캔버스가 없으면 바깥 캔버스의 차례다. 검사가 공격 이펙트보다 위인지 본다.</summary>
+        public int EnemyDamageSortingOrder
+        {
+            get
+            {
+                GameObject target = _enemyDamageNumber != null ? _enemyDamageNumber.gameObject : null;
+                Canvas canvas = target != null ? target.GetComponentInParent<Canvas>(true) : null;
+                return canvas != null ? (canvas.overrideSorting || canvas.isRootCanvas ? canvas.sortingOrder : canvas.rootCanvas.sortingOrder) : 0;
+            }
+        }
+
         private IEnumerator PopNumber(DamageNumberView number, float scale)
         {
             RectTransform rect = number.RectTransform;

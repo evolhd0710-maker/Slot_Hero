@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using SlotHero.Ui;
 
@@ -381,7 +381,7 @@ namespace SlotHero.Map.UI
             }
 
             float seconds = _view != null && _view.Visual != null ? _view.Visual.SelectFlashSeconds : 0f;
-            _enterTime += Time.unscaledDeltaTime;
+            _enterTime += EffectClock.Delta;
             float t = seconds <= 0f ? 1f : Mathf.Clamp01(_enterTime / seconds);
 
             if (_view != null)

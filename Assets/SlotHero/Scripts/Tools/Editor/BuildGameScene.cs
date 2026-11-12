@@ -14,6 +14,7 @@ using SlotHero.CurrentBuild.UI;
 using SlotHero.Events;
 using SlotHero.Events.UI;
 using SlotHero.Flow;
+using SlotHero.Flow.UI;
 using SlotHero.Hud;
 using SlotHero.Hud.UI;
 using SlotHero.Localization;
@@ -97,6 +98,9 @@ namespace SlotHero.ToolsEditor
             // 고르기 화면은 방 화면과 현재 빌드 위, 아이템 상세 아래다. 고르는 칸에도 아이템 상세가 떠야 한다.
             ItemPickerScreenController picker = Take<ItemPickerScreenController>(canvas, "13 고르기 화면");
 
+            // 이벤트의 태그 선택 창. 고르기 화면과 같은 높이에 뜬다.
+            EventTagPicker tagPicker = BuildEventTagPicker(canvas);
+
             // 아이템 상세는 현재 빌드와 고르기 위에 뜬다. 상단 표시줄보다는 아래다.
             ItemDetailView itemDetail = Take<ItemDetailView>(canvas, "08 아이템 상세");
 
@@ -165,6 +169,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(flow, "_popup", popup);
             UiSceneBuilder.SetField(flow, "_itemDetail", itemDetail);
             UiSceneBuilder.SetField(flow, "_picker", picker);
+            UiSceneBuilder.SetField(flow, "_tagPickerBehaviour", tagPicker);
             UiSceneBuilder.SetField(flow, "_topBar", topBar);
             UiSceneBuilder.SetField(flow, "_hud", hud);
             UiSceneBuilder.SetField(flow, "_screenFade", screenFade);
@@ -212,6 +217,9 @@ namespace SlotHero.ToolsEditor
 
             // 칸을 다 닫기 전 자리 그대로 그림자를 맞춘다.
             UiSceneBuilder.SyncShadows();
+
+            AddButtonSounds(sound);
+            LiftOverlays(canvas, map, tagPicker);
 
             string path = UiSceneBuilder.SceneFolder + "/" + SceneName + ".unity";
             UiSceneBuilder.EnsureFolder(UiSceneBuilder.SceneFolder);
@@ -480,6 +488,170 @@ namespace SlotHero.ToolsEditor
 
             controller.ApplyLayout();
             return controller;
+        }
+
+        /// <summary>
+        /// 이벤트의 태그 선택 창을 짓는다. 07 기록 말살 의 "태그 선택 창에서 전체 태그 중 1개를 고른다" 다.
+        ///
+        /// 태그 선택 창을 따로 만들기 전까지 전투의 태그 원판을 빌려 쓴다(2026년 11월 11일 원재).
+        /// 원판은 전투 확인용 씬과 같은 코드(`BuildPreviewScenes.BuildTagDial`)로 짓는다.
+        /// 확인용 씬이 따로 없어 현재 빌드 버튼처럼 여기서 짓는다.
+        /// 화면 전체를 어둡게 덮어 뒤의 이벤트 선택지가 눌리지 않게 하고, 가운데에 원판, 위에 제목, 아래에 태그 이름을 둔다.
+        /// </summary>
+        internal static EventTagPicker BuildEventTagPicker(Canvas canvas)
+        {
+            CombatLayoutConfig layout = UiSceneBuilder.LoadConfig<CombatLayoutConfig>("Combat", "CombatLayoutConfig");
+            CombatVisualConfig visual = UiSceneBuilder.LoadConfig<CombatVisualConfig>("Combat", "CombatVisualConfig");
+            CurrentBuildVisualConfig tags =
+                UiSceneBuilder.LoadConfig<CurrentBuildVisualConfig>("CurrentBuild", "CurrentBuildVisualConfig");
+
+            if (layout == null || visual == null)
+            {
+                Debug.LogWarning("전투 설정 에셋이 없어 이벤트 태그 선택 창을 짓지 못했다.");
+                return null;
+            }
+
+            // 뿌리가 어둠 막이다. 막이 커서를 받아 뒤의 이벤트 화면이 눌리지 않는다.
+            Image backdrop = UiSceneBuilder.NewFlatImage("EventTagPicker", canvas.transform, new Color(0f, 0f, 0f, 0.7f));
+            UiSceneBuilder.Stretch(backdrop.rectTransform);
+
+            RectTransform dialRoot = UiSceneBuilder.NewRect("Dial", backdrop.transform);
+            dialRoot.anchorMin = new Vector2(0.5f, 0.5f);
+            dialRoot.anchorMax = new Vector2(0.5f, 0.5f);
+            dialRoot.pivot = new Vector2(0.5f, 0.5f);
+            dialRoot.sizeDelta = new Vector2(layout.DialSize, layout.DialSize);
+            dialRoot.anchoredPosition = Vector2.zero;
+
+            TagDialView dial = BuildPreviewScenes.BuildTagDial(dialRoot, visual, UiSceneBuilder.LoadSkin("원"), out CanvasGroup _);
+
+            float labelHeight = UiScale.Px(60f);
+            float labelWidth = UiScale.Px(800f);
+            float gap = layout.DialSize * 0.5f + UiScale.Px(20f);
+
+            TMP_Text title = UiSceneBuilder.NewText(
+                "TitleLabel", backdrop.transform, "태그 선택", visual.HintFontSize * 1.4f, visual.TextColor,
+                TextAlignmentOptions.Center, true, true);
+            PlaceCentered(title.rectTransform, new Vector2(0f, gap + labelHeight * 0.5f), new Vector2(labelWidth, labelHeight));
+
+            TMP_Text hint = UiSceneBuilder.NewText(
+                "HintLabel", backdrop.transform, "태그를 누르면 고르고, 가운데를 누르면 닫는다", visual.HintFontSize, visual.TextColor,
+                TextAlignmentOptions.Center, false, true);
+            PlaceCentered(hint.rectTransform, new Vector2(0f, -gap - labelHeight * 0.5f), new Vector2(labelWidth, labelHeight));
+
+            EventTagPicker picker = backdrop.gameObject.AddComponent<EventTagPicker>();
+            UiSceneBuilder.SetField(picker, "_dial", dial);
+            UiSceneBuilder.SetField(picker, "_titleLabel", title);
+            UiSceneBuilder.SetField(picker, "_hintLabel", hint);
+            UiSceneBuilder.SetField(picker, "_layout", layout);
+            UiSceneBuilder.SetField(picker, "_visual", visual);
+            UiSceneBuilder.SetField(picker, "_tags", tags);
+
+            // 칸 각도와 크기를 한 번 맞춰 둔다. 게임에서는 열 때마다 다시 맞춘다.
+            dial.Configure(layout, visual, tags);
+            return picker;
+        }
+
+        /// <summary>
+        /// 덮는 화면을 그리는 차례. 바깥 캔버스 차례에 더한다. 화면마다 하나씩 더 올라간다.
+        /// 전투의 몬스터 피해 숫자(`CombatVisualConfig.DamageSortingOffset`, 50)와 태그 공격 파티클(10 + 프리팹 차례)보다 커야 한다.
+        /// </summary>
+        public const int OverlaySortingOffset = 100;
+
+        /// <summary>
+        /// 맵부터 위에 쌓인 화면(맵, 런 종료, 프로필, 타이틀, 진행 표시, 현재 빌드, 고르기, 아이템 상세, 상단 표시줄, 설정, 팝업, 전환 막, 건너뛰기 칸)에
+        /// 각자 캔버스를 달아 전투의 피해 숫자와 태그 공격 파티클보다 위에 그린다(2026년 11월 13일 원재).
+        /// 둘은 캔버스보다 앞 차례로 그려져, 전투 중 설정이나 팝업을 열면 그 위에 보였다(코덱스 점검).
+        ///
+        /// 차례는 지금 쌓인 차례 그대로 하나씩 올린다. 태그 선택 창은 열 때 맨 위로 올리던 것을 지키려고 팝업 다음, 전환 막 아래에 둔다.
+        /// 덮는 화면은 제 캔버스에서 누르기를 받도록 GraphicRaycaster 를 함께 단다.
+        /// </summary>
+        private static void LiftOverlays(Canvas canvas, Component from, Component lastPicker)
+        {
+            Transform start = TopChild(canvas, from);
+            Transform picker = TopChild(canvas, lastPicker);
+            if (start == null)
+            {
+                Debug.LogWarning("덮는 화면의 시작(맵)을 찾지 못해 그리는 차례를 올리지 않았다.");
+                return;
+            }
+
+            List<Transform> layers = new List<Transform>();
+            for (int i = start.GetSiblingIndex(); i < canvas.transform.childCount; i++)
+            {
+                Transform child = canvas.transform.GetChild(i);
+                if (child != picker)
+                {
+                    layers.Add(child);
+                }
+            }
+
+            // 태그 선택 창은 팝업 다음에 둔다. 전환 막과 건너뛰기 칸은 늘 맨 위다.
+            if (picker != null)
+            {
+                int fade = layers.FindIndex(t => t.name == "ScreenFade");
+                layers.Insert(fade >= 0 ? fade : layers.Count, picker);
+            }
+
+            for (int i = 0; i < layers.Count; i++)
+            {
+                Canvas own = layers[i].GetComponent<Canvas>();
+                if (own == null)
+                {
+                    own = layers[i].gameObject.AddComponent<Canvas>();
+                }
+
+                // 꺼진 화면의 캔버스는 속성으로 덮어쓰기를 켜도 저장되지 않아 저장값을 바로 적는다.
+                SerializedObject saved = new SerializedObject(own);
+                saved.FindProperty("m_OverrideSorting").boolValue = true;
+                saved.FindProperty("m_SortingLayerID").intValue = canvas.sortingLayerID;
+                saved.FindProperty("m_SortingOrder").intValue = canvas.sortingOrder + OverlaySortingOffset + i;
+                saved.ApplyModifiedPropertiesWithoutUndo();
+
+                if (layers[i].GetComponent<GraphicRaycaster>() == null)
+                {
+                    layers[i].gameObject.AddComponent<GraphicRaycaster>();
+                }
+            }
+        }
+
+        /// <summary>그 컴포넌트를 품은, 캔버스 바로 아래 자식.</summary>
+        private static Transform TopChild(Canvas canvas, Component component)
+        {
+            Transform t = component != null ? component.transform : null;
+            while (t != null && t.parent != canvas.transform)
+            {
+                t = t.parent;
+            }
+
+            return t;
+        }
+
+        /// <summary>
+        /// 씬의 버튼마다 S01 버튼 누름 소리를 붙인다(2026년 11월 13일 원재). 꺼진 화면의 버튼도 붙인다.
+        /// 복제해 쓰는 칸(보상 카드, 고르기 칸 등)은 본보기에 붙어 복제본도 함께 소리를 낸다.
+        /// </summary>
+        private static void AddButtonSounds(SoundPlayer sound)
+        {
+            Button[] buttons = Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                ButtonClickSound click = buttons[i].GetComponent<ButtonClickSound>();
+                if (click == null)
+                {
+                    click = buttons[i].gameObject.AddComponent<ButtonClickSound>();
+                }
+
+                click.Sound = sound;
+            }
+        }
+
+        private static void PlaceCentered(RectTransform rect, Vector2 position, Vector2 size)
+        {
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = size;
+            rect.anchoredPosition = position;
         }
 
         /// <summary>

@@ -1,0 +1,29 @@
+더머.png
+size:1545,327
+filter:Linear,Linear
+pma:false
+더머
+bounds:2,45,634,280
+offsets:1,1,636,282
+더머 복사
+bounds:1120,133,331,192
+offsets:1,1,333,194
+더머 복사 2
+bounds:638,124,480,201
+offsets:1,1,482,203
+더머 복사 3
+bounds:1453,149,176,90
+offsets:1,1,178,92
+rotate:90
+더머 복사 4
+bounds:1322,27,172,104
+offsets:1,1,174,106
+더머 복사 5
+bounds:638,6,298,116
+offsets:1,1,300,118
+더머 복사 6
+bounds:1120,9,200,122
+offsets:1,1,202,124
+더머-눈 3개 뜬 모습 복사
+bounds:938,2,175,120
+offsets:1,1,177,122

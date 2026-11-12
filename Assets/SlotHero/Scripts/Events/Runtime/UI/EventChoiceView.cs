@@ -1,4 +1,5 @@
 using System;
+using SlotHero.Ui;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -185,7 +186,8 @@ namespace SlotHero.Events.UI
             float width = layout.GetChoiceTextWidth(visual.ChoicePadding);
 
             // 높이를 0 으로 주면 TMP 가 이 폭에 맞춘 높이를 스스로 재서 돌려준다.
-            float textHeight = _label.GetPreferredValues(_label.text, width, 0f).y;
+            // 영어 설정이면 영어로 잰다. 한국어로 재면 더 긴 영어가 줄이 바뀌어도 칸이 늘지 않는다(2026년 11월 10일 원재).
+            float textHeight = ShownText.Measure(_label, _label.text, width, 0f).y;
             return layout.GetChoiceHeight(textHeight);
         }
 

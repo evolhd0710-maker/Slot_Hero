@@ -18,6 +18,12 @@ MonoBehaviour:
   _normalEnemyArt: {fileID: 21300000, guid: 170e624999917bb4c90e58ae39f2a0c3, type: 3}
   _eliteEnemyArt: {fileID: 21300000, guid: fd6df544153a88047b881bb8473645b9, type: 3}
   _bossEnemyArt: {fileID: 21300000, guid: d5402716ddd2ec8459ea01cf4b495c79, type: 3}
+  _normalEnemySpine: {fileID: 11400000, guid: 78fc105e4157a784f880c8ab94518add, type: 2}
+  _eliteEnemySpine: {fileID: 11400000, guid: 761100abab838394ba41e5ebe9b7c41b, type: 2}
+  _bossEnemySpine: {fileID: 0}
+  _enemySpineAnimation: animation
+  _enemySpineFit: 0.9
+  _damageSortingOffset: 50
   BarBackColor: {r: 0.07, g: 0.065, b: 0.06, a: 1}
   PlayerBarColor: {r: 0.863, g: 0.318, b: 0.263, a: 1}
   EnemyBarColor: {r: 0.863, g: 0.318, b: 0.263, a: 1}

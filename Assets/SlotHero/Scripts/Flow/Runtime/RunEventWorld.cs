@@ -333,6 +333,24 @@ namespace SlotHero.Flow
                     DecideRelics(action.Count - (string.IsNullOrEmpty(target.Id) ? 0 : 1), target.Id, random, into);
                     break;
 
+                // 17 협박. 바칠 유물을 미리 정해 칸에 적는다.
+                case EventActionKind.LoseRelic:
+                    if (string.IsNullOrEmpty(target.Id))
+                    {
+                        AddDecided(PickOwnedRelicId(random), into);
+                    }
+
+                    break;
+
+                // 07 기록 말살. 건넬 전설 코인을 미리 정해 칸에 적는다. 기획서 비고의 "보유한 전설 코인 중 무작위 1개를 지목해 선택지에 표시한다".
+                case EventActionKind.LoseCoin:
+                    if (string.IsNullOrEmpty(target.Id))
+                    {
+                        AddDecided(PickOwnedCoinId(random, action.TargetMinRarity), into);
+                    }
+
+                    break;
+
                 case EventActionKind.ChangeRelic:
                     // 13 유물 교환. 내줄 유물을 정하고, 그 등급에서 비중대로 몇 단계 위의 유물을 정한다.
                     string give = PickTradableRelic(action, random);
@@ -475,6 +493,7 @@ namespace SlotHero.Flow
                 case EventActionKind.LoseSymbol:
                 case EventActionKind.ChangeSymbol:
                 case EventActionKind.ChangeAllSymbols:
+                case EventActionKind.ChangeSomeSymbols:
                     if (_context.Run.Owned.Symbols.Count == 0)
                     {
                         reason = "문양 없음";
@@ -520,6 +539,15 @@ namespace SlotHero.Flow
                     if (gainable < wanted)
                     {
                         reason = gainable == 0 ? "받을 유물 없음" : "받을 유물 부족";
+                        return false;
+                    }
+
+                    break;
+
+                case EventActionKind.LoseRelic:
+                    if (_context.Run.Owned.Relics.Count == 0)
+                    {
+                        reason = "유물 없음";
                         return false;
                     }
 
@@ -640,8 +668,14 @@ namespace SlotHero.Flow
                 case EventActionKind.ChangeAllSymbols:
                     return ChangeAllSymbols(random);
 
+                case EventActionKind.ChangeSomeSymbols:
+                    return ChangeSomeSymbols(action.Count, random);
+
                 case EventActionKind.GainRelic:
                     return GainRelics(targetId, action.Count, target.Decided, random);
+
+                case EventActionKind.LoseRelic:
+                    return LoseRelic(!string.IsNullOrEmpty(targetId) ? targetId : target.GetDecided(0), random);
 
                 case EventActionKind.ChangeRelic:
                     return ChangeRelic(action, target.GetDecided(0), target.GetDecided(1), random);
@@ -650,7 +684,7 @@ namespace SlotHero.Flow
                     return GainCoin(targetId, random);
 
                 case EventActionKind.LoseCoin:
-                    return LoseCoin(targetId, random);
+                    return LoseCoin(!string.IsNullOrEmpty(targetId) ? targetId : target.GetDecided(0), random, action.TargetMinRarity);
 
                 case EventActionKind.ChangeCoin:
                     return ChangeCoin(targetId, random, 0, target.GetDecided(0), -1);
@@ -829,6 +863,65 @@ namespace SlotHero.Flow
             }
 
             return Cost("문양 " + total + "장") + " 이 모두 " + Gain("무작위 문양") + " 으로 뒤바뀌었다.";
+        }
+
+        /// <summary>
+        /// 가진 문양 중 무작위 count 장을 무작위 문양으로 바꾼다. 장수는 그대로다. 36 혼돈 이 다섯 장으로 쓴다.
+        /// 문양 종류가 아니라 장마다 고르게 뽑는다. 같은 문양을 많이 가질수록 그 문양이 많이 뽑힌다.
+        /// 새로 받은 문양이 다시 뽑히지 않게 다 뽑은 뒤에 넣는다. 가진 것이 모자라면 가진 만큼 바꾼다.
+        /// </summary>
+        private string ChangeSomeSymbols(int count, EventRandom random)
+        {
+            RunOwnedData owned = _context.Run.Owned;
+            int wanted = count < 1 ? 1 : count;
+            List<string> incoming = new List<string>();
+
+            for (int n = 0; n < wanted; n++)
+            {
+                string from = PickOwnedCardId(random);
+                if (string.IsNullOrEmpty(from) || owned.RemoveSymbol(from, 1) <= 0)
+                {
+                    break;
+                }
+
+                incoming.Add(PickAnySymbolId(random));
+            }
+
+            for (int i = 0; i < incoming.Count; i++)
+            {
+                owned.AddSymbol(incoming[i], 1);
+            }
+
+            if (incoming.Count == 0)
+            {
+                return "바꿀 문양이 없었다.";
+            }
+
+            return Cost("문양 " + incoming.Count + "장") + " 이 " + Gain("무작위 문양") + " 으로 뒤바뀌었다.";
+        }
+
+        /// <summary>가진 문양 한 장. 장마다 고르게 뽑는다. 없으면 빈 글이다.</summary>
+        private string PickOwnedCardId(EventRandom random)
+        {
+            List<OwnedSymbol> symbols = _context.Run.Owned.Symbols;
+            int total = _context.Run.Owned.TotalSymbolCount;
+
+            if (total <= 0)
+            {
+                return string.Empty;
+            }
+
+            int roll = random.Range(0, total);
+            for (int i = 0; i < symbols.Count; i++)
+            {
+                roll -= symbols[i].Count;
+                if (roll < 0)
+                {
+                    return symbols[i].SymbolId;
+                }
+            }
+
+            return string.Empty;
         }
 
         private string PickAnySymbolId(EventRandom random)
@@ -1334,6 +1427,32 @@ namespace SlotHero.Flow
             return Gain(names) + " 을 얻었다.";
         }
 
+        /// <summary>
+        /// 가진 유물 하나를 잃는다. 17 협박.
+        /// 칸에 적어 둔 유물이 아직 있으면 그것을, 없으면 보유 유물 중 무작위로 잃는다.
+        /// </summary>
+        private string LoseRelic(string relicId, EventRandom random)
+        {
+            string id = !string.IsNullOrEmpty(relicId) && HasRelic(_context.Run.Owned.Relics, relicId)
+                ? relicId
+                : PickOwnedRelicId(random);
+
+            if (string.IsNullOrEmpty(id))
+            {
+                return "잃을 유물이 없었다.";
+            }
+
+            _context.Run.Owned.RemoveRelic(id);
+            return Cost(_config.GetDisplayName(id)) + " 을 잃었다.";
+        }
+
+        /// <summary>보유 유물 중 무작위 하나. 없으면 빈 글이다.</summary>
+        private string PickOwnedRelicId(EventRandom random)
+        {
+            List<OwnedRelic> relics = _context.Run.Owned.Relics;
+            return relics.Count == 0 ? string.Empty : relics[random.Range(0, relics.Count)].RelicId;
+        }
+
         /// <summary>아직 가지지 않아 받을 수 있는 유물 수.</summary>
         private int CountGainableRelics()
         {
@@ -1540,9 +1659,10 @@ namespace SlotHero.Flow
             return Gain(_config.GetDisplayName(id)) + " 을 얻었다.";
         }
 
-        private string LoseCoin(string targetId, EventRandom random)
+        /// <summary>코인 하나를 잃는다. 대상이 없으면 minRarity 이상 보유 코인 중 무작위다(07 기록 말살 의 전설 코인).</summary>
+        private string LoseCoin(string targetId, EventRandom random, int minRarity)
         {
-            string id = !string.IsNullOrEmpty(targetId) ? targetId : PickOwnedCoinId(random, -1);
+            string id = !string.IsNullOrEmpty(targetId) ? targetId : PickOwnedCoinId(random, minRarity);
 
             if (string.IsNullOrEmpty(id) || !_context.Run.Owned.RemoveCoin(id))
             {

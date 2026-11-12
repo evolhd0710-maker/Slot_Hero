@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using SlotHero.Events;
+using SlotHero.Sanctum;
 
 namespace SlotHero.Flow
 {
@@ -34,11 +35,14 @@ namespace SlotHero.Flow
             all.Add(Reflection());
             all.Add(Purification());
             all.Add(SymbolTrade());
+            all.Add(RecordErasure());
             all.Add(BloodDeal());
             all.Add(Corrosion());
             all.Add(MindCollapse());
+            all.Add(Allure());
             all.Add(SleepingTreasure());
             all.Add(RelicTrade());
+            all.Add(Extortion());
             all.Add(OwnerlessRelic());
             all.Add(TwoBoxes());
             all.Add(MoneyChange());
@@ -53,6 +57,7 @@ namespace SlotHero.Flow
             all.Add(LeftBehind());
             all.Add(Gamble());
             all.Add(Challenger());
+            all.Add(Chaos());
             all.Add(Ambush());
 
             for (int i = 0; i < all.Count; i++)
@@ -288,6 +293,53 @@ namespace SlotHero.Flow
         }
 
         /// <summary>
+        /// 07 기록 말살. 긍정, 화면 4개.
+        /// 화면 2 는 보유한 전설 코인 중 무작위 하나를 지목해 칸에 적고, 없으면 비활성이다. 기획서 비고 그대로다.
+        /// 화면 3 은 태그 선택 창에서 아홉 태그 중 하나를 고른다(`EventPickSource.AllTags`).
+        /// 태그 선택 창을 따로 만들기 전까지 전투의 태그 원판을 빌려 쓴다(2026년 11월 11일 원재).
+        /// 고른 태그를 지우는 일은 05 정화 와 같다(`PurgeTag`).
+        /// **지금은 꺼 둔다.** 물건 목록에 전설 코인이 없어 늘 화면 2 에서 막히므로 2026년 11월 13일 원재가 나오지 않게 했다.
+        /// 시험 씬(`시험 07 기록 말살`)은 식별자로 찾아 그대로 연다. 켜려면 `Disabled` 를 지운다.
+        /// </summary>
+        private static EventScript RecordErasure()
+        {
+            EventScript script = Begin("record_erasure", "기록 말살", EventNature.Good);
+            script.Disabled = true;
+
+            script.Add(new EventScreen("1", "비를 피한 동굴에서 하룻밤을 보내고 깨어나자 동굴 안쪽에서 말소리가 들려오는 분위기",
+                    "비를 피해서 동굴에서 하룻밤을 보낸 나. 눈을 떠보니 어딘가에서 말을 걸어온다.\n"
+                    + "\"동굴에서 나가고 싶어.\"\n"
+                    + "말소리가 들려오는 것은 동굴 안쪽. 들어가볼까, 비도 멈췄으니 다시 나가볼까.")
+                .Add(EventScreenChoice.Advance("near", "다가간다", "2"))
+                .Add(EventScreenChoice.Finish("leave", "떠난다")));
+
+            script.Add(new EventScreen("2", "동굴 안쪽에서 형체 없이 일렁이는 존재가 가장 값진 것을 달라고 하는 분위기",
+                    "\"네게서 가장 값진 것을 주면, 나도 값진 것을 줄게. "
+                    + "밖에서 온 존재가 주는 가장 값진 것을 받아야, 내 영혼이 빠져나갈 수 있어.\"\n"
+                    + "아무래도 그런 것은 가진 코인일 것이다. 형체도 없는, 그저 일렁이는 것. 그런 자에게 내놔도 되는 것일까. "
+                    + "아직 입구가 보인다. 나갈 수 있다. 코인을 건네볼까, 무시하고 이만 나가볼까.")
+                .Add(Act("give", "전설 코인을 건넨다",
+                        new EventAction(EventActionKind.LoseCoin).TargetingRarityAtLeast((int)ItemRarity.Legend), "3")
+                    .Revealing()
+                    .With(EventEffectLine.Cost(Decided(0)))
+                    .With(EventEffectLine.Gain("지울 태그를 고른다")))
+                .Add(EventScreenChoice.Finish("refuse", "거절한다")));
+
+            script.Add(new EventScreen("3", "투명해지는 형체 사이로 동굴 벽에 새겨진 갖가지 문양이 드러나는 분위기",
+                    "\"고마워.\"\n"
+                    + "형체가 더더욱 투명해진다. 그 사이로 동굴에 새겨진 각종 문양이 보인다.\n"
+                    + "\"하나를 고르면, 다른 문양으로 바꿔줄게.\"")
+                .Add(Act("erase", "지울 태그를 고른다", EventAction.OnTarget(EventActionKind.PurgeTag), "끝")
+                    .PickingFrom(EventPickSource.AllTags)
+                    .With(EventEffectLine.Cost("그 태그 문양 전부"))
+                    .With(EventEffectLine.Gain("그 태그가 없는 다른 문양"))));
+
+            return script.Add(Ending("형체가 빠져나간 길을 따라 빙긋 웃으며 동굴을 나서는 분위기",
+                "그는 동굴을 그제서야 빠져나갈 수 있었다. "
+                + "나는 빙긋 웃으며 그가 빠져나간 길로 동굴을 빠져나갔다."));
+        }
+
+        /// <summary>
         /// 08 피의 거래. 긍정, 화면 3개.
         /// 화면 2 의 "전체 문양 목록에서 원하는 문양 1개를 획득한다" 는 고르기 화면에서 고른다.
         /// 2026년 10월 5일에 고르기 화면을 만들며 옮겼다. 기획서가 `00` 으로 비워 둔 체력은 최대 체력의 15% 로 두었다.
@@ -358,6 +410,35 @@ namespace SlotHero.Flow
                 + "이곳은 영 꿈자리가 좋지 않군, 다시 길을 떠난다."));
         }
 
+        /// <summary>
+        /// 11 이끌림. 긍정, 화면 3개.
+        /// 화면 2 는 무작위 태그 셋을 선택지로 내고, 고른 태그를 가진 무작위 문양 하나를 준다.
+        /// 받을 문양은 02 힘을 새기는 것 처럼 미리 정해 칸에 적는다. 기억해 둔 태그가 없어 그 태그만 보고 뽑는다(`GainSymbolByTags`).
+        /// </summary>
+        private static EventScript Allure()
+        {
+            EventScript script = Begin("allure", "이끌림", EventNature.Good);
+
+            script.Add(new EventScreen("1", "어두컴컴한 숲속에 유독 햇빛이 쏟아지고 꽃들로 장식된 이상하리만치 밝은 길의 분위기",
+                    "어두컴컴한 숲속, 유독 햇빛이 잘 들어오고 꽃들로 장식된 길이 있다. "
+                    + "어둠에 익숙해져있던 나머지 빛이 너무 간절했던 상황. 하지만 이상하리만치 밝은 길이다. "
+                    + "가볼까, 원래 가려 했던 길로 가볼까.")
+                .Add(EventScreenChoice.Advance("follow", "따라간다", "2"))
+                .Add(EventScreenChoice.Finish("leave", "떠난다")));
+
+            script.Add(new EventScreen("2", "길 끝에 같은 철에 열매를 맺은 사과나무, 포도나무, 복숭아나무가 나란히 선 분위기",
+                    "길의 끝엔 세 종류의 과일나무가 있었다. 하나는 사과나무, 하나는 포도나무, 하나는 복숭아 나무다. "
+                    + "같은 시기에 과일을 맺은 것을 보아하니 심상치 않은 나무인듯 하다. "
+                    + "마침 잠이 쏟아지는 상황. 어느 나무 아래에서 휴식을 취할까.")
+                .Add(Act("tree", "{0}", EventAction.OnTarget(EventActionKind.GainSymbolByTags), "끝")
+                    .FilledWith(EventChoiceFill.RandomTags, 3, "{0}")
+                    .Revealing()
+                    .With(EventEffectLine.Gain("문양 " + Decided(0)))));
+
+            return script.Add(Ending("나무 아래에서 개운하게 잠을 깨고 다시 여정을 이어 가는 분위기",
+                "잠에서 깨니 몸이 개운하다. 여정을 이어갈 힘이 나는 듯 하다."));
+        }
+
         // ── 6.2 유물 이벤트 ──────────────────────────────────────
 
         /// <summary>
@@ -419,6 +500,37 @@ namespace SlotHero.Flow
 
             return script.Add(Ending("수상한 분위기와 달리 괜찮은 유물을 받아 들고 길을 떠나는 분위기",
                 "수상한 분위기와는 다르게 그의 말처럼 꽤 괜찮은 유물이다. 마저 길을 떠나볼까."));
+        }
+
+        /// <summary>
+        /// 17 협박. 부정, 화면 3개.
+        /// 유물을 바치면 보유 유물 중 무작위 하나를 잃는다. 잃을 유물은 미리 정해 칸에 적는다.
+        /// 생명력을 바치면 최대 체력이 10% 영구 감소한다. 기획서가 적어 둔 수치 그대로다.
+        /// 유물이 없으면 유물을 바친다 가 비활성이라 생명력을 바친다 만 남는다.
+        /// </summary>
+        private static EventScript Extortion()
+        {
+            EventScript script = Begin("extortion", "협박", EventNature.Bad);
+
+            script.Add(new EventScreen("1", "숲속 길에서 함부로 싸우지 않는다는 몬스터와 마주친 분위기",
+                    "숲속 길을 지나가던 도중, 몬스터를 발견한다. "
+                    + "자신은 다른 몬스터와는 다르게 함부로 싸우지 않는다고 한다.")
+                .Add(EventScreenChoice.Advance("talk", "이야기를 듣는다", "2")));
+
+            script.Add(new EventScreen("2", "화려한 것을 좋아하는 몬스터가 귀찮은 듯 무언가를 바치라고 요구하는 분위기",
+                    "하지만 화려한 것을 좋아한다고 하는 몬스터.\n"
+                    + "\"바치면 그냥 보내줄게. 그치만 지금은 좀 귀찮아서 말이야. 바치지 않더라도 죽이진 않을거야. "
+                    + "누군가의 목숨을 확실히 끊는 것은 꽤나 까다로운 일이거든.\"")
+                .Add(Act("relic", "유물을 바친다", new EventAction(EventActionKind.LoseRelic), "끝")
+                    .Revealing()
+                    .With(EventEffectLine.Cost(Decided(0))))
+                .Add(Act("life", "생명력을 바친다",
+                        EventAction.ByMaxHealth(EventActionKind.LoseMaxHealth, 0.10f), "끝")
+                    .With(EventEffectLine.Cost("최대 체력 {hp}"))));
+
+            return script.Add(Ending("재미를 얻은 몬스터의 기괴한 콧노래를 뒤로하고 착잡하게 떠나는 분위기",
+                "어찌됐든 나름대로의 재미를 얻은 몬스터는 기괴한 콧노래를 부른다. "
+                + "나는 착잡한 마음으로 길을 떠난다."));
         }
 
         /// <summary>18 주인 없는 유물. 긍정, 화면 3개.</summary>
@@ -785,6 +897,25 @@ namespace SlotHero.Flow
                 + "손에 두둑한 보상이 담긴다. 기분좋게 동굴을 떠난다."));
         }
 
+        /// <summary>
+        /// 36 혼돈. 무작위, 화면 2개.
+        /// 가진 문양 중 무작위 다섯 장이 무작위 문양으로 바뀐다(`ChangeSomeSymbols`). 장수는 그대로다.
+        /// 03 판도라의 상자 처럼 무엇이 바뀔지 칸에 적지 않는다. 2026년 11월 12일 원재가 그대로 두라고 했다.
+        /// </summary>
+        private static EventScript Chaos()
+        {
+            EventScript script = Begin("chaos", "혼돈", EventNature.Random);
+
+            script.Add(new EventScreen("1", "폭풍우가 몰아쳐 짐이 뒤섞이고 몇 개는 날아가는 분위기",
+                    "폭풍우가 몰아친다. 짐이 뒤섞이고, 몇 개는 날아가기도 한다.")
+                .Add(Act("accept", "받아들인다", new EventAction(EventActionKind.ChangeSomeSymbols).Times(5), "끝")
+                    .With(EventEffectLine.Cost("보유 문양 무작위 5장"))
+                    .With(EventEffectLine.Gain("같은 장수의 무작위 문양"))));
+
+            return script.Add(Ending("동굴로 급히 피해 뒤섞인 짐을 살피는 분위기",
+                "급하게 동굴에 와 폭풍우를 피한다. 짐 몇 개가 뒤섞여져 있다."));
+        }
+
         /// <summary>38 매복. 부정, 화면 2개.</summary>
         private static EventScript Ambush()
         {
@@ -850,6 +981,7 @@ namespace SlotHero.Flow
         /// 미리 정한 결과 하나의 이름. `[곡괭이]` 처럼 괄호로 감싼다. 선택지에 `Revealing` 을 붙여야 정해진다.
         /// 2026년 10월 5일 원재가 의도적으로 숨기는 경우만 "무작위" 로 적고 나머지는 정확한 이름을 적으라고 했다.
         /// 숨기기로 한 것은 03 판도라의 상자, 05 정화, 25 미치광이 대장장이, 27 축복 이다.
+        /// 36 혼돈 도 03 과 같이 숨긴다(2026년 11월 12일 원재).
         /// 20 환전 은 처음에 숨기기로 했다가 문양 거래(06), 유물 교환(13) 과 같은 방식이어야 한다고 해 공개로 바꿨다.
         /// </summary>
         private static string Decided(int index)

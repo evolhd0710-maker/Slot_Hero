@@ -195,7 +195,7 @@ namespace SlotHero.Map.UI
                 return;
             }
 
-            _time += Time.unscaledDeltaTime;
+            _time += EffectClock.Delta;
 
             float unrollSeconds = _visual.UnrollSeconds;
             if (_time < unrollSeconds)
@@ -231,7 +231,7 @@ namespace SlotHero.Map.UI
         /// <summary>펼치기를 거꾸로 돌린다. 펼친 정도가 1 에서 0 으로 간다.</summary>
         private void UpdateRollUp()
         {
-            _time += Time.unscaledDeltaTime;
+            _time += EffectClock.Delta;
 
             float seconds = _visual.RollUpSeconds;
             float done = seconds <= 0f ? 1f : Mathf.Clamp01(_time / seconds);

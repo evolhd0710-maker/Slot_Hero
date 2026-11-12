@@ -6,6 +6,7 @@ using SlotHero.TagAttack;
 using SlotHero.TagAttack.UI;
 using SlotHero.Tools;
 using SlotHero.Ui;
+using Spine.Unity;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -25,6 +26,13 @@ namespace SlotHero.ToolsEditor
     {
         /// 전투 확인용 씬 이름. 게임 씬이 여기서 전투 화면을 가져간다.
         public const string CombatSceneName = "14 전투 화면";
+
+        /// <summary>
+        /// 몬스터 스파인을 UI 에 그리는 재질. 스파인 실행기에 딸린 곧은 알파 재질이다.
+        /// 프로젝트가 선형 색 공간이라 PMA 로 내보낸 덤과 더머를 옮길 때 곧은 알파로 풀어 두었다(`Combat/README.md`).
+        /// </summary>
+        public const string EnemySpineMaterialPath =
+            "Packages/com.esotericsoftware.spine.spine-unity/Runtime/spine-unity/Materials/UI-StraightAlphaTex/SkeletonGraphicDefault-Straight.mat";
 
         [MenuItem("Slot Hero/확인용 씬 만들기/전투 화면")]
         public static void BuildCombat()
@@ -166,6 +174,17 @@ namespace SlotHero.ToolsEditor
             TMP_Text enemyArtLabel = NewLabel("NameLabel", enemyArt.transform, visual.NameFontSize, visual.TextColor, true);
             UiSceneBuilder.Stretch(enemyArtLabel.rectTransform);
 
+            // 몬스터 스파인. 덤과 더머는 그림 대신 이것이 움직인다(2026년 11월 13일 원재).
+            // 그림 칸의 자식이라 공격 연출에서 함께 앞으로 나온다. 어느 몬스터인지는 화면이 전투마다 정한다.
+            GameObject spineObject = new GameObject("EnemySpine", typeof(RectTransform));
+            spineObject.transform.SetParent(enemyArt.transform, false);
+            SkeletonComponents<SkeletonGraphic, SkeletonAnimation> spine =
+                SkeletonGraphic.AddSkeletonGraphicAnimationComponents(spineObject, null, null, true);
+            spine.skeletonRenderer.material = AssetDatabase.LoadAssetAtPath<Material>(EnemySpineMaterialPath);
+            spine.skeletonRenderer.raycastTarget = false;
+            spine.skeletonAnimation.loop = true;
+            spineObject.SetActive(false);
+
             Image enemyInfo = UiSceneBuilder.NewImage("EnemyInfo", root, visual.PanelColor);
             enemyInfo.raycastTarget = false;
             TMP_Text enemyName = NewLabel("NameLabel", enemyInfo.transform, visual.NameFontSize, visual.TextColor, true);
@@ -276,6 +295,8 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(view, "_enemyHealthLabel", enemyLabel);
             UiSceneBuilder.SetField(view, "_enemyArt", enemyArt);
             UiSceneBuilder.SetField(view, "_enemyArtLabel", enemyArtLabel);
+            UiSceneBuilder.SetField(view, "_enemySpine", spine.skeletonRenderer);
+            UiSceneBuilder.SetField(view, "_enemySpineMotion", spine.skeletonAnimation);
             UiSceneBuilder.SetField(view, "_enemyInfo", enemyInfo);
             UiSceneBuilder.SetField(view, "_enemyNameLabel", enemyName);
             UiSceneBuilder.SetField(view, "_enemyInfoLabel", enemyInfoLabel);
@@ -669,7 +690,7 @@ namespace SlotHero.ToolsEditor
         /// 태그 UI. 피그마 Frame 3 · 4 를 따라 어두운 원, 원판 테두리, 열 칸 바퀴, 칸 열 개, 가운데 메달과 코인을 차례로 쌓는다.
         /// 크기는 `TagDialView.Configure` 가 자리 설정에서 잡는다.
         /// </summary>
-        private static TagDialView BuildTagDial(
+        internal static TagDialView BuildTagDial(
             Transform dial, CombatVisualConfig visual, Sprite circle, out CanvasGroup group)
         {
             RectTransform root = UiSceneBuilder.NewRect("TagDial", dial);

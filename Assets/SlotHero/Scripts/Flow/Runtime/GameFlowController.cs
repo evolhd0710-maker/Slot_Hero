@@ -73,6 +73,16 @@ namespace SlotHero.Flow
         [Tooltip("고르기 화면. 성소 문양 변경과 08 피의 거래 처럼 가진 것이나 목록에서 하나를 직접 고를 때 연다.")]
         [SerializeField] private ItemPickerScreenController _picker;
 
+        [Tooltip("이벤트의 태그 선택 창(IEventTagPicker). 07 기록 말살 이 아홉 태그 중 하나를 고를 때 연다. " +
+                 "전투의 태그 원판을 빌린 임시 창이다(2026년 11월 11일 원재).")]
+        [SerializeField] private MonoBehaviour _tagPickerBehaviour;
+
+        /// 태그 선택 창. 게임 씬에는 `Flow.UI.EventTagPicker` 가 물린다. 없으면 null 이다.
+        private IEventTagPicker TagPicker
+        {
+            get { return _tagPickerBehaviour as IEventTagPicker; }
+        }
+
         [Header("런 중에 보이는 것")]
         [SerializeField] private TopBarController _topBar;
         [SerializeField] private RunHudController _hud;
@@ -117,8 +127,15 @@ namespace SlotHero.Flow
         [SerializeField] private UnityEngine.UI.Image _battleBackgroundImage;
 
         [Header("수치")]
-        [Tooltip("타이틀 화면에 적는 빌드 번호.")]
-        [SerializeField] private string _buildNumber = "0.1.0";
+        [Tooltip("타이틀 화면에 적는 빌드 번호. 비우면 프로젝트 설정의 게임 버전(Application.version)을 쓴다. " +
+                 "2026년 11월 10일부터 버전은 프로젝트 설정 한 곳에서만 고친다.")]
+        [SerializeField] private string _buildNumber = string.Empty;
+
+        /// <summary>타이틀에 적는 버전. 따로 적은 값이 없으면 프로젝트 설정의 게임 버전이다.</summary>
+        private string BuildNumber
+        {
+            get { return string.IsNullOrEmpty(_buildNumber) ? Application.version : _buildNumber; }
+        }
 
         [Tooltip("설정 창을 여는 키. 겹쳐 뜬 화면이 있으면 그쪽이 먼저 가져간다.")]
         [SerializeField] private KeyCode _settingsKey = KeyCode.Escape;
@@ -288,10 +305,17 @@ namespace SlotHero.Flow
         {
             _readRetry.Tick(Time.unscaledDeltaTime);
             TickClock();
+            WatchResources();
             RefreshSettingsInput();
             ReadKeys();
             _mapPeek.RefreshButton();
             HideItemDetailOnScreenChange();
+
+            // 연출 속도 "스킵". 건너뛸 수 있는 연출이 시작되면 누르지 않아도 다음 프레임에 끝 모습으로 넘긴다(2026년 11월 11일 원재).
+            if (EffectClock.AutoSkip && EffectSkip.Waiting)
+            {
+                EffectSkip.SkipAll();
+            }
         }
 
         /// <summary>
@@ -301,6 +325,49 @@ namespace SlotHero.Flow
         /// 예전에는 표시줄에도 시계가 있어 둘이 따로 흘렀다. 2026년 10월 8일에 하나로 모았다.
         /// 실제로 흐른 시간을 센다(`unscaledDeltaTime`). 연출 속도를 `Time.timeScale` 로 바꿔도 빨라지지 않는다.
         /// </summary>
+        private RunContext _watchedContext;
+        private int _watchedGold;
+        private int _watchedCoins;
+
+        /// <summary>
+        /// 런의 골드와 코인을 넣은 횟수를 앞 프레임과 견주어, 늘었으면 S09 골드 얻음과 S15 코인 받음 소리를 낸다(2026년 11월 13일 원재).
+        /// 코인은 개수가 아니라 넣은 횟수(`RunOwnedData.CoinsAdded`)를 본다. 한도가 차 하나를 버리고 받으면 개수가 같다.
+        /// 골드와 코인은 보상, 이벤트, 행상, 런 시작 등 여러 길로 늘어 길마다 알림을 다는 대신 결과를 본다.
+        /// 런이 바뀐 프레임(새 게임, 이어하기)은 기준만 다시 잡고 소리를 내지 않는다. 시작 골드와 시작 코인에 소리가 나지 않게 한다.
+        /// 행상에서 코인을 사면 S23 행상 구매가 같은 등급 위라 그쪽이 난다.
+        /// </summary>
+        private void WatchResources()
+        {
+            RunContext context = Context;
+            if (context != _watchedContext)
+            {
+                _watchedContext = context;
+                _watchedGold = context != null ? context.Run.Status.Gold : 0;
+                _watchedCoins = context != null ? context.Run.Owned.CoinsAdded : 0;
+                return;
+            }
+
+            if (context == null)
+            {
+                return;
+            }
+
+            int gold = context.Run.Status.Gold;
+            int coins = context.Run.Owned.CoinsAdded;
+            if (_sound != null && gold > _watchedGold)
+            {
+                _sound.Play(SoundCue.GoldGained);
+            }
+
+            if (_sound != null && coins > _watchedCoins)
+            {
+                _sound.Play(SoundCue.CoinGained);
+            }
+
+            _watchedGold = gold;
+            _watchedCoins = coins;
+        }
+
         private void TickClock()
         {
             RunContext context = Context;
@@ -385,6 +452,11 @@ namespace SlotHero.Flow
                 return true;
             }
 
+            if (TagPicker != null && TagPicker.IsOpen)
+            {
+                return true;
+            }
+
             return _popups.IsOpen;
         }
 
@@ -396,7 +468,8 @@ namespace SlotHero.Flow
         {
             return (_settings != null && _settings.IsOpen)
                 || _popups.IsOpen
-                || (_picker != null && _picker.IsOpen);
+                || (_picker != null && _picker.IsOpen)
+                || (TagPicker != null && TagPicker.IsOpen);
         }
 
         /// <summary>
@@ -455,7 +528,7 @@ namespace SlotHero.Flow
         {
             if (_title != null && _save != null && _screen == GameScreen.Title)
             {
-                _title.Open(_save.GetSavedRunState(), _buildNumber);
+                _title.Open(_save.GetSavedRunState(), BuildNumber);
             }
         }
 
@@ -635,6 +708,25 @@ namespace SlotHero.Flow
             StartRunTimer(run.Status.ElapsedSeconds);
             ShowRunChrome(true);
             RefreshTopBar(false);
+            PlayRunStartSound();
+        }
+
+        /// <summary>설정의 막대 값이 한 단계 오르거나 내렸다. S25 설정 값 올림이나 S26 설정 값 내림을 낸다(2026년 11월 13일 원재).</summary>
+        private void PlaySettingStepSound(SettingDefinition definition, bool up)
+        {
+            if (_sound != null)
+            {
+                _sound.Play(up ? SoundCue.SettingStepUp : SoundCue.SettingStepDown);
+            }
+        }
+
+        /// <summary>새 게임이나 이어하기로 런에 들어갔다. S19 런 시작을 낸다(2026년 11월 13일 원재).</summary>
+        private void PlayRunStartSound()
+        {
+            if (_sound != null)
+            {
+                _sound.Play(SoundCue.RunStart);
+            }
         }
 
         /// <summary>
@@ -663,6 +755,7 @@ namespace SlotHero.Flow
 
             _sanctumIndex = 0;
             _sanctumNodeId = -1;
+            PlayRunStartSound();
 
             CloseAll();
             ResetRunScreens();
@@ -1033,6 +1126,12 @@ namespace SlotHero.Flow
             RunSaveData run = Context.Run;
             _save.OnStageAdvanced(run.StageIndex + 1);
 
+            // 스테이지 전환 화면이 아직 없어 다음 스테이지로 넘어가는 이때 S20 스테이지 전환을 낸다(2026년 11월 13일 원재).
+            if (_sound != null)
+            {
+                _sound.Play(SoundCue.StageTransition);
+            }
+
             if (_map != null)
             {
                 _map.StartNewStage(run.Seed, run.StageIndex);
@@ -1381,6 +1480,7 @@ namespace SlotHero.Flow
             if (_settings != null)
             {
                 _settings.ValueChanged += HandleSettingChanged;
+                _settings.ValueStepped += PlaySettingStepSound;
                 _settings.RestoreRequested += ShowSettingsRestoreConfirm;
                 _settings.RestoreApplied += HandleSettingsRestored;
                 _settings.Closed += HandleSettingsClosed;
@@ -1518,6 +1618,7 @@ namespace SlotHero.Flow
             if (_settings != null)
             {
                 _settings.ValueChanged -= HandleSettingChanged;
+                _settings.ValueStepped -= PlaySettingStepSound;
                 _settings.RestoreRequested -= ShowSettingsRestoreConfirm;
                 _settings.RestoreApplied -= HandleSettingsRestored;
                 _settings.Closed -= HandleSettingsClosed;
@@ -1691,6 +1792,7 @@ namespace SlotHero.Flow
             _onPicked = onPicked;
             _onPickCancelled = onCancelled;
             _picker.Open(request, _catalog);
+            PlayCurrentBuildSound();
         }
 
         /// <summary>고르기 화면을 아무것도 알리지 않고 닫는다. 화면을 치울 때 쓴다.</summary>
@@ -1703,6 +1805,11 @@ namespace SlotHero.Flow
             {
                 _picker.Close();
             }
+
+            if (TagPicker != null)
+            {
+                TagPicker.Close();
+            }
         }
 
         private void HandlePicked(BuildEntry entry)
@@ -1710,6 +1817,7 @@ namespace SlotHero.Flow
             Action<BuildEntry> callback = _onPicked;
             _onPicked = null;
             _onPickCancelled = null;
+            PlayCurrentBuildSound();
 
             if (callback != null)
             {
@@ -1722,6 +1830,7 @@ namespace SlotHero.Flow
             Action callback = _onPickCancelled;
             _onPicked = null;
             _onPickCancelled = null;
+            PlayCurrentBuildSound();
 
             if (callback != null)
             {
@@ -2067,7 +2176,24 @@ namespace SlotHero.Flow
         private void ContinueEventChoice(string choiceId)
         {
             EventPickSource source = _events.GetPickSource(choiceId);
-            if (source != EventPickSource.None && _picker != null && Context != null)
+
+            // 07 기록 말살 의 태그 선택 창. 고른 태그의 영어 이름이 대상이다. 취소하면 이벤트 화면에 그대로 남는다.
+            if (source == EventPickSource.AllTags && TagPicker != null)
+            {
+                object tagToken = _events.Token;
+                TagPicker.Open(
+                    tag =>
+                    {
+                        if (_events.Token == tagToken)
+                        {
+                            ApplyEventStep(_events.Choose(choiceId, tag.ToString()), choiceId);
+                        }
+                    },
+                    null);
+                return;
+            }
+
+            if (source != EventPickSource.None && source != EventPickSource.AllTags && _picker != null && Context != null)
             {
                 object token = _events.Token;
                 OpenPicker(
@@ -2286,9 +2412,10 @@ namespace SlotHero.Flow
         /// </summary>
         private void ApplySoundSettings()
         {
-            // 설정을 읽어 들이는 자리가 소리와 같아 임시 아이템 효과와 언어도 여기서 함께 넘긴다.
+            // 설정을 읽어 들이는 자리가 소리와 같아 임시 아이템 효과와 언어, 일반 탭의 화면 설정도 여기서 함께 넘긴다.
             ApplyItemEffectSettings();
             ApplyLanguageSetting();
+            ApplyGeneralSettings();
 
             if (_sound == null || _save == null || _save.Settings == null || _save.Settings.Values == null)
             {
@@ -2338,6 +2465,74 @@ namespace SlotHero.Flow
 
             Loc.SetLanguage(Loc.FromSettingIndex(_save.Settings.Values.GetRaw(LanguageSettingId, 0f)));
         }
+
+        /// <summary>
+        /// 일반 탭의 창 모드, 연출 속도, 자동 저장 표시를 건다(2026년 11월 11일 원재). 인게임 화면 기획서 07 설정 화면 일반 탭이다.
+        ///   창 모드: 창은 모니터의 일정 비율인 16:9 창, 전체 화면은 독점 전체 화면, 테두리 없는 창은 모니터 크기의 테두리 없는 창이다.
+        ///            바뀌었을 때만 건다. 소리 막대를 끌 때마다 이 함수가 불려 창이 깜빡이지 않게 하려는 것이다.
+        ///            편집기에서는 게임 창 크기를 바꾸지 않는다
+        ///   연출 속도: 보통 1배, 빠름과 스킵은 설정 목록의 배율이다. 전투 밖 연출(`EffectClock`)과 전투(`Time.timeScale`)에 함께 건다.
+        ///            스킵이면 건너뛸 수 있는 연출을 누르지 않아도 넘긴다(`Update`)
+        ///   자동 저장 표시: 끄면 저장할 때 오른쪽 아래 "자동 저장중..." 이 뜨지 않는다
+        /// </summary>
+        private void ApplyGeneralSettings()
+        {
+            if (_save == null || _save.Settings == null || _save.Settings.Values == null)
+            {
+                return;
+            }
+
+            SettingsValues values = _save.Settings.Values;
+            SettingsCatalogConfig catalog = _settings != null ? _settings.Catalog : null;
+
+            int speed = DisplaySettingRules.ReadPresentationSpeed(
+                values.GetRaw(DisplaySettingRules.PresentationSpeedId, DisplaySettingRules.SpeedNormal));
+            float scale = DisplaySettingRules.GetSpeed(speed,
+                catalog != null ? catalog.FastPresentationSpeed : 2f,
+                catalog != null ? catalog.SkipPresentationSpeed : 3f);
+            EffectClock.Speed = scale;
+            EffectClock.AutoSkip = DisplaySettingRules.SkipsEffects(speed);
+            Time.timeScale = scale;
+
+            if (_hud != null)
+            {
+                _hud.SetAutoSaveNoticeEnabled(values.GetBool(DisplaySettingRules.AutoSaveNoticeId, true));
+            }
+
+            int mode = DisplaySettingRules.ReadScreenMode(
+                values.GetRaw(DisplaySettingRules.ScreenModeId, DisplaySettingRules.FullScreen));
+            if (mode == _appliedScreenMode)
+            {
+                return;
+            }
+
+            _appliedScreenMode = mode;
+            if (Application.isEditor)
+            {
+                return;
+            }
+
+            Resolution display = UnityEngine.Screen.currentResolution;
+            switch (mode)
+            {
+                case DisplaySettingRules.Windowed:
+                    int width;
+                    int height;
+                    DisplaySettingRules.GetWindowSize(display.width, display.height,
+                        catalog != null ? catalog.WindowedScreenRatio : 0.8f, out width, out height);
+                    UnityEngine.Screen.SetResolution(width, height, FullScreenMode.Windowed);
+                    break;
+                case DisplaySettingRules.Borderless:
+                    UnityEngine.Screen.SetResolution(display.width, display.height, FullScreenMode.FullScreenWindow);
+                    break;
+                default:
+                    UnityEngine.Screen.SetResolution(display.width, display.height, FullScreenMode.ExclusiveFullScreen);
+                    break;
+            }
+        }
+
+        /// <summary>마지막으로 건 창 모드. 같은 값이면 다시 걸지 않는다. -1 은 아직 걸지 않았다는 뜻이다.</summary>
+        private int _appliedScreenMode = -1;
 
         /// <summary>설정 목록(`SettingsCatalogConfig`)의 언어 식별자.</summary>
         public const string LanguageSettingId = "language";
@@ -2408,6 +2603,8 @@ namespace SlotHero.Flow
             {
                 _hud.SetCurrentBuildOpen(true);
             }
+
+            PlayCurrentBuildSound();
         }
 
         private void HandleCurrentBuildClosed()
@@ -2415,6 +2612,17 @@ namespace SlotHero.Flow
             if (_hud != null)
             {
                 _hud.SetCurrentBuildOpen(false);
+            }
+
+            PlayCurrentBuildSound();
+        }
+
+        /// <summary>현재 빌드 화면이나 문양 고르기 화면이 열리고 닫혔다. S06 현재 빌드 열고 닫기를 낸다(2026년 11월 13일 원재).</summary>
+        private void PlayCurrentBuildSound()
+        {
+            if (_sound != null)
+            {
+                _sound.Play(SoundCue.CurrentBuildToggle);
             }
         }
 

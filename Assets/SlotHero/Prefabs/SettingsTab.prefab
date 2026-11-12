@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5901821447496368814}
   - component: {fileID: 4504905590972190798}
   - component: {fileID: 4555524773420436221}
+  - component: {fileID: 5124700125111867273}
   m_Layer: 0
   m_Name: SettingsTab
   m_TagString: Untagged
@@ -116,6 +117,19 @@ MonoBehaviour:
   _button: {fileID: 5901821447496368814}
   _background: {fileID: 7670434816170632451}
   _label: {fileID: 5269115499020936660}
+--- !u!114 &5124700125111867273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098560431500982549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}
 --- !u!1 &5143244667689458550
 GameObject:
   m_ObjectHideFlags: 0

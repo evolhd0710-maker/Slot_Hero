@@ -101,6 +101,18 @@ namespace SlotHero.Events
 
         /// <summary>유물 소지 한도를 `Amount` 만큼 바꾼다. 규칙은 `ChangeCoinCapacity` 와 같다.</summary>
         ChangeRelicCapacity = 24,
+
+        /// <summary>
+        /// 가진 유물 하나를 잃는다. 대상이 없으면 보유 유물 중 무작위다.
+        /// 17 협박 의 "보유 유물 중 무작위 1개를 잃는다" 가 쓴다.
+        /// </summary>
+        LoseRelic = 25,
+
+        /// <summary>
+        /// 가진 문양 중 무작위 `Count` 장을 무작위 문양으로 바꾼다. 장수는 그대로다.
+        /// 36 혼돈 의 "보유 문양 중 무작위 5개가 무작위 문양으로 바뀐다" 가 쓴다. 가진 것이 모자라면 가진 만큼 바꾼다.
+        /// </summary>
+        ChangeSomeSymbols = 26,
     }
 
     /// <summary>

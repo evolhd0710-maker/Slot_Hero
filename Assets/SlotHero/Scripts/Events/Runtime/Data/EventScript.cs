@@ -73,10 +73,17 @@ namespace SlotHero.Events
         [SerializeField] private int _weight = 1;
         public int Weight { get { return _weight; } set { _weight = value; } }
 
-        /// <summary>그 스테이지에 나올 수 있는지.</summary>
+        /// <summary>
+        /// 꺼 둔 이벤트. 켜면 어느 스테이지의 방에도 나오지 않는다. 식별자로 찾는 것(`RunEventConfig.Find`)은 그대로 되어 시험 씬은 연다.
+        /// 07 기록 말살 은 전설 코인이 목록에 없어 늘 막히므로 2026년 11월 13일 원재가 일단 나오지 않게 했다.
+        /// </summary>
+        [SerializeField] private bool _disabled;
+        public bool Disabled { get { return _disabled; } set { _disabled = value; } }
+
+        /// <summary>그 스테이지에 나올 수 있는지. 꺼 둔 이벤트는 어디에도 나오지 않는다.</summary>
         public bool AppearsIn(int stage)
         {
-            return (MinStage <= 0 || stage >= MinStage) && (MaxStage <= 0 || stage <= MaxStage);
+            return !Disabled && (MinStage <= 0 || stage >= MinStage) && (MaxStage <= 0 || stage <= MaxStage);
         }
 
         /// <summary>뽑을 때 쓰는 비중. 0 이하는 1 이다.</summary>

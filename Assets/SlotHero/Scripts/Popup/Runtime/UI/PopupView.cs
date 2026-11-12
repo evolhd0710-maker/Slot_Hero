@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SlotHero.Ui;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -206,7 +207,8 @@ namespace SlotHero.Popup.UI
             }
 
             float inner = _layout.GetContentWidth() - _layout.BodyPadding * 2f;
-            float text = _bodyLabel.GetPreferredValues(_bodyLabel.text, inner, 0f).y;
+            // 영어 설정이면 영어로 잰다. 한국어로 재면 더 긴 영어가 칸을 넘친다(2026년 11월 10일).
+            float text = ShownText.Measure(_bodyLabel, _bodyLabel.text, inner, 0f).y;
             return text + _layout.BodyPadding * 2f;
         }
 

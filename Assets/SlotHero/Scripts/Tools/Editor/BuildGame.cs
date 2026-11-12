@@ -18,7 +18,7 @@ namespace SlotHero.ToolsEditor
     /// 2. 빌드가 함께 만드는 디버그 정보 폴더(`_BurstDebugInformation_DoNotShip`)와
     ///    IL2CPP 백업 폴더(`_BackUpThisFolder_ButDontShipItWithYourGame`)를 지운다. 이름 그대로 나눠 주지 않는 폴더다
     ///
-    /// 결과는 `slot hero/빌드 날짜` 폴더에 `Slot Hero Demo.exe` 로 나온다. 옛 `빌드` 폴더는 건드리지 않는다.
+    /// 결과는 `slot hero/빌드 날짜` 폴더에 `Slot Hero Demo.exe` 로 나온다.
     /// </summary>
     public static class BuildGame
     {

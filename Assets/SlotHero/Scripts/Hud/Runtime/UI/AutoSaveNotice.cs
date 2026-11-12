@@ -27,7 +27,14 @@ namespace SlotHero.Hud.UI
         /// 설정 화면의 자동 저장 알림 항목. 꺼 두면 저장이 일어나도 문구를 띄우지 않는다.
         /// 설정 값을 화면에 적용하는 일은 미뤄 두어 값을 넣어 주는 쪽이 챙긴다(`RunHudController.SetAutoSaveNoticeEnabled`).
         /// </summary>
-        public bool NoticeEnabled { get; set; }
+        public bool NoticeEnabled
+        {
+            get { return _noticeEnabled; }
+            set { _noticeEnabled = value; }
+        }
+
+        /// 처음에는 켜져 있다. `Awake` 에서 켜면 꺼진 HUD 에 먼저 넣은 "꺼짐" 이 첫 활성화 때 덮여 버린다(2026년 11월 11일 코덱스 점검).
+        private bool _noticeEnabled = true;
 
         /// <summary>지금 문구가 떠 있는지.</summary>
         public bool IsShowing
@@ -37,7 +44,6 @@ namespace SlotHero.Hud.UI
 
         private void Awake()
         {
-            NoticeEnabled = true;
             ApplyStyle();
             HideNow();
         }

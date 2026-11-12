@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: EventIllustrationConfig
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Events.EventIllustrationConfig
   _illustrations:
+  - _id: allure_1
+    _sprite: {fileID: 21300000, guid: f91f0798239f88a41bd20ef4838e29cf, type: 3}
+  - _id: allure_2
+    _sprite: {fileID: 21300000, guid: 915ebe5772b364244a84956961b6ff0f, type: 3}
+  - _id: "allure_\uB05D"
+    _sprite: {fileID: 21300000, guid: 3c826524be728a64892fa4f32171dba9, type: 3}
   - _id: ambush_1
     _sprite: {fileID: 21300000, guid: 8fc39a8c0ed47d742a913cb1555e4ed3, type: 3}
   - _id: "ambush_\uB05D"
@@ -43,6 +49,10 @@ MonoBehaviour:
     _sprite: {fileID: 21300000, guid: 05fc2f273690d374290715b5a7acaac8, type: 3}
   - _id: "challenger_\uB05D"
     _sprite: {fileID: 21300000, guid: 536f78b7e27b4c042948cdf6bb6cb73a, type: 3}
+  - _id: chaos_1
+    _sprite: {fileID: 21300000, guid: 0ed56ce3da2830d45bfae86aee323aed, type: 3}
+  - _id: "chaos_\uB05D"
+    _sprite: {fileID: 21300000, guid: 430e050115770114daeb513394e04d58, type: 3}
   - _id: coin_sale_1
     _sprite: {fileID: 21300000, guid: 060c65d0f05ae2f4486c77293cf11001, type: 3}
   - _id: coin_sale_2
@@ -59,6 +69,12 @@ MonoBehaviour:
     _sprite: {fileID: 21300000, guid: 843565c7db0380f4eb10178d0badb049, type: 3}
   - _id: "erosion_\uB05D"
     _sprite: {fileID: 21300000, guid: d4698de0de300c541baa3b426c00df96, type: 3}
+  - _id: extortion_1
+    _sprite: {fileID: 21300000, guid: d58b726422b2e5d458371a263b3566bd, type: 3}
+  - _id: extortion_2
+    _sprite: {fileID: 21300000, guid: b26e11848a97d5b44ab85e7f8f674507, type: 3}
+  - _id: "extortion_\uB05D"
+    _sprite: {fileID: 21300000, guid: 8c776f5235e5a604fa0d39b7823268d0, type: 3}
   - _id: gamble_1
     _sprite: {fileID: 21300000, guid: 3a64a041d3380b348832d8aa57352f9d, type: 3}
   - _id: gamble_2
@@ -119,6 +135,14 @@ MonoBehaviour:
     _sprite: {fileID: 21300000, guid: 26e0992023635f649ae2dc2565983b08, type: 3}
   - _id: "purification_\uB05D"
     _sprite: {fileID: 21300000, guid: 2566a8cb41a2ac640bae3c0b4e455b45, type: 3}
+  - _id: record_erasure_1
+    _sprite: {fileID: 21300000, guid: 6e2a4d2fc8fa8c64f9c6c5926e6df42a, type: 3}
+  - _id: record_erasure_2
+    _sprite: {fileID: 21300000, guid: 722a32d970c8f0e48bb13a881bcff6ea, type: 3}
+  - _id: record_erasure_3
+    _sprite: {fileID: 21300000, guid: 3c5a3077516d8684783645188b7dcb0d, type: 3}
+  - _id: "record_erasure_\uB05D"
+    _sprite: {fileID: 21300000, guid: 2142df281c843744c9c0b16d2abf8e8b, type: 3}
   - _id: recovery_1
     _sprite: {fileID: 21300000, guid: f0472911bc6cb95458d439c1ecbe7b14, type: 3}
   - _id: recovery_2

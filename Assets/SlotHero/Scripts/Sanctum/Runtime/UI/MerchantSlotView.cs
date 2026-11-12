@@ -107,7 +107,7 @@ namespace SlotHero.Sanctum.UI
                 return;
             }
 
-            _formTime += Time.unscaledDeltaTime;
+            _formTime += EffectClock.Delta;
             float seconds = _visual != null ? _visual.RelicFormSeconds : 0f;
             float t = seconds <= 0f ? 1f : Mathf.Clamp01((_formTime - _formDelay) / seconds);
             ApplyForming(t);

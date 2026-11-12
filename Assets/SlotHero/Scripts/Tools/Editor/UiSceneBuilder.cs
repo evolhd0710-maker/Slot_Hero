@@ -857,6 +857,16 @@ namespace SlotHero.ToolsEditor
         {
             EnsureFolder(PrefabFolder);
 
+            // 복제해 쓰는 칸의 버튼도 누름 소리(S01)를 낸다(2026년 11월 13일 코덱스 점검).
+            Button[] buttons = go.GetComponentsInChildren<Button>(true);
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                if (buttons[i].GetComponent<SlotHero.Audio.ButtonClickSound>() == null)
+                {
+                    buttons[i].gameObject.AddComponent<SlotHero.Audio.ButtonClickSound>();
+                }
+            }
+
             string path = PrefabFolder + "/" + name + ".prefab";
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(go, path);
             Object.DestroyImmediate(go);

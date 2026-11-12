@@ -207,7 +207,7 @@ namespace SlotHero.Reward.UI
                 return;
             }
 
-            _revealTime += Time.unscaledDeltaTime;
+            _revealTime += EffectClock.Delta;
             UpdateReveal();
         }
 

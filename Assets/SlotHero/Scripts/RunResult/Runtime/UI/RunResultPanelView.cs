@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SlotHero.Ui;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -85,7 +86,10 @@ namespace SlotHero.RunResult.UI
 
             if (_label != null)
             {
-                float textHeight = _label.preferredHeight + layout.PanelTopPadding * 2f;
+                // 영어 설정이면 영어로 잰다. `preferredHeight` 는 번역 전 한국어로 재어 더 긴 영어의 끝이 스크롤 밖으로 잘렸다(2026년 11월 11일).
+                float width = _label.rectTransform.rect.width;
+                float measured = width > 1f ? ShownText.Measure(_label, _label.text, width, 0f).y : _label.preferredHeight;
+                float textHeight = measured + layout.PanelTopPadding * 2f;
                 if (textHeight > byText)
                 {
                     byText = textHeight;

@@ -257,10 +257,15 @@ namespace SlotHero.Combat
             return bonus;
         }
 
-        /// <summary>문양 하나의 지금 가치. 태그 둘에 유물이 더한 값까지 들어 있다.</summary>
+        /// <summary>
+        /// 문양 하나의 지금 가치. 태그 둘에 유물이 더한 값까지 들어 있다.
+        /// 0 아래로 내려가지 않는다(2026년 11월 10일 원재). 일식으로 내행성 문양(수은 2 - 6)이 음수가 되어
+        /// 같은 태그로 때리는 다른 문양의 가치까지 깎던 것을 막는다.
+        /// </summary>
         public int GetSymbolValue(ReelSymbol symbol)
         {
-            return symbol.Value + GetTagValueBonus(symbol.FirstTag) + GetTagValueBonus(symbol.SecondTag);
+            int value = symbol.Value + GetTagValueBonus(symbol.FirstTag) + GetTagValueBonus(symbol.SecondTag);
+            return value < 0 ? 0 : value;
         }
 
         /// <summary>그 자리의 코인을 지금 쓸 수 있는지.</summary>

@@ -61,6 +61,9 @@ namespace SlotHero.Events.UI
         }
 
         private AnimationPhase _phase;
+
+        /// 연출 중에 언어가 바뀌어 선택지 칸을 연출이 끝난 뒤 다시 재야 한다.
+        private bool _remeasurePending;
         private float _phaseTime;
         private EventPage _pendingPage;
         private IEventIllustrationSource _pendingIllustrations;
@@ -333,6 +336,11 @@ namespace SlotHero.Events.UI
             if (phase == AnimationPhase.None)
             {
                 EffectSkip.End(this);
+
+                if (_remeasurePending)
+                {
+                    RemeasureChoices();
+                }
             }
             else
             {
@@ -347,7 +355,7 @@ namespace SlotHero.Events.UI
                 return;
             }
 
-            _phaseTime += Time.unscaledDeltaTime;
+            _phaseTime += EffectClock.Delta;
 
             switch (_phase)
             {
@@ -517,9 +525,51 @@ namespace SlotHero.Events.UI
             BeginPhase(AnimationPhase.None);
         }
 
+        private void OnEnable()
+        {
+            ShownText.Changed += HandleShownTextChanged;
+        }
+
         private void OnDisable()
         {
+            ShownText.Changed -= HandleShownTextChanged;
             StopAnimation();
+        }
+
+        /// <summary>
+        /// 언어가 바뀌면 선택지 칸 높이를 다시 잰다. 영어가 길어 줄이 늘면 칸도 늘어야 한다(2026년 11월 10일 원재).
+        /// 선택지가 움직이는 연출 중에는 자리를 건드리지 않고, 연출이 끝날 때 잰다.
+        /// </summary>
+        private void HandleShownTextChanged()
+        {
+            if (_phase != AnimationPhase.None)
+            {
+                _remeasurePending = true;
+                return;
+            }
+
+            RemeasureChoices();
+        }
+
+        private void RemeasureChoices()
+        {
+            _remeasurePending = false;
+            if (_layout == null || _visual == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < _choiceViews.Count; i++)
+            {
+                EventChoiceView view = _choiceViews[i];
+                if (view != null && view.gameObject.activeSelf)
+                {
+                    view.SetFontSize(_visual.ChoiceFontSize, _layout, _visual);
+                }
+            }
+
+            FitChoiceFont();
+            PlaceChoices();
         }
 
         private void SetChoicesClickable(bool clickable)

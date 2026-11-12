@@ -181,12 +181,25 @@ namespace SlotHero.Save
             }
         }
 
+        /// <summary>
+        /// 이 런 자료가 만들어진 뒤 코인을 넣은 횟수. 저장하지 않는다.
+        /// 한도가 차 코인 하나를 버리고 새 코인을 받으면 코인 수가 같아, S15 코인 받음 소리가 이 수로 받은 것을 안다(2026년 11월 13일 코덱스 점검).
+        /// </summary>
+        [NonSerialized] private int _coinsAdded;
+
+        /// <summary>이 런 자료가 만들어진 뒤 코인을 넣은 횟수.</summary>
+        public int CoinsAdded
+        {
+            get { return _coinsAdded; }
+        }
+
         /// <summary>코인을 넣는다. 같은 코인을 여러 개 가질 수 있어 겹침을 막지 않는다.</summary>
         public void AddCoin(string coinId)
         {
             if (!string.IsNullOrEmpty(coinId))
             {
                 CoinIds.Add(coinId);
+                _coinsAdded++;
             }
         }
 

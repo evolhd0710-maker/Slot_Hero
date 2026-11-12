@@ -1,3 +1,4 @@
+using SlotHero.Ui;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -104,7 +105,8 @@ namespace SlotHero.TopBar.UI
                 inner = 1f;
             }
 
-            Vector2 wanted = _label.GetPreferredValues(text, inner, 0f);
+            // 영어 설정이면 영어로 잰다. 한국어 폭으로 칸을 잡으면 더 긴 영어가 줄이 바뀐다(2026년 11월 10일 원재).
+            Vector2 wanted = ShownText.Measure(_label, text, inner, 0f);
 
             float width = wanted.x + padding * 2f;
             if (maxWidth > 0f && width > maxWidth)
