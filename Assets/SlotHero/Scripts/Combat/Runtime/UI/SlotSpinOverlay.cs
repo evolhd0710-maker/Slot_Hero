@@ -374,10 +374,13 @@ namespace SlotHero.Combat.UI
             return deck[_random.Range(0, deck.Count)];
         }
 
-        /// <summary>마우스나 스페이스바로 건너뛰는지. 같은 프레임의 다른 쪽과 겹치지 않게 키를 가져간다.</summary>
+        /// <summary>
+        /// 마우스나 스페이스바로 건너뛰는지. 같은 프레임의 다른 쪽과 겹치지 않게 키를 가져간다.
+        /// 설정의 연출 속도가 스킵이면 누르지 않아도 건너뛴다(2026년 11월 11일 원재).
+        /// </summary>
         private static bool WantsSkip()
         {
-            return KeyGate.TryUse(KeyCode.Space) || KeyGate.TryUse(KeyCode.Mouse0);
+            return EffectClock.AutoSkip || KeyGate.TryUse(KeyCode.Space) || KeyGate.TryUse(KeyCode.Mouse0);
         }
 
         private IEnumerator Fade(float from, float to, float duration)

@@ -291,6 +291,7 @@ GameObject:
   - component: {fileID: 6853474151054980610}
   - component: {fileID: 4077766659470566520}
   - component: {fileID: 4791780277351397549}
+  - component: {fileID: 3269895083588214946}
   m_Layer: 0
   m_Name: MuteButton
   m_TagString: Untagged
@@ -417,6 +418,19 @@ MonoBehaviour:
   _target: {fileID: 0}
   _selectable: {fileID: 0}
   _pressRatio: 0.95
+--- !u!114 &3269895083588214946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076165931737862163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}
 --- !u!1 &1540210880583606666
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,6 +931,7 @@ GameObject:
   - component: {fileID: 6267170985325653079}
   - component: {fileID: 1875703754792977297}
   - component: {fileID: 1577588932320540027}
+  - component: {fileID: 7764483354768379309}
   m_Layer: 0
   m_Name: SettingsRow
   m_TagString: Untagged
@@ -1032,6 +1047,19 @@ MonoBehaviour:
   _muteButton: {fileID: 4077766659470566520}
   _muteBackground: {fileID: 6853474151054980610}
   _muteLabel: {fileID: 8455463464847303014}
+--- !u!114 &7764483354768379309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6218491510212139367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}
 --- !u!1 &8635754612342753514
 GameObject:
   m_ObjectHideFlags: 0

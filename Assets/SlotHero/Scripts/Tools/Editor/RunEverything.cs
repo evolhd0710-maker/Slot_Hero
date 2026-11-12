@@ -50,8 +50,15 @@ namespace SlotHero.ToolsEditor
             Step("게임 씬 굴려 보기", CheckGameScene.Check);
             Step("전투 검사", CheckCombat.Check);
             Step("번역 빠진 글자 찾기", LocalizationAudit.Finish);
+
+            // 36 혼돈 시험 씬(2026년 11월 12일 원재). 시험 칸 글은 게임 글이 아니라 번역 검사 뒤에 돈다.
+            Step("07 기록 말살 시험 씬 굴려 보기", CheckEventTest.Check);
+            Step("효과음 후보 듣기 씬 굴려 보기", CheckSoundTest.Check);
             Step("그림으로 뽑기", CapturePreviewScenes.CaptureAll);
             Step("영어 그림으로 뽑기", CapturePreviewScenes.CaptureAllEnglish);
+
+            // 게임 씬 검사, 전투 검사, 영어 그림 뽑기가 잰 영어 넘침을 적는다(2026년 11월 11일 원재).
+            Step("영어 넘침 적기", LocalizationAudit.WriteOverflows);
 
             Debug.Log("=== 한 바퀴 끝 ===");
         }

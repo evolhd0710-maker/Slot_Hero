@@ -77,6 +77,11 @@ Localization/
 
 ## 영어로 긴 글
 
+글 길이에 맞춰 칸을 잡는 곳은 그려질 글(영어)로 잰다(`Ui/Runtime/ShownText`, 2026년 11월 10일 원재).
+TMP 의 `GetPreferredValues(글, 폭, 높이)` 는 넘긴 글을 전처리 없이 재서, 한국어 길이로 칸을 잡으면 더 긴 영어가 줄이 바뀌고 칸이 늘지 않았다.
+상단 표시줄 풍선(`TopBarTooltip`), 이벤트 선택지(`EventChoiceView`), 팝업 본문(`PopupView`)이 이것으로 잰다.
+언어를 바꾸면 `Loc` 이 `ShownText.Changed` 로 알리고, 떠 있는 이벤트 화면은 선택지 칸을 다시 잰다. 선택지가 움직이는 연출 중이면 끝난 뒤에 잰다.
+
 영어 글이 칸을 넘치는 좁은 칸은 `UiSceneBuilder.ShrinkToFit` 로 넘칠 때만 글자를 줄인다.
 지금은 고르기 화면 제목과 프로필 카드의 수정, 삭제 버튼이다. 한국어는 칸에 들어가 크기가 그대로다.
 보상 화면의 "오버킬 보상" 은 골드 그림과 겹쳐 영어를 "Overkill" 로 줄였다.

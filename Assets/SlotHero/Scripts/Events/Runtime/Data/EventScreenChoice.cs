@@ -98,6 +98,13 @@ namespace SlotHero.Events
 
         /// <summary>가진 유물 전부.</summary>
         OwnedRelics = 4,
+
+        /// <summary>
+        /// 아홉 태그 전부. 07 기록 말살 의 "태그 선택 창에서 전체 태그 중 1개를 고른다" 다.
+        /// 고르기 화면이 아니라 태그 선택 창을 연다. 고른 태그의 영어 이름(`SymbolTagType`)이 대상이 된다.
+        /// 태그 선택 창을 따로 만들기 전까지 전투의 태그 원판을 빌려 쓴다(2026년 11월 11일 원재).
+        /// </summary>
+        AllTags = 5,
     }
 
     /// <summary>

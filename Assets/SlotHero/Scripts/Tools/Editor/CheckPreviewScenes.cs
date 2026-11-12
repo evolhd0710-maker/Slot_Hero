@@ -99,7 +99,7 @@ namespace SlotHero.ToolsEditor
         /// 플레이 모드가 아니면 유니티가 불러 주지 않아 화면이 버튼에 귀를 대지 못한다.
         /// 우리가 쓴 것만 부르려고 이름 앞이 SlotHero 인 것만 고른다.
         /// </summary>
-        private static int CallAwake(HashSet<MonoBehaviour> already)
+        internal static int CallAwake(HashSet<MonoBehaviour> already)
         {
             MonoBehaviour[] all = Object.FindObjectsByType<MonoBehaviour>();
             int count = 0;

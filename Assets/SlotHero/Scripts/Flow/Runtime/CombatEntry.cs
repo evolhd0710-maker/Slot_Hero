@@ -68,6 +68,7 @@ namespace SlotHero.Flow
 
             Unsubscribe();
             _screen.PlayerHealthLost += HandleHealthLost;
+            _screen.PlayerHealthPaid += HandleHealthPaid;
             _screen.Finished += HandleFinished;
             _screen.RelicStackChanged += HandleRelicStackChanged;
             _screen.Open(MakeSetup(context, node), this);
@@ -237,7 +238,11 @@ namespace SlotHero.Flow
                 : new CoinRule(id, 10, 5, string.Empty);
             string name = _catalog != null ? _catalog.GetDisplayName(id) : id;
 
-            return new CombatCoin(id, name, rule.HealthCost, rule.Weight, rule.Description);
+            // 설명은 적힌 글이 아니라 실제 가중치로 만든다. 팀원이 은화 가중치를 15 에서 10 으로 내렸는데
+            // 설명은 "15 를 더한다" 로 남아 코인 칸에 실제보다 큰 값이 보였다(2026년 11월 10일 원재 계산 점검).
+            string description = "건 태그의 배수에 " + rule.Weight + " 를 더한다.";
+
+            return new CombatCoin(id, name, rule.HealthCost, rule.Weight, description);
         }
 
         /// <summary>12개의 금화처럼 영구히 오르는 유물. 쌓인 횟수를 런에 적어 다음 전투로 이어지게 한다.</summary>
@@ -254,6 +259,15 @@ namespace SlotHero.Flow
             if (_context != null)
             {
                 _context.TakeDamage(amount);
+            }
+        }
+
+        /// <summary>코인 소모값. 체력은 깎되 피격음은 내지 않는다(2026년 11월 13일 원재).</summary>
+        private void HandleHealthPaid(int amount)
+        {
+            if (_context != null)
+            {
+                _context.PayHealth(amount);
             }
         }
 
@@ -295,6 +309,7 @@ namespace SlotHero.Flow
             if (_screen != null)
             {
                 _screen.PlayerHealthLost -= HandleHealthLost;
+                _screen.PlayerHealthPaid -= HandleHealthPaid;
                 _screen.Finished -= HandleFinished;
                 _screen.RelicStackChanged -= HandleRelicStackChanged;
             }

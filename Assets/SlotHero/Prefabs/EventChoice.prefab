@@ -239,6 +239,7 @@ GameObject:
   - component: {fileID: 4212425723533274399}
   - component: {fileID: 2157263426256166938}
   - component: {fileID: 2769650413866973648}
+  - component: {fileID: 5418345186518216135}
   m_Layer: 0
   m_Name: EventChoice
   m_TagString: Untagged
@@ -343,3 +344,16 @@ MonoBehaviour:
   _button: {fileID: 4212425723533274399}
   _background: {fileID: 6611640000487134123}
   _label: {fileID: 5276811281912763585}
+--- !u!114 &5418345186518216135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5881263495192009128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}

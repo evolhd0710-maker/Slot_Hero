@@ -136,3 +136,6 @@ MonoBehaviour:
   - _id: control
     _displayName: "\uC870\uC791"
     _items: []
+  _fastPresentationSpeed: 2
+  _skipPresentationSpeed: 3
+  _windowedScreenRatio: 0.8

@@ -53,6 +53,13 @@ namespace SlotHero.ToolsEditor
             Loc.SetTable(config != null ? config.English : null);
             Loc.SetLanguage(GameLanguage.English);
 
+            // 메뉴로 이것만 돌리면 번역 검사가 시작되지 않아 넘침을 재지 못한다. 그때는 스스로 시작하고 끝에 적는다(2026년 11월 11일 코덱스 점검).
+            bool ownAudit = !LocalizationAudit.Running;
+            if (ownAudit)
+            {
+                LocalizationAudit.Begin();
+            }
+
             try
             {
                 string folder = Path.Combine(Directory.GetCurrentDirectory(), OutputFolder, "English");
@@ -64,6 +71,9 @@ namespace SlotHero.ToolsEditor
                     string path = AssetDatabase.GUIDToAssetPath(guids[i]);
                     EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
                     HookTranslations();
+
+                    // 영어로 칸을 벗어나는 글상자를 잰다. 견본 글자는 번역표에 없어 빠진 번역으로는 세지 않는다(2026년 11월 11일).
+                    LocalizationAudit.ScanOpenScenes(false);
                     Shoot(Path.GetFileNameWithoutExtension(path), folder);
                 }
 
@@ -72,6 +82,11 @@ namespace SlotHero.ToolsEditor
             finally
             {
                 Loc.SetLanguage(GameLanguage.Korean);
+
+                if (ownAudit)
+                {
+                    LocalizationAudit.WriteOverflows();
+                }
             }
         }
 

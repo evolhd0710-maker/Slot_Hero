@@ -10,7 +10,7 @@ namespace SlotHero.Ui
     /// 막은 누르기를 받지 않는다. 걷히는 짧은 동안에도 새 화면은 그대로 눌린다.
     ///
     /// 게임이 돌 때만 움직인다. 편집 모드에서는 막을 바로 걷어 둔다.
-    /// 시간은 멈춤과 상관없이 흐르는 시간(unscaledDeltaTime)으로 잰다.
+    /// 시간은 멈춤과 상관없이 흐르는 시간(unscaledDeltaTime)에 연출 속도를 곱해 잰다(`EffectClock`).
     /// </summary>
     public class ScreenFade : MonoBehaviour
     {
@@ -75,7 +75,7 @@ namespace SlotHero.Ui
                 return;
             }
 
-            _time += Time.unscaledDeltaTime;
+            _time += EffectClock.Delta;
             float t = AlphaAt(_time, _seconds);
             SetAlpha(t);
 

@@ -91,10 +91,18 @@ namespace SlotHero.Audio
         {
             return new List<SoundCueEntry>
             {
+                new SoundCueEntry(SoundCue.StageTransition, 1, 1f, 0f, 0f),
                 new SoundCueEntry(SoundCue.MerchantPurchase, 2, 1f, 0f, 0f),
+                new SoundCueEntry(SoundCue.CoinGained, 2, 1f, 0f, 0f),
                 new SoundCueEntry(SoundCue.HealthLost, 3, 1f, 0f, 0f),
                 new SoundCueEntry(SoundCue.Camp, 3, 1f, 2f, 0.5f),
+                new SoundCueEntry(SoundCue.GoldGained, 3, 1f, 0f, 0f),
+                new SoundCueEntry(SoundCue.RunStart, 4, 1f, 0f, 0f),
                 new SoundCueEntry(SoundCue.NodeSelect, 4, 1f, 0f, 0f),
+                new SoundCueEntry(SoundCue.CurrentBuildToggle, 4, 1f, 0f, 0f),
+                new SoundCueEntry(SoundCue.SettingStepUp, 5, 1f, 0f, 0f),
+                new SoundCueEntry(SoundCue.SettingStepDown, 5, 1f, 0f, 0f),
+                new SoundCueEntry(SoundCue.ButtonPress, 5, 1f, 0f, 0f),
             };
         }
 

@@ -14,7 +14,7 @@ namespace SlotHero.Ui
     /// 칸의 피벗이 가운데여야 가운데에서 커진다. 팝업 칸이 그렇다.
     ///
     /// 게임이 돌 때만 움직인다. 편집 모드 검사와 그림 뽑기는 프레임이 돌지 않아 바로 끝 모습을 보인다.
-    /// 시간은 멈춤과 상관없이 흐르는 시간(unscaledDeltaTime)으로 잰다.
+    /// 시간은 멈춤과 상관없이 흐르는 시간(unscaledDeltaTime)에 연출 속도를 곱해 잰다(`EffectClock`).
     /// </summary>
     public class PopAnimation : MonoBehaviour
     {
@@ -128,7 +128,7 @@ namespace SlotHero.Ui
             }
 
             float duration = _closing ? _closeSeconds : _openSeconds;
-            _time += Time.unscaledDeltaTime;
+            _time += EffectClock.Delta;
             float t = duration <= 0f ? 1f : Mathf.Clamp01(_time / duration);
             Apply(t);
 

@@ -87,7 +87,7 @@ namespace SlotHero.Sanctum.UI
                 return;
             }
 
-            _time += Time.unscaledDeltaTime;
+            _time += EffectClock.Delta;
 
             switch (_phase)
             {

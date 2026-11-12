@@ -68,6 +68,22 @@ namespace SlotHero.Settings
         };
         public List<SettingsTab> Tabs { get { return _tabs; } set { _tabs = value; } }
 
+        [Header("적용")]
+        [Tooltip("연출 속도 \"빠름\" 의 배율. 전투 밖 연출과 전투가 이만큼 빨라진다. 2026년 11월 11일 내가 정했다.")]
+        [Min(1f)]
+        [SerializeField] private float _fastPresentationSpeed = 2f;
+        public float FastPresentationSpeed { get { return _fastPresentationSpeed; } set { _fastPresentationSpeed = value; } }
+
+        [Tooltip("연출 속도 \"스킵\" 의 배율. 건너뛸 수 있는 연출과 전투 슬롯 회전은 바로 끝나고, 나머지(전투 레이저와 피해 숫자, 팝업, 화면 전환)는 이만큼 빨라진다.")]
+        [Min(1f)]
+        [SerializeField] private float _skipPresentationSpeed = 3f;
+        public float SkipPresentationSpeed { get { return _skipPresentationSpeed; } set { _skipPresentationSpeed = value; } }
+
+        [Tooltip("창 모드일 때 창이 모니터에서 차지하는 비율. 그 안에 들어가는 가장 큰 16:9 창을 연다.")]
+        [Range(0.3f, 1f)]
+        [SerializeField] private float _windowedScreenRatio = 0.8f;
+        public float WindowedScreenRatio { get { return _windowedScreenRatio; } set { _windowedScreenRatio = value; } }
+
         /// <summary>
         /// 일반 탭. 와이어프레임의 네 항목에 2026년 10월 5일 원재의 결정을 반영했다.
         ///   언어는 드롭다운으로 고른다

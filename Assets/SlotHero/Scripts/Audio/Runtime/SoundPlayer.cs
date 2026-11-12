@@ -49,6 +49,25 @@ namespace SlotHero.Audio
         /// 겹칠 때 규칙을 지나 마지막으로 고른 소리. 게임 씬 검사가 본다.
         /// 음소거여서 실제로 울리지 않았어도 고른 것은 적는다.
         /// </summary>
+        /// <summary>
+        /// 지금 게임 씬의 소리 창구. 깨어날 때 자신을 적는다.
+        /// 프리팹에서 복제하는 버튼(이벤트 선택지, 보상 카드, 팝업 버튼, 설정 줄 등)의 누름 소리가 씬의 창구를 물 수 없어 이것을 쓴다(2026년 11월 13일 코덱스 점검).
+        /// </summary>
+        public static SoundPlayer Current { get; private set; }
+
+        private void Awake()
+        {
+            Current = this;
+        }
+
+        private void OnDestroy()
+        {
+            if (Current == this)
+            {
+                Current = null;
+            }
+        }
+
         public SoundCue LastChosen { get; private set; }
 
         /// <summary>

@@ -39,6 +39,12 @@ namespace SlotHero.Settings.UI
         public event Action<SettingDefinition, float> ValueChanged;
 
         /// <summary>
+        /// 수치 항목(막대)의 값이 올랐거나(true) 내렸을 때(false). 흐름이 S25 · S26 소리를 낸다(2026년 11월 13일 원재).
+        /// 막대를 끌면 단계마다 한 번씩 온다. 선택지, 음소거, 드롭다운, 기본값 복원은 보내지 않는다.
+        /// </summary>
+        public event Action<SettingDefinition, bool> ValueStepped;
+
+        /// <summary>
         /// 기본값 복원을 눌렀을 때.
         /// 07 설정 화면 이 확인 팝업을 거치게 하므로 여기서 되돌리지 않는다.
         /// 팝업에서 확인을 받으면 <see cref="RestoreDefaults"/>를 부른다.
@@ -55,6 +61,12 @@ namespace SlotHero.Settings.UI
         public SettingsValues Values
         {
             get { return _values; }
+        }
+
+        /// <summary>설정 목록. 흐름이 창 모드와 연출 속도를 걸 때 수치를 읽는다.</summary>
+        public SettingsCatalogConfig Catalog
+        {
+            get { return _catalog; }
         }
 
         /// <summary>
@@ -253,12 +265,18 @@ namespace SlotHero.Settings.UI
                 return;
             }
 
+            float before = _values.Get(definition);
             if (!_values.Set(definition, value))
             {
                 return;
             }
 
             float applied = _values.Get(definition);
+
+            if (definition.Kind == SettingKind.Slider && applied != before && ValueStepped != null)
+            {
+                ValueStepped(definition, applied > before);
+            }
 
             if (_view != null)
             {

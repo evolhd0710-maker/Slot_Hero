@@ -1,4 +1,5 @@
 using TMPro;
+using SlotHero.Ui;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -63,7 +64,7 @@ namespace SlotHero.TopBar.UI
             }
 
             // 연출 속도 설정이나 일시 정지와 무관하게 흘러야 하므로 실제 시간을 쓴다.
-            _flashRemaining -= Time.unscaledDeltaTime;
+            _flashRemaining -= EffectClock.Delta;
 
             if (_flashRemaining <= 0f)
             {

@@ -275,6 +275,7 @@ GameObject:
   - component: {fileID: 6153383573098162127}
   - component: {fileID: 7636838729631651896}
   - component: {fileID: 659003666376650699}
+  - component: {fileID: 8739422398281638561}
   m_Layer: 0
   m_Name: RewardCard
   m_TagString: Untagged
@@ -386,6 +387,19 @@ MonoBehaviour:
   _tagCorners: {fileID: 7331173797905040478}
   _nameLabel: {fileID: 2394086568807512279}
   _tagLabel: {fileID: 8160482517897210453}
+--- !u!114 &8739422398281638561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3232710810108218526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}
 --- !u!1 &3270174074739781466
 GameObject:
   m_ObjectHideFlags: 0
@@ -1072,9 +1086,9 @@ MonoBehaviour:
   m_fontSize: 30
   m_fontSizeBase: 30
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 21
+  m_fontSizeMax: 30
   m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -1108,7 +1122,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 8, y: 0, z: 8, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

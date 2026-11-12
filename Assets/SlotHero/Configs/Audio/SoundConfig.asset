@@ -13,6 +13,13 @@ MonoBehaviour:
   m_Name: SoundConfig
   m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.SoundConfig
   _cues:
+  - _cue: 20
+    _grade: 1
+    _clips:
+    - {fileID: 8300000, guid: 9b31956b8c82f684dba688b150410b79, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
   - _cue: 23
     _grade: 2
     _clips:
@@ -22,9 +29,17 @@ MonoBehaviour:
     _volume: 1
     _playSeconds: 0
     _fadeSeconds: 0
+  - _cue: 15
+    _grade: 2
+    _clips:
+    - {fileID: 8300000, guid: 13a30d6205ef3e64eb0dcf2fc52d1ad2, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
   - _cue: 12
     _grade: 3
-    _clips: []
+    _clips:
+    - {fileID: 8300000, guid: 8075be552af7a7448a688832e352b21d, type: 3}
     _volume: 1
     _playSeconds: 0
     _fadeSeconds: 0
@@ -35,9 +50,52 @@ MonoBehaviour:
     _volume: 1
     _playSeconds: 2
     _fadeSeconds: 0.5
+  - _cue: 9
+    _grade: 3
+    _clips:
+    - {fileID: 8300000, guid: f83f574b2f34c2f4ca329b366289430a, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  - _cue: 19
+    _grade: 4
+    _clips:
+    - {fileID: 8300000, guid: d1739282771524141a5c78ea80d90a9d, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
   - _cue: 7
     _grade: 4
-    _clips: []
+    _clips:
+    - {fileID: 8300000, guid: fffc4ff0aba2b2e46be1529e411ed604, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  - _cue: 6
+    _grade: 4
+    _clips:
+    - {fileID: 8300000, guid: 82d479c786d20204895f73d78aa66c82, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  - _cue: 25
+    _grade: 5
+    _clips:
+    - {fileID: 8300000, guid: 3f5f12a3c4a906b4081198776cb17cf5, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  - _cue: 26
+    _grade: 5
+    _clips:
+    - {fileID: 8300000, guid: dcd198dd0805dc64f910a3b9749c8192, type: 3}
+    _volume: 1
+    _playSeconds: 0
+    _fadeSeconds: 0
+  - _cue: 1
+    _grade: 5
+    _clips:
+    - {fileID: 8300000, guid: 5373499b339d62040aaea729a87b7886, type: 3}
     _volume: 1
     _playSeconds: 0
     _fadeSeconds: 0

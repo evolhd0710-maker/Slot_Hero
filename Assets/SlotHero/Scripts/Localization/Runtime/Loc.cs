@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SlotHero.Ui;
 
 namespace SlotHero.Localization
 {
@@ -76,6 +77,9 @@ namespace SlotHero.Localization
             {
                 changed();
             }
+
+            // 글 길이에 맞춰 칸을 잡은 화면(이벤트 선택지)이 다시 재게 알린다(2026년 11월 10일).
+            ShownText.NotifyChanged();
         }
     }
 }

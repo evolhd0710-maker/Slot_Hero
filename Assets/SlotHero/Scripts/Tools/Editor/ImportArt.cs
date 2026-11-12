@@ -64,6 +64,10 @@ namespace SlotHero.ToolsEditor
             // UI 재질. 셰이더는 그림이 아니지만 코드 옮기기가 .cs 만 옮겨 여기서 함께 옮긴다.
             CopyShaders(Path.Combine(SourceRoot, @"Ui\Shaders"), ShaderFolder);
 
+            // 몬스터 스파인. 덤과 더머를 팀원이 Spine 4.3 으로 만들었다(2026년 11월 13일 원재).
+            // 스파인 실행기가 가져올 때 아틀라스와 스켈레톤 자료(`이름_SkeletonData.asset`)를 만든다. 스프라이트로 바꾸지 않는다.
+            CopySpine(Path.Combine(SourceRoot, @"Combat\Art\Spine"), SpineFolder);
+
             AssetDatabase.Refresh();
 
             MakeSprites(ArtFolder + "/Map", true);
@@ -86,6 +90,7 @@ namespace SlotHero.ToolsEditor
             LinkCatalogIcons();
             LinkEventIllustrations();
             LinkGrayMaterial();
+            FixSpineTextures();
             LinkEnemyArt();
 
             AssetDatabase.SaveAssets();
@@ -97,6 +102,97 @@ namespace SlotHero.ToolsEditor
 
         /// <summary>무채색 UI 재질의 자리. 셰이더 `SlotHero/UI Grayscale` 로 만든다.</summary>
         public const string GrayMaterialPath = ShaderFolder + "/UI 무채.mat";
+
+        /// <summary>몬스터 스파인을 두는 자리. 몬스터마다 하위 폴더 하나다.</summary>
+        public const string SpineFolder = ArtFolder + "/Spine";
+
+        /// <summary>
+        /// 스파인 내보내기 파일(.json, .atlas.txt, .png)을 몬스터 폴더째 옮긴다.
+        /// 내용이 같으면 덮지 않아 스파인 실행기가 자료를 다시 만들지 않는다.
+        /// </summary>
+        private static void CopySpine(string source, string target)
+        {
+            if (!Directory.Exists(source))
+            {
+                return;
+            }
+
+            UiSceneBuilder.EnsureFolder(target);
+            string[] folders = Directory.GetDirectories(source);
+            for (int i = 0; i < folders.Length; i++)
+            {
+                string to = target + "/" + Path.GetFileName(folders[i]);
+                UiSceneBuilder.EnsureFolder(to);
+
+                string[] files = Directory.GetFiles(folders[i]);
+                for (int j = 0; j < files.Length; j++)
+                {
+                    string destination = Path.Combine(to, Path.GetFileName(files[j]));
+                    if (File.Exists(destination) && SameBytes(files[j], destination))
+                    {
+                        continue;
+                    }
+
+                    File.Copy(files[j], destination, true);
+                }
+            }
+        }
+
+        /// <summary>두 파일의 내용이 같은지. 소리 가져오기도 쓴다.</summary>
+        internal static bool SameBytes(string a, string b)
+        {
+            byte[] left = File.ReadAllBytes(a);
+            byte[] right = File.ReadAllBytes(b);
+            if (left.Length != right.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < left.Length; i++)
+            {
+                if (left[i] != right[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 스파인 그림의 가져오기 설정을 다른 그림과 같게 맞춘다(2026년 11월 13일 원재).
+        /// 스파인 실행기의 기본 설정은 sRGB 를 끈다. 감마 색 공간용이라 선형 색 공간인 이 프로젝트에서는
+        /// 색이 변환 없이 쓰여 몬스터가 밝고 흐리게 보였다. 다른 그림처럼 sRGB 를 켜고,
+        /// 곧은 알파로 풀어 둔 그림이라 투명한 가장자리 색이 번지지 않게 알파 투명 처리를 켠다.
+        /// </summary>
+        private static void FixSpineTextures()
+        {
+            if (!AssetDatabase.IsValidFolder(SpineFolder))
+            {
+                return;
+            }
+
+            string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { SpineFolder });
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (importer == null || (importer.sRGBTexture && importer.alphaIsTransparency))
+                {
+                    continue;
+                }
+
+                importer.sRGBTexture = true;
+                importer.alphaIsTransparency = true;
+                importer.SaveAndReimport();
+            }
+        }
+
+        /// <summary>몬스터 하나의 스파인 자료. 스파인 실행기가 가져올 때 만든 `이름_SkeletonData.asset` 이다. 없으면 null 이다.</summary>
+        public static Spine.Unity.SkeletonDataAsset LoadEnemySpine(string name)
+        {
+            return AssetDatabase.LoadAssetAtPath<Spine.Unity.SkeletonDataAsset>(SpineFolder + "/" + name + "/" + name + "_SkeletonData.asset");
+        }
 
         /// <summary>폴더의 셰이더를 프로젝트로 옮긴다.</summary>
         private static void CopyShaders(string source, string target)
@@ -159,6 +255,14 @@ namespace SlotHero.ToolsEditor
             visual.NormalEnemyArt = LoadCombat("몬스터_덤");
             visual.EliteEnemyArt = LoadCombat("몬스터_더머");
             visual.BossEnemyArt = LoadCombat("몬스터_더스트");
+
+            // 스파인이 있는 몬스터는 그림 대신 스파인을 움직인다(2026년 11월 13일 원재). 더스트는 아직 스파인이 없다.
+            visual.NormalEnemySpine = LoadEnemySpine("덤");
+            visual.EliteEnemySpine = LoadEnemySpine("더머");
+            if (visual.NormalEnemySpine == null || visual.EliteEnemySpine == null)
+            {
+                Debug.LogWarning("몬스터 스파인 자료를 찾지 못했다: " + SpineFolder);
+            }
             EditorUtility.SetDirty(visual);
         }
 

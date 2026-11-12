@@ -48,6 +48,51 @@ namespace SlotHero.Combat
             }
         }
 
+        [Header("몬스터 스파인")]
+        [Tooltip("일반 방 몬스터(덤)의 스파인 자료(SkeletonDataAsset). 팀원이 Spine 4.3 으로 만들었다(2026년 11월 13일 원재). " +
+                 "있으면 그림 대신 스파인을 움직여 그린다. `그림 가져오기` 가 채운다.")]
+        [SerializeField] private ScriptableObject _normalEnemySpine;
+        public ScriptableObject NormalEnemySpine { get { return _normalEnemySpine; } set { _normalEnemySpine = value; } }
+
+        [Tooltip("엘리트 방 몬스터(더머)의 스파인 자료.")]
+        [SerializeField] private ScriptableObject _eliteEnemySpine;
+        public ScriptableObject EliteEnemySpine { get { return _eliteEnemySpine; } set { _eliteEnemySpine = value; } }
+
+        [Tooltip("보스 방 몬스터(더스트)의 스파인 자료. 아직 없어 그림을 그린다.")]
+        [SerializeField] private ScriptableObject _bossEnemySpine;
+        public ScriptableObject BossEnemySpine { get { return _bossEnemySpine; } set { _bossEnemySpine = value; } }
+
+        [Tooltip("스파인 몬스터가 늘 되풀이하는 애니메이션 이름. 두 파일 모두 하나뿐인 `animation` 이다.")]
+        [SerializeField] private string _enemySpineAnimation = "animation";
+        public string EnemySpineAnimation { get { return _enemySpineAnimation; } set { _enemySpineAnimation = value; } }
+
+        [Tooltip("스파인 몬스터를 몬스터 자리에 맞출 때 자리 크기에 곱하는 비율. 숨 쉬듯 커지는 움직임이 자리를 넘지 않게 조금 줄인다.")]
+        [SerializeField] private float _enemySpineFit = 0.9f;
+        public float EnemySpineFit { get { return _enemySpineFit; } set { _enemySpineFit = value; } }
+
+        /// <summary>
+        /// 그 방 종류 몬스터의 스파인 자료. 없으면 null 이고 화면은 그림을 그린다.
+        /// 순수 검사가 스파인 없이 이 설정을 빌드하므로 형식을 ScriptableObject 로 두고 화면이 SkeletonDataAsset 으로 바꿔 읽는다.
+        /// </summary>
+        public ScriptableObject GetEnemySpine(CombatEnemyKind kind)
+        {
+            switch (kind)
+            {
+                case CombatEnemyKind.Elite:
+                    return _eliteEnemySpine;
+                case CombatEnemyKind.Boss:
+                    return _bossEnemySpine;
+                default:
+                    return _normalEnemySpine;
+            }
+        }
+
+        [Tooltip("몬스터 피해 숫자를 그리는 차례. 캔버스의 그리는 차례에 더한다. " +
+                 "태그 공격 파티클이 캔버스 차례 + 10(TagAttackFxConfig.SortingOffset) + 프리팹의 차례(지금 가장 큰 것 4)로 캔버스 앞에 그려져 " +
+                 "피해 숫자를 덮었다. 그보다 크게 두어 피해 숫자가 공격 이펙트 위에 보이게 한다(2026년 11월 13일 원재).")]
+        [SerializeField] private int _damageSortingOffset = 50;
+        public int DamageSortingOffset { get { return _damageSortingOffset; } set { _damageSortingOffset = value; } }
+
         [Tooltip("체력 막대 바탕. 피그마 체력 틀 안쪽처럼 거의 검다.")]
         public Color BarBackColor = new Color(0.07f, 0.065f, 0.06f, 1f);
 

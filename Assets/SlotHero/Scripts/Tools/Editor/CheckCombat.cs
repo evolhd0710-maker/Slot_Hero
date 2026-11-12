@@ -10,6 +10,7 @@ using SlotHero.Combat.UI;
 using SlotHero.Flow;
 using SlotHero.Map;
 using SlotHero.Save;
+using Spine.Unity;
 
 namespace SlotHero.ToolsEditor
 {
@@ -432,11 +433,14 @@ namespace SlotHero.ToolsEditor
             // 일식. 내행성 -3, 외행성 +3.
             CombatBattle eclipse = Begin(WithRelic(ExampleSetup(99, 500), 12008, 0), rules);
             Report("일식 · 섬(토성 · 해왕성) 7 + 6 = 13", eclipse.GetSymbolValue(Find(eclipse, "Island")), 13);
-            Report("일식 · 수은(수성 · 금성) 2 - 6 = -4", eclipse.GetSymbolValue(Find(eclipse, "Quicksilver")), -4);
+            // 문양 가치는 0 아래로 내려가지 않는다(2026년 11월 10일 원재).
+            Report("일식 · 수은(수성 · 금성) 2 - 6 은 0 에서 멈춘다", eclipse.GetSymbolValue(Find(eclipse, "Quicksilver")), 0);
             Report("일식 · 불사조(화성 · 지구) 4 + 3 - 3 = 4", eclipse.GetSymbolValue(Find(eclipse, "Pheonix")), 4);
             eclipse.SelectWithoutCoin();
             AttackResult venus = eclipse.Attack(SymbolTagType.Venus);
-            Report("일식 · 가치 합이 음수여도 적을 낫게 하지 않는다", venus != null && venus.Damage == 0 && eclipse.Enemy.Health == 500);
+            Report("일식 · 가치 합과 피해가 0 아래로 내려가지 않는다",
+                venus != null && venus.ValueSum >= 0 && venus.Damage >= 0
+                && eclipse.Enemy.Health == 500 - (venus.Damage - venus.Blocked));
 
             // 곰 가죽 망토. 체력 50% 이하면 1.2배. 코인 없이 해왕성 32 → 38.
             CombatBattle low = Begin(WithRelic(ExampleSetup(49, 500), 12009, 0), rules);
@@ -948,6 +952,8 @@ namespace SlotHero.ToolsEditor
                 && screen.View.EnemySprite == enemyVisual.NormalEnemyArt);
             // 9조각 늘여 그리기면 비율이 무시돼 세로로 늘어났다(2026년 11월 1일 원재).
             Report("몬스터 그림이 늘지 않고 제 비율로 그려진다", screen.View != null && screen.View.EnemyArtKeepsAspect);
+            CheckEnemySpine(entry, screen, enemyVisual);
+            CheckDamageAboveEffects(screen);
 
             int healthBefore = context.Health;
             int turns = 0;
@@ -1402,6 +1408,120 @@ namespace SlotHero.ToolsEditor
             }
 
             return ids;
+        }
+
+        /// <summary>
+        /// 몬스터 스파인(2026년 11월 13일 원재). 덤과 더머는 그림 대신 스파인이 움직이고, 더스트는 그림을 그린다.
+        /// 엘리트와 보스는 몬스터 자리만 바꿔 보고 지금 전투의 몬스터로 되돌린다.
+        /// </summary>
+        private static void CheckEnemySpine(CombatEntry entry, CombatScreenController screen, CombatVisualConfig visual)
+        {
+            CombatScreenView view = screen.View;
+            Report("몬스터 스파인 둘이 표시 설정에 물려 있다", visual != null
+                && visual.NormalEnemySpine is SkeletonDataAsset && visual.EliteEnemySpine is SkeletonDataAsset);
+            if (view == null || visual == null || view.EnemySpine == null)
+            {
+                Report("전투 화면에 몬스터 스파인 자리가 있다", false);
+                return;
+            }
+
+            Image art = GetField<Image>(view, "_enemyArt");
+            Report("일반 방은 덤 스파인이 켜진다", view.EnemySpineData != null
+                && view.EnemySpineData == visual.NormalEnemySpine && view.EnemySpine.gameObject.activeSelf);
+            Report("덤 스파인이 설정의 애니메이션을 되풀이한다", view.EnemySpineAnimationName == visual.EnemySpineAnimation);
+            Report("스파인이 켜지면 그림 칸은 비운다", art != null && art.color.a == 0f);
+            Report("스파인은 마우스를 받지 않는다", !view.EnemySpine.raycastTarget);
+            // 스파인 실행기 기본 설정이 sRGB 를 꺼 몬스터가 밝고 흐리게 보였다(2026년 11월 13일 원재).
+            Report("스파인 그림은 다른 그림처럼 sRGB 로 읽는다",
+                SpineTextureIsSrgb(visual.NormalEnemySpine as SkeletonDataAsset) && SpineTextureIsSrgb(visual.EliteEnemySpine as SkeletonDataAsset));
+            CapturePreviewScenes.CaptureOpenScene("게임 전투 덤 스파인");
+
+            CombatRuleConfig rules = GetField<CombatRuleConfig>(entry, "_rules");
+            if (rules == null || screen.Battle == null)
+            {
+                return;
+            }
+
+            view.ShowEnemy(rules.MakeEnemy(CombatEnemyKind.Elite, 1));
+            Report("엘리트 방은 더머 스파인이 켜진다", view.EnemySpineData == visual.EliteEnemySpine
+                && view.EnemySpine.gameObject.activeSelf && view.EnemySpineAnimationName == visual.EnemySpineAnimation);
+            CapturePreviewScenes.CaptureOpenScene("게임 전투 더머 스파인");
+
+            view.ShowEnemy(rules.MakeEnemy(CombatEnemyKind.Boss, 1));
+            Report("보스 방은 스파인을 끄고 더스트 그림을 그린다", view.EnemySpineData == null
+                && !view.EnemySpine.gameObject.activeSelf && view.EnemySprite == visual.BossEnemyArt
+                && art != null && art.color.a > 0f);
+
+            view.ShowEnemy(screen.Battle.Enemy);
+        }
+
+        /// <summary>
+        /// 몬스터 피해 숫자가 태그 공격 파티클 위에 그려지는지(2026년 11월 13일 원재).
+        /// 파티클은 캔버스 차례 + 설정의 차례 + 프리팹의 차례로 그려진다. 프리팹의 차례는 지금 가장 큰 것이 4 다.
+        /// </summary>
+        private static void CheckDamageAboveEffects(CombatScreenController screen)
+        {
+            CombatScreenView view = screen.View;
+            SlotHero.TagAttack.UI.TagAttackFxPlayer fx = view != null
+                ? GetField<SlotHero.TagAttack.UI.TagAttackFxPlayer>(view, "_tagAttackFx")
+                : null;
+            SlotHero.TagAttack.TagAttackFxConfig fxConfig = fx != null
+                ? GetField<SlotHero.TagAttack.TagAttackFxConfig>(fx, "_config")
+                : null;
+            DamageNumberView number = view != null ? GetField<DamageNumberView>(view, "_enemyDamageNumber") : null;
+            if (view == null || fxConfig == null || number == null)
+            {
+                Report("피해 숫자와 태그 공격 이펙트가 전투 화면에 있다", false);
+                return;
+            }
+
+            MethodInfo keep = typeof(CombatScreenView).GetMethod("KeepAboveEffects", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (keep != null)
+            {
+                keep.Invoke(view, new object[] { number.gameObject });
+            }
+
+            // 꺼진 피해 숫자의 제 캔버스는 자신을 바깥 캔버스로 알려 주므로 부모에서 찾는다.
+            Canvas root = number.transform.parent.GetComponentInParent<Canvas>(true).rootCanvas;
+            int particleTop = root.sortingOrder + fxConfig.SortingOffset + MaxEffectSortingOrder(fxConfig);
+            Report("몬스터 피해 숫자가 태그 공격 이펙트보다 위에 그려진다", view.EnemyDamageSortingOrder > particleTop, view.EnemyDamageSortingOrder);
+        }
+
+        /// <summary>태그 공격 파티클 프리팹들의 가장 큰 그리는 차례.</summary>
+        private static int MaxEffectSortingOrder(SlotHero.TagAttack.TagAttackFxConfig config)
+        {
+            int best = 0;
+            foreach (SymbolTagType tag in System.Enum.GetValues(typeof(SymbolTagType)))
+            {
+                SlotHero.TagAttack.TagAttackFxEntry entry = config.GetEntry(tag);
+                if (entry == null || entry.Effect == null)
+                {
+                    continue;
+                }
+
+                ParticleSystemRenderer[] renderers = entry.Effect.GetComponentsInChildren<ParticleSystemRenderer>(true);
+                for (int i = 0; i < renderers.Length; i++)
+                {
+                    best = Mathf.Max(best, renderers[i].sortingOrder);
+                }
+            }
+
+            return best;
+        }
+
+        private static bool SpineTextureIsSrgb(SkeletonDataAsset data)
+        {
+            if (data == null || data.atlasAssets == null || data.atlasAssets.Length == 0 || data.atlasAssets[0] == null
+                || data.atlasAssets[0].PrimaryMaterial == null)
+            {
+                return false;
+            }
+
+            Texture texture = data.atlasAssets[0].PrimaryMaterial.mainTexture;
+            TextureImporter importer = texture != null
+                ? AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(texture)) as TextureImporter
+                : null;
+            return importer != null && importer.sRGBTexture;
         }
 
         private static T GetField<T>(object target, string name) where T : class

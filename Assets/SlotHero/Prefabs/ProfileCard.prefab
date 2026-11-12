@@ -165,6 +165,7 @@ GameObject:
   - component: {fileID: 1305988197220073801}
   - component: {fileID: 4356883302966187326}
   - component: {fileID: 3535814730634321788}
+  - component: {fileID: 5159038178836323282}
   m_Layer: 0
   m_Name: EditPanel
   m_TagString: Untagged
@@ -291,6 +292,19 @@ MonoBehaviour:
   _target: {fileID: 0}
   _selectable: {fileID: 0}
   _pressRatio: 0.95
+--- !u!114 &5159038178836323282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144879770276106922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}
 --- !u!1 &3079349619601631935
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,6 +1070,7 @@ GameObject:
   - component: {fileID: 1634584992702053041}
   - component: {fileID: 7401832959677421283}
   - component: {fileID: 4697780789166200836}
+  - component: {fileID: 7905402965728855167}
   m_Layer: 0
   m_Name: DeletePanel
   m_TagString: Untagged
@@ -1182,6 +1197,19 @@ MonoBehaviour:
   _target: {fileID: 0}
   _selectable: {fileID: 0}
   _pressRatio: 0.95
+--- !u!114 &7905402965728855167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5680360274179193552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}
 --- !u!1 &5807746627127293709
 GameObject:
   m_ObjectHideFlags: 0
@@ -1534,6 +1562,7 @@ GameObject:
   - component: {fileID: 1454848754838140942}
   - component: {fileID: 6866719216830212903}
   - component: {fileID: 1903714372924803817}
+  - component: {fileID: 8131738224284397418}
   m_Layer: 0
   m_Name: ProfileCard
   m_TagString: Untagged
@@ -1631,6 +1660,19 @@ MonoBehaviour:
   _deletePanel: {fileID: 1634584992702053041}
   _deleteLabel: {fileID: 8267352810161975201}
   _nameInput: {fileID: 2358241344262932751}
+--- !u!114 &8131738224284397418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7752614059829823729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667edb0a6f5f21c4ab6005f986a5e25a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SlotHero.Audio.ButtonClickSound
+  _sound: {fileID: 0}
 --- !u!1 &8836689608915852194
 GameObject:
   m_ObjectHideFlags: 0

@@ -34,6 +34,9 @@ using SlotHero.Settings.UI;
 using SlotHero.Title.UI;
 using SlotHero.TopBar;
 using SlotHero.TopBar.UI;
+using SymbolTagType = SlotHero.Combat.SymbolTagType;
+using TagDialView = SlotHero.Combat.UI.TagDialView;
+using TagSectorView = SlotHero.Combat.UI.TagSectorView;
 
 namespace SlotHero.ToolsEditor
 {
@@ -98,6 +101,7 @@ namespace SlotHero.ToolsEditor
             CheckCatalogItems(GetField<RunCatalogConfig>(flow, "_catalogConfig"));
             CheckBackdrops();
             CheckSoundWiring(flow);
+            CheckOverlayOrder();
             CheckLocalizationWiring(flow);
 
             // 게임 씬이 모든 화면을 끈 상태에서 구조를 본다.
@@ -309,6 +313,12 @@ namespace SlotHero.ToolsEditor
             // 결과 화면에서 타이틀로 돌아간다.
             flow.GoToTitle();
             Report("타이틀로 돌아간다", flow.Screen == GameScreen.Title);
+
+            // 타이틀 버전은 프로젝트 설정의 게임 버전을 따른다(2026년 11월 10일 원재).
+            TitleScreenView titleView = Object.FindAnyObjectByType<TitleScreenView>();
+            TMP_Text versionLabel = titleView != null ? GetField<TMP_Text>(titleView, "_versionLabel") : null;
+            Report("타이틀 버전이 프로젝트 설정의 게임 버전이다",
+                versionLabel != null && versionLabel.text == "v" + PlayerSettings.bundleVersion);
             Report("저장된 런이 없어졌다",
                 save.GetSavedRunState() == SlotHero.Title.SavedRunState.None);
 
@@ -578,6 +588,8 @@ namespace SlotHero.ToolsEditor
                 (int)settings.Values.GetRaw("screenMode", -1f));
             Report("되돌려도 언어는 고른 English 그대로", settings.Values.GetRaw("language", -1f) == 1f);
             Report("연출 속도는 보통으로 돌아간다", settings.Values.GetRaw("presentationSpeed", -1f) == 0f);
+            Report("되돌리면 연출과 전투도 1 배로 돌아간다",
+                Mathf.Approximately(EffectClock.Speed, 1f) && Mathf.Approximately(Time.timeScale, 1f) && !EffectClock.AutoSkip);
             Report("기본값 복원이 소리 크기도 되돌린다", settings.Values.GetRaw("bgmVolume", -1f) == 100f,
                 (int)settings.Values.GetRaw("bgmVolume", -1f));
             Report("기본값 복원이 음소거도 끈다", !settings.Values.GetBool("sfxVolumeMute", true));
@@ -683,10 +695,31 @@ namespace SlotHero.ToolsEditor
             Report("한 번 더 누르면 창", screenMode.ValueText == "창");
 
             Report("연출 속도는 보통으로 시작", speed.ValueText == "보통");
+            Report("보통이면 연출과 전투가 1 배", Mathf.Approximately(EffectClock.Speed, 1f) && Mathf.Approximately(Time.timeScale, 1f));
             speed.GetComponent<Button>().onClick.Invoke();
             Report("연출 속도를 누르면 빠름", speed.ValueText == "빠름");
+
+            // 연출 속도를 실제로 건다(2026년 11월 11일 원재). 빠름은 2 배, 스킵은 3 배에 건너뛸 수 있는 연출을 바로 넘긴다.
+            Report("빠름이면 전투 밖 연출이 2 배", Mathf.Approximately(EffectClock.Speed, 2f));
+            Report("빠름이면 전투도 2 배", Mathf.Approximately(Time.timeScale, 2f));
+            Report("빠름은 연출을 건너뛰지 않는다", !EffectClock.AutoSkip);
             speed.GetComponent<Button>().onClick.Invoke();
             Report("한 번 더 누르면 스킵", speed.ValueText == "스킵");
+            Report("스킵이면 3 배에 건너뛸 수 있는 연출을 넘긴다",
+                Mathf.Approximately(EffectClock.Speed, 3f) && Mathf.Approximately(Time.timeScale, 3f) && EffectClock.AutoSkip);
+
+            // 자동 저장 표시(2026년 11월 11일 원재). 끄면 흐름이 오른쪽 아래 표시를 끈다.
+            SettingsRowView autoSave = FindRow(rows, "autoSaveNotice");
+            RunHudController hud = Object.FindAnyObjectByType<RunHudController>(FindObjectsInactive.Include);
+            Report("자동 저장 줄과 표시가 있다", autoSave != null && hud != null && hud.AutoSaveNotice != null);
+            if (autoSave != null && hud != null && hud.AutoSaveNotice != null)
+            {
+                Report("자동 저장 표시는 켜짐으로 시작", hud.AutoSaveNotice.NoticeEnabled);
+                autoSave.GetComponent<Button>().onClick.Invoke();
+                Report("자동 저장을 끄면 표시도 꺼진다", !hud.AutoSaveNotice.NoticeEnabled);
+                autoSave.GetComponent<Button>().onClick.Invoke();
+                Report("다시 켜면 표시도 켜진다", hud.AutoSaveNotice.NoticeEnabled);
+            }
 
             // 임시 아이템 효과 적용(2026년 11월 1일 원재). 처음에는 켜져 있고, 바꾸면 흐름이 전투에 바로 넘긴다.
             SettingsRowView temporary = FindRow(rows, "temporaryItemEffects");
@@ -1019,6 +1052,7 @@ namespace SlotHero.ToolsEditor
             {
                 CheckCamp();
                 CheckHitSound(flow);
+                CheckChosenSounds(flow);
                 CheckMerchant();
             }
 
@@ -4676,8 +4710,26 @@ namespace SlotHero.ToolsEditor
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = RectTransformUtility.WorldToScreenPoint(eventCamera, world);
 
+            // 덮는 화면은 제 캔버스와 GraphicRaycaster 를 가진다(2026년 11월 13일). 게임의 EventSystem 처럼 모든 레이캐스터에 쏘고
+            // 그리는 차례(정렬 층, 캔버스 차례, 깊이)가 높은 것을 맨 위로 본다.
             List<RaycastResult> hits = new List<RaycastResult>();
-            raycaster.Raycast(pointer, hits);
+            GraphicRaycaster[] raycasters = canvas.GetComponentsInChildren<GraphicRaycaster>(false);
+            for (int i = 0; i < raycasters.Length; i++)
+            {
+                raycasters[i].Raycast(pointer, hits);
+            }
+
+            hits.Sort((a, b) =>
+            {
+                int layer = SortingLayer.GetLayerValueFromID(b.sortingLayer).CompareTo(SortingLayer.GetLayerValueFromID(a.sortingLayer));
+                if (layer != 0)
+                {
+                    return layer;
+                }
+
+                int order = b.sortingOrder.CompareTo(a.sortingOrder);
+                return order != 0 ? order : b.depth.CompareTo(a.depth);
+            });
 
             eventCamera.targetTexture = null;
             canvas.renderMode = mode;
@@ -5266,6 +5318,229 @@ namespace SlotHero.ToolsEditor
                 ClipName(config, SoundCue.MerchantPurchase, 2) == "Coins In Sack Dropped on Wood");
 
             Report("야영 소리 파일 하나", ClipCount(config, SoundCue.Camp) == 1, ClipCount(config, SoundCue.Camp));
+
+            // 2026년 11월 13일 원재가 효과음 후보 듣기 씬에서 고른 일곱.
+            Report("S01 버튼 누름 파일", ClipName(config, SoundCue.ButtonPress, 0) == "SFX_UI_Button_Organic_Plastic_Thin_Select_1");
+            Report("S06 현재 빌드 열고 닫기 파일", ClipName(config, SoundCue.CurrentBuildToggle, 0) == "MOVEActv_Medium_HA_WHOOSH_04");
+            Report("S09 골드 얻음 파일", ClipName(config, SoundCue.GoldGained, 0) == "Coin 1");
+            Report("S12 체력 잃음 파일", ClipName(config, SoundCue.HealthLost, 0) == "PUNCH_PERCUSSIVE_HEAVY_08");
+            Report("S15 코인 받음 파일", ClipName(config, SoundCue.CoinGained, 0) == "Coin Flung");
+            Report("S19 런 시작 파일", ClipName(config, SoundCue.RunStart, 0) == "MOVEActv_LongHeavy_HA_WHOOSH_04");
+            Report("S20 스테이지 전환 파일", ClipName(config, SoundCue.StageTransition, 0) == "MOVEActv_LongHeavy_HA_WHOOSH_09");
+            Report("S07 노드 고르기 파일", ClipName(config, SoundCue.NodeSelect, 0) == "Kenney 다섯 걸음 빠름");
+            Report("S25 설정 값 올림 파일", ClipName(config, SoundCue.SettingStepUp, 0) == "Fantasy_UI (10)");
+            Report("S26 설정 값 내림 파일", ClipName(config, SoundCue.SettingStepDown, 0) == "Fantasy_UI (11)");
+
+            Button[] buttons = Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            int without = 0;
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                ButtonClickSound click = buttons[i].GetComponent<ButtonClickSound>();
+                without += click == null || (click.Sound != sound && click.Sound != null) ? 1 : 0;
+            }
+
+            Report("게임 씬의 버튼마다 누름 소리가 붙어 있다", buttons.Length > 0 && without == 0, without);
+
+            // 복제해 쓰는 칸의 프리팹. 씬의 창구를 물 수 없어 비워 두고 SoundPlayer.Current 를 쓴다.
+            int prefabWithout = 0;
+            int prefabButtons = 0;
+            string[] prefabs = AssetDatabase.FindAssets("t:Prefab", new[] { UiSceneBuilder.PrefabFolder });
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(prefabs[i]));
+                Button[] inPrefab = prefab != null ? prefab.GetComponentsInChildren<Button>(true) : new Button[0];
+                for (int b = 0; b < inPrefab.Length; b++)
+                {
+                    prefabButtons++;
+                    prefabWithout += inPrefab[b].GetComponent<ButtonClickSound>() == null ? 1 : 0;
+                }
+            }
+
+            Report("복제해 쓰는 칸의 버튼에도 누름 소리가 붙어 있다", prefabButtons > 0 && prefabWithout == 0, prefabWithout);
+        }
+
+        /// <summary>
+        /// 덮는 화면이 전투의 몬스터 피해 숫자와 태그 공격 파티클보다 위에 그려지는지(2026년 11월 13일 원재).
+        /// 맵부터 위의 화면은 각자 캔버스를 달고 바깥 캔버스 차례 + 100 부터 쌓는다(`BuildGameScene.LiftOverlays`).
+        /// </summary>
+        private static void CheckOverlayOrder()
+        {
+            Canvas root = Object.FindAnyObjectByType<CanvasScaler>(FindObjectsInactive.Include) != null
+                ? Object.FindAnyObjectByType<CanvasScaler>(FindObjectsInactive.Include).GetComponent<Canvas>()
+                : null;
+            SlotHero.Combat.CombatVisualConfig combat =
+                UiSceneBuilder.LoadConfig<SlotHero.Combat.CombatVisualConfig>("Combat", "CombatVisualConfig");
+            SlotHero.TagAttack.TagAttackFxConfig fx =
+                UiSceneBuilder.LoadConfig<SlotHero.TagAttack.TagAttackFxConfig>("TagAttack", "TagAttackFxConfig");
+            if (root == null || combat == null)
+            {
+                Report("덮는 화면 차례를 볼 캔버스와 전투 설정이 있다", false);
+                return;
+            }
+
+            int damage = root.sortingOrder + combat.DamageSortingOffset;
+            int particles = root.sortingOrder + (fx != null ? fx.SortingOffset : 10);
+            Component[] overlays =
+            {
+                Object.FindAnyObjectByType<MapScreenController>(FindObjectsInactive.Include),
+                Object.FindAnyObjectByType<CurrentBuildScreenController>(FindObjectsInactive.Include),
+                Object.FindAnyObjectByType<ItemPickerScreenController>(FindObjectsInactive.Include),
+                Object.FindAnyObjectByType<SettingsScreenController>(FindObjectsInactive.Include),
+                Object.FindAnyObjectByType<PopupPresenter>(FindObjectsInactive.Include),
+                Object.FindAnyObjectByType<TopBarController>(FindObjectsInactive.Include),
+            };
+
+            int below = 0;
+            int noInput = 0;
+            int lowest = int.MaxValue;
+            for (int i = 0; i < overlays.Length; i++)
+            {
+                Transform t = overlays[i] != null ? overlays[i].transform : null;
+                while (t != null && t.parent != root.transform)
+                {
+                    t = t.parent;
+                }
+
+                // 꺼진 화면의 캔버스는 속성이 저장값과 다르게 읽혀 저장된 값을 본다.
+                Canvas own = t != null ? t.GetComponent<Canvas>() : null;
+                SerializedObject saved = own != null ? new SerializedObject(own) : null;
+                bool overrides = saved != null && saved.FindProperty("m_OverrideSorting").boolValue;
+                int order = saved != null ? saved.FindProperty("m_SortingOrder").intValue : int.MinValue;
+                bool lifted = overrides && order > damage && order > particles + 4;
+                below += lifted ? 0 : 1;
+                if (!lifted)
+                {
+                    Debug.Log("  덮는 화면 차례 확인: " + (overlays[i] != null ? overlays[i].GetType().Name : "없음")
+                        + " · 뿌리 " + (t != null ? t.name : "없음") + " · 덮어쓰기 " + overrides + " · 차례 " + order + " · 피해 숫자 " + damage);
+                }
+                noInput += t != null && t.GetComponent<GraphicRaycaster>() != null ? 0 : 1;
+                lowest = saved != null ? Mathf.Min(lowest, order) : lowest;
+            }
+
+            Report("덮는 화면이 피해 숫자와 태그 공격 파티클보다 위에 그려진다", below == 0, lowest);
+            Report("덮는 화면이 제 캔버스에서 누르기를 받는다", noInput == 0, noInput);
+
+            SlotHero.Combat.UI.CombatScreenController battle =
+                Object.FindAnyObjectByType<SlotHero.Combat.UI.CombatScreenController>(FindObjectsInactive.Include);
+            Canvas battleCanvas = battle != null ? battle.GetComponentInParent<Canvas>(true) : null;
+            Report("전투 화면은 바깥 캔버스에 그대로 그려진다", battleCanvas != null && battleCanvas.isRootCanvas);
+        }
+
+        /// <summary>
+        /// 2026년 11월 13일 원재가 고른 소리를 제때 고르는지. 골드와 코인은 늘려 본 뒤 되돌린다.
+        /// 앞 소리와 묶이지 않게 소리마다 시계를 1초 흘린다.
+        /// </summary>
+        private static void CheckChosenSounds(GameFlowController flow)
+        {
+            SoundPlayer sound = Object.FindAnyObjectByType<SoundPlayer>();
+            RunContext context = flow != null ? flow.Context : null;
+            if (sound == null || context == null)
+            {
+                Report("고른 소리를 볼 런과 효과음 창구가 있다", false);
+                return;
+            }
+
+            // 기준을 지금 런에 맞춘다.
+            Invoke(flow, "WatchResources");
+            Invoke(flow, "WatchResources");
+
+            sound.AdvanceClock(1f);
+            context.GainGold(1);
+            Invoke(flow, "WatchResources");
+            sound.Flush();
+            Report("골드가 늘면 S09 골드 얻음을 고른다", sound.LastChosen == SoundCue.GoldGained);
+            context.Run.Status.Gold -= 1;
+            context.Run.Statistics.GoldGained -= 1;
+
+            sound.AdvanceClock(1f);
+            Invoke(flow, "WatchResources");
+            SlotHero.Audio.SoundArbiter arbiter = GetField<SlotHero.Audio.SoundArbiter>(sound, "_arbiter");
+            Report("골드가 줄면 소리를 청하지 않는다", arbiter != null && !arbiter.HasPending);
+            sound.Flush();
+
+            sound.AdvanceClock(1f);
+            context.Run.Owned.AddCoin("coin_gold");
+            Invoke(flow, "WatchResources");
+            sound.Flush();
+            Report("코인이 늘면 S15 코인 받음을 고른다", sound.LastChosen == SoundCue.CoinGained);
+            context.Run.Owned.RemoveCoin("coin_gold");
+            Invoke(flow, "WatchResources");
+
+            // 한도가 차 하나를 버리고 받는 것처럼, 같은 프레임에 빼고 넣어 개수가 같아도 S15 를 고른다.
+            sound.AdvanceClock(1f);
+            context.Run.Owned.AddCoin("coin_gold");
+            context.Run.Owned.RemoveCoin("coin_gold");
+            Invoke(flow, "WatchResources");
+            bool asked = arbiter != null && arbiter.HasPending;
+            sound.Flush();
+            Report("코인을 버리고 받아 개수가 같아도 S15 를 고른다", asked && sound.LastChosen == SoundCue.CoinGained);
+
+            sound.AdvanceClock(1f);
+            ButtonClickSound click = Object.FindAnyObjectByType<ButtonClickSound>(FindObjectsInactive.Include);
+            if (click != null)
+            {
+                Invoke(click, "HandleClicked");
+            }
+
+            sound.Flush();
+            Report("버튼을 누르면 S01 버튼 누름을 고른다", sound.LastChosen == SoundCue.ButtonPress);
+
+            sound.AdvanceClock(1f);
+            Invoke(flow, "HandleCurrentBuildOpened");
+            Invoke(flow, "HandleCurrentBuildClosed");
+            sound.Flush();
+            Report("현재 빌드를 열고 닫으면 S06 을 고른다", sound.LastChosen == SoundCue.CurrentBuildToggle);
+
+            sound.AdvanceClock(1f);
+            Invoke(flow, "PlayRunStartSound");
+            sound.Flush();
+            Report("런에 들어가면 S19 런 시작을 고른다", sound.LastChosen == SoundCue.RunStart);
+            sound.AdvanceClock(1f);
+
+            // 코인 소모값으로 체력을 내는 것은 몬스터를 공격하는 때라 피격음을 내지 않는다(2026년 11월 13일 원재).
+            if (context.Health > 1)
+            {
+                context.PayHealth(1);
+                Report("코인 소모값으로 체력을 내면 피격음을 청하지 않는다", arbiter != null && !arbiter.HasPending);
+                context.Heal(1);
+                sound.Flush();
+                sound.AdvanceClock(1f);
+            }
+
+            // 설정의 막대를 한 단계 올렸다 내린다. 값은 처음대로 돌아온다.
+            SlotHero.Settings.UI.SettingsScreenController settings =
+                GetField<SlotHero.Settings.UI.SettingsScreenController>(flow, "_settings");
+            SlotHero.Settings.SettingDefinition slider = null;
+            for (int t = 0; settings != null && settings.Catalog != null && t < settings.Catalog.TabCount && slider == null; t++)
+            {
+                SlotHero.Settings.SettingsTab tab = settings.Catalog.GetTab(t);
+                for (int i = 0; tab != null && tab.Items != null && i < tab.Items.Count && slider == null; i++)
+                {
+                    if (tab.Items[i] != null && tab.Items[i].Kind == SlotHero.Settings.SettingKind.Slider && tab.Items[i].Step > 0f)
+                    {
+                        slider = tab.Items[i];
+                    }
+                }
+            }
+
+            if (slider == null)
+            {
+                Report("설정에 막대 항목이 있다", false);
+                return;
+            }
+
+            float start = settings.Values.Get(slider);
+            float step = start + slider.Step <= slider.Max ? slider.Step : -slider.Step;
+            settings.SetValue(slider, start + step);
+            sound.Flush();
+            Report("막대를 올리면 S25, 내리면 S26 을 고른다(첫 단계)",
+                sound.LastChosen == (step > 0f ? SoundCue.SettingStepUp : SoundCue.SettingStepDown));
+            sound.AdvanceClock(1f);
+            settings.SetValue(slider, start);
+            sound.Flush();
+            Report("되돌리면 반대쪽 소리를 고른다",
+                sound.LastChosen == (step > 0f ? SoundCue.SettingStepDown : SoundCue.SettingStepUp));
+            sound.AdvanceClock(1f);
         }
 
         private static string ClipName(SoundConfig config, SoundCue cue, int clip)
@@ -5519,6 +5794,69 @@ namespace SlotHero.ToolsEditor
             Report("알림까지 닫으면 팝업이 걷힌다", !popup.IsOpen);
 
             CheckBloodDealPicker(flow, picker, pickerView);
+            CheckEventTagPicker(flow);
+        }
+
+        /// <summary>
+        /// 07 기록 말살 의 태그 선택 창. 전투의 태그 원판을 빌린 임시 창이다(2026년 11월 11일 원재).
+        /// 아홉 태그 칸은 모두 눌리고 소용돌이는 꺼져 있다. 칸에 마우스를 올리면 태그 이름이 나오고,
+        /// 누르면 그 태그를 알리며 닫힌다. 가운데를 누르면 고르지 않고 닫힌다.
+        /// </summary>
+        private static void CheckEventTagPicker(GameFlowController flow)
+        {
+            SlotHero.Flow.UI.EventTagPicker tagPicker = GetField<SlotHero.Flow.UI.EventTagPicker>(flow, "_tagPickerBehaviour");
+            Report("이벤트 태그 선택 창이 흐름에 물려 있다", tagPicker != null);
+            if (tagPicker == null)
+            {
+                return;
+            }
+
+            Report("이벤트 태그 선택 창은 처음에 닫혀 있다", !tagPicker.IsOpen);
+
+            bool cancelled = false;
+            SymbolTagType? picked = null;
+            tagPicker.Open(tag => picked = tag, () => cancelled = true);
+            AwakenNew();
+
+            TagDialView dial = tagPicker.Dial;
+            Report("이벤트 태그 선택 창이 열린다", tagPicker.IsOpen && dial != null);
+            if (dial == null)
+            {
+                return;
+            }
+
+            int usable = 0;
+            for (int i = 0; i < dial.Sectors.Count; i++)
+            {
+                usable += i != TagDialView.VortexIndex && dial.Sectors[i].Interactable ? 1 : 0;
+            }
+
+            Report("아홉 태그 칸이 모두 눌린다", usable == 9, usable);
+            Report("소용돌이 칸은 꺼져 있다", !dial.Sectors[TagDialView.VortexIndex].Interactable);
+
+            TagSectorView saturn = dial.Sectors[TagDialView.GetSectorIndex(SymbolTagType.Saturn)];
+            saturn.OnPointerEnter(null);
+            CurrentBuildVisualConfig buildVisual = GetField<CurrentBuildVisualConfig>(flow, "_buildVisual");
+            string saturnName = SymbolTags.GetName(SymbolTagType.Saturn, buildVisual);
+            Report("칸에 마우스를 올리면 태그 이름이 나온다", tagPicker.HintText == saturnName, tagPicker.HintText);
+            saturn.OnPointerExit(null);
+
+            Canvas.ForceUpdateCanvases();
+            CapturePreviewScenes.CaptureOpenScene("게임 이벤트 태그 선택 창");
+
+            saturn.OnPointerClick(null);
+            Report("태그를 누르면 그 태그를 알린다", picked.HasValue && picked.Value == SymbolTagType.Saturn);
+            Report("태그를 누르면 창이 닫힌다", !tagPicker.IsOpen);
+
+            tagPicker.Open(tag => picked = tag, () => cancelled = true);
+            AwakenNew();
+            MethodInfo center = typeof(TagDialView).GetMethod("HandleCenterClicked", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (center != null)
+            {
+                center.Invoke(dial, null);
+            }
+
+            Report("가운데를 누르면 고르지 않고 닫힌다", cancelled && !tagPicker.IsOpen);
         }
 
         /// <summary>
@@ -5738,7 +6076,8 @@ namespace SlotHero.ToolsEditor
 
             Report("02 ~ 06 이 이벤트 목록에 다 들어 있다", absent.Count == 0,
                 absent.Count == 0 ? "다 있음" : string.Join(", ", absent.ToArray()));
-            Report("이벤트 화면이 여든 개다", screens, 80);
+            // 2026년 11월 11일 07 · 11 · 17 · 36 의 화면 열둘을 더해 아흔둘이 됐다.
+            Report("이벤트 화면이 아흔두 개다", screens, 92);
             Report("이벤트 삽화가 화면 수만큼 있다", illustrations.Illustrations.Count, screens);
             Report("모든 이벤트의 화면마다 삽화가 붙는다", missing, 0);
 
@@ -6361,6 +6700,10 @@ namespace SlotHero.ToolsEditor
 
             // 검사가 영어로 바꿔 둔 게임 언어를 한국어로 되돌린다.
             Loc.SetLanguage(GameLanguage.Korean);
+
+            // 검사가 바꿨을 수 있는 연출 속도를 보통으로 되돌린다. 편집기의 유니티 시간 배율이 남지 않게 한다.
+            EffectClock.Reset();
+            Time.timeScale = 1f;
 
             Debug.Log("게임 씬 검사 " + _checked + "건, 실패 " + _failed + "건");
         }

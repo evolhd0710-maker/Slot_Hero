@@ -85,6 +85,8 @@ namespace SlotHero.ToolsEditor
             BuildItemDetail();
             BuildMap();
             BuildEvent();
+            BuildRecordErasureTest();
+            BuildSoundTest();
             BuildReward();
             BuildRunResult();
             BuildCurrentBuild();
@@ -184,7 +186,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.Stretch(menuLayer);
 
             TMP_Text version = UiSceneBuilder.NewText(
-                "VersionLabel", root, "v0.1", UiScale.Px(20f), Color.white, TextAlignmentOptions.Right);
+                "VersionLabel", root, "v" + Application.version, UiScale.Px(20f), Color.white, TextAlignmentOptions.Right);
 
             TitleScreenView view = root.gameObject.AddComponent<TitleScreenView>();
             UiSceneBuilder.SetField(view, "_layout", layout);
@@ -204,7 +206,7 @@ namespace SlotHero.ToolsEditor
 
             view.ShowMenu();
             view.ApplyLayout();
-            view.SetVersion("0.1");
+            view.SetVersion(Application.version);
 
             AddDriver();
             SaveScene(scene, "05 타이틀 화면");
@@ -647,6 +649,9 @@ namespace SlotHero.ToolsEditor
                 nameLabel.rectTransform, layout,
                 0f, layout.CardIconTop + layout.CardIconSize + UiScale.Px(10f), layout.CardSize.x, UiScale.Px(40f));
 
+            // 영어 이름("Cuneiform Silver Coin" 같은 것)이 한 줄을 넘으면 두 줄로 칸을 벗어났다. 넘칠 때만 글자를 줄인다(2026년 11월 11일).
+            UiSceneBuilder.ShrinkToFit(nameLabel, 0.7f, UiScale.Px(8f));
+
             TMP_Text tagLabel = UiSceneBuilder.NewText(
                 "TagLabel", go.transform, "태그", visual.CardTagFontSize,
                 visual.CardTextColor, TextAlignmentOptions.Center);
@@ -684,6 +689,24 @@ namespace SlotHero.ToolsEditor
             Canvas canvas = UiSceneBuilder.CreateCanvas("EventCanvas");
             UiSceneBuilder.AttachCanvasToCamera(canvas, _camera);
 
+            EventScreenView view;
+            BuildEventScreen(canvas, out view);
+            view.Show(PreviewSamples.Event(), null);
+
+            // 삽화가 칸에 어떻게 들어가는지 보이게 임시 그림 하나를 얹는다. 02 힘을 새기는 것 의 첫 화면이다.
+            view.ShowIllustration(ImportArt.LoadEventIllustration(
+                SlotHero.Flow.EventScripts.IllustrationIdOf("carve_power", "1")));
+
+            AddDriver();
+            SaveScene(scene, "11 이벤트 화면");
+        }
+
+        /// <summary>
+        /// 이벤트 화면 하나를 캔버스 아래에 짓는다. 이벤트 화면 확인용 씬과 이벤트 시험 씬이 함께 쓴다.
+        /// 자리는 설정대로 맞춰 두고 내용은 비워 둔다.
+        /// </summary>
+        private static EventScreenController BuildEventScreen(Canvas canvas, out EventScreenView view)
+        {
             EventLayoutConfig layout =
                 UiSceneBuilder.LoadConfig<EventLayoutConfig>("Events", "EventLayoutConfig");
             EventVisualConfig visual =
@@ -713,7 +736,7 @@ namespace SlotHero.ToolsEditor
             RectTransform choiceLayer = UiSceneBuilder.NewRect("ChoiceLayer", root);
             UiSceneBuilder.Stretch(choiceLayer);
 
-            EventScreenView view = root.gameObject.AddComponent<EventScreenView>();
+            view = root.gameObject.AddComponent<EventScreenView>();
             UiSceneBuilder.SetField(view, "_layout", layout);
             UiSceneBuilder.SetField(view, "_visual", visual);
             UiSceneBuilder.SetField(view, "_illustration", illustration);
@@ -728,14 +751,7 @@ namespace SlotHero.ToolsEditor
             UiSceneBuilder.SetField(controller, "_view", view);
 
             view.ApplyLayout();
-            view.Show(PreviewSamples.Event(), null);
-
-            // 삽화가 칸에 어떻게 들어가는지 보이게 임시 그림 하나를 얹는다. 02 힘을 새기는 것 의 첫 화면이다.
-            view.ShowIllustration(ImportArt.LoadEventIllustration(
-                SlotHero.Flow.EventScripts.IllustrationIdOf("carve_power", "1")));
-
-            AddDriver();
-            SaveScene(scene, "11 이벤트 화면");
+            return controller;
         }
 
         [MenuItem("Slot Hero/확인용 씬 만들기/팝업")]
@@ -875,6 +891,9 @@ namespace SlotHero.ToolsEditor
                 "NameLabel", root, "이름", visual.ItemNameFontSize, visual.TextColor,
                 TextAlignmentOptions.Left, true, true);
             UiSceneBuilder.PlaceTopLeft(nameLabel.rectTransform, new Vector2(pad, pad), new Vector2(size.x * 0.65f - pad, UiScale.Px(44f)));
+
+            // 영어 이름("Poseidon Gold Coin" 같은 것)이 칸 폭을 넘었다. 넘칠 때만 글자를 줄인다(2026년 11월 11일).
+            UiSceneBuilder.ShrinkToFit(nameLabel, 0.7f, UiScale.Px(8f));
 
             TMP_Text valueLabel = UiSceneBuilder.NewText(
                 "ValueLabel", root, "가치", visual.ItemValueFontSize, visual.TextColor,
@@ -1146,12 +1165,16 @@ namespace SlotHero.ToolsEditor
                 visual.TextColor, TextAlignmentOptions.Center, true, true);
             UiSceneBuilder.Stretch(confirmLabel.rectTransform);
 
+            // 영어 "Discard and Receive" 가 버튼 폭을 넘었다. 넘칠 때만 글자를 줄인다(2026년 11월 11일).
+            UiSceneBuilder.ShrinkToFit(confirmLabel, 0.6f, UiScale.Px(8f));
+
             Image cancelPanel = UiSceneBuilder.NewImage("CancelPanel", root, visual.PanelColor);
             UiSceneBuilder.AddButton(cancelPanel.gameObject);
             TMP_Text cancelLabel = UiSceneBuilder.NewText(
                 "CancelLabel", cancelPanel.transform, visual.PickCancelText, visual.SectionFontSize,
                 visual.TextColor, TextAlignmentOptions.Center, true, true);
             UiSceneBuilder.Stretch(cancelLabel.rectTransform);
+            UiSceneBuilder.ShrinkToFit(cancelLabel, 0.6f, UiScale.Px(8f));
 
             ItemPickerScreenView view = root.gameObject.AddComponent<ItemPickerScreenView>();
             UiSceneBuilder.SetField(view, "_layout", layout);

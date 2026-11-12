@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using SlotHero.Ui;
 using UnityEngine;
 
 namespace SlotHero.TopBar.UI
@@ -265,7 +266,7 @@ namespace SlotHero.TopBar.UI
             }
 
             float total = _visual != null ? _visual.GoldCountSeconds : 0f;
-            _goldCountRemaining -= Time.unscaledDeltaTime;
+            _goldCountRemaining -= EffectClock.Delta;
 
             if (_goldCountRemaining <= 0f || total <= 0f)
             {

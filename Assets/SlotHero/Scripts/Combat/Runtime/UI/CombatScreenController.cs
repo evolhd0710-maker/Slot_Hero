@@ -37,8 +37,14 @@ namespace SlotHero.Combat.UI
         private bool _busy;
         private bool _finished;
 
-        /// <summary>플레이어 체력이 깎였다. 코인 소모값이나 적의 공격이다. 런에 적는 쪽이 듣는다.</summary>
+        /// <summary>플레이어 체력이 깎였다. 적의 공격이다. 런에 적는 쪽이 듣고 피격음(S12)이 난다.</summary>
         public event Action<int> PlayerHealthLost;
+
+        /// <summary>
+        /// 코인 소모값으로 플레이어 체력을 냈다. 런에 적는 쪽이 듣는다.
+        /// 몬스터를 공격하는 때라 공격 효과음이 이미 있어 피격음을 내지 않는다(2026년 11월 13일 원재).
+        /// </summary>
+        public event Action<int> PlayerHealthPaid;
 
         /// <summary>전투가 끝났다. 한 번만 온다.</summary>
         public event Action<CombatOutcome> Finished;
@@ -267,7 +273,7 @@ namespace SlotHero.Combat.UI
 
             if (attack.HealthPaid > 0)
             {
-                LoseHealth(attack.HealthPaid);
+                PayHealth(attack.HealthPaid);
             }
 
             Color color = _view != null ? _view.GetTagVisual(attack.Tag).BarColor : Color.white;
@@ -731,6 +737,14 @@ namespace SlotHero.Combat.UI
         private bool CanAct()
         {
             return _battle != null && !_busy && !_finished;
+        }
+
+        private void PayHealth(int amount)
+        {
+            if (amount > 0 && PlayerHealthPaid != null)
+            {
+                PlayerHealthPaid(amount);
+            }
         }
 
         private void LoseHealth(int amount)
